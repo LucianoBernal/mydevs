@@ -1,0 +1,1 @@
+interprete.d: ../interprete.c
