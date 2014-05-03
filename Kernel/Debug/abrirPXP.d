@@ -1,1 +1,0 @@
-abrirPXP.d: ../abrirPXP.c
