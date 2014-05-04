@@ -1,1 +1,0 @@
-funcionesExtra.d: ../funcionesExtra.c

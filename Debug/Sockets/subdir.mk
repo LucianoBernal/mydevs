@@ -4,17 +4,17 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../Sockets/so-test-sockets/Servidor/src/Server.c 
+../Sockets/Server.c 
 
 OBJS += \
-./Sockets/so-test-sockets/Servidor/src/Server.o 
+./Sockets/Server.o 
 
 C_DEPS += \
-./Sockets/so-test-sockets/Servidor/src/Server.d 
+./Sockets/Server.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
-Sockets/so-test-sockets/Servidor/src/%.o: ../Sockets/so-test-sockets/Servidor/src/%.c
+Sockets/%.o: ../Sockets/%.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: GCC C Compiler'
 	gcc -O0 -g3 -Wall -pthread -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o "$@" "$<"

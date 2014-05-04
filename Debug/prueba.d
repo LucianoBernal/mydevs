@@ -1,1 +1,0 @@
-prueba.d: ../prueba.c

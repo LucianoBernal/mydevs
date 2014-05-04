@@ -1,1 +1,0 @@
-pruebapunteros.d: ../pruebapunteros.c

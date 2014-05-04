@@ -19,8 +19,8 @@ commons/Debug/commons \
 commons/Debug/commons/collections \
 UMV \
 UMV/Debug \
-Sockets/so-test-sockets/Servidor/src \
-Sockets/Debug/so-test-sockets/Servidor/src \
+Sockets \
+Sockets/Debug \
 Programa \
 Programa/Debug \
 Kernel \

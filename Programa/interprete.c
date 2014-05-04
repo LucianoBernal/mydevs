@@ -59,11 +59,12 @@ FILE *archivo;
 	archivo = fopen(argv[1], "r");
 	enviarPorSocket(archivo);
 	close((int)archivo);
+
 //	Las siguientes 3 lineas son intentos de solucionarlo (fallidos xd)
+
 	fflush(stdin);
 	fflush(stdout);
 	free(archivo);
 	return 0;
-
 }
 
