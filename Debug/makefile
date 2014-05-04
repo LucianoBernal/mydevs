@@ -8,6 +8,17 @@ RM := rm -rf
 
 # All of the sources participating in the build are defined here
 -include sources.mk
+-include commons/commons/collections/subdir.mk
+-include commons/commons/subdir.mk
+-include commons/Debug/commons/collections/subdir.mk
+-include commons/Debug/commons/subdir.mk
+-include UMV/Debug/subdir.mk
+-include UMV/subdir.mk
+-include Sockets/so-test-sockets/Servidor/src/subdir.mk
+-include Sockets/Debug/so-test-sockets/Servidor/src/subdir.mk
+-include Programa/Debug/subdir.mk
+-include Programa/subdir.mk
+-include Kernel/subdir.mk
 -include subdir.mk
 -include objects.mk
 
