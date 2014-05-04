@@ -1,0 +1,1 @@
+funcionesaux.d: ../funcionesaux.c

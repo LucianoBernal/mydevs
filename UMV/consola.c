@@ -24,13 +24,12 @@ void analizarYEjecutarComando(char *);
 int main (){
 	//En realidad deberia leerlo de un archivo config
 	//int tamanoMundo=10000;
-	char *comando;
+	char comando[4];
 	//void *baseUMV = malloc(tamanoMundo);
 	//t_tprogramas *tablaProgramas;
 	//tablaProgramas =(t_tprogramas *)baseUMV;
-
 	do{
-		fgets(comando, 30, stdin);
+		gets(comando);
 		analizarYEjecutarComando(comando);
 	}while(strcmp(comando, "exit\n"));
 	return 0;

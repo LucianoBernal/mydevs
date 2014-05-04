@@ -13,11 +13,11 @@ void leerComoRetardo(char*);
 void leerComoAlgoritmo(char*);
 void leerComoCompactacion(char*);
 void leerComoDump(char*);
-void obtenerParametroI(int, char**);
-int interpretadoComoInt(char*);
+void obtenerParametroI(int, char*, char*);
 void *interpretadoComoPuntero(char*);
 void buscarEnMemoriaYEntregar(int, void*, int, int);
 void escribirBufferEnMemoria(int, void*, int, int, char);
+int buscarEspacio(int, char *);
 
 typedef struct{
 	int proceso;
@@ -47,19 +47,20 @@ void analizarYEjecutar(char *comando){
 	}
 }
 
-void leerComoOperacion(char*){
+void leerComoOperacion(char *comando){
 	char* parametro[6];
 	int i;
 	t_operacion operacion;
 	for(i=0;i<6;i++){
-		obtenerParametroI(i, &parametro[i]);//busca espacios en la gran cadena para separar los parámetros y los guarda en vector
+		obtenerParametroI(i, &parametro[i], comando);//busca espacios en la gran cadena para separar los parámetros y los guarda en vector
 	}
-	operacion.proceso=interpretadoComoInt(parametro[0]);
+	operacion.proceso=atol(parametro[0]);
 	operacion.base=interpretadoComoPuntero(parametro[1]);
-	operacion.offset=interpretadoComoInt(parametro[2]);
-	operacion.tamano=interpretadoComoInt(parametro[3]);
-	operacion.accion=(char)parametro[4];
-	operacion.archivo=(char)parametro[5];
+//	Para hacer esta vamos a tener que charlar un rato
+	operacion.offset=atol(parametro[2]);
+	operacion.tamano=atol(parametro[3]);
+	operacion.accion=(char)*parametro[4];
+	operacion.archivo=(char)*parametro[5];
 
 	if(operacion.accion=='s')
 	{
@@ -69,5 +70,30 @@ void leerComoOperacion(char*){
 	{
 		escribirBufferEnMemoria(operacion.proceso, operacion.base, operacion.offset, operacion.tamano,operacion.archivo);
 	}
+}
+
+int buscarEspacio(int numero, char *cadena){
+	if (numero==0) return 0;
+	int espacios=0;
+	int i=1;
+ 	while((espacios<numero)&&(i<strlen(cadena))){
+		if (cadena[i]==' ') espacios+=1;
+		i+=1;
+	};
+ 	if (i==strlen(cadena)&&(cadena[i-1]!=' ')) i+=1;
+	return i;
+}
+
+void obtenerParametroI(int numero, char* destino, char* origen){
+	int primerEspacio;
+	int segundoEspacio;
+	int i;
+	primerEspacio=buscarEspacio(numero-1, origen);
+	segundoEspacio=buscarEspacio(numero, origen);
+	for (i=primerEspacio;i<(segundoEspacio-1);i++){
+		destino[i-primerEspacio]=origen[i];
+	}
+	destino[i-primerEspacio]=0;
+	return;
 }
 
