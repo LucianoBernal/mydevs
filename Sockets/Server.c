@@ -8,14 +8,15 @@
 #include <unistd.h>
 
 #define IP "127.0.0.1"
-#define PUERTO "6667"
 #define BACKLOG 5
-#define PACKAGESIZE 50
+#define PACKAGESIZE 1024
 
-int main(){
+int main(int argc, char **argv){
 
+	char *PUERTO=argv[1];
 	struct addrinfo hints;
 	struct addrinfo *serverInfo;
+
 	memset(&hints, 0, sizeof(hints));
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_socktype = SOCK_STREAM;
@@ -42,13 +43,9 @@ int main(){
 
 	while (strncmp(package,"Ya, estamos",11)){
 		status = recv(socketCliente, (void*) package, PACKAGESIZE, 0);
-		if (status != 0) printf("%s", package);
-
+		if ((status != 0)) printf("%s", package);
 	}
 	close(socketCliente);
 	close(listenningSocket);
-	//con estas fflush me gustaria solucionar el problema
-	fflush(stdin);
-	fflush(stdout);
 	return 0;
 }

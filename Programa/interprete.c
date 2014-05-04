@@ -7,8 +7,9 @@
 #include <unistd.h>
 
 #define IP "127.0.0.1"
-#define PUERTO "6667"
-#define PACKAGESIZE 50
+#define PACKAGESIZE 1024
+
+char *PUERTO;
 
 int enviarPorSocket(FILE* archivo){
 
@@ -19,20 +20,18 @@ int enviarPorSocket(FILE* archivo){
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_socktype = SOCK_STREAM;
 	getaddrinfo(IP, PUERTO, &hints, &serverInfo);
-	hints.ai_flags = AI_PASSIVE;
 
 	int serverSocket;
 	serverSocket = socket(serverInfo->ai_family, serverInfo->ai_socktype, serverInfo->ai_protocol);
 	connect(serverSocket, serverInfo->ai_addr, serverInfo->ai_addrlen);
 	freeaddrinfo(serverInfo);
 
-	printf("Ya me voy a empezar \n");
+	printf("Ya voy a empezar \n");
 	char message[PACKAGESIZE];
-
-	do{
+	while(! feof(archivo)){
 		fgets(message, PACKAGESIZE, archivo);
-		send(serverSocket, message, strlen(message) + 1, 0);
-	}while(! feof(archivo));
+		if (! feof(archivo)) send(serverSocket, message, strlen(message) + 1, 0);
+	};
 
 	send(serverSocket, "Ya, estamos\n", 14,0);
 	printf("Ya envie el ya estamos\n");
@@ -44,27 +43,19 @@ void enviarPorSocketAlKernel(char* buffer){
 	printf("%s", buffer);
 	return;
 }
-/*
- * El problema que hay con esta version es que funciona bien, es decir,
- * envia el archivo completo solo en la primera corrida. Yo pienso que
- * hay una variable que no pierde el valor (probablemente archivo sigue
- * apuntando a eof) Soy Pato e_e.
- */
+
 int main(int argc, char **argv){
-FILE *archivo;
 
-//	Tenemos que pasarle como parametro la ruta del archivo al momento
-//	de ejecutarlo, es decir pongan ./interprete /home/(resto de la ruta)
+	FILE *archivo;
+	PUERTO=argv[2];
 
+//	Es necesario que le pasen el puerto, por alguna razon despues de un connect
+//	tarda cierto tiempo para usar el mismo puerto
+//	llamenlo por consola asi: "./interprete /rutaarchivo XXXX
 	archivo = fopen(argv[1], "r");
 	enviarPorSocket(archivo);
-	close((int)archivo);
+	fclose(archivo);
 
-//	Las siguientes 3 lineas son intentos de solucionarlo (fallidos xd)
-
-	fflush(stdin);
-	fflush(stdout);
-	free(archivo);
 	return 0;
 }
 
