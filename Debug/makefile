@@ -10,13 +10,11 @@ RM := rm -rf
 -include sources.mk
 -include commons/commons/collections/subdir.mk
 -include commons/commons/subdir.mk
--include commons/Debug/commons/collections/subdir.mk
--include commons/Debug/commons/subdir.mk
--include UMV/Debug/subdir.mk
+-include ansisop-parser/so-ansisop-parser-dummy/subdir.mk
+-include ansisop-parser/parser/parser/subdir.mk
+-include ansisop-parser/parser/build/parser/subdir.mk
 -include UMV/subdir.mk
--include Sockets/Debug/subdir.mk
 -include Sockets/subdir.mk
--include Programa/Debug/subdir.mk
 -include Programa/subdir.mk
 -include Kernel/subdir.mk
 -include subdir.mk
@@ -33,19 +31,19 @@ endif
 # Add inputs and outputs from these tool invocations to the build variables 
 
 # All Target
-all: prueba2
+all: SO
 
 # Tool invocations
-prueba2: $(OBJS) $(USER_OBJS)
+SO: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C Linker'
-	gcc  -o "prueba2" $(OBJS) $(USER_OBJS) $(LIBS)
+	gcc  -o "SO" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) $(OBJS)$(C_DEPS)$(EXECUTABLES) prueba2
+	-$(RM) $(OBJS)$(C_DEPS)$(EXECUTABLES) SO
 	-@echo ' '
 
 .PHONY: all clean dependents
