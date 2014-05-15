@@ -15,11 +15,13 @@ EXECUTABLES :=
 SUBDIRS := \
 commons/commons \
 commons/commons/collections \
-ansisop-parser/so-ansisop-parser-dummy \
-ansisop-parser/parser/parser \
-ansisop-parser/parser/build/parser \
+commons/Debug/commons \
+commons/Debug/commons/collections \
 UMV \
+UMV/Debug \
 Sockets \
+Sockets/Debug \
 Programa \
+Programa/Debug \
 Kernel \
 

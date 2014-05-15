@@ -6,29 +6,16 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <unistd.h>
+#include "bibSockets.h"
 
-#define IP "127.0.0.1"
 #define BACKLOG 5
 #define PACKAGESIZE 1024
 
 int main(int argc, char **argv){
-
-	char *PUERTO=argv[1];
-	struct addrinfo hints;
-	struct addrinfo *serverInfo;
-
-	memset(&hints, 0, sizeof(hints));
-	hints.ai_family = AF_UNSPEC;
-	hints.ai_socktype = SOCK_STREAM;
-	hints.ai_flags = AI_PASSIVE;
-	getaddrinfo(NULL, PUERTO, &hints, &serverInfo);
-
 	int listenningSocket;
-	listenningSocket = socket(serverInfo->ai_family, serverInfo->ai_socktype, serverInfo->ai_protocol);
+	char *PUERTO=argv[1];
 
-	bind(listenningSocket,serverInfo->ai_addr, serverInfo->ai_addrlen);
-	freeaddrinfo(serverInfo);
-
+	crearSocketL(&listenningSocket, PUERTO);
 	listen(listenningSocket, BACKLOG);
 
 	struct sockaddr_in addr;
