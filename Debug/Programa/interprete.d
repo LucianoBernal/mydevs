@@ -1,4 +1,3 @@
-Programa/interprete.d: ../Programa/interprete.c \
- /home/utnso/tp-2014-1c-skynet/Sockets/bibSockets.h
+Programa/interprete.d: ../Programa/interprete.c ../Programa/bibSockets.h
 
-/home/utnso/tp-2014-1c-skynet/Sockets/bibSockets.h:
+../Programa/bibSockets.h:

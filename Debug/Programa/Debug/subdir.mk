@@ -4,6 +4,7 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 O_SRCS += \
+../Programa/Debug/bibSockets.o \
 ../Programa/Debug/interprete.o 
 
 
