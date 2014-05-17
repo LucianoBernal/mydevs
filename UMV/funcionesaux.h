@@ -8,7 +8,7 @@
 #ifndef FUNCIONESAUX_H_
 #define FUNCIONESAUX_H_
 
-
+void analizarYEjecutar(char *);
 void leerComoOperacion(char*);
 void leerComoRetardo(char*);
 void leerComoAlgoritmo(char*);

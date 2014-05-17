@@ -11,7 +11,7 @@
 
 typedef struct{
 	int proceso;
-	void *base;
+	int base;
 	int offset;
 	int tamano;
 	char accion;
@@ -19,11 +19,12 @@ typedef struct{
 }t_operacion;
 
 void analizarYEjecutar(char *comando){
-	char* nomComando;
-	if(!strcmp(strncpy(nomComando,comando,10), "operacion ")){
+	//char* nomComando; //no lo usamos más...
+
+	if(!strncmp("operacion ",comando,10)){
 		leerComoOperacion(comando);
 	}
-	if(!strcmp(strncpy(nomComando,comando,8), "retardo ")){
+	/*if(!strcmp(strncpy(nomComando,comando,8), "retardo ")){
 		leerComoRetardo(comando);
 	}
 	if(!strcmp(strncpy(nomComando,comando,10), "algoritmo ")){
@@ -34,10 +35,13 @@ void analizarYEjecutar(char *comando){
 	}
 	if(!strcmp(strncpy(nomComando,comando,5), "dump ")){
 		leerComoDump(comando);
+	}*/
+	else {
+		printf("Error al ingresar el comando. Verifique sintaxis.");
 	}
 }
 
-
+//funciones usadas para obtener y guardar parámetros de un comando
 int buscarEspacio(int numero, char *cadena){
 	if (numero==0) return 0;
 	int espacios=0;
@@ -62,23 +66,28 @@ void obtenerParametroI(int numero, char* destino, char* origen){
 	destino[i-primerEspacio]=0;
 	return;
 }
+//Termina funciones usadas para obtener y guardar parámetros de un comando
 
 void leerComoOperacion(char *comando){
-	char parametro[5][20];
+	const int PARAM_SIZE = 20;
+	char parametro[6][PARAM_SIZE];
 	int i;
-//	t_operacion operacion;
-	for(i=0;i<6;i++){
+	t_operacion operacion;
+
+	for(i=0;i<7;i++){
 		obtenerParametroI(i+1, parametro[i], comando);//busca espacios en la gran cadena para separar los parámetros y los guarda en vector
 	}
-//	operacion.proceso=atoi(parametro[0]);
-//	operacion.base=atoi(parametro[1]);
-//	operacion.offset=atoi(parametro[2]);
-//	operacion.tamano=atoi(parametro[3]);
-//	operacion.accion=(char)*parametro[4];
-//	operacion.archivo=(char)*parametro[5];
-	for(i=0;i<6;i++){
-		printf("el %d parametro es %s:\n", i, parametro[i]);
+	operacion.proceso=atoi(parametro[1]);
+	operacion.base=atoi(parametro[2]);
+	operacion.offset=atoi(parametro[3]);
+	operacion.tamano=atoi(parametro[4]);
+	operacion.accion=(char)*parametro[5];
+	operacion.archivo=(char)*parametro[6];
+
+	for(i=1;i<7;i++){
+		printf("el parametro %d es: %s\n", i, parametro[i]);
 	}
+
 /*	<>
 	if(operacion.accion=='s')
 	{
