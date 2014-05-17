@@ -1,1 +1,3 @@
-Server.d: ../Server.c
+Server.d: ../Server.c ../bibSockets.h
+
+../bibSockets.h:

@@ -1,1 +1,3 @@
-funcionesaux.d: ../funcionesaux.c
+funcionesaux.d: ../funcionesaux.c ../funcionesaux.h
+
+../funcionesaux.h:

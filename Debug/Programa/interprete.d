@@ -1,1 +1,3 @@
-Programa/interprete.d: ../Programa/interprete.c
+Programa/interprete.d: ../Programa/interprete.c ../Programa/bibSockets.h
+
+../Programa/bibSockets.h:

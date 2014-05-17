@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "funcionesaux.h"
 
 typedef struct{
 	char* identificador;
@@ -19,23 +20,20 @@ typedef struct{
 	int id_programa;
 	t_tsegmento *baseTabla;
 }t_tprogramas;
-void analizarYEjecutarComando(char *);
+
+
 
 int main (){
 	//En realidad deberia leerlo de un archivo config
 	//int tamanoMundo=10000;
-	char comando[4];
+	char comando[73];
 	//void *baseUMV = malloc(tamanoMundo);
 	//t_tprogramas *tablaProgramas;
 	//tablaProgramas =(t_tprogramas *)baseUMV;
-	do{
+	//do{
 		gets(comando);
-		analizarYEjecutarComando(comando);
-	}while(strcmp(comando, "exit\n"));
-	return 0;
-}
+		leerComoOperacion(comando);
 
-void analizarYEjecutarComando(char *com){
-	printf("%s\n",com);
-	return;
+	//}while(strcmp(comando, "exit\n"));
+	return 0;
 }
