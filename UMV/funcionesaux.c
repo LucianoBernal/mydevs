@@ -19,29 +19,32 @@ typedef struct{
 }t_operacion;
 
 void analizarYEjecutar(char *comando){
-	//char* nomComando; //no lo usamos más...
 
 	if(!strncmp("operacion ",comando,10)){
 		leerComoOperacion(comando);
 	}
-	/*if(!strcmp(strncpy(nomComando,comando,8), "retardo ")){
+	else if(!strncmp("retardo ",comando,8)){
 		leerComoRetardo(comando);
 	}
-	if(!strcmp(strncpy(nomComando,comando,10), "algoritmo ")){
+	else if(!strncmp("algoritmo ",comando,10)){
 		leerComoAlgoritmo(comando);
 	}
-	if(!strcmp(strncpy(nomComando,comando,13), "compactacion ")){
+	else if(!strncmp("compactacion ",comando,13)){
 		leerComoCompactacion(comando);
 	}
-	if(!strcmp(strncpy(nomComando,comando,5), "dump ")){
+	else if(!strncmp("dump ",comando,5)){
 		leerComoDump(comando);
-	}*/
+	}
+	else if(!strncmp("exit",comando,4)){
+		return;
+	}
 	else {
-		printf("Error al ingresar el comando. Verifique sintaxis.");
+		printf("Error al ingresar el comando. Verifique sintaxis.\n");
+		return;
 	}
 }
 
-//funciones usadas para obtener y guardar parámetros de un comando
+//Empieza- funciones usadas para obtener y guardar parámetros de un comando
 int buscarEspacio(int numero, char *cadena){
 	if (numero==0) return 0;
 	int espacios=0;
@@ -66,7 +69,7 @@ void obtenerParametroI(int numero, char* destino, char* origen){
 	destino[i-primerEspacio]=0;
 	return;
 }
-//Termina funciones usadas para obtener y guardar parámetros de un comando
+//Termina- funciones usadas para obtener y guardar parámetros de un comando
 
 void leerComoOperacion(char *comando){
 	const int PARAM_SIZE = 20;
@@ -98,5 +101,17 @@ void leerComoOperacion(char *comando){
 		escribirBufferEnMemoria(operacion.proceso, operacion.base, operacion.offset, operacion.tamano,operacion.archivo);
 	}
 */
+}
+
+void leerComoRetardo(char *comando){
+}
+
+void leerComoAlgoritmo(char *comando){
+}
+
+void leerComoCompactacion(char *comando){
+}
+
+void leerComoDump(char *comando){
 }
 

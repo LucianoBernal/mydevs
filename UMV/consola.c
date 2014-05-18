@@ -24,17 +24,18 @@ typedef struct{
 
 
 int main (){
-	const int COMANDO_SIZE = 80;
+	const int COMANDO_SIZE=70;
+	char* comando=malloc(COMANDO_SIZE);
 	//En realidad deberia leerlo de un archivo config
 	//int tamanoMundo=10000;
-	char comando[COMANDO_SIZE];
 	//void *baseUMV = malloc(tamanoMundo);
 	//t_tprogramas *tablaProgramas;
 	//tablaProgramas =(t_tprogramas *)baseUMV;
-	//do{
+	do{
 		gets(comando);
 		analizarYEjecutar(comando);
 
-	//}while(strcmp(comando, "exit\n"));
+	}while(strncmp("exit",comando,4));
+	free(comando);
 	return 0;
 }
