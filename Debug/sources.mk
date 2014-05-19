@@ -15,13 +15,8 @@ EXECUTABLES :=
 SUBDIRS := \
 commons/commons \
 commons/commons/collections \
-commons/Debug/commons \
-commons/Debug/commons/collections \
 UMV \
-UMV/Debug \
 Sockets \
-Sockets/Debug \
 Programa \
-Programa/Debug \
 Kernel \
 
