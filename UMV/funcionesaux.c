@@ -19,7 +19,7 @@ typedef struct{
 }t_operacion;
 
 void analizarYEjecutar(char *comando){
-
+//Vs. Switch. Y pasaríamos los parámetros de a uno, a medida que va pidiendo.
 	if(!strncmp("operacion ",comando,10)){
 		leerComoOperacion(comando);
 	}
