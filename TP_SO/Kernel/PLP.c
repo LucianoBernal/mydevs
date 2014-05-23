@@ -15,8 +15,11 @@
 static t_list* colaNew;
 static t_list* randoms;
 static int numAleatorio;
+static int numABorrar;
 sem_t * randomMutex;
+sem_t * numABorrarMutex;
 sem_init(randomMutex,0,1);
+sem_init(numABorrar,0,1);
 sem_t * colaNuevosMutex;
 sem_init(colaNuevosMutex,0,1);
 //va en el MAIN
@@ -50,12 +53,12 @@ void asignaciones_desde_metada(t_metadata_program* metadata, t_PCB* pcb) {
 	 pcb-> = metadata->cantidad_de_etiquetas;*/
 }
 
-bool esDistinto(int* numero) {
+bool esDistintoANumAleatorio(int* numero) {
 	return (*numero != numAleatorio);
 }
 
 int estaRepetido(){
-	return(!(list_all_satisfy(randoms,(void*)esDistinto)));
+	return(!(list_all_satisfy(randoms,(void*)esDistintoANumAleatorio)));
  }
 
 int estaRepetido();
@@ -97,6 +100,18 @@ int calcularPeso(t_metadata_program* metadata){
 	return peso;
 }
 
+bool esIgualANumABorrar(int* numero){
+	return (*numero == numABorrar);
+}
+
+void liberar_numero(int pid){
+	sem_wait(numABorrarMutex);
+	numABorrar=pid;
+	list_remove_by_condition(randoms,(void*) esIgualANumABorrar);
+	sem_post(numABorrarMutex);
+
+}
+
 int generarProgramID();
 void asignaciones_desde_metada(t_metadata_program*, t_PCB*);
 int solicitar_Memoria(t_metadata_program*, t_PCB*);
@@ -104,6 +119,7 @@ void escribir_en_Memoria(t_metadata_program*, t_PCB*);
 void encolar_New(t_PCB*, int);
 void notificar_Memoria_Llena();
 int calcularPeso(t_metadata_program*);
+void liberar_numero(int pid);
 
 void gestionarProgramaNuevo(const char* literal) {
 	randoms=list_create();//va en el MAIN
@@ -119,6 +135,7 @@ void gestionarProgramaNuevo(const char* literal) {
 		} else {
 		notificar_Memoria_Llena();
 		free(pcb);
+		liberar_numero(pcb->program_id);
 	}
 	metadata_destruir(metadata); //OJO QUIZAS SOLO SEA EN EL ELSE REVISAR!
 
