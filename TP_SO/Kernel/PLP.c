@@ -9,19 +9,27 @@
 #include <time.h>
 #include <parser/metadata_program.h>
 #include <commons/collections/list.h>
+#include <commons/collections/queue.h>
 #include <semaphore.h>
 
 //van en el MAIN
 static t_list* colaNew;
 static t_list* randoms;
+static t_queue* colaReady;
 static int numAleatorio;
 static int numABorrar;
 sem_t * randomMutex;
 sem_t * numABorrarMutex;
+sem_t * colaNuevoSemaforo;
 sem_init(randomMutex,0,1);
-sem_init(numABorrar,0,1);
+sem_init(numABorrarMutex,0,1);
+sem_init(colaNuevoSemaforo,0,0);
 sem_t * colaNuevosMutex;
 sem_init(colaNuevosMutex,0,1);
+sem_t * colaReadyMutex;
+sem_init(colaReadyMutex,0,1);
+sem_t * vacioReady;
+sem_init(vacioReady,0,0);
 //va en el MAIN
 
 
@@ -93,6 +101,7 @@ void encolar_New(t_PCB* pcb, int peso){
 	list_add(colaNew,nodoNuevo);
 	list_sort(colaNew,(void*) menor_Peso);
 	sem_post(colaNuevosMutex);
+	sem_post(colaNuevoSemaforo);
 }
 
 int calcularPeso(t_metadata_program* metadata){
@@ -121,7 +130,7 @@ void notificar_Memoria_Llena();
 int calcularPeso(t_metadata_program*);
 void liberar_numero(int pid);
 
-void gestionarProgramaNuevo(const char* literal) {
+void gestionarProgramaNuevo(const char* literal) { // UN HILO
 	randoms=list_create();//va en el MAIN
 	colaNew=list_create();//va en el MAIN
 	t_PCB* pcb=malloc(sizeof(t_PCB));
@@ -140,4 +149,23 @@ void gestionarProgramaNuevo(const char* literal) {
 	metadata_destruir(metadata); //OJO QUIZAS SOLO SEA EN EL ELSE REVISAR!
 
 }
+void encolar_en_Ready(t_PCB*);
+void deNewAReady(){ //HILO
+	sem_wait(colaNuevoSemaforo);
+	sem_wait(grado_Multiprogramacion);
+	t_new* elementoSacado;
+	sem_wait(colaNuevosMutex);
+	elementoSacado = list_remove(colaNew,0);
+	sem_post(colaNuevosMutex);
+	t_PCB* pcb_Ready;
+	pcb_Ready=elementoSacado->pcb;
+	free(elementoSacado);
+	encolar_en_Ready(pcb_Ready);
+}
 
+void encolar_en_Ready(t_PCB* pcb){
+	sem_wait(colaReadyMutex);
+	queue_push(colaReady,pcb);
+	sem_post(colaReadyMutex);
+	sem_post(vacioReady);
+}
