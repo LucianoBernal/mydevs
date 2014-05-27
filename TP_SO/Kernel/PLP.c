@@ -150,7 +150,7 @@ void gestionarProgramaNuevo(const char* literal) { // UN HILO
 
 }
 void encolar_en_Ready(t_PCB*);
-void deNewAReady(){ //HILO
+void deNewAReady(){ // OTRO HILO
 	sem_wait(colaNuevoSemaforo);
 	sem_wait(grado_Multiprogramacion);
 	t_new* elementoSacado;
@@ -159,8 +159,8 @@ void deNewAReady(){ //HILO
 	sem_post(colaNuevosMutex);
 	t_PCB* pcb_Ready;
 	pcb_Ready=elementoSacado->pcb;
-	free(elementoSacado);
 	encolar_en_Ready(pcb_Ready);
+	free(elementoSacado);
 }
 
 void encolar_en_Ready(t_PCB* pcb){
