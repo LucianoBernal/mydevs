@@ -13,7 +13,5 @@ EXECUTABLES :=
 
 # Every subdirectory with source files must be described here
 SUBDIRS := \
-so-test-sockets/Servidor/src \
-so-test-sockets/Cliente/src \
 . \
 
