@@ -4,52 +4,17 @@
  *  Created on: 18/05/2014
  *      Author: utnso
  */
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <parser/metadata_program.h>
-#include <commons/collections/list.h>
-#include <commons/collections/queue.h>
-#include <semaphore.h>
 
-//van en el MAIN
+#include "PLP.h"
+
 static t_list* colaNew;
 static t_list* randoms;
-static t_queue* colaReady;
 static int numAleatorio;
 static int numABorrar;
-sem_t * randomMutex;
-sem_t * numABorrarMutex;
-sem_t * colaNuevoSemaforo;
-sem_init(randomMutex,0,1);
-sem_init(numABorrarMutex,0,1);
-sem_init(colaNuevoSemaforo,0,0);
-sem_t * colaNuevosMutex;
-sem_init(colaNuevosMutex,0,1);
-sem_t * colaReadyMutex;
-sem_init(colaReadyMutex,0,1);
-sem_t * vacioReady;
-sem_init(vacioReady,0,0);
-//va en el MAIN
-
-
-typedef struct {
-	int program_id;	//Identificador único del Programa en el sistema
-	int* segmento_Codigo;// Dirección del primer byte en la UMV del segmento de código
-	int* segmento_Stack;// Dirección del primer byte en la UMV del segmento de stack
-
-	int* cursor_Stack;	// Dirección del primer byte en la UMV del Contexto de Ejecución Actual
-	int* indice_de_Codigo;	// Dirección del primer byte en la UMV del Índice de Código
-	int* indice_de_Etiquetas;//Dirección del primer byte en la UMV del Índice de Etiquetas
-	int program_Counter;	//Número de la próxima instrucción a ejecutar
-	int tamanio_Contexto_Actual;//Cantidad de variables (locales y parámetros) del Contexto de Ejecución Actual
-	int tamanio_Indice_de_Etiquetas;//Cantidad de bytes que ocupa el Índice de etiquetas
-} t_PCB;
-
-typedef struct {
-	t_PCB *pcb;
-	int peso;
-} t_new;
+static sem_t * randomMutex=NULL;
+static sem_t * numABorrarMutex=NULL;
+static sem_t * colaNuevoSemaforo=NULL;
+static sem_t * colaNuevosMutex=NULL;
 
 void asignaciones_desde_metada(t_metadata_program* metadata, t_PCB* pcb) {
 	pcb->program_Counter = metadata->instruccion_inicio;
@@ -69,7 +34,7 @@ int estaRepetido(){
 	return(!(list_all_satisfy(randoms,(void*)esDistintoANumAleatorio)));
  }
 
-int estaRepetido();
+//int estaRepetido();
 int generarProgramID() {
 	srand(time(NULL)); // Semilla
 	sem_wait(randomMutex);
@@ -121,18 +86,16 @@ void liberar_numero(int pid){
 
 }
 
-int generarProgramID();
-void asignaciones_desde_metada(t_metadata_program*, t_PCB*);
+//int generarProgramID();
+//void asignaciones_desde_metada(t_metadata_program*, t_PCB*);
 int solicitar_Memoria(t_metadata_program*, t_PCB*);
 void escribir_en_Memoria(t_metadata_program*, t_PCB*);
-void encolar_New(t_PCB*, int);
+//void encolar_New(t_PCB*, int);
 void notificar_Memoria_Llena();
-int calcularPeso(t_metadata_program*);
-void liberar_numero(int pid);
+//int calcularPeso(t_metadata_program*);
+//void liberar_numero(int pid);
 
 void gestionarProgramaNuevo(const char* literal) { // UN HILO
-	randoms=list_create();//va en el MAIN
-	colaNew=list_create();//va en el MAIN
 	t_PCB* pcb=malloc(sizeof(t_PCB));
 	t_metadata_program* metadata = metadatada_desde_literal(literal);
 	pcb->program_id = generarProgramID();
@@ -149,7 +112,7 @@ void gestionarProgramaNuevo(const char* literal) { // UN HILO
 	metadata_destruir(metadata); //OJO QUIZAS SOLO SEA EN EL ELSE REVISAR!
 
 }
-void encolar_en_Ready(t_PCB*);
+//void encolar_en_Ready(t_PCB*);
 void deNewAReady(){ // OTRO HILO
 	sem_wait(colaNuevoSemaforo);
 	sem_wait(grado_Multiprogramacion);
