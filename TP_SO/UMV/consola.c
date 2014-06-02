@@ -9,17 +9,38 @@
 #include <stdlib.h>
 #include "funcionesaux.h"
 
-typedef struct{
-	char* identificador;
-	int inicio;
+//const int CANT_PROCESOS =20;
+typedef struct {
+	int identificador;
+	int inicioLogico;
 	int tamano;
-	int ubicacion;
-}t_tsegmento;
+	void* memPpal;
+}t_tablaSegmento;
 
 typedef struct{
-	int id_programa;
-	t_tsegmento *baseTabla;
-}t_tprogramas;
+	int pid;
+	char *tipo;
+	t_tablaSegmento *tabla;
+	int activo;
+}t_tablaProceso;
+
+t_tablaProceso vectorProcesos[20];
+
+int cantProcesos;
+
+void* element_destroyer (void* p){
+	free(p);
+	return p;
+}
+
+int buscarPid(int pid){
+	int i;
+	for(i = 0; i < cantProcesos; i++){
+		if (vectorProcesos[i].pid==pid) return i;
+	}
+	printf("algo malo paso");
+	return 0;
+}
 
 
 
