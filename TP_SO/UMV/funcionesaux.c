@@ -14,25 +14,24 @@ typedef struct{
 	int base;
 	int offset;
 	int tamano;
-	char accion;
-	char archivo;
+	char accion; //Las acciones posibles son: Crear/Destruir segmentos y solicitar/enviar bytes
+	char *archivo;
 }t_operacion;
 
 void analizarYEjecutar(char *comando){
-//Vs. Switch. Y pasaríamos los parámetros de a uno, a medida que va pidiendo.
-	if(!strncmp("operacion ",comando,10)){
+	if(!strncmp("operacion",comando,9)){
 		leerComoOperacion(comando);
 	}
-	else if(!strncmp("retardo ",comando,8)){
+	else if(!strncmp("retardo",comando,7)){
 		leerComoRetardo(comando);
 	}
-	else if(!strncmp("algoritmo ",comando,10)){
+	else if(!strncmp("algoritmo",comando,9)){
 		leerComoAlgoritmo(comando);
 	}
-	else if(!strncmp("compactacion ",comando,13)){
+	else if(!strncmp("compactacion",comando,12)){
 		leerComoCompactacion(comando);
 	}
-	else if(!strncmp("dump ",comando,5)){
+	else if(!strncmp("dump",comando,4)){
 		leerComoDump(comando);
 	}
 	else if(!strncmp("exit",comando,4)){
@@ -44,7 +43,7 @@ void analizarYEjecutar(char *comando){
 	}
 }
 
-//Empieza- funciones usadas para obtener y guardar parámetros de un comando
+/*//Empieza- funciones usadas para obtener y guardar parámetros de un comando
 int buscarEspacio(int numero, char *cadena){
 	if (numero==0) return 0;
 	int espacios=0;
@@ -69,38 +68,113 @@ void obtenerParametroI(int numero, char* destino, char* origen){
 	destino[i-primerEspacio]=0;
 	return;
 }
-//Termina- funciones usadas para obtener y guardar parámetros de un comando
+//Termina- funciones usadas para obtener y guardar parámetros de un comando */
 
 void leerComoOperacion(char *comando){
-	const int PARAM_SIZE = 20;
+/*	const int PARAM_SIZE = 20;
 	char parametro[6][PARAM_SIZE];
 	int i;
 	t_operacion operacion;
-
-	for(i=0;i<7;i++){
+	char mensaje[48];
+	for(i=0;i<8;i++){
 		obtenerParametroI(i+1, parametro[i], comando);//busca espacios en la gran cadena para separar los parámetros y los guarda en vector
 	}
+
 	operacion.proceso=atoi(parametro[1]);
 	operacion.base=atoi(parametro[2]);
 	operacion.offset=atoi(parametro[3]);
 	operacion.tamano=atoi(parametro[4]);
-	operacion.accion=(char)*parametro[5];
+	operacion.accion=(char)parametro[5];
 	operacion.archivo=(char)*parametro[6];
 
-	for(i=1;i<7;i++){
-		printf("el parametro %d es: %s\n", i, parametro[i]);
-	}
+	switch (operacion.accion){
+		case 'e':
+			printf("que queres mandar? tipea pls:");
+			scanf("%s", mensaje);
+			enviarUnosBytes(operacion.proceso, operacion.base, operacion.offset, operacion.tamano, mensaje);
+			//averiguar que mostrar por pantalla
+			break;
+		case 's':
+			printf("%s", solicitarBytes(operacion.proceso, operacion.base, operacion.offset, operacion.tamano));
+			break;
+		case 'c':
+			if (crearSegmento(operacion.proceso)){
+				printf("Creeme que el segmento se creo correctamente");
+			}else {
+				printf("Hubo un error, anda a saber cual");
+			}
+			break;
+		case 'd':
+			if (destruirSegmento(operacion.proceso)){
+			printf("Creeme que el segmento se creo correctamente");
+		}else {
+			printf("Hubo un error, anda a saber cual");
+		}
+			break;
+		default:
+			//lo mandamos al log
+			break;
+}*/
+	t_operacion operacion;
+	printf("decime que queres hacer:\n");
+	scanf("%d",operacion.proceso);
 
-/*	<>
-	if(operacion.accion=='s')
-	{
-		buscarEnMemoriaYEntregar(operacion.proceso, operacion.base, operacion.offset, operacion.tamano);
+}
+
+void enviarUnosBytes(int, pid, int base, int offset, int tamano, void* mensaje){
+	memcpy(obtenerDirFisica(base, offset, pid), mensaje, tamano);
+}
+
+char *solicitarBytes(int pid, int base, int offset, int tamano){
+	char *aux;
+	memcpy(aux, obtenerDirFisica(base, offset, pid), tamano);
+	*(aux+tamano+1)=0;
+	return aux;
+}
+
+typedef struct {
+	int identificador;
+	int inicioLogico;
+	int tamano;
+	void* memPpal;
+}t_tablaSegmento;
+
+typedef struct{
+	int pid;
+	char *tipo;
+	t_tablaSegmento *tabla;
+	int activo=0;
+}t_tablaProceso;
+
+t_tablaProceso vectorProcesos[];
+int cantProcesos;
+
+void crearSegmento(int pid, int tamano){
+
+	t_tablaSegmento auxTablaSegmento;
+	auxTablaSegmento.identificador = crearIdentificador();
+	auxTablaSegmento.inicioLogico = obtenerInicioLogico(pid);
+	auxTablaSegmento.tamano = tamano;
+	auxTablaSegmento.memPpal = mallocConAlgoritmo(tamano);
+	list_add(vectorProcesos[buscarPid(pid)].tabla, auxTablaSegmento);
+}
+
+void destruirSegmento(int pid){
+	list_destroy_and_destroy_element(vectorProcesos[buscarPid(pid)].tabla, element_destroyer);
+}
+//element_destroyer entendemos que es una función que permite destruir algo... no sabemos si la definimos nosotros o qionda :P
+
+void* element_destroyer (void* p){
+	free(p);
+	return p;
+}
+
+int buscarPid(int pid){
+	for(int i = 0; i < cantProcesos; i++){
+		if (vectorProcesos[i].pid==pid) return i;
 	}
-	else if (operacion.accion=='e')
-	{
-		escribirBufferEnMemoria(operacion.proceso, operacion.base, operacion.offset, operacion.tamano,operacion.archivo);
-	}
-*/
+	printf("algo malo paso");
+	return 0;
 }
 
 void leerComoRetardo(char *comando){
