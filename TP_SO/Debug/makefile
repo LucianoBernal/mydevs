@@ -8,8 +8,11 @@ RM := rm -rf
 
 # All of the sources participating in the build are defined here
 -include sources.mk
+-include UMV/Debug/subdir.mk
 -include UMV/subdir.mk
+-include Sockets/Debug/subdir.mk
 -include Sockets/subdir.mk
+-include Programa/Debug/subdir.mk
 -include Programa/subdir.mk
 -include Kernel/subdir.mk
 -include subdir.mk
@@ -28,14 +31,11 @@ endif
 # All Target
 all: SO
 
-dependents:
-	-cd /home/utnso/tp-2014-1c-skynet/Bibliotecas_Comunes/Debug && $(MAKE) all
-
 # Tool invocations
-SO: $(OBJS) $(USER_OBJS) /home/utnso/tp-2014-1c-skynet/Bibliotecas_Comunes/Debug/libBibliotecas_Comunes.so
+SO: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C Linker'
-	gcc -L"/home/utnso/tp-2014-1c-skynet/Bibliotecas_Comunes/Debug" -o "SO" $(OBJS) $(USER_OBJS) $(LIBS)
+	gcc  -o "SO" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -46,6 +46,5 @@ clean:
 
 .PHONY: all clean dependents
 .SECONDARY:
-/home/utnso/tp-2014-1c-skynet/Bibliotecas_Comunes/Debug/libBibliotecas_Comunes.so:
 
 -include ../makefile.targets

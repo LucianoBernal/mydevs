@@ -4,9 +4,9 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 O_SRCS += \
-../Sockets/Debug/Serializacion.o \
-../Sockets/Debug/Server.o \
-../Sockets/Debug/bibSockets.o 
+../Bibliotecas_Comunes/Debug/commons/collections/dictionary.o \
+../Bibliotecas_Comunes/Debug/commons/collections/list.o \
+../Bibliotecas_Comunes/Debug/commons/collections/queue.o 
 
 
 # Each subdirectory must supply rules for building sources it contributes
