@@ -233,6 +233,21 @@ void destruirSegmentos(int pid){
 }
 //element_destroyer entendemos que es una función que permite destruir algo... no sabemos si la definimos nosotros o qionda :P
 
+int handshake(int pid,char * tipo){
+	//control de errores
+	vectorProcesos[cantProcesos++].pid=pid;
+	vectorProcesos[cantProcesos++].tipo=tipo;
+	return 0;
+}
+
+void procesSwitch(int pid){
+	int i;
+	for(i=0; i<cantProcesos;i++){
+		vectorProcesos[i].activo=0;
+		if(vectorProcesos[i].pid==pid)
+			vectorProcesos[i].activo=1;
+	}
+}
 
 
 void leerComoRetardo(char *comando){
