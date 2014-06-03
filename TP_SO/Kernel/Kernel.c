@@ -8,6 +8,7 @@
 #include "PLP.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <time.h>
 #include <parser/metadata_program.h>
 #include <commons/collections/list.h>
@@ -30,6 +31,5 @@ void* plp(void* parametro){
 	randoms=list_create();
 	sem_init(randomMutex,0,1);
 	sem_init(numABorrarMutex,0,1);
-	sem_init(colaNuevoSemaforo,0,0);
 	sem_init(colaNuevosMutex,0,1);
 }

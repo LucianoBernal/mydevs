@@ -5,16 +5,19 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../Kernel.c \
+../PCP.c \
 ../PLP.c \
 ../abrirPXP.c 
 
 OBJS += \
 ./Kernel.o \
+./PCP.o \
 ./PLP.o \
 ./abrirPXP.o 
 
 C_DEPS += \
 ./Kernel.d \
+./PCP.d \
 ./PLP.d \
 ./abrirPXP.d 
 
