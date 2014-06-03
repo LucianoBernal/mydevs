@@ -4,26 +4,23 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../Serializacion.c \
-../Server.c \
-../bibSockets.c 
+../TP_SO/Programa/bibSockets.c \
+../TP_SO/Programa/interprete.c 
 
 OBJS += \
-./Serializacion.o \
-./Server.o \
-./bibSockets.o 
+./TP_SO/Programa/bibSockets.o \
+./TP_SO/Programa/interprete.o 
 
 C_DEPS += \
-./Serializacion.d \
-./Server.d \
-./bibSockets.d 
+./TP_SO/Programa/bibSockets.d \
+./TP_SO/Programa/interprete.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
-%.o: ../%.c
+TP_SO/Programa/%.o: ../TP_SO/Programa/%.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: GCC C Compiler'
-	gcc -I"/home/utnso/tp-2014-1c-skynet/Bibliotecas_Comunes" -O0 -g3 -Wall -pthread -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o "$@" "$<"
+	gcc -I"/home/utnso/tp-2014-1c-skynet/Bibliotecas_Comunes" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 

@@ -4,19 +4,13 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../Serializacion.c \
-../Server.c \
-../bibSockets.c 
+../primerIntentoCPU.c 
 
 OBJS += \
-./Serializacion.o \
-./Server.o \
-./bibSockets.o 
+./primerIntentoCPU.o 
 
 C_DEPS += \
-./Serializacion.d \
-./Server.d \
-./bibSockets.d 
+./primerIntentoCPU.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

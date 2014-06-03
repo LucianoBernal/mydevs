@@ -19,7 +19,8 @@ int enviarArchivoPorSocket(FILE* archivo, char *PUERTO){
 	char message[PACKAGESIZE];
 	while(! feof(archivo)){
 		fgets(message, PACKAGESIZE, archivo);
-		if (! feof(archivo)) send(serverSocket, message, strlen(message) + 1, 0);
+		send(serverSocket, (void*)strlen(message), 4, 0);
+		if (! feof(archivo)) send(serverSocket, message, strlen(message), 0);
 	};
 
 	send(serverSocket, "Ya, estamos\n", 14,0);
