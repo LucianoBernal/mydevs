@@ -31,7 +31,7 @@ dependents:
 Programa: $(OBJS) $(USER_OBJS) /home/utnso/tp-2014-1c-skynet/Bibliotecas_Comunes/Debug/libBibliotecas_Comunes.so
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C Linker'
-	gcc -L"/home/utnso/tp-2014-1c-skynet/Bibliotecas_Comunes/Debug" -o "Programa" $(OBJS) $(USER_OBJS) $(LIBS)
+	gcc -L"/home/utnso/tp-2014-1c-skynet/Bibliotecas_Comunes/Debug" -Xlinker pthread -o "Programa" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

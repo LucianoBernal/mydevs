@@ -6,6 +6,13 @@
  */
 
 #include "PLP.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <parser/metadata_program.h>
+#include <commons/collections/list.h>
+#include <commons/collections/queue.h>
+#include <semaphore.h>
 
 static t_list* colaNew;
 static t_list* randoms;

@@ -4,6 +4,8 @@
  *  Created on: 27/05/2014
  *      Author: utnso
  */
+
+#include "PLP.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -11,8 +13,6 @@
 #include <commons/collections/list.h>
 #include <commons/collections/queue.h>
 #include <semaphore.h>
-#include "PLP.h"
-
 
 
 void kernel_main(){

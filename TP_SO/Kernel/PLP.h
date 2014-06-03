@@ -8,14 +8,7 @@
 #ifndef PLP_H_
 #define PLP_H_
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <parser/metadata_program.h>
-#include <commons/collections/list.h>
-#include <commons/collections/queue.h>
-#include <semaphore.h>
-#include <biblioteca_comun/Definiciones.h>
+#include <biblioteca_comun/definiciones.h>
 
 
 
