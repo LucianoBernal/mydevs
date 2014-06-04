@@ -29,6 +29,7 @@ void kernel_main(){
 void* plp(void* parametro){
 	colaNew=list_create();
 	randoms=list_create();
+	sem_init(colaNuevosVacio,0,0);
 	sem_init(randomMutex,0,1);
 	sem_init(numABorrarMutex,0,1);
 	sem_init(colaNuevosMutex,0,1);

@@ -19,6 +19,7 @@ static t_list* colaNew;
 static t_list* randoms;
 static int numAleatorio;
 static int numABorrar;
+static sem_t * colaNuevosVacio = NULL;
 static sem_t * randomMutex = NULL;
 static sem_t * numABorrarMutex = NULL;
 static sem_t * colaNuevosMutex = NULL;
@@ -72,6 +73,7 @@ void encolar_New(t_PCB* pcb, int peso) {
 	list_add(colaNew, nodoNuevo);
 	list_sort(colaNew, (void*) menor_Peso);
 	sem_post(colaNuevosMutex);
+	sem_post(colaNuevosVacio);
 
 }
 
@@ -128,8 +130,7 @@ void gestionarProgramaNuevo(const char* literal) { // UN HILO
 			== 0 /*ergo se pudo reservar memoria */) { //HABLAR CON PROJECTS LEADERS DE UMV
 		escribir_en_Memoria(metadata, pcb);
 		encolar_New(pcb, peso);
-		lanzarHiloColaNewAReady();
-	} else {
+		} else {
 		notificar_Memoria_Llena();
 		free(pcb);
 		liberar_numero(pcb->program_id);
@@ -139,6 +140,8 @@ void gestionarProgramaNuevo(const char* literal) { // UN HILO
 }
 //void encolar_en_Ready(t_PCB*);
 void deNewAReady(int sinParametro) { // OTRO HILO
+	while(1){
+	sem_wait(colaNuevosVacio);
 	sem_wait(grado_Multiprogramacion);
 	t_new* elementoSacado;
 	sem_wait(colaNuevosMutex);
@@ -148,6 +151,7 @@ void deNewAReady(int sinParametro) { // OTRO HILO
 	pcb_Ready = elementoSacado->pcb;
 	encolar_en_Ready(pcb_Ready);
 	free(elementoSacado);
+	}
 }
 
 void encolar_en_Ready(t_PCB* pcb) {
