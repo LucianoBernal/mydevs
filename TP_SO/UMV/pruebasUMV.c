@@ -15,7 +15,7 @@ typedef struct{
 }t_limites;
 
 typedef struct {
-	int identificador, inicioLogico, tamano;
+	int pidOwner, identificador, inicioLogico, tamano;
 	void* memPpal;
 }t_tablaSegmento;
 
@@ -29,12 +29,12 @@ int cantProcesosActivos = 0;
 t_tablaProceso vectorProcesos[10];
 void *baseUMV;
 int tamanoUMV;
-int flag_compactado = 1;
+int flag_compactado = 0;
 int flag = 1;//Esta ni se para que esta.
 int k=0;//Esta esta solo para mostrar unos mensajes.
 char *algoritmo="FIRST FIT";//Lo ponemos por defecto porque es el mas lindo*
 
-static t_tablaSegmento *crear_nodoSegm(int, int, int, void *);
+static t_tablaSegmento *crear_nodoSegm(int, int, int, int, void *);
 static void tsegm_destroy(t_tablaSegmento *);
 void crearEstructurasGlobales();
 void agregarProceso(int, char);
@@ -42,6 +42,8 @@ int crearSegmento(int, int);
 void destruirSegmento(int, int);
 void *obtenerInicioReal(int);
 void *seleccionarSegunAlgoritmo(t_list *);
+void compactarMemoria();
+void mostrarListaSegmentos();
 t_list *obtenerEspaciosDisponibles();
 t_list *obtenerListaSegmentosOrdenada();
 void conseguirDeArchivo(int *);
@@ -56,8 +58,9 @@ static t_limites *crear_nodoLim(void *comienzo, void *final){
 	return nuevo;
 }
 
-static t_tablaSegmento *crear_nodoSegm(int identificador, int inicioLogico, int tamano, void *memPpal) {
+static t_tablaSegmento *crear_nodoSegm(int pidOwner, int identificador, int inicioLogico, int tamano, void *memPpal) {
 	t_tablaSegmento *nuevo = malloc(sizeof(t_tablaSegmento));
+	nuevo->pidOwner = pidOwner;
 	nuevo->identificador = identificador;
 	nuevo->inicioLogico = inicioLogico;
 	nuevo->tamano = tamano;
@@ -65,7 +68,7 @@ static t_tablaSegmento *crear_nodoSegm(int identificador, int inicioLogico, int 
 	return nuevo;
 }
 static void tsegm_destroy(t_tablaSegmento *self){
-	if(self->memPpal!=baseUMV) free(self->memPpal);
+	free(self->memPpal);
 	free(self);
 }
 
@@ -92,29 +95,47 @@ int buscarPid(int pid){
 }
 
 int crearSegmento(int pid, int tamano){
-	t_tablaSegmento *nuevoSegmento = crear_nodoSegm(pid, obtenerInicioLogico(pid), tamano, obtenerInicioReal(tamano));
+	t_tablaSegmento *nuevoSegmento = crear_nodoSegm(pid, 073, obtenerInicioLogico(pid), tamano, obtenerInicioReal(tamano));
 	list_add(vectorProcesos[buscarPid(pid)].tabla, nuevoSegmento);
 	return nuevoSegmento->inicioLogico;
 }//Creo que es necesario que devuelva el inicio logico asi el programa puede identificarlo posteriormente.
 
 int obtenerInicioLogico(int pid){
 	//Aca deberia haber algo complicado con randoms y chequeos;
-	return 5;
+	return 5;//El numero 5 es casi tan bueno como muchos algoritmos raros
 }
-
+void compactarMemoria(){
+	int i = -1;
+	t_list *listaSegmentosOrdenada = obtenerListaSegmentosOrdenada();
+	void _cambiar_posiciones_chetamente(t_tablaSegmento *self){
+		t_tablaSegmento *aux;
+		if (i==-1) {
+			self->memPpal=baseUMV;
+		} else{
+			aux=list_get(listaSegmentosOrdenada, i);
+			if (aux!=NULL) self->memPpal=aux->memPpal+aux->tamano+1;
+		}
+	i++;
+	}
+	list_iterate(listaSegmentosOrdenada, (void*)_cambiar_posiciones_chetamente);
+}
 void *obtenerInicioReal(int tamano){
 	t_list *lista_mascapita2 = list_create();
 
 	t_list *lista_mascapita = obtenerEspaciosDisponibles();
-	printf("%x %x\n", (unsigned int)((t_limites *)(lista_mascapita->head->data))->comienzo, (unsigned int)((t_limites *)(lista_mascapita->head->data))->final);
 	bool _tiene_tamano_suficiente(t_limites *self){
-		printf("%d %d\n", ((self->final)-(self->comienzo))>tamano, tamano);
 		return ((self->final)-(self->comienzo))>tamano;
 	}
 	lista_mascapita2 = list_filter(lista_mascapita, (void*)_tiene_tamano_suficiente);
 	if (list_is_empty(lista_mascapita2) && !list_is_empty(lista_mascapita)){
-		//deberias compactar y llamar otra vez a la funcion
-		return baseUMV;//Si no pones un flag de compactacion esto explota
+		if (flag_compactado==0){
+			compactarMemoria();
+			flag_compactado=1;
+			return obtenerInicioReal(tamano);//deberias compactar y llamar otra vez a la funcion
+		} else{
+			printf("no hay espacio suficiente en memoria");
+			return baseUMV; //Solo pongo esto para que me deje compilar, deberiamos crear un error.
+		}
 	} else {
 		if (list_is_empty(lista_mascapita)) return baseUMV;
 		return seleccionarSegunAlgoritmo(lista_mascapita2);
@@ -143,7 +164,14 @@ void cambiarAlgoritmo(int numerin){
 		algoritmo="BEST FIT";
 	}
 }
+void mostrarListaSegmentos(t_list *listaSegmento){
+	printf("			  Comienzo Final pidOwner\n");
+	void _mostrar_posiciones_y_pid_owner(t_tablaSegmento* elemento){
+		printf("Contenido lista Segmentos:%x %x %d\n", (unsigned int)elemento->memPpal, (unsigned int)elemento->memPpal+elemento->tamano, elemento->pidOwner);
+	}
 
+	list_iterate(listaSegmento, (void*)_mostrar_posiciones_y_pid_owner);
+}
 t_list *obtenerEspaciosDisponibles(){
 	int i=1;
 
@@ -157,18 +185,6 @@ t_list *obtenerEspaciosDisponibles(){
 	}
 
 	t_list *lista2 = list_map(listaParaAmasar, (void*) _mapear_t_limites);
-	bool _es_verdad(t_limites *self){
-		return 1;
-	}
-	t_list *copialista2 = list_filter(lista2, (void*) _es_verdad);
-
-	int l=0;
-	while (l<k){
-		if (copialista2->head->next!=NULL) copialista2->head=copialista2->head->next;
-		l++;
-	}
-	if (!list_is_empty(copialista2)) printf("%x %x\n", (unsigned int)((t_limites *)(copialista2->head->data))->comienzo, (unsigned int)((t_limites *)(copialista2->head->data))->final);
-	k++;
 
 	t_limites *_delimitar_espacios_libres(t_limites *limites){
 		t_limites *aux = malloc(sizeof(t_limites));
@@ -176,11 +192,11 @@ t_list *obtenerEspaciosDisponibles(){
 			aux->comienzo=baseUMV;
 			aux->final=limites->comienzo;
 		} else {
-			aux->comienzo = limites->final;
-			if (list_get(listaParaAmasar, i)==NULL){ //Significa que no hay mas segmentos
+			aux->comienzo = limites->final+1;
+			if (list_get(lista2, i)==NULL){ //Significa que no hay mas segmentos
 				aux->final = baseUMV + tamanoUMV;//Si no me falla el calculo es el final de nuestro gran segmento
 			} else {
-				aux->final = ((t_limites *)list_get(listaParaAmasar, i))->comienzo;
+				aux->final = ((t_limites *)list_get(lista2, i))->comienzo;
 			}
 		}
 		i++;
@@ -195,8 +211,10 @@ t_list *obtenerEspaciosDisponibles(){
 
 	bool _no_es_un_error(t_limites *unaCosa){
 		return (unaCosa->final>unaCosa->comienzo);
-	}//No comprendo este comportamiento, pero es muy necesario
+	}//Antes habia algo mal, ahora solo sirve para sacar los que tiene comienzo==final
+	//Generan nodos de tamaño==0 al dope
 	t_list *lista4 = list_filter(lista3, (void*) _no_es_un_error);
+
 	return lista4;
 }
 
@@ -204,22 +222,25 @@ t_list *obtenerListaSegmentosOrdenada(){
 
 	int i;
 	t_list *listaAux=list_create(), *listaSegmentos = list_create();
-	t_tablaSegmento *_dejar_tal_cual(t_tablaSegmento *tabla){
-		return tabla;
+
+	bool _es_verdad(t_tablaSegmento *self){
+		return 1;
 	}
+
 	for (i=0;i<cantProcesosActivos;i++){
-		//Es la manera mas pancha que se me ocurrio de copiar la lista
-		listaAux = list_map(vectorProcesos[i].tabla, (void*)_dejar_tal_cual);
-		//copio las listas porque si al hacer add se cambiarian las referencias del final de cada tabla
-		list_add_all(listaSegmentos, listaAux);
+		bool _tiene_pid_owner(t_tablaSegmento *self){
+			return self->pidOwner==i;
+		}
+		list_add_all(listaSegmentos, vectorProcesos[i].tabla);
+		list_remove_by_condition(vectorProcesos[i].tabla, (void*)_tiene_pid_owner);
 	}
-	list_destroy_and_destroy_elements(listaAux, (void*)tsegm_destroy);
 
 	bool _posicion_menor(t_tablaSegmento *posicionMenor, t_tablaSegmento *posicionMayor){
 		return posicionMenor->memPpal < posicionMayor->memPpal;
 	}
 
 	list_sort(listaSegmentos, (void*) _posicion_menor);
+	list_destroy_and_destroy_elements(listaAux, (void*)tsegm_destroy);
 	return listaSegmentos;
 }
 
@@ -227,7 +248,11 @@ void destruirSegmento(int pid, int base){
 	bool _coincide_base(t_tablaSegmento *self){
 		return self->inicioLogico==base;
 	}
-	free(list_remove_by_condition(vectorProcesos[buscarPid(pid)].tabla, (void*)_coincide_base));
+	t_tablaSegmento* aux=list_remove_by_condition(vectorProcesos[buscarPid(pid)].tabla, (void*)_coincide_base);
+	if (NULL==aux){
+		printf("Quisiste borrar algo que no hay papa\n");
+	}
+	free(aux);//No hay problema con hacer free(NULL)
 }
 
 void conseguirDeArchivo(int *p_tamanoUMV){
@@ -251,11 +276,21 @@ int main(){
 	destruirSegmento(pid[1], 5);//Es la base que le puse a todos
 	crearSegmento(pid[2], 30);
 	crearSegmento(pid[0], 20);
-
-
-
+	crearSegmento(pid[1], 100);
+	crearSegmento(pid[1], 100);
+	crearSegmento(pid[0], 20);
+	crearSegmento(pid[0], 20);
+	crearSegmento(pid[0], 20);
+	crearSegmento(pid[0], 20);
+	crearSegmento(pid[0], 20);
+	destruirSegmento(pid[1], 5);//Es la base que le puse a todos
+	mostrarListaSegmentos(obtenerListaSegmentosOrdenada());
+	compactarMemoria();
+	printf("\nSeparador rustiquisimo, posiciones despues de compactar\n");
+	mostrarListaSegmentos(obtenerListaSegmentosOrdenada());
+/*
 	printf("%x %x\n", (unsigned int)((t_tablaSegmento *)vectorProcesos[0].tabla->head->data)->memPpal, (unsigned int)baseUMV);
 	printf("%x\n", (unsigned int)((t_tablaSegmento *)vectorProcesos[1].tabla->head->data)->memPpal);
 	printf("%x", (unsigned int)((t_tablaSegmento *)vectorProcesos[2].tabla->head->data)->memPpal);
-	return 0;
+ */	return 0;
 }
