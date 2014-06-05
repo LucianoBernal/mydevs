@@ -34,8 +34,10 @@ int flag = 1;//Esta ni se para que esta.
 int k=0;//Esta esta solo para mostrar unos mensajes.
 char *algoritmo="FIRST FIT";//Lo ponemos por defecto porque es el mas lindo*
 
+t_link_element *list_head(t_list *);
 static t_tablaSegmento *crear_nodoSegm(int, int, int, int, void *);
 static void tsegm_destroy(t_tablaSegmento *);
+t_tablaSegmento *obtenerPtrASegmento(int, int);
 void crearEstructurasGlobales();
 void agregarProceso(int, char);
 int crearSegmento(int, int);
@@ -47,10 +49,14 @@ void mostrarListaSegmentos();
 t_list *obtenerEspaciosDisponibles();
 t_list *obtenerListaSegmentosOrdenada();
 void conseguirDeArchivo(int *);
-//void compactar();
+void *obtenerDirFisica(int, int, int);
+void enviarUnosBytes(int, int, int, int, void*);
+char *solicitarBytes(int, int, int, int);
 int obtenerInicioLogico(int);
 int buscarPid(int);
 
+void probarFuncionesSegmentos(int *, char);
+int verificarEspacio(int, int, int, int);
 static t_limites *crear_nodoLim(void *comienzo, void *final){
 	t_limites *nuevo = malloc(sizeof(t_limites));
 	nuevo->comienzo = comienzo;
@@ -149,10 +155,9 @@ void *seleccionarSegunAlgoritmo(t_list *lista){
 		}
 		list_sort(lista, (void*)_mayorTamano);
 	}
-	t_limites *aux = list_get(lista, 0);
 	//Con list_get 0 tenemos el comienzo y el final del segmento segun el algoritmo
 	//Yo elijo el primer bit porque ni se como usar las funciones random
-	return(aux->comienzo);
+	return(((t_limites *)list_head(lista))->comienzo);
 }
 
 //Habla bastante por si sola.
@@ -244,11 +249,12 @@ t_list *obtenerListaSegmentosOrdenada(){
 	return listaSegmentos;
 }
 
+
 void destruirSegmento(int pid, int base){
-	bool _coincide_base(t_tablaSegmento *self){
+	bool _coincide_base_logica(t_tablaSegmento *self){
 		return self->inicioLogico==base;
 	}
-	t_tablaSegmento* aux=list_remove_by_condition(vectorProcesos[buscarPid(pid)].tabla, (void*)_coincide_base);
+	t_tablaSegmento* aux=list_remove_by_condition(vectorProcesos[buscarPid(pid)].tabla, (void*)_coincide_base_logica);
 	if (NULL==aux){
 		printf("Quisiste borrar algo que no hay papa\n");
 	}
@@ -259,18 +265,53 @@ void conseguirDeArchivo(int *p_tamanoUMV){
 	//en un futuro buscaria en el archivo de config.
 	*p_tamanoUMV = 1000;
 }
+//Estaria bueno agregarla a las commons
+t_link_element *list_head(t_list *list){
+	return list_get(list, 0);
+}
+t_tablaSegmento *obtenerPtrASegmento(int base, int pid){
+	bool _coincide_base_logica(t_tablaSegmento *self){
+		return self->inicioLogico==base;
+	}
+	return (t_tablaSegmento *)list_head(list_filter(vectorProcesos[buscarPid(pid)].tabla, (void*)_coincide_base_logica));
+}//El list_head a.k.a list_get(lista, 0) sacaria el primer elemento, no deberia ser necesario pero
+//por el momento todos tendrian la misma base logica (073) entonces lo necesito.
 
-int main(){
-	int pid[2];
-	char tipo = 'c';
-	pid[0]=1000;
-	pid[1]=1001;
-	pid[2]=1002;
-	crearEstructurasGlobales();
+void *obtenerDirFisica(int base, int offset, int pid){
+	return (obtenerPtrASegmento(base, pid)->memPpal)+offset;
+}
+
+int verificarEspacio(int pid, int base, int offset, int tamano){
+	if (tamano - 1< (int)(obtenerPtrASegmento(base, pid)->tamano) - offset){
+		return 1;
+	} else{
+		if ((int)(obtenerPtrASegmento(base, pid)->tamano) - offset<0){
+			printf("Segmentation fault (?\n");//Me dio un offset que te saca del segmento
+		} else{
+			printf("El mensaje es demasiado largo para el segmento\n");
+		}
+	}
+	return 0;
+}
+
+void enviarUnosBytes(int pid, int base, int offset, int tamano, void *mensaje){
+	if (verificarEspacio(pid, base, offset, tamano)) memcpy(obtenerDirFisica(base, offset, pid), mensaje, tamano);
+}
+
+char *solicitarBytes(int pid, int base, int offset, int tamano){
+	char *aux=malloc(50);
+	if(verificarEspacio(pid, base, offset, tamano)){
+		memcpy(aux, obtenerDirFisica(base, offset, pid), tamano);
+		*(aux+tamano+1)=0;
+		return aux;
+	}
+	return "";
+}
+
+void probarFuncionesSegmentos(int pid[2], char tipo){
 	agregarProceso(pid[0], tipo);
 	agregarProceso(pid[1], tipo);
 	agregarProceso(pid[2], tipo);
-
 	crearSegmento(pid[1], 100);
 	crearSegmento(pid[0], 50);
 	destruirSegmento(pid[1], 5);//Es la base que le puse a todos
@@ -288,9 +329,22 @@ int main(){
 	compactarMemoria();
 	printf("\nSeparador rustiquisimo, posiciones despues de compactar\n");
 	mostrarListaSegmentos(obtenerListaSegmentosOrdenada());
-/*
-	printf("%x %x\n", (unsigned int)((t_tablaSegmento *)vectorProcesos[0].tabla->head->data)->memPpal, (unsigned int)baseUMV);
-	printf("%x\n", (unsigned int)((t_tablaSegmento *)vectorProcesos[1].tabla->head->data)->memPpal);
-	printf("%x", (unsigned int)((t_tablaSegmento *)vectorProcesos[2].tabla->head->data)->memPpal);
- */	return 0;
+}
+int main(){
+	int pid[2];
+	char tipo = 'c';
+	pid[0]=1000;
+	pid[1]=1001;
+	pid[2]=1002;
+//	probarFuncionesSegmentos(pid, tipo);
+	char mensajeEnviado[20];
+	crearEstructurasGlobales();
+	agregarProceso(pid[0], tipo);
+	crearSegmento(pid[0], 20);
+	mostrarListaSegmentos(obtenerListaSegmentosOrdenada());
+	printf("a ver dame un mensaje papin: ");
+	gets(mensajeEnviado);
+	enviarUnosBytes(pid[0], 5, 10, strlen(mensajeEnviado), mensajeEnviado);
+	printf("%s", solicitarBytes(pid[0], 5, 10, strlen(mensajeEnviado)));
+	return 0;
 }
