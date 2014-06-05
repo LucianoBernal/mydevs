@@ -27,7 +27,7 @@ typedef struct{
 t_tablaProceso vectorProcesos[20];
 
 int cantProcesos;
-
+/*
 void* element_destroyer (void* p){
 	free(p);
 	return p;
@@ -41,10 +41,10 @@ int buscarPid(int pid){
 	printf("algo malo paso");
 	return 0;
 }
+*/
 
 
-
-int main (){
+int main2 (){
 	const int COMANDO_SIZE=70;
 	char* comando=malloc(COMANDO_SIZE);
 	//En realidad deberia leerlo de un archivo config
@@ -54,7 +54,7 @@ int main (){
 	//tablaProgramas =(t_tprogramas *)baseUMV;
 	do{
 		gets(comando);
-		analizarYEjecutar(comando);
+//		analizarYEjecutar(comando);
 
 	}while(strncmp("exit",comando,4));
 	free(comando);

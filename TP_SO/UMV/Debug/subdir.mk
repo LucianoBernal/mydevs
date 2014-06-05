@@ -5,15 +5,18 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../consola.c \
-../funcionesaux.c 
+../funcionesaux.c \
+../pruebasUMV.c 
 
 OBJS += \
 ./consola.o \
-./funcionesaux.o 
+./funcionesaux.o \
+./pruebasUMV.o 
 
 C_DEPS += \
 ./consola.d \
-./funcionesaux.d 
+./funcionesaux.d \
+./pruebasUMV.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

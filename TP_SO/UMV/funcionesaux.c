@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include "funcionesaux.h"
 #include "commons/collections/list.h"
-
+/*
 typedef struct {
 	int identificador;
 	int inicioLogico;
@@ -74,7 +74,8 @@ void analizarYEjecutar(char *comando){
 		return;
 	}
 }
-
+COMENTADO 04/06
+*/
 /*//Empieza- funciones usadas para obtener y guardar parámetros de un comando
 int buscarEspacio(int numero, char *cadena){
 	if (numero==0) return 0;
@@ -103,7 +104,7 @@ void obtenerParametroI(int numero, char* destino, char* origen){
 //Termina- funciones usadas para obtener y guardar parámetros de un comando */
 
 
-void leerComoOperacion(char *comando){
+//void leerComoOperacion(char *comando){
 /*	const int PARAM_SIZE = 20;
 	char parametro[6][PARAM_SIZE];
 	int i;
@@ -148,6 +149,7 @@ void leerComoOperacion(char *comando){
 			//lo mandamos al log
 			break;
 }*/
+/* COMENTADO 04/06
 	t_operacion operacion;
 	printf("decime que queres hacer:(para saber como usarlo enviar 'h')\n");
 	scanf("%c", &operacion.accion);
@@ -231,6 +233,7 @@ void crearSegmento(int pid, int tamano){
 void destruirSegmentos(int pid){
 	list_destroy_and_destroy_element(vectorProcesos[buscarPid(pid)].tabla, element_destroyer);
 }
+
 //element_destroyer entendemos que es una función que permite destruir algo... no sabemos si la definimos nosotros o qionda :P
 
 int handshake(int pid,char * tipo){
@@ -261,4 +264,5 @@ void leerComoCompactacion(char *comando){
 
 void leerComoDump(char *comando){
 }
-
+COMENTADO 04/06
+*/
