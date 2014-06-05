@@ -27,9 +27,7 @@ static t_link_element* list_find_element(t_list *self, bool(*condition)(void*), 
  * @NAME: list_create
  * @DESC: Crea una lista
  */
-t_link_element *list_head(t_list *list){
-	return list_get(list, 0);
-}
+
 t_list *list_create() {
 	t_list *list = malloc(sizeof(t_list));
 	list->head = NULL;

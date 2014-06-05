@@ -25,6 +25,34 @@ typedef struct{
 	t_list *tabla;
 }t_tablaProceso;
 
+t_link_element *list_head(t_list *);
+static t_tablaSegmento *crear_nodoSegm(int, int, int, int, void *);
+static void tsegm_destroy(t_tablaSegmento *);
+t_tablaSegmento *obtenerPtrASegmento(int, int);
+void dumpMemoriaChata(int, int, bool);
+void dumpMemoriaLibreYSegmentos(bool);
+void dumpTablaSegmentos(bool, int);
+void crearEstructurasGlobales();
+void agregarProceso(int, char);
+int crearSegmento(int);
+void destruirSegmento(int);
+void *obtenerInicioReal(int);
+void *seleccionarSegunAlgoritmo(t_list *);
+void compactarMemoria();
+void mostrarListaSegmentos(t_list*);
+void mostrarListaEspacios(t_list*);
+t_list *obtenerEspaciosDisponibles();
+t_list *obtenerListaSegmentosOrdenada();
+void conseguirDeArchivo(int *);
+void *obtenerDirFisica(int, int, int);
+void enviarUnosBytes(int, int, int, void*);
+char *solicitarBytes(int, int, int);
+int obtenerInicioLogico(int);
+int buscarPid(int);
+int procesoActivo();
+void cambiarProcesoActivo(int);
+int verificarEspacio(int, int, int, int);
+
 int cantProcesosActivos = 0;
 t_tablaProceso vectorProcesos[10];
 void *baseUMV;
@@ -32,31 +60,14 @@ int tamanoUMV;
 int flag_compactado = 0;
 int flag = 1;//Esta ni se para que esta.
 int k=0;//Esta esta solo para mostrar unos mensajes.
-char *algoritmo="FIRST FIT";//Lo ponemos por defecto porque es el mas lindo*
+bool algoritmo=0;//0 significa FF, lo ponemos por defecto porque es el mas lindo*
 
-t_link_element *list_head(t_list *);
-static t_tablaSegmento *crear_nodoSegm(int, int, int, int, void *);
-static void tsegm_destroy(t_tablaSegmento *);
-t_tablaSegmento *obtenerPtrASegmento(int, int);
-void crearEstructurasGlobales();
-void agregarProceso(int, char);
-int crearSegmento(int, int);
-void destruirSegmento(int, int);
-void *obtenerInicioReal(int);
-void *seleccionarSegunAlgoritmo(t_list *);
-void compactarMemoria();
-void mostrarListaSegmentos();
-t_list *obtenerEspaciosDisponibles();
-t_list *obtenerListaSegmentosOrdenada();
-void conseguirDeArchivo(int *);
-void *obtenerDirFisica(int, int, int);
-void enviarUnosBytes(int, int, int, int, void*);
-char *solicitarBytes(int, int, int, int);
-int obtenerInicioLogico(int);
-int buscarPid(int);
+int main(){
+//	Ya logre que me compile eso!
+	printf("Hola mundo!");
+	return 0;
+}
 
-void probarFuncionesSegmentos(int *, char);
-int verificarEspacio(int, int, int, int);
 static t_limites *crear_nodoLim(void *comienzo, void *final){
 	t_limites *nuevo = malloc(sizeof(t_limites));
 	nuevo->comienzo = comienzo;
@@ -73,8 +84,9 @@ static t_tablaSegmento *crear_nodoSegm(int pidOwner, int identificador, int inic
 	nuevo->memPpal = memPpal;
 	return nuevo;
 }
+
 static void tsegm_destroy(t_tablaSegmento *self){
-	free(self->memPpal);
+//	free(self->memPpal);
 	free(self);
 }
 
@@ -85,24 +97,32 @@ void crearEstructurasGlobales(){
 }
 
 void agregarProceso(int pid, char tipo){
-	vectorProcesos[cantProcesosActivos].pid=pid;
-	vectorProcesos[cantProcesosActivos].tipo=tipo;
-	vectorProcesos[cantProcesosActivos].activo=0;
- 	vectorProcesos[cantProcesosActivos].tabla=list_create();
-	cantProcesosActivos++;
+	if (buscarPid(pid)==-1){
+		vectorProcesos[cantProcesosActivos].pid=pid;
+		vectorProcesos[cantProcesosActivos].tipo=tipo;
+		vectorProcesos[cantProcesosActivos].activo=0;
+		vectorProcesos[cantProcesosActivos].tabla=list_create();
+		cantProcesosActivos++;
+	} else{
+		printf("El numero pid ya esta en uso (?");
+		//Creo que lean ya evito esto desde el plp
+	}
 }
 
 int buscarPid(int pid){
 	int j=0;
-	while(vectorProcesos[j].pid!=pid){
+	while((vectorProcesos[j].pid!=pid)&&(j<=cantProcesosActivos)){
 		j++;
 	}
-	return j;
+	if (vectorProcesos[j].pid==pid){
+		return j;
+	}
+	return -1;
 }
 
-int crearSegmento(int pid, int tamano){
-	t_tablaSegmento *nuevoSegmento = crear_nodoSegm(pid, 073, obtenerInicioLogico(pid), tamano, obtenerInicioReal(tamano));
-	list_add(vectorProcesos[buscarPid(pid)].tabla, nuevoSegmento);
+int crearSegmento(int tamano){
+	t_tablaSegmento *nuevoSegmento = crear_nodoSegm(procesoActivo(), 073, obtenerInicioLogico(procesoActivo()), tamano, obtenerInicioReal(tamano));
+	list_add(vectorProcesos[buscarPid(procesoActivo())].tabla, nuevoSegmento);
 	return nuevoSegmento->inicioLogico;
 }//Creo que es necesario que devuelva el inicio logico asi el programa puede identificarlo posteriormente.
 
@@ -110,6 +130,7 @@ int obtenerInicioLogico(int pid){
 	//Aca deberia haber algo complicado con randoms y chequeos;
 	return 5;//El numero 5 es casi tan bueno como muchos algoritmos raros
 }
+
 void compactarMemoria(){
 	int i = -1;
 	t_list *listaSegmentosOrdenada = obtenerListaSegmentosOrdenada();
@@ -124,7 +145,9 @@ void compactarMemoria(){
 	i++;
 	}
 	list_iterate(listaSegmentosOrdenada, (void*)_cambiar_posiciones_chetamente);
+	printf("Compacte\n");
 }
+
 void *obtenerInicioReal(int tamano){
 	t_list *lista_mascapita2 = list_create();
 
@@ -137,9 +160,9 @@ void *obtenerInicioReal(int tamano){
 		if (flag_compactado==0){
 			compactarMemoria();
 			flag_compactado=1;
-			return obtenerInicioReal(tamano);//deberias compactar y llamar otra vez a la funcion
+			return obtenerInicioReal(tamano);
 		} else{
-			printf("no hay espacio suficiente en memoria");
+			printf("Memory overload, u win \n");
 			return baseUMV; //Solo pongo esto para que me deje compilar, deberiamos crear un error.
 		}
 	} else {
@@ -149,7 +172,7 @@ void *obtenerInicioReal(int tamano){
 }
 
 void *seleccionarSegunAlgoritmo(t_list *lista){
-	if (strcmp(algoritmo,"BEST FIT")){
+	if (algoritmo){
 		bool _mayorTamano(t_limites *mayorTamano, t_limites *menorTamano){
 			return (mayorTamano->final-mayorTamano->comienzo)>(menorTamano->final-menorTamano->comienzo);
 		}
@@ -159,24 +182,27 @@ void *seleccionarSegunAlgoritmo(t_list *lista){
 	//Yo elijo el primer bit porque ni se como usar las funciones random
 	return(((t_limites *)list_head(lista))->comienzo);
 }
-
 //Habla bastante por si sola.
-void cambiarAlgoritmo(int numerin){
-	if (numerin==0){
-		algoritmo="FIRST FIT";
-	}
-	if (numerin==1){
-		algoritmo="BEST FIT";
-	}
+void cambiarAlgoritmo(){
+	algoritmo=!algoritmo;
+	algoritmo?printf("Ahora el algoritmo es First-Fit"):printf("Ahora el algoritmo es Worst-Fit");
 }
+
 void mostrarListaSegmentos(t_list *listaSegmento){
 	printf("			  Comienzo Final pidOwner\n");
 	void _mostrar_posiciones_y_pid_owner(t_tablaSegmento* elemento){
 		printf("Contenido lista Segmentos:%x %x %d\n", (unsigned int)elemento->memPpal, (unsigned int)elemento->memPpal+elemento->tamano, elemento->pidOwner);
 	}
-
 	list_iterate(listaSegmento, (void*)_mostrar_posiciones_y_pid_owner);
 }
+
+void mostrarListaEspacios(t_list *listaEspacios){
+	void _mostrar_limites(t_limites *self){
+		printf("Espacios libres: %x, %x\n", (unsigned int)self->comienzo, (unsigned int)self->final);
+	}
+	list_iterate(listaEspacios, (void*)_mostrar_limites);
+}
+
 t_list *obtenerEspaciosDisponibles(){
 	int i=1;
 
@@ -207,19 +233,13 @@ t_list *obtenerEspaciosDisponibles(){
 		i++;
 		return aux;
 	}
-
 	t_list *lista3 = list_map(lista2, (void*) _delimitar_espacios_libres);
-
-	flag = 0;
-
 	if (list_is_empty(lista3)) list_add(lista3, crear_nodoLim(baseUMV, baseUMV+tamanoUMV));
-
 	bool _no_es_un_error(t_limites *unaCosa){
 		return (unaCosa->final>unaCosa->comienzo);
 	}//Antes habia algo mal, ahora solo sirve para sacar los que tiene comienzo==final
 	//Generan nodos de tamaño==0 al dope
 	t_list *lista4 = list_filter(lista3, (void*) _no_es_un_error);
-
 	return lista4;
 }
 
@@ -227,48 +247,45 @@ t_list *obtenerListaSegmentosOrdenada(){
 
 	int i;
 	t_list *listaAux=list_create(), *listaSegmentos = list_create();
-
-	bool _es_verdad(t_tablaSegmento *self){
-		return 1;
+	bool _tiene_pid_owner(t_tablaSegmento *self){
+		return self->pidOwner==vectorProcesos[i].pid;
 	}
-
 	for (i=0;i<cantProcesosActivos;i++){
-		bool _tiene_pid_owner(t_tablaSegmento *self){
-			return self->pidOwner==i;
-		}
-		list_add_all(listaSegmentos, vectorProcesos[i].tabla);
-		list_remove_by_condition(vectorProcesos[i].tabla, (void*)_tiene_pid_owner);
+		listaAux=list_filter(vectorProcesos[i].tabla, (void*)_tiene_pid_owner);
+		list_add_all(listaSegmentos, listaAux);
 	}
-
+	list_clean(listaAux);
 	bool _posicion_menor(t_tablaSegmento *posicionMenor, t_tablaSegmento *posicionMayor){
 		return posicionMenor->memPpal < posicionMayor->memPpal;
 	}
-
 	list_sort(listaSegmentos, (void*) _posicion_menor);
-	list_destroy_and_destroy_elements(listaAux, (void*)tsegm_destroy);
 	return listaSegmentos;
 }
-
-
-void destruirSegmento(int pid, int base){
+//No me consta que sea necesaria esta funcion.
+void destruirSegmento(int base){
 	bool _coincide_base_logica(t_tablaSegmento *self){
 		return self->inicioLogico==base;
 	}
-	t_tablaSegmento* aux=list_remove_by_condition(vectorProcesos[buscarPid(pid)].tabla, (void*)_coincide_base_logica);
+	t_tablaSegmento* aux=list_remove_by_condition(vectorProcesos[buscarPid(procesoActivo())].tabla, (void*)_coincide_base_logica);
 	if (NULL==aux){
 		printf("Quisiste borrar algo que no hay papa\n");
 	}
 	free(aux);//No hay problema con hacer free(NULL)
 }
 
+void destruirTodosLosSegmentos(){
+	list_destroy_and_destroy_elements(vectorProcesos[buscarPid(procesoActivo())].tabla, (void*)tsegm_destroy);
+}
+
 void conseguirDeArchivo(int *p_tamanoUMV){
 	//en un futuro buscaria en el archivo de config.
-	*p_tamanoUMV = 1000;
+	*p_tamanoUMV = 2000;
 }
 //Estaria bueno agregarla a las commons
 t_link_element *list_head(t_list *list){
 	return list_get(list, 0);
 }
+
 t_tablaSegmento *obtenerPtrASegmento(int base, int pid){
 	bool _coincide_base_logica(t_tablaSegmento *self){
 		return self->inicioLogico==base;
@@ -294,12 +311,32 @@ int verificarEspacio(int pid, int base, int offset, int tamano){
 	return 0;
 }
 
-void enviarUnosBytes(int pid, int base, int offset, int tamano, void *mensaje){
+void enviarUnosBytes(int base, int offset, int tamano, void *mensaje){
+	int pid=procesoActivo();
 	if (verificarEspacio(pid, base, offset, tamano)) memcpy(obtenerDirFisica(base, offset, pid), mensaje, tamano);
 }
 
-char *solicitarBytes(int pid, int base, int offset, int tamano){
+int procesoActivo(){
+	int i=0;
+	while (!vectorProcesos[i].activo){
+		i++;
+	}
+	return vectorProcesos[i].pid;
+}//Podria tambien devolver i
+
+void cambiarProcesoActivo(int pid){
+	int i=0;
+	for (i=0;i<cantProcesosActivos;i++){
+		if(vectorProcesos[i].pid==pid){
+			vectorProcesos[i].activo=1;
+		} else{
+			vectorProcesos[i].activo=0;
+		}//No se porque no me deja usar el ? :
+	}
+}
+char *solicitarBytes(int base, int offset, int tamano){
 	char *aux=malloc(50);
+	int pid=procesoActivo();
 	if(verificarEspacio(pid, base, offset, tamano)){
 		memcpy(aux, obtenerDirFisica(base, offset, pid), tamano);
 		*(aux+tamano+1)=0;
@@ -308,43 +345,36 @@ char *solicitarBytes(int pid, int base, int offset, int tamano){
 	return "";
 }
 
-void probarFuncionesSegmentos(int pid[2], char tipo){
-	agregarProceso(pid[0], tipo);
-	agregarProceso(pid[1], tipo);
-	agregarProceso(pid[2], tipo);
-	crearSegmento(pid[1], 100);
-	crearSegmento(pid[0], 50);
-	destruirSegmento(pid[1], 5);//Es la base que le puse a todos
-	crearSegmento(pid[2], 30);
-	crearSegmento(pid[0], 20);
-	crearSegmento(pid[1], 100);
-	crearSegmento(pid[1], 100);
-	crearSegmento(pid[0], 20);
-	crearSegmento(pid[0], 20);
-	crearSegmento(pid[0], 20);
-	crearSegmento(pid[0], 20);
-	crearSegmento(pid[0], 20);
-	destruirSegmento(pid[1], 5);//Es la base que le puse a todos
+void dumpMemoriaLibreYSegmentos(bool archivo){
+	int i=0;
 	mostrarListaSegmentos(obtenerListaSegmentosOrdenada());
-	compactarMemoria();
-	printf("\nSeparador rustiquisimo, posiciones despues de compactar\n");
-	mostrarListaSegmentos(obtenerListaSegmentosOrdenada());
+	void _acumularEspacio(t_limites *elemento){
+		i+=elemento->final-elemento->comienzo;
+	}
+	list_iterate(obtenerEspaciosDisponibles(), (void*)_acumularEspacio);
+	printf("El espacio actual disponible en memoria es: %d b\n", i);
 }
-int main(){
-	int pid[2];
-	char tipo = 'c';
-	pid[0]=1000;
-	pid[1]=1001;
-	pid[2]=1002;
-//	probarFuncionesSegmentos(pid, tipo);
-	char mensajeEnviado[20];
-	crearEstructurasGlobales();
-	agregarProceso(pid[0], tipo);
-	crearSegmento(pid[0], 20);
-	mostrarListaSegmentos(obtenerListaSegmentosOrdenada());
-	printf("a ver dame un mensaje papin: ");
-	gets(mensajeEnviado);
-	enviarUnosBytes(pid[0], 5, 10, strlen(mensajeEnviado), mensajeEnviado);
-	printf("%s", solicitarBytes(pid[0], 5, 10, strlen(mensajeEnviado)));
-	return 0;
+void dumpTablaSegmentos(bool archivo, int pid){
+	int i;
+	if (pid == -1){
+		for (i=0;i<cantProcesosActivos;i++){
+			printf("Se muestra la tabla de segmentos del proceso %d\n", vectorProcesos[i].pid);
+			mostrarListaSegmentos(vectorProcesos[i].tabla);
+		}
+	} else{
+		printf("Se muestra la tabla de segmentos del proceso %d\n", vectorProcesos[buscarPid(pid)].pid);
+		mostrarListaSegmentos(vectorProcesos[buscarPid(pid)].tabla);
+	}
 }
+
+void dumpMemoriaChata(int offset, int tamano, bool archivo){
+	int i, *a=malloc(sizeof(int));
+	printf("Se muestra la memoria desde la posicion %x a la %x \n", (unsigned int)baseUMV+offset, (unsigned int)baseUMV+offset+tamano);
+	for (i=0;i<tamano;){
+		memcpy(a, baseUMV+offset+i, 4);
+		printf("%x ", (unsigned int)*a);
+		i+=4;
+		if (i%96==0)printf(" \n");
+	}
+}
+
