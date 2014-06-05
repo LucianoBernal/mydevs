@@ -15,17 +15,14 @@ typedef struct{
 }t_limites;
 
 typedef struct {
-	int identificador;
-	int inicioLogico;
-	int tamano;
+	int identificador, inicioLogico, tamano;
 	void* memPpal;
 }t_tablaSegmento;
 
 typedef struct{
-	int pid;
+	int pid, activo;
 	char tipo;
 	t_list *tabla;
-	int activo;
 }t_tablaProceso;
 
 int cantProcesosActivos = 0;
@@ -33,12 +30,16 @@ t_tablaProceso vectorProcesos[10];
 void *baseUMV;
 int tamanoUMV;
 int flag_compactado = 1;
+int flag = 1;//Esta ni se para que esta.
+int k=0;//Esta esta solo para mostrar unos mensajes.
+char *algoritmo="FIRST FIT";//Lo ponemos por defecto porque es el mas lindo*
 
 static t_tablaSegmento *crear_nodoSegm(int, int, int, void *);
 static void tsegm_destroy(t_tablaSegmento *);
 void crearEstructurasGlobales();
 void agregarProceso(int, char);
-void crearSegmento(int, int);
+int crearSegmento(int, int);
+void destruirSegmento(int, int);
 void *obtenerInicioReal(int);
 void *seleccionarSegunAlgoritmo(t_list *);
 t_list *obtenerEspaciosDisponibles();
@@ -90,10 +91,11 @@ int buscarPid(int pid){
 	return j;
 }
 
-void crearSegmento(int pid, int tamano){
+int crearSegmento(int pid, int tamano){
 	t_tablaSegmento *nuevoSegmento = crear_nodoSegm(pid, obtenerInicioLogico(pid), tamano, obtenerInicioReal(tamano));
 	list_add(vectorProcesos[buscarPid(pid)].tabla, nuevoSegmento);
-}
+	return nuevoSegmento->inicioLogico;
+}//Creo que es necesario que devuelva el inicio logico asi el programa puede identificarlo posteriormente.
 
 int obtenerInicioLogico(int pid){
 	//Aca deberia haber algo complicado con randoms y chequeos;
@@ -120,13 +122,28 @@ void *obtenerInicioReal(int tamano){
 }
 
 void *seleccionarSegunAlgoritmo(t_list *lista){
-	//Este seria el first fit
+	if (strcmp(algoritmo,"BEST FIT")){
+		bool _mayorTamano(t_limites *mayorTamano, t_limites *menorTamano){
+			return (mayorTamano->final-mayorTamano->comienzo)>(menorTamano->final-menorTamano->comienzo);
+		}
+		list_sort(lista, (void*)_mayorTamano);
+	}
 	t_limites *aux = list_get(lista, 0);
+	//Con list_get 0 tenemos el comienzo y el final del segmento segun el algoritmo
+	//Yo elijo el primer bit porque ni se como usar las funciones random
 	return(aux->comienzo);
 }
 
-int flag = 1;
-int k=0;
+//Habla bastante por si sola.
+void cambiarAlgoritmo(int numerin){
+	if (numerin==0){
+		algoritmo="FIRST FIT";
+	}
+	if (numerin==1){
+		algoritmo="BEST FIT";
+	}
+}
+
 t_list *obtenerEspaciosDisponibles(){
 	int i=1;
 
@@ -206,9 +223,16 @@ t_list *obtenerListaSegmentosOrdenada(){
 	return listaSegmentos;
 }
 
+void destruirSegmento(int pid, int base){
+	bool _coincide_base(t_tablaSegmento *self){
+		return self->inicioLogico==base;
+	}
+	free(list_remove_by_condition(vectorProcesos[buscarPid(pid)].tabla, (void*)_coincide_base));
+}
+
 void conseguirDeArchivo(int *p_tamanoUMV){
 	//en un futuro buscaria en el archivo de config.
-	*p_tamanoUMV = 2000;
+	*p_tamanoUMV = 1000;
 }
 
 int main(){
@@ -222,10 +246,13 @@ int main(){
 	agregarProceso(pid[1], tipo);
 	agregarProceso(pid[2], tipo);
 
+	crearSegmento(pid[1], 100);
 	crearSegmento(pid[0], 50);
-	crearSegmento(pid[1], 10);
+	destruirSegmento(pid[1], 5);//Es la base que le puse a todos
+	crearSegmento(pid[2], 30);
 	crearSegmento(pid[0], 20);
-	crearSegmento(pid[2], 40);
+
+
 
 	printf("%x %x\n", (unsigned int)((t_tablaSegmento *)vectorProcesos[0].tabla->head->data)->memPpal, (unsigned int)baseUMV);
 	printf("%x\n", (unsigned int)((t_tablaSegmento *)vectorProcesos[1].tabla->head->data)->memPpal);
