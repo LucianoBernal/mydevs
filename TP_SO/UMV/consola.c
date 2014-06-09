@@ -27,11 +27,6 @@ typedef struct{
 t_tablaProceso vectorProcesos[20];
 
 int cantProcesos;
-/*
-void* element_destroyer (void* p){
-	free(p);
-	return p;
-}
 
 int buscarPid(int pid){
 	int i;
