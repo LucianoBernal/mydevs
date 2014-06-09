@@ -4,19 +4,34 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
+../ClienteSerializacion.c \
 ../Serializacion.c \
 ../Server.c \
-../bibSockets.c 
+../ServerSerializacion.c \
+../bibSockets.c \
+../dictionary.c \
+../list.c \
+../queue.c 
 
 OBJS += \
+./ClienteSerializacion.o \
 ./Serializacion.o \
 ./Server.o \
-./bibSockets.o 
+./ServerSerializacion.o \
+./bibSockets.o \
+./dictionary.o \
+./list.o \
+./queue.o 
 
 C_DEPS += \
+./ClienteSerializacion.d \
 ./Serializacion.d \
 ./Server.d \
-./bibSockets.d 
+./ServerSerializacion.d \
+./bibSockets.d \
+./dictionary.d \
+./list.d \
+./queue.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

@@ -4,16 +4,8 @@
 #include <commons/collections/list.h>
 #include <commons/collections/queue.h>
 #include "bibSockets.h"
+#include "Serializacion.h"
 
-typedef struct{
-	int tamano;
-	char *p_var;
-}t_tamYDir;
-typedef struct{
-	char *msj;
-	char tamano;//un tamano de 255 PUEDE ser poco
-	char cantVar;//pero es mejor que nada
-}t_paquete;
 
 #define IP "127.0.0.1"
 #define PACKAGESIZE 1024
@@ -22,26 +14,29 @@ typedef struct{
 void Desempaquetar(char *, t_queue *);
 t_paquete *Serializar(t_queue *);
 t_tamYDir *crear_nodoVar(void *, int);
-
+/*
 int main(){
-	char *a="pato ", *b ="es", *c=" pro", *e=malloc(10), *d=malloc(10), *f=malloc(10);
+	int g=3, h=0;
+	char *a="lucho ", *b ="es", *c=" pro", *e=malloc(10), *d=malloc(10), *f=malloc(10);
 	t_queue *queue=queue_create();
 	t_queue *queue2=queue_create();
 	queue_push(queue, crear_nodoVar(a, strlen(a)));
 	queue_push(queue, crear_nodoVar(b, strlen(b)));
 	queue_push(queue, crear_nodoVar(c, strlen(c)));
+	queue_push(queue, crear_nodoVar(&g, 4));
 //	El mecanismo seria este, pusheamos a una cola las variables y su tamaño con esa funcion
 	t_paquete *paquete=Serializar(queue);
 	queue_push(queue2, d);
 	queue_push(queue2, e);
 	queue_push(queue2, f);
+	queue_push(queue2, &h);
 //  y del otro lado pusheamos una cola con punteros a las variables
 	Desempaquetar(paquete->msj, queue2);
-	printf("%s%s%s", d, e, f);
+	printf("%s%s%s%d", d, e, f, h);
 //	ay estas funciones que me dicen cosas lindas (?
 	return 0;
 }
-
+*/
 //	Es un poco tonto que no le mande a las funciones la cantidad de variables a serializar
 //	y le mande una lista con esa cantidad implicitamente, si se les ocurre una forma mas
 //	practica mejor.
