@@ -16,7 +16,7 @@
 #include "bibSockets.h"
 #include "Serializacion.h"
 
-int main(){
+int main33(){
 	int serverSocket;
 	crearSocketS(&serverSocket, "6666");
 	char *mensaje=malloc(50),*otromensaje=malloc(50);

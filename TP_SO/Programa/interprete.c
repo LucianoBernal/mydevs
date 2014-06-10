@@ -10,8 +10,9 @@
 //cuando esta afuera de la carpeta
 #define IP "127.0.0.1"
 #define PACKAGESIZE 1024
+#define PUERTO "6660"
 
-int enviarArchivoPorSocket(FILE* archivo, char *PUERTO){
+int enviarArchivoPorSocket(FILE* archivo){
 	int serverSocket;
 
 	crearSocketS(&serverSocket, PUERTO);
@@ -38,13 +39,12 @@ void enviarPorSocketAlKernel(char* buffer){
 int main(int argc, char **argv){
 
 	FILE *archivo;
-	char *PUERTO=argv[2];
 
 //	Es necesario que le pasen el puerto, por alguna razon despues de un connect
 //	tarda cierto tiempo para usar el mismo puerto
 //	llamenlo por consola asi: "./interprete /rutaarchivo XXXX
 	archivo = fopen(argv[1], "r");
-	enviarArchivoPorSocket(archivo, PUERTO);
+	enviarArchivoPorSocket(archivo);
 	fclose(archivo);
 
 	return 0;

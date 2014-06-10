@@ -12,7 +12,7 @@
 
 #define TAMANO_CABECERA 2
 
-int main(){
+int main22(){
 	int listenningSocket;
 	char *puerto="6666";
 

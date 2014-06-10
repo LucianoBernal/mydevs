@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdarg.h>
 #include <commons/collections/list.h>
 #include <commons/collections/queue.h>
 #include "bibSockets.h"
@@ -14,33 +15,40 @@
 void Desempaquetar(char *, t_queue *);
 t_paquete *Serializar(t_queue *);
 t_tamYDir *crear_nodoVar(void *, int);
-/*
+t_paquete *serializar2(t_tamYDir *uno, ...);
+void desempaquetar2(char *, void *, ...);
+
 int main(){
-	int g=3, h=0;
-	char *a="lucho ", *b ="es", *c=" pro", *e=malloc(10), *d=malloc(10), *f=malloc(10);
-	t_queue *queue=queue_create();
-	t_queue *queue2=queue_create();
-	queue_push(queue, crear_nodoVar(a, strlen(a)));
-	queue_push(queue, crear_nodoVar(b, strlen(b)));
-	queue_push(queue, crear_nodoVar(c, strlen(c)));
-	queue_push(queue, crear_nodoVar(&g, 4));
-//	El mecanismo seria este, pusheamos a una cola las variables y su tamaño con esa funcion
-	t_paquete *paquete=Serializar(queue);
-	queue_push(queue2, d);
-	queue_push(queue2, e);
-	queue_push(queue2, f);
-	queue_push(queue2, &h);
-//  y del otro lado pusheamos una cola con punteros a las variables
-	Desempaquetar(paquete->msj, queue2);
+	int g=333, h=0;
+	char *a="pato ", *b ="es muy", *c=" pro", *e=malloc(10), *d=malloc(10), *f=malloc(10);
+
+
+	t_paquete *paquete=serializar2(crear_nodoVar(a, strlen(a)), crear_nodoVar(b, strlen(b)), crear_nodoVar(c, strlen(c)), crear_nodoVar(&g, 4), 0);
+
+	desempaquetar2(paquete->msj, d, e, f, &h, 0);
 	printf("%s%s%s%d", d, e, f, h);
 //	ay estas funciones que me dicen cosas lindas (?
 	return 0;
 }
-*/
-//	Es un poco tonto que no le mande a las funciones la cantidad de variables a serializar
-//	y le mande una lista con esa cantidad implicitamente, si se les ocurre una forma mas
-//	practica mejor.
+//	Ahora reciben la cantidad de parametros que se les antoje (?
 
+t_paquete *serializar2(t_tamYDir *uno, ...){
+	va_list(p);
+	va_start(p, uno);
+	int acum = 0;
+	t_tamYDir *arg=uno;
+	t_paquete *paquete=malloc(sizeof(t_paquete));
+	paquete->msj=malloc(50);
+	do{
+		memcpy(acum+(paquete->msj), &(arg->tamano), 1);
+		memcpy(acum+1+(paquete->msj), arg->p_var, arg->tamano);
+		acum+=((arg->tamano)+1);
+	}while((arg = va_arg(p, t_tamYDir *)));
+	va_end(p);
+	paquete->tamano=acum;
+	return paquete;
+}
+//Las dejo por si tienen algun problema las nuevas
 t_paquete *Serializar(t_queue *cola){
 	t_paquete *paquete=malloc(sizeof(t_paquete));
 	t_tamYDir *aux;
@@ -57,7 +65,19 @@ t_paquete *Serializar(t_queue *cola){
 	paquete->tamano=acum;
 	return paquete;
 }
+void desempaquetar2(char *msjRecibido, void *uno, ...){
+	va_list(p);
+	va_start(p, uno);
+	void * arg=uno;
+	char tamano;
+	int acum=0;
+	do{
+		memcpy(&tamano, msjRecibido+acum, 1);
+		memcpy(arg, msjRecibido+acum+1, tamano);
+		acum+=(tamano+1);
+	}while((arg = va_arg(p, void*)));
 
+}
 void Desempaquetar(char *msjRecibido, t_queue *cola){
 	void *aux=malloc(50);
 	char tamano;

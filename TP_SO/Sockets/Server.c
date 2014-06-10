@@ -10,10 +10,10 @@
 
 #define BACKLOG 5
 #define PACKAGESIZE 1024
+#define PUERTO "6660"
 
-int main2(int argc, char **argv){
+int main23(){
 	int listenningSocket;
-	char *PUERTO=argv[1];
 
 	crearSocketL(&listenningSocket, PUERTO);
 	listen(listenningSocket, BACKLOG);
@@ -25,12 +25,12 @@ int main2(int argc, char **argv){
 
 	char package[PACKAGESIZE];
 	int status = 1;
-	int tamano;
+	int *tamano=malloc(sizeof(int));
 	printf("Cliente conectado. Esperando mensajes:\n");
 
 	while (status!=0){
-		recv(socketCliente, (void*)&tamano, 4, MSG_WAITALL);
-		status = recv(socketCliente, (void*) package, tamano, MSG_WAITALL);
+		recv(socketCliente, (void*)tamano, 4, MSG_WAITALL);
+		status = recv(socketCliente, (void*) package, *tamano, MSG_WAITALL);
 		if ((status != 0)) printf("%s", package);
 	}
 	close(socketCliente);
