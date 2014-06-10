@@ -130,15 +130,21 @@ int crearSegmento(int tamano) {
 } //Creo que es necesario que devuelva el inicio logico asi el programa puede identificarlo posteriormente.
 
 bool tieneProblemas(int inicio, int pid) {
-	t_list* inicioTabla = vectorProcesos[buscarPID(pid)].tabla;
-	if ((inicio >= inicioTabla) && (inicio <= inicioTabla + size(inicioTabla)) || );
+	t_list* tabla = vectorProcesos[buscarPID(pid)].tabla;
+
+	bool condicion(t_tablaSegmento* segmento) {
+		return ((inicio >= segmento->inicioLogico)
+				&& (inicio <= (segmento->inicioLogico + segmento->tamano)));
+	}
+
+	return list_any_satisfy(tabla, (void*) condicion);
 }
 
 int obtenerInicioLogico(int pid) {
 	const int SIZE_SEGMENT = 1000;
 	int inicioLogico;
-	srand(time(NULL )); // Semilla
-	inicioLogico = rand() % SIZE_SEGMENT; //Numero Aleatorio entre 0 - 999
+	srand(time(NULL ));
+	inicioLogico = rand() % SIZE_SEGMENT;
 	while (tieneProblemas(inicioLogico, pid)) {
 		inicioLogico = rand() % SIZE_SEGMENT;
 	}
