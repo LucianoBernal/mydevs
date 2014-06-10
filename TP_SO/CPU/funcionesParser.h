@@ -9,6 +9,8 @@
 #define FUNCIONESPARSER_H_
 
 #include <parser/parser.h>
+#include <commons/collections/queue.h>
+#include <commons/collections/dictionary.h>
 
 AnSISOP_funciones funciones_Ansisop;
 AnSISOP_kernel funciones_kernel;

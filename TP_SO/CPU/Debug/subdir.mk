@@ -4,16 +4,19 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
+../Serializacion.c \
 ../bibSockets.c \
 ../funcionesParser.c \
 ../primerIntentoCPU.c 
 
 OBJS += \
+./Serializacion.o \
 ./bibSockets.o \
 ./funcionesParser.o \
 ./primerIntentoCPU.o 
 
 C_DEPS += \
+./Serializacion.d \
 ./bibSockets.d \
 ./funcionesParser.d \
 ./primerIntentoCPU.d 
