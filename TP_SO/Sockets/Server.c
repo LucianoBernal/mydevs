@@ -29,7 +29,7 @@ int main2(int argc, char **argv){
 	printf("Cliente conectado. Esperando mensajes:\n");
 
 	while (status!=0){
-		recv(socketCliente, (void*)tamano, 4, MSG_WAITALL);
+		recv(socketCliente, (void*)&tamano, 4, MSG_WAITALL);
 		status = recv(socketCliente, (void*) package, tamano, MSG_WAITALL);
 		if ((status != 0)) printf("%s", package);
 	}

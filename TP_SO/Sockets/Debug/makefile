@@ -25,7 +25,7 @@ endif
 all: Sockets
 
 dependents:
-	-cd /home/utnso/tp-2014-1c-skynet/Bibliotecas_Comunes/Debug && $(MAKE) all
+	-cd /home/utnso/tp-2014-1c-skynet/Bibliotecas_Comunes/Debug && $(MAKE) clean all
 
 # Tool invocations
 Sockets: $(OBJS) $(USER_OBJS) /home/utnso/tp-2014-1c-skynet/Bibliotecas_Comunes/Debug/libBibliotecas_Comunes.so

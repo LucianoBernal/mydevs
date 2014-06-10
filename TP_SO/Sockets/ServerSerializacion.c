@@ -12,7 +12,7 @@
 
 #define TAMANO_CABECERA 2
 
-int main32(){
+int main(){
 	int listenningSocket;
 	char *puerto="6666";
 
@@ -34,6 +34,8 @@ int main32(){
 	queue_push(queue_mensaje, mensaje);
 	recv(socketCliente, (void*)mensaje, tamano, MSG_WAITALL);
 	Desempaquetar(mensaje, queue_mensaje);
+	//Esto es solo porque es un string, quizas deberia mandar el /0 en estos casos.
+	mensaje[tamano]=0;
 	printf("El tamano del mensaje supersecreto era: %d\n", tamano);
 	printf("El mensaje supersecreto era: %s\n", mensaje);
 	return 0;
