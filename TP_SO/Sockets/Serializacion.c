@@ -12,13 +12,11 @@
 #define PACKAGESIZE 1024
 #define PUERTO "6666"
 
-void Desempaquetar(char *, t_queue *);
-t_paquete *Serializar(t_queue *);
 t_tamYDir *crear_nodoVar(void *, int);
 t_paquete *serializar2(t_tamYDir *uno, ...);
 void desempaquetar2(char *, void *, ...);
 
-int main(){
+int main32(){
 	int g=333, h=0;
 	char *a="pato ", *b ="es muy", *c=" pro", *e=malloc(10), *d=malloc(10), *f=malloc(10);
 
@@ -49,6 +47,7 @@ t_paquete *serializar2(t_tamYDir *uno, ...){
 	return paquete;
 }
 //Las dejo por si tienen algun problema las nuevas
+/*
 t_paquete *Serializar(t_queue *cola){
 	t_paquete *paquete=malloc(sizeof(t_paquete));
 	t_tamYDir *aux;
@@ -65,6 +64,7 @@ t_paquete *Serializar(t_queue *cola){
 	paquete->tamano=acum;
 	return paquete;
 }
+*/
 void desempaquetar2(char *msjRecibido, void *uno, ...){
 	va_list(p);
 	va_start(p, uno);
@@ -78,6 +78,7 @@ void desempaquetar2(char *msjRecibido, void *uno, ...){
 	}while((arg = va_arg(p, void*)));
 
 }
+/*
 void Desempaquetar(char *msjRecibido, t_queue *cola){
 	void *aux=malloc(50);
 	char tamano;
@@ -89,7 +90,7 @@ void Desempaquetar(char *msjRecibido, t_queue *cola){
 		acum+=(tamano+1);
 	}
 }
-
+*/
 t_tamYDir *crear_nodoVar(void *p_var, int tamano){
 	t_tamYDir *nuevo=malloc(sizeof(t_tamYDir));
 	nuevo->p_var=p_var;

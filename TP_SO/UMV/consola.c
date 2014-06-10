@@ -10,6 +10,7 @@
 #include "funcionesaux.h"
 
 //const int CANT_PROCESOS =20;
+/*
 typedef struct {
 	int identificador;
 	int inicioLogico;
@@ -27,7 +28,8 @@ typedef struct{
 t_tablaProceso vectorProcesos[20];
 
 int cantProcesos;
-
+*/
+/*
 int buscarPid(int pid){
 	int i;
 	for(i = 0; i < cantProcesos; i++){
@@ -37,7 +39,6 @@ int buscarPid(int pid){
 	return 0;
 }
 */
-
 
 int main2 (){
 	const int COMANDO_SIZE=70;

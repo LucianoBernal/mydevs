@@ -12,7 +12,7 @@
 
 #define TAMANO_CABECERA 2
 
-int main22(){
+int main(){
 	int listenningSocket;
 	char *puerto="6666";
 
@@ -24,18 +24,15 @@ int main22(){
 
 	int socketCliente = accept(listenningSocket, (struct sockaddr *) &addr, &addrlen);
 
-	char *mensaje=malloc(50), *header=malloc(10), tamano;
-	t_queue *queue_mensaje = queue_create();
-	queue_push(queue_mensaje, &tamano);
+	char *mensaje=malloc(50), *msjRecibido=malloc(50), *header=malloc(10), tamano;
 	//Por ahora no mando mas nada por la cabecera
 	recv(socketCliente, (void*)header, TAMANO_CABECERA, MSG_WAITALL);
-	Desempaquetar(header, queue_mensaje);
+	desempaquetar2(header, &tamano, 0);
 	//Aca irian todas las variables que esperamos ansiosamente (?
-	queue_push(queue_mensaje, mensaje);
-	recv(socketCliente, (void*)mensaje, tamano, MSG_WAITALL);
-	Desempaquetar(mensaje, queue_mensaje);
+	recv(socketCliente, (void*)msjRecibido, tamano, MSG_WAITALL);
+	desempaquetar2(msjRecibido, mensaje, 0);
 	//Esto es solo porque es un string, quizas deberia mandar el /0 en estos casos.
-	mensaje[tamano]=0;
+	mensaje[(int)tamano]=0;
 	printf("El tamano del mensaje supersecreto era: %d\n", tamano);
 	printf("El mensaje supersecreto era: %s\n", mensaje);
 	return 0;

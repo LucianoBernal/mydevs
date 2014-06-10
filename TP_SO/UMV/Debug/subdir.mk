@@ -6,16 +6,19 @@
 C_SRCS += \
 ../consola.c \
 ../funcionesaux.c \
+../principal.c \
 ../pruebasUMV.c 
 
 OBJS += \
 ./consola.o \
 ./funcionesaux.o \
+./principal.o \
 ./pruebasUMV.o 
 
 C_DEPS += \
 ./consola.d \
 ./funcionesaux.d \
+./principal.d \
 ./pruebasUMV.d 
 
 

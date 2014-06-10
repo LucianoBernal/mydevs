@@ -18,9 +18,9 @@ typedef struct{
 	char cantVar;//pero es mejor que nada
 }t_paquete;
 
-void Desempaquetar(char *, t_queue *);
-t_paquete *Serializar(t_queue *);
 t_tamYDir *crear_nodoVar(void *, int);
+t_paquete *serializar2(t_tamYDir *uno, ...);
+void desempaquetar2(char *, void *, ...);
 
 
 #endif /* SERIALIZACION_H_ */

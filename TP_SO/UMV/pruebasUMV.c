@@ -8,65 +8,21 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
 #include <commons/collections/list.h>
-
-typedef struct {
-	void *comienzo, *final;
-} t_limites;
-
-typedef struct {
-	int pidOwner, identificador, inicioLogico, tamano;
-	void* memPpal;
-} t_tablaSegmento;
-
-typedef struct {
-	int pid, activo;
-	char tipo;
-	t_list *tabla;
-} t_tablaProceso;
-
-t_link_element *list_head(t_list *);
-static t_tablaSegmento *crear_nodoSegm(int, int, int, int, void *);
-static void tsegm_destroy(t_tablaSegmento *);
-t_tablaSegmento *obtenerPtrASegmento(int, int);
-void dumpMemoriaChata(int, int, bool);
-void dumpMemoriaLibreYSegmentos(bool);
-void dumpTablaSegmentos(bool, int);
-void crearEstructurasGlobales();
-void agregarProceso(int, char);
-int crearSegmento(int);
-void destruirSegmento(int);
-void *obtenerInicioReal(int);
-void *seleccionarSegunAlgoritmo(t_list *);
-void compactarMemoria();
-void mostrarListaSegmentos(t_list*);
-void mostrarListaEspacios(t_list*);
-t_list *obtenerEspaciosDisponibles();
-t_list *obtenerListaSegmentosOrdenada();
-void conseguirDeArchivo(int *);
-void *obtenerDirFisica(int, int, int);
-void enviarUnosBytes(int, int, int, void*);
-char *solicitarBytes(int, int, int);
-int obtenerInicioLogico(int);
-int buscarPid(int);
-int procesoActivo();
-void cambiarProcesoActivo(int);
-int verificarEspacio(int, int, int, int);
+#include "pruebasUMV.h"
 
 int cantProcesosActivos = 0;
-t_tablaProceso vectorProcesos[10];
+t_list *listaProcesos; //dinamico>estatico
+//t_tablaProceso vectorProcesos[10];
 void *baseUMV;
 int tamanoUMV;
 int flag_compactado = 0;
 int flag = 1; //Esta ni se para que esta.
 int k = 0; //Esta esta solo para mostrar unos mensajes.
 bool algoritmo = 0; //0 significa FF, lo ponemos por defecto porque es el mas lindo*
-
-int main() {
-//	Ya logre que me compile eso!
-	printf("Hola mundo!");
-	return 0;
-}
+static t_tablaSegmento *crear_nodoSegm(int, int, int, int, void *);
+static void tsegm_destroy(t_tablaSegmento *);
 
 static t_limites *crear_nodoLim(void *comienzo, void *final) {
 	t_limites *nuevo = malloc(sizeof(t_limites));
@@ -75,8 +31,40 @@ static t_limites *crear_nodoLim(void *comienzo, void *final) {
 	return nuevo;
 }
 
-static t_tablaSegmento *crear_nodoSegm(int pidOwner, int identificador,
-		int inicioLogico, int tamano, void *memPpal) {
+int main(){
+	crearEstructurasGlobales();
+	agregarProceso(1001, 'c');
+	cambiarProcesoActivo(1001);
+	crearSegmento(30);
+	crearSegmento(40);
+	crearSegmento(50);
+	agregarProceso(1002, 'c');
+	crearSegmento(100);
+	cambiarProcesoActivo(1002);
+	crearSegmento(40);
+	crearSegmento(10);
+	dumpMemoriaLibreYSegmentos(0);
+	cambiarProcesoActivo(1001);
+	crearSegmento(10);
+	crearSegmento(100);
+	cambiarProcesoActivo(1002);
+	destruirTodosLosSegmentos();
+	dumpMemoriaLibreYSegmentos(0);
+	compactarMemoria();
+	dumpMemoriaLibreYSegmentos(0);
+	return 0;
+}
+
+static t_tablaProceso *crear_nodoProc(int pid, int activo, char tipo){
+	t_tablaProceso *nuevo = malloc(sizeof(t_tablaProceso));
+	nuevo->pid=pid;
+	nuevo->activo=activo;
+	nuevo->tipo=tipo;
+	nuevo->tabla=list_create();
+	return nuevo;
+}
+
+static t_tablaSegmento *crear_nodoSegm(int pidOwner, int identificador, int inicioLogico, int tamano, void *memPpal) {
 	t_tablaSegmento *nuevo = malloc(sizeof(t_tablaSegmento));
 	nuevo->pidOwner = pidOwner;
 	nuevo->identificador = identificador;
@@ -94,15 +82,19 @@ static void tsegm_destroy(t_tablaSegmento *self) {
 void crearEstructurasGlobales() {
 	conseguirDeArchivo(&tamanoUMV);
 	baseUMV = malloc(tamanoUMV);
-
+	listaProcesos=list_create();
 }
 
 void agregarProceso(int pid, char tipo) {
 	if (buscarPid(pid) == -1) {
+		/*
 		vectorProcesos[cantProcesosActivos].pid = pid;
 		vectorProcesos[cantProcesosActivos].tipo = tipo;
 		vectorProcesos[cantProcesosActivos].activo = 0;
 		vectorProcesos[cantProcesosActivos].tabla = list_create();
+		cantProcesosActivos++;
+		*/
+		list_add(listaProcesos, crear_nodoProc(pid, 0, tipo));
 		cantProcesosActivos++;
 	} else {
 		printf("El numero pid ya esta en uso (?");
@@ -111,6 +103,14 @@ void agregarProceso(int pid, char tipo) {
 }
 
 int buscarPid(int pid) {
+	int i=0;
+	bool tienePid(t_tablaProceso *self){
+		i++;
+		return self->pid==pid;
+	}
+	t_tablaProceso *element = list_find(listaProcesos, (void*)tienePid);
+	return element==NULL?-1:i-1;
+	/*
 	int j = 0;
 	while ((vectorProcesos[j].pid != pid) && (j <= cantProcesosActivos)) {
 		j++;
@@ -119,18 +119,23 @@ int buscarPid(int pid) {
 		return j;
 	}
 	return -1;
+	*/
 }
 
 int crearSegmento(int tamano) {
 	t_tablaSegmento *nuevoSegmento = crear_nodoSegm(procesoActivo(), 073,
 			obtenerInicioLogico(procesoActivo()), tamano,
 			obtenerInicioReal(tamano));
-	list_add(vectorProcesos[buscarPid(procesoActivo())].tabla, nuevoSegmento);
+	t_tablaProceso *proceso = list_get(listaProcesos, buscarPid(procesoActivo()));
+	if (proceso->tabla==NULL) proceso->tabla =list_create();
+	list_add(proceso->tabla, nuevoSegmento);
+	//list_add(vectorProcesos[buscarPid(procesoActivo())].tabla, nuevoSegmento);
 	return nuevoSegmento->inicioLogico;
 } //Creo que es necesario que devuelva el inicio logico asi el programa puede identificarlo posteriormente.
 
 bool tieneProblemas(int inicio, int pid) {
-	t_list* tabla = vectorProcesos[buscarPID(pid)].tabla;
+	if ((((t_tablaProceso *)list_get(listaProcesos, buscarPid(pid)))->tabla)==NULL) return false;
+	t_list* tabla = ((t_tablaProceso *)list_get(listaProcesos, buscarPid(pid)))->tabla;
 
 	bool condicion(t_tablaSegmento* segmento) {
 		return ((inicio >= segmento->inicioLogico)
@@ -141,15 +146,17 @@ bool tieneProblemas(int inicio, int pid) {
 }
 
 int obtenerInicioLogico(int pid) {
-	const int SIZE_SEGMENT = 1000;
+	/*const int SIZE_SEGMENT = 1000;
 	int inicioLogico;
 	srand(time(NULL ));
 	inicioLogico = rand() % SIZE_SEGMENT;
+
 	while (tieneProblemas(inicioLogico, pid)) {
 		inicioLogico = rand() % SIZE_SEGMENT;
 	}
 	return inicioLogico;
-//return 5; //El numero 5 es casi tan bueno como muchos algoritmos raros
+	*/
+	return 5; //El numero 5 es casi tan bueno como muchos algoritmos raros
 }
 void compactarMemoria() {
 	int i = -1;
@@ -280,10 +287,10 @@ t_list *obtenerListaSegmentosOrdenada() {
 	int i;
 	t_list *listaAux = list_create(), *listaSegmentos = list_create();
 	bool _tiene_pid_owner(t_tablaSegmento *self) {
-		return self->pidOwner == vectorProcesos[i].pid;
+		return self->pidOwner == ((t_tablaProceso *)list_get(listaProcesos, i))->pid;
 	}
 	for (i = 0; i < cantProcesosActivos; i++) {
-		listaAux = list_filter(vectorProcesos[i].tabla,
+		listaAux = list_filter(((t_tablaProceso *)list_get(listaProcesos, i))->tabla,
 				(void*) _tiene_pid_owner);
 		list_add_all(listaSegmentos, listaAux);
 	}
@@ -300,8 +307,7 @@ void destruirSegmento(int base) {
 	bool _coincide_base_logica(t_tablaSegmento *self) {
 		return self->inicioLogico == base;
 	}
-	t_tablaSegmento* aux = list_remove_by_condition(
-			vectorProcesos[buscarPid(procesoActivo())].tabla,
+	t_tablaSegmento* aux = list_remove_by_condition(((t_tablaProceso *)list_get(listaProcesos, buscarPid(procesoActivo())))->tabla,
 			(void*) _coincide_base_logica);
 	if (NULL == aux) {
 		printf("Quisiste borrar algo que no hay papa\n");
@@ -310,9 +316,12 @@ void destruirSegmento(int base) {
 }
 
 void destruirTodosLosSegmentos() {
+	/*
 	list_destroy_and_destroy_elements(
 			vectorProcesos[buscarPid(procesoActivo())].tabla,
 			(void*) tsegm_destroy);
+	*/
+	list_destroy_and_destroy_elements(((t_tablaProceso *)list_get(listaProcesos, buscarPid(procesoActivo())))->tabla, (void*)tsegm_destroy);
 }
 
 void conseguirDeArchivo(int *p_tamanoUMV) {
@@ -328,9 +337,7 @@ t_tablaSegmento *obtenerPtrASegmento(int base, int pid) {
 	bool _coincide_base_logica(t_tablaSegmento *self) {
 		return self->inicioLogico == base;
 	}
-	return (t_tablaSegmento *) list_head(
-			list_filter(vectorProcesos[buscarPid(pid)].tabla,
-					(void*) _coincide_base_logica));
+	return (t_tablaSegmento *) list_head(list_filter(((t_tablaProceso *)list_get(listaProcesos, buscarPid(pid)))->tabla, (void*)_coincide_base_logica));
 }//El list_head a.k.a list_get(lista, 0) sacaria el primer elemento, no deberia ser necesario pero
 //por el momento todos tendrian la misma base logica (073) entonces lo necesito.
 
@@ -357,24 +364,37 @@ void enviarUnosBytes(int base, int offset, int tamano, void *mensaje) {
 		memcpy(obtenerDirFisica(base, offset, pid), mensaje, tamano);
 }
 
-int procesoActivo() {
+int procesoActivo() {/*
 	int i = 0;
 	while (!vectorProcesos[i].activo) {
 		i++;
 	}
-	return vectorProcesos[i].pid;
-}	//Podria tambien devolver i
+	return vectorProcesos[i].pid;*/
+	bool estaActivo(t_tablaProceso *self){
+		return self->activo==1;
+	}
+	t_tablaProceso *elemento =list_find(listaProcesos, (void*)estaActivo);
+	return elemento->pid;//Podria tambien devolver i
+}
 
 void cambiarProcesoActivo(int pid) {
-	int i = 0;
+	/*int i = 0;
 	for (i = 0; i < cantProcesosActivos; i++) {
 		if (vectorProcesos[i].pid == pid) {
 			vectorProcesos[i].activo = 1;
 		} else {
 			vectorProcesos[i].activo = 0;
 		}	//No se porque no me deja usar el ? :
+	}*/
+	void cambiarActivo(t_tablaProceso *self){
+		if(self->pid==pid)
+			(self->activo)=1;
+		else
+			(self->activo)=0;
 	}
+	list_iterate(listaProcesos, (void*)cambiarActivo);
 }
+
 char *solicitarBytes(int base, int offset, int tamano) {
 	char *aux = malloc(50);
 	int pid = procesoActivo();
@@ -400,13 +420,13 @@ void dumpTablaSegmentos(bool archivo, int pid) {
 	if (pid == -1) {
 		for (i = 0; i < cantProcesosActivos; i++) {
 			printf("Se muestra la tabla de segmentos del proceso %d\n",
-					vectorProcesos[i].pid);
-			mostrarListaSegmentos(vectorProcesos[i].tabla);
+					((t_tablaProceso *)list_get(listaProcesos, i))->pid);
+			mostrarListaSegmentos(((t_tablaProceso *)list_get(listaProcesos, i))->tabla);
 		}
 	} else {
 		printf("Se muestra la tabla de segmentos del proceso %d\n",
-				vectorProcesos[buscarPid(pid)].pid);
-		mostrarListaSegmentos(vectorProcesos[buscarPid(pid)].tabla);
+				((t_tablaProceso *)list_get(listaProcesos, buscarPid(pid)))->pid);
+		mostrarListaSegmentos(((t_tablaProceso *)list_get(listaProcesos, buscarPid(pid)))->tabla);
 	}
 }
 

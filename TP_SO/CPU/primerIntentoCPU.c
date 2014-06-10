@@ -29,6 +29,7 @@ int laSenialDeTerminar() {
 t_PCB *conseguirPCB();
 
 int main() {
+	holaSoyUnCPU();
 	while (!laSenialDeTerminar) {
 		t_PCB *PCB = conseguirPCB();
 		int i = 0;
@@ -42,3 +43,4 @@ int main() {
 		}
 		actualizarKernel(PCB);
 	}
+}
