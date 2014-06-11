@@ -13,4 +13,5 @@
 #include <stdlib.h>
 #include "funcionesaux.h"
 
+int consola();
 #endif /* CONSOLA_H_ */

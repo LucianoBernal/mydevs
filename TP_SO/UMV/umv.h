@@ -25,7 +25,8 @@ extern uint32_t tamanio_umv;
 extern void *baseUMV;
 extern t_list *listaProcesos;
 
-pthread_t atencion_consola, atencion_interna;
+pthread_t atencion_consola;
+pthread_t atencion_interna;
 
 typedef struct {
 	int pid, activo;
