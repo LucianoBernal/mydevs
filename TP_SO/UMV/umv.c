@@ -44,7 +44,9 @@ int main(int argc, char** argv) {
 	else{
 		//Se creó correctamente.
 	}
-
+	list_destroy(listaProcesos);
+	config_destroy(config);
+	return EXIT_SUCCESS;
 }
 
 int32_t validarConfig(t_config *config) {
