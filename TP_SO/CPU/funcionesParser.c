@@ -49,6 +49,9 @@ t_PCB *pcb;
 typedef enum {
 	SEGMENTATION_FAULT,
 	MEMORY_OVERLOAD,
+	MOSTRAR_VALOR,
+	MOSTRAR_TEXTO,
+	ENTRADA_SALIDA,
 	OBTENER_VALOR_COMPARTIDA,
 	ASIGNAR_VALOR_COMPARTIDA,
 	CREAR_SEGMENTO,
@@ -229,7 +232,7 @@ t_valor_variable asignarValorCompartida(t_nombre_compartida variable,
 
 void irAlLabel(t_nombre_etiqueta etiqueta) {
 	//Segun yo a las 12, al comienzo del programa en el cpu, debemos traer el segmento de etiquetas hacia el.
-	//etiquetas es una global en la que copiamos TODO el indice de etiquetas
+	//etiquetas es una global en la que copiamos enterito el indice de etiquetas
 	programCounter=metadata_buscar_etiqueta(etiqueta, etiquetas, pcb->tamanio_Indice_de_Etiquetas);
 }
 
@@ -262,16 +265,34 @@ void retornar(t_valor_variable retorno) {
 	cursorCtxto = *solicitarBytesAUMV(stackBase, cursorCtxto - 12, 4);
 }
 void imprimir(t_valor_variable valor_mostrar) {
-
+	int *razon=malloc(sizeof(int));
+	*razon=MOSTRAR_VALOR;
+	t_paquete *paquete=serializar2(crear_nodoVar(&valor_mostrar, sizeof(t_valor_variable)), 0);
+	t_paquete *header=serializar2(crear_nodoVar(&(paquete->tamano), 4), crear_nodoVar(razon, 4), 0);
+	send(socketKernel, header->msj, TAMANO_CABECERA, 0);
+	send(socketKernel, paquete->msj, paquete->tamano, 0);
+	//Quizas deberiamos esperar la respuesta
 }
 void imprimirTexto(char* texto) {
-
+	int *razon=malloc(sizeof(int));
+	*razon=MOSTRAR_TEXTO;
+	t_paquete *paquete=serializar2(crear_nodoVar(texto, strlen(texto)+1), 0);
+	t_paquete *header=serializar2(crear_nodoVar(&(paquete->tamano), 4), crear_nodoVar(razon, 4), 0);
+	send(socketKernel, header->msj, TAMANO_CABECERA, 0);
+	send(socketKernel, paquete->msj, paquete->tamano, 0);
+	//Quizas deberiamos esperar la respuesta
 }
 void entradaSalida(t_nombre_dispositivo dispositivo, int tiempo) {
-
+	int *razon=malloc(sizeof(int));
+	*razon=ENTRADA_SALIDA;
+	t_paquete *paquete=serializar2(crear_nodoVar(dispositivo, strlen(dispositivo)), crear_nodoVar(&tiempo, 4), 0);
+	t_paquete *header=serializar2(crear_nodoVar(&(paquete->tamano), 4), crear_nodoVar(razon, 4), 0);
+	send(socketKernel, header->msj, TAMANO_CABECERA, 0);
+	send(socketKernel, paquete->msj, paquete->tamano, 0);
+	//lo mismo que arriba
 }
 void wait(t_nombre_semaforo identificador_semaforo) {
-
+	//PASO
 }
 void signal(t_nombre_semaforo identificador_semaforo) {
 
