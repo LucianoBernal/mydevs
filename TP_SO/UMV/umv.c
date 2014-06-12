@@ -49,6 +49,7 @@ int main(int argc, char** argv) {
 	return EXIT_SUCCESS;
 }
 
+
 int32_t validarConfig(t_config *config) {
 	if (!config_has_property(config, "TAMANIO_UMV")) {
 		perror("Falta TAMANIO_UMV");

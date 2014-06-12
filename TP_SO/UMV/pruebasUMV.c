@@ -14,7 +14,6 @@
 
 int cantProcesosActivos = 0;
 t_list *listaProcesos; //dinamico>estatico
-//t_tablaProceso vectorProcesos[10];
 void *baseUMV;
 int tamanoUMV;
 int flag_compactado = 0;
@@ -31,7 +30,7 @@ static t_limites *crear_nodoLim(void *comienzo, void *final) {
 	return nuevo;
 }
 
-int main(){
+int main33() {
 	crearEstructurasGlobales();
 	agregarProceso(1001, 'c');
 	cambiarProcesoActivo(1001);
@@ -55,16 +54,17 @@ int main(){
 	return 0;
 }
 
-static t_tablaProceso *crear_nodoProc(int pid, int activo, char tipo){
+static t_tablaProceso *crear_nodoProc(int pid, int activo, char tipo) {
 	t_tablaProceso *nuevo = malloc(sizeof(t_tablaProceso));
-	nuevo->pid=pid;
-	nuevo->activo=activo;
-	nuevo->tipo=tipo;
-	nuevo->tabla=list_create();
+	nuevo->pid = pid;
+	nuevo->activo = activo;
+	nuevo->tipo = tipo;
+	nuevo->tabla = list_create();
 	return nuevo;
 }
 
-static t_tablaSegmento *crear_nodoSegm(int pidOwner, int identificador, int inicioLogico, int tamano, void *memPpal) {
+static t_tablaSegmento *crear_nodoSegm(int pidOwner, int identificador,
+		int inicioLogico, int tamano, void *memPpal) {
 	t_tablaSegmento *nuevo = malloc(sizeof(t_tablaSegmento));
 	nuevo->pidOwner = pidOwner;
 	nuevo->identificador = identificador;
@@ -75,25 +75,17 @@ static t_tablaSegmento *crear_nodoSegm(int pidOwner, int identificador, int inic
 }
 
 static void tsegm_destroy(t_tablaSegmento *self) {
-//	free(self->memPpal);
 	free(self);
 }
 
 void crearEstructurasGlobales() {
 	conseguirDeArchivo(&tamanoUMV);
 	baseUMV = malloc(tamanoUMV);
-	listaProcesos=list_create();
+	listaProcesos = list_create();
 }
 
 void agregarProceso(int pid, char tipo) {
 	if (buscarPid(pid) == -1) {
-		/*
-		vectorProcesos[cantProcesosActivos].pid = pid;
-		vectorProcesos[cantProcesosActivos].tipo = tipo;
-		vectorProcesos[cantProcesosActivos].activo = 0;
-		vectorProcesos[cantProcesosActivos].tabla = list_create();
-		cantProcesosActivos++;
-		*/
 		list_add(listaProcesos, crear_nodoProc(pid, 0, tipo));
 		cantProcesosActivos++;
 	} else {
@@ -103,60 +95,89 @@ void agregarProceso(int pid, char tipo) {
 }
 
 int buscarPid(int pid) {
-	int i=0;
-	bool tienePid(t_tablaProceso *self){
+	int i = 0;
+	bool tienePid(t_tablaProceso *self) {
 		i++;
-		return self->pid==pid;
+		return self->pid == pid;
 	}
-	t_tablaProceso *element = list_find(listaProcesos, (void*)tienePid);
-	return element==NULL?-1:i-1;
-	/*
-	int j = 0;
-	while ((vectorProcesos[j].pid != pid) && (j <= cantProcesosActivos)) {
-		j++;
-	}
-	if (vectorProcesos[j].pid == pid) {
-		return j;
-	}
-	return -1;
-	*/
+	t_tablaProceso *element = list_find(listaProcesos, (void*) tienePid);
+	return element == NULL ? -1 : i - 1;
 }
 
 int crearSegmento(int tamano) {
 	t_tablaSegmento *nuevoSegmento = crear_nodoSegm(procesoActivo(), 073,
-			obtenerInicioLogico(procesoActivo()), tamano,
+			obtenerInicioLogico(procesoActivo(), tamano), tamano,
 			obtenerInicioReal(tamano));
-	t_tablaProceso *proceso = list_get(listaProcesos, buscarPid(procesoActivo()));
-	if (proceso->tabla==NULL) proceso->tabla =list_create();
+	t_tablaProceso *proceso = list_get(listaProcesos,
+			buscarPid(procesoActivo()));
+	if (proceso->tabla == NULL )
+		proceso->tabla = list_create();
 	list_add(proceso->tabla, nuevoSegmento);
-	//list_add(vectorProcesos[buscarPid(procesoActivo())].tabla, nuevoSegmento);
 	return nuevoSegmento->inicioLogico;
-} //Creo que es necesario que devuelva el inicio logico asi el programa puede identificarlo posteriormente.
-
-bool tieneProblemas(int inicio, int pid) {
-	if ((((t_tablaProceso *)list_get(listaProcesos, buscarPid(pid)))->tabla)==NULL) return false;
-	t_list* tabla = ((t_tablaProceso *)list_get(listaProcesos, buscarPid(pid)))->tabla;
-
-	bool condicion(t_tablaSegmento* segmento) {
-		return ((inicio >= segmento->inicioLogico)
-				&& (inicio <= (segmento->inicioLogico + segmento->tamano)));
-	}
-
-	return list_any_satisfy(tabla, (void*) condicion);
 }
 
-int obtenerInicioLogico(int pid) {
-	/*const int SIZE_SEGMENT = 1000;
-	int inicioLogico;
+bool tieneProblemas(int inicio, int pid, int tamano) {
+	if ((((t_tablaProceso *) list_get(listaProcesos, buscarPid(pid)))->tabla)
+			== NULL )
+		return false;
+	t_list* tabla =
+			((t_tablaProceso *) list_get(listaProcesos, buscarPid(pid)))->tabla;
+	int i = 1;
+
+	bool ordenarPorInicioLogico(t_tablaSegmento *inicioMenor,
+			t_tablaSegmento *inicioMayor) {
+		return inicioMenor->inicioLogico < inicioMayor->inicioLogico;
+	}
+	list_sort(tabla, (void*) ordenarPorInicioLogico);
+	t_limites_logico *delimitar_espacios_libres(t_tablaSegmento *elemento) {
+		t_limites_logico *aux = malloc(sizeof(t_limites));
+		if ((i == 1) && (elemento->inicioLogico != 0)) {
+			aux->comienzo = 0;
+			aux->final = elemento->inicioLogico - 1;
+		}
+		aux->comienzo = elemento->inicioLogico + elemento->tamano + 1;
+		if (list_get(tabla, i) == NULL ) {
+			aux->final = 1000;
+		} else {
+			aux->final = ((t_tablaSegmento *) list_get(tabla, i))->inicioLogico
+					- 1;
+		}
+		i++;
+		return aux;
+	}
+	t_list *listaEspacios = list_map(tabla, (void*) delimitar_espacios_libres);
+	t_limites_logico *aux = malloc(sizeof(t_limites_logico));
+	if (list_is_empty(listaEspacios)) {
+		aux->comienzo = 0;
+		aux->final = 1000;
+		list_add(listaEspacios, aux);
+	}
+	if ((listaEspacios->elements_count == tabla->elements_count)
+			&& (!list_is_empty(listaEspacios))) {
+		aux->comienzo = 0;
+		aux->final = ((t_tablaSegmento *) tabla->head->data)->inicioLogico - 1;
+		list_add_in_index(listaEspacios, 0, aux);
+	}
+	bool estaDentroDeUnEspacio(t_limites_logico* espacio) {
+		return ((inicio > espacio->comienzo)
+				&& ((inicio + tamano) < (espacio->final)));
+	}
+	return !list_any_satisfy(listaEspacios, (void*) estaDentroDeUnEspacio);
+}
+
+int obtenerInicioLogico(int pid, int tamano) {
+	const int SIZE_SEGMENT = 1000;
+	int inicioLogico, error = 0;
 	srand(time(NULL ));
 	inicioLogico = rand() % SIZE_SEGMENT;
 
-	while (tieneProblemas(inicioLogico, pid)) {
+	while (tieneProblemas(inicioLogico, pid, tamano) || (error > 20)) {
 		inicioLogico = rand() % SIZE_SEGMENT;
+		error++;
 	}
+	if (error > 20)
+		printf("Hay un tema con las bases logicas");
 	return inicioLogico;
-	*/
-	return 5; //El numero 5 es casi tan bueno como muchos algoritmos raros
 }
 void compactarMemoria() {
 	int i = -1;
@@ -210,8 +231,6 @@ void *seleccionarSegunAlgoritmo(t_list *lista) {
 		}
 		list_sort(lista, (void*) _mayorTamano);
 	}
-//Con list_get 0 tenemos el comienzo y el final del segmento segun el algoritmo
-//Yo elijo el primer bit porque ni se como usar las funciones random
 	return (((t_limites *) list_head(lista))->comienzo);
 }
 //Habla bastante por si sola.
@@ -223,12 +242,12 @@ void cambiarAlgoritmo() {
 }
 
 void mostrarListaSegmentos(t_list *listaSegmento) {
-	printf("			  Comienzo Final pidOwner\n");
+	printf("			  Comienzo Final pidOwner BaseLogica Tamano\n");
 	void _mostrar_posiciones_y_pid_owner(t_tablaSegmento* elemento) {
-		printf("Contenido lista Segmentos:%x %x %d\n",
+		printf("Contenido lista Segmentos:%x %x %d       %d       %d\n",
 				(unsigned int) elemento->memPpal,
 				(unsigned int) elemento->memPpal + elemento->tamano,
-				elemento->pidOwner);
+				elemento->pidOwner, elemento->inicioLogico, elemento->tamano);
 	}
 	list_iterate(listaSegmento, (void*) _mostrar_posiciones_y_pid_owner);
 }
@@ -255,7 +274,7 @@ t_list *obtenerEspaciosDisponibles() {
 
 	t_list *lista2 = list_map(listaParaAmasar, (void*) _mapear_t_limites);
 
-	t_limites *_delimitar_espacios_libres(t_limites *limites) {
+	t_limites *_delimitar_espacios_fisicos_libres(t_limites *limites) {
 		t_limites *aux = malloc(sizeof(t_limites));
 		if ((i == 1) && (limites->comienzo != baseUMV)) { //A esto lo hago por si hay un espacio libre antes del primer segmento
 			aux->comienzo = baseUMV;
@@ -271,7 +290,8 @@ t_list *obtenerEspaciosDisponibles() {
 		i++;
 		return aux;
 	}
-	t_list *lista3 = list_map(lista2, (void*) _delimitar_espacios_libres);
+	t_list *lista3 = list_map(lista2,
+			(void*) _delimitar_espacios_fisicos_libres);
 	if (list_is_empty(lista3))
 		list_add(lista3, crear_nodoLim(baseUMV, baseUMV + tamanoUMV));
 	bool _no_es_un_error(t_limites *unaCosa) {
@@ -287,10 +307,12 @@ t_list *obtenerListaSegmentosOrdenada() {
 	int i;
 	t_list *listaAux = list_create(), *listaSegmentos = list_create();
 	bool _tiene_pid_owner(t_tablaSegmento *self) {
-		return self->pidOwner == ((t_tablaProceso *)list_get(listaProcesos, i))->pid;
+		return self->pidOwner
+				== ((t_tablaProceso *) list_get(listaProcesos, i))->pid;
 	}
 	for (i = 0; i < cantProcesosActivos; i++) {
-		listaAux = list_filter(((t_tablaProceso *)list_get(listaProcesos, i))->tabla,
+		listaAux = list_filter(
+				((t_tablaProceso *) list_get(listaProcesos, i))->tabla,
 				(void*) _tiene_pid_owner);
 		list_add_all(listaSegmentos, listaAux);
 	}
@@ -307,7 +329,9 @@ void destruirSegmento(int base) {
 	bool _coincide_base_logica(t_tablaSegmento *self) {
 		return self->inicioLogico == base;
 	}
-	t_tablaSegmento* aux = list_remove_by_condition(((t_tablaProceso *)list_get(listaProcesos, buscarPid(procesoActivo())))->tabla,
+	t_tablaSegmento* aux = list_remove_by_condition(
+			((t_tablaProceso *) list_get(listaProcesos,
+					buscarPid(procesoActivo())))->tabla,
 			(void*) _coincide_base_logica);
 	if (NULL == aux) {
 		printf("Quisiste borrar algo que no hay papa\n");
@@ -316,12 +340,9 @@ void destruirSegmento(int base) {
 }
 
 void destruirTodosLosSegmentos() {
-	/*
 	list_destroy_and_destroy_elements(
-			vectorProcesos[buscarPid(procesoActivo())].tabla,
-			(void*) tsegm_destroy);
-	*/
-	list_destroy_and_destroy_elements(((t_tablaProceso *)list_get(listaProcesos, buscarPid(procesoActivo())))->tabla, (void*)tsegm_destroy);
+			((t_tablaProceso *) list_get(listaProcesos,
+					buscarPid(procesoActivo())))->tabla, (void*) tsegm_destroy);
 }
 
 void conseguirDeArchivo(int *p_tamanoUMV) {
@@ -337,7 +358,10 @@ t_tablaSegmento *obtenerPtrASegmento(int base, int pid) {
 	bool _coincide_base_logica(t_tablaSegmento *self) {
 		return self->inicioLogico == base;
 	}
-	return (t_tablaSegmento *) list_head(list_filter(((t_tablaProceso *)list_get(listaProcesos, buscarPid(pid)))->tabla, (void*)_coincide_base_logica));
+	return (t_tablaSegmento *) list_head(
+			list_filter(
+					((t_tablaProceso *) list_get(listaProcesos, buscarPid(pid)))->tabla,
+					(void*) _coincide_base_logica));
 }//El list_head a.k.a list_get(lista, 0) sacaria el primer elemento, no deberia ser necesario pero
 //por el momento todos tendrian la misma base logica (073) entonces lo necesito.
 
@@ -364,35 +388,22 @@ void enviarUnosBytes(int base, int offset, int tamano, void *mensaje) {
 		memcpy(obtenerDirFisica(base, offset, pid), mensaje, tamano);
 }
 
-int procesoActivo() {/*
-	int i = 0;
-	while (!vectorProcesos[i].activo) {
-		i++;
+int procesoActivo() {
+	bool estaActivo(t_tablaProceso *self) {
+		return self->activo == 1;
 	}
-	return vectorProcesos[i].pid;*/
-	bool estaActivo(t_tablaProceso *self){
-		return self->activo==1;
-	}
-	t_tablaProceso *elemento =list_find(listaProcesos, (void*)estaActivo);
-	return elemento->pid;//Podria tambien devolver i
+	t_tablaProceso *elemento = list_find(listaProcesos, (void*) estaActivo);
+	return elemento->pid;	//Podria tambien devolver i
 }
 
 void cambiarProcesoActivo(int pid) {
-	/*int i = 0;
-	for (i = 0; i < cantProcesosActivos; i++) {
-		if (vectorProcesos[i].pid == pid) {
-			vectorProcesos[i].activo = 1;
-		} else {
-			vectorProcesos[i].activo = 0;
-		}	//No se porque no me deja usar el ? :
-	}*/
-	void cambiarActivo(t_tablaProceso *self){
-		if(self->pid==pid)
-			(self->activo)=1;
+	void cambiarActivo(t_tablaProceso *self) {
+		if (self->pid == pid)
+			(self->activo) = 1;
 		else
-			(self->activo)=0;
+			(self->activo) = 0;
 	}
-	list_iterate(listaProcesos, (void*)cambiarActivo);
+	list_iterate(listaProcesos, (void*) cambiarActivo);
 }
 
 char *solicitarBytes(int base, int offset, int tamano) {
@@ -420,13 +431,15 @@ void dumpTablaSegmentos(bool archivo, int pid) {
 	if (pid == -1) {
 		for (i = 0; i < cantProcesosActivos; i++) {
 			printf("Se muestra la tabla de segmentos del proceso %d\n",
-					((t_tablaProceso *)list_get(listaProcesos, i))->pid);
-			mostrarListaSegmentos(((t_tablaProceso *)list_get(listaProcesos, i))->tabla);
+					((t_tablaProceso *) list_get(listaProcesos, i))->pid);
+			mostrarListaSegmentos(
+					((t_tablaProceso *) list_get(listaProcesos, i))->tabla);
 		}
 	} else {
 		printf("Se muestra la tabla de segmentos del proceso %d\n",
-				((t_tablaProceso *)list_get(listaProcesos, buscarPid(pid)))->pid);
-		mostrarListaSegmentos(((t_tablaProceso *)list_get(listaProcesos, buscarPid(pid)))->tabla);
+				((t_tablaProceso *) list_get(listaProcesos, buscarPid(pid)))->pid);
+		mostrarListaSegmentos(
+				((t_tablaProceso *) list_get(listaProcesos, buscarPid(pid)))->tabla);
 	}
 }
 

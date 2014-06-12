@@ -21,6 +21,9 @@ extern bool algoritmo; //0 significa FF, lo ponemos por defecto porque es el mas
 typedef struct {
 	void *comienzo, *final;
 } t_limites;
+typedef struct {
+	int comienzo, final;
+} t_limites_logico;
 
 typedef struct {
 	int pidOwner, identificador, inicioLogico, tamano;
@@ -54,7 +57,7 @@ void conseguirDeArchivo(int *);
 void *obtenerDirFisica(int, int, int);
 void enviarUnosBytes(int, int, int, void*);
 char *solicitarBytes(int, int, int);
-int obtenerInicioLogico(int);
+int obtenerInicioLogico(int, int);
 int buscarPid(int);
 int procesoActivo();
 void cambiarProcesoActivo(int);
