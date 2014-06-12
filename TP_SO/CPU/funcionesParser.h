@@ -17,6 +17,10 @@ AnSISOP_kernel funciones_kernel;
 
 void vincularPrimitivas();
 
+char *solicitarBytesAUMV(t_puntero base, t_puntero desplazamiento, int tamano);
+void enviarBytesAUMV(t_puntero base, t_puntero desplazamiento, void *datos,
+		int tamano);
+
 t_puntero definirVariable(t_nombre_variable identificador_variable );
 t_puntero obtenerPosicionVariable(t_nombre_variable identificador_variable );
 t_valor_variable dereferenciar(t_puntero direccion_variable);

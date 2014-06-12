@@ -43,10 +43,11 @@ t_puntero stackBase;
 t_puntero desplazamiento;
 t_dictionary *diccionario;
 t_puntero cursorCtxto;
-char *etiquetas;
+extern char *etiquetas;
 t_PCB *pcb;
 
 typedef enum {
+	CONFIRMACION,
 	SEGMENTATION_FAULT,
 	MEMORY_OVERLOAD,
 	MOSTRAR_VALOR,
@@ -61,6 +62,9 @@ typedef enum {
 	ESCRIBIR_EN_UMV_OFFSET_CERO,
 	ENVIAR_PCB,
 	SOLICITAR_A_UMV,
+	ESPERAR_SEMAFORO,
+	HABILITAR_SEMAFORO,
+	BLOQUEATE,
 	PEDIR_ETIQUETAS,
 	PEDIR_INSTRUCCION
 }codigos_mensajes;
@@ -144,10 +148,9 @@ void enviarBytesAUMV(t_puntero base, t_puntero desplazamiento, void *datos,
 			crear_nodoVar(&desplazamiento, sizeof(t_puntero)),
 			crear_nodoVar(datos, tamano), 0);
 	//Aca faltaria un queue_push(queue, crear_nodoVar(ID MENSAJE, 1));
-	int *razon = malloc(sizeof(int));
-	*razon = ESCRIBIR_EN_UMV;
+	int razon = ESCRIBIR_EN_UMV;
 	t_paquete *header = serializar2(crear_nodoVar(&(paquete->tamano), 4),
-			crear_nodoVar(razon, 4), 0);
+			crear_nodoVar(&razon, 4), 0);
 	send(socketUMV, header->msj, TAMANO_CABECERA, 0);
 	send(socketUMV, paquete->msj, paquete->tamano, 0);
 	//tambien deberia escuchar un mensaje de confirmacion
@@ -157,22 +160,26 @@ char *solicitarBytesAUMV(t_puntero base, t_puntero desplazamiento, int tamano) {
 			crear_nodoVar(&desplazamiento, sizeof(t_puntero)),
 			crear_nodoVar(&tamano, 4));
 	//Tambien faltaria lo mismo que en enviarbytes
-	int *razon = malloc(sizeof(int));
-	*razon = SOLICITAR_A_UMV;
+	int razon = SOLICITAR_A_UMV;
 	t_paquete *header = serializar2(crear_nodoVar(&(paquete->tamano), 4),
-			crear_nodoVar(razon, 4));
+			crear_nodoVar(&razon, 4));
 	send(socketUMV, header->msj, TAMANO_CABECERA, 0);
 	send(socketUMV, paquete->msj, paquete->tamano, 0);
 	//bind y listen mediante
 	char *msjCabecera = malloc(TAMANO_CABECERA);
 	recv(socketUMV, msjCabecera, TAMANO_CABECERA, MSG_WAITALL);
 	int tamanoMensaje;
-	desempaquetar2(msjCabecera, &tamanoMensaje);
-	char *mensaje = malloc(tamanoMensaje);
-	recv(socketUMV, mensaje, tamanoMensaje, MSG_WAITALL);
-	char *aux = malloc(tamano);
-	desempaquetar2(mensaje, aux);
-	return aux;
+	desempaquetar2(msjCabecera, &tamanoMensaje, razon, 0);
+	if (razon==CONFIRMACION){
+		char *mensaje = malloc(tamanoMensaje);
+		recv(socketUMV, mensaje, tamanoMensaje, MSG_WAITALL);
+		char *aux = malloc(tamano);
+		desempaquetar2(mensaje, aux, 0);
+		return aux;
+	} else{
+		//notificar error
+		return "";
+	}
 } //UFF SOY TAN HOMBRE
 
 t_puntero definirVariable(t_nombre_variable identificador_variable) {
@@ -199,17 +206,16 @@ void asignar(t_puntero direccion_variable, t_valor_variable valor) {
 }
 
 t_valor_variable obtenerValorCompartida(t_nombre_compartida variable) {
-	int *razon=malloc(sizeof(int));
-	*razon=OBTENER_VALOR_COMPARTIDA;
-	t_paquete *paquete=serializar2(crear_nodoVar(variable, strlen(variable)));
-	t_paquete *header=serializar2(crear_nodoVar(&(paquete->tamano), 4), crear_nodoVar(razon, 4));
+	int razon=OBTENER_VALOR_COMPARTIDA;
+	t_paquete *paquete=serializar2(crear_nodoVar(variable, strlen(variable)), 0);
+	t_paquete *header=serializar2(crear_nodoVar(&(paquete->tamano), 4), crear_nodoVar(&razon, 4), 0);
 	send(socketKernel, header->msj, TAMANO_CABECERA, 0);
 	send(socketKernel, paquete->msj, paquete->tamano, 0);
 	char *msjCabecera = malloc(TAMANO_CABECERA);
 	//bind y listen mediante
 	recv(socketKernel, msjCabecera, TAMANO_CABECERA, MSG_WAITALL);
 	int tamanoMensaje;
-	desempaquetar2(msjCabecera, &tamanoMensaje, razon, 0);
+	desempaquetar2(msjCabecera, &tamanoMensaje, &razon, 0);
 	//quizas deberia preguntar por la razon, pero ni da la verdad.
 	char *mensaje = malloc(tamanoMensaje);
 	recv(socketKernel, mensaje, tamanoMensaje, MSG_WAITALL);
@@ -293,7 +299,28 @@ void entradaSalida(t_nombre_dispositivo dispositivo, int tiempo) {
 }
 void wait(t_nombre_semaforo identificador_semaforo) {
 	//PASO
+	int razon=ESPERAR_SEMAFORO, tamano;
+	t_paquete *paquete=serializar2(crear_nodoVar(identificador_semaforo, strlen(identificador_semaforo)), 0);
+	t_paquete *header=serializar2(crear_nodoVar(&(paquete->tamano), 4) , crear_nodoVar(&razon, 4), 0);
+	send(socketKernel, (void*)header->msj, TAMANO_CABECERA, 0);
+	send(socketKernel, (void*)paquete->msj, paquete->tamano, 0);
+	char *cabecera=malloc(TAMANO_CABECERA);
+	//lo que haga falta
+	recv(socketKernel, (void*)cabecera, TAMANO_CABECERA, MSG_WAITALL);
+	desempaquetar2(cabecera, &tamano, &razon, 0);
+	if (razon==BLOQUEATE){
+		//sacarDeCpu(1);//1 significaria por bloqueo
+	} else{
+		//Creo que nada
+	}
 }
 void signal(t_nombre_semaforo identificador_semaforo) {
-
+	int razon=HABILITAR_SEMAFORO;
+	t_paquete *paquete=serializar2(crear_nodoVar(identificador_semaforo, strlen(identificador_semaforo)), 0);
+	t_paquete *header=serializar2(crear_nodoVar(&(paquete->tamano), 4), crear_nodoVar(&razon, 4), 0);
+	send(socketKernel, (void*)header->msj, TAMANO_CABECERA, 0);
+	send(socketKernel, (void*)paquete->msj, paquete->tamano, 0);
+	/*Creo que no hace falta un recv, porque no le afecta directamente a el,
+	 * el PCP deberia sacar de la cola de bloqueados a quien corresponda y listo.
+	 */
 }
