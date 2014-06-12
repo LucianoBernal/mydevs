@@ -21,6 +21,14 @@ typedef struct {
 	int tamanio_Contexto_Actual;//Cantidad de variables (locales y parámetros) del Contexto de Ejecución Actual
 	int tamanio_Indice_de_Etiquetas;//Cantidad de bytes que ocupa el Índice de etiquetas
 } t_PCB;
-
-
+typedef struct{
+	int tamano;
+	char *p_var;
+}t_tamYDir;
+/*typedef struct{
+	char *msj;
+	char tamano;//un tamano de 255 PUEDE ser poco
+	char cantVar;//pero es mejor que nada
+}t_paquete;
+*/
 #endif /* DEFINICIONES_H_ */

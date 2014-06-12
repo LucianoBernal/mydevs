@@ -14,7 +14,7 @@ typedef struct{
 }t_tamYDir;
 typedef struct{
 	char *msj;
-	char tamano;//un tamano de 255 PUEDE ser poco
+	int tamano;//un tamano de 255 PUEDE ser poco
 	char cantVar;//pero es mejor que nada
 }t_paquete;
 

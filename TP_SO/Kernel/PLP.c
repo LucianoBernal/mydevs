@@ -4,7 +4,6 @@
  *  Created on: 18/05/2014
  *      Author: utnso
  */
-
 #include "PLP.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,6 +13,7 @@
 #include <commons/collections/list.h>
 #include <commons/collections/queue.h>
 #include <semaphore.h>
+#include <sys/socket.h>
 
 static t_list* colaNew;
 static t_list* randoms;
@@ -23,10 +23,26 @@ static sem_t * colaNuevosVacio = NULL;
 static sem_t * randomMutex = NULL;
 static sem_t * numABorrarMutex = NULL;
 static sem_t * colaNuevosMutex = NULL;
-
+typedef enum {
+	SEGMENTATION_FAULT,
+	MEMORY_OVERLOAD,
+	CREAR_SEGMENTO,
+	CREAR_SEGMENTOS_PROGRAMA,
+	DESTRUIR_SEGMENTOS,
+	ESCRIBIR_EN_UMV,
+	ESCRIBIR_EN_UMV_OFFSET_CERO,
+	ENVIAR_PCB,
+	SOLICITAR_A_UMV,
+	PEDIR_ETIQUETAS,
+	PEDIR_INSTRUCCION
+};
+#define TAMANO_CABECERA 7
+int socketUMV; //Agregada por pato, deberias crear el socket en algun momento.
+int tamanoStack; //Deberia leerlo desde config
 void asignaciones_desde_metada(t_metadata_program* metadata, t_PCB* pcb) {
 	pcb->program_Counter = metadata->instruccion_inicio;
 	pcb->tamanio_Indice_de_Etiquetas = metadata->etiquetas_size;
+
 	/*pcb-> = metadata->instrucciones_size;
 	 pcb-> = metadata->instrucciones_serializado;
 	 pcb-> = metadata->etiquetas;
@@ -107,7 +123,7 @@ void lanzarHiloColaNewAReady() {
 				iretColaNew);
 
 	}
-	pthread_join( threadColaNew, NULL);
+	pthread_join(threadColaNew, NULL );
 
 }
 
@@ -119,6 +135,73 @@ void escribir_en_Memoria(t_metadata_program*, t_PCB*);
 void notificar_Memoria_Llena();
 //int calcularPeso(t_metadata_program*);
 //void liberar_numero(int pid);
+int solicitar_Memoria(t_metadata_program *metadata, t_PCB *pcb,
+		const char* literal) {
+	int *codigoRespuesta = malloc(sizeof(int));
+	char *tamanoRespuesta = malloc(sizeof(char));
+	//Ya lo agregue a definiciones.h, sigue tirando error
+	t_paquete *mensaje = serializar2(strlen(literal), metadata->etiquetas_size,
+			tamanoStack, metadata->instrucciones_size);
+	int *razon = malloc(sizeof(int));
+	*razon = CREAR_SEGMENTOS_PROGRAMA;
+	t_paquete *header = serializar2(crear_nodoVar(&mensaje->tamano, 1),
+			crear_nodoVar(razon, sizeof(int)), 0);
+	send(socketUMV, (void*) header, TAMANO_CABECERA, 0);
+	send(socketUMV, (void*) mensaje, mensaje->tamano, 0);
+	char *hRespuesta = malloc(TAMANO_CABECERA);
+	recv(socketUMV, (void*) hRespuesta, TAMANO_CABECERA, MSG_WAITALL);
+	desempaquetar2(hRespuesta, tamanoRespuesta, codigoRespuesta, 0);
+	if (codigoRespuesta) {
+		char *msjRespuesta = malloc(tamanoRespuesta);
+		recv(socketUMV, (void*) msjRespuesta, tamanoRespuesta, MSG_WAITALL);
+		desempaquetar2(msjRespuesta, pcb->segmento_Codigo,
+				pcb->indice_de_Etiquetas, pcb->segmento_Stack,
+				pcb->indice_de_Codigo, 0);
+	} else {
+		printf("No habia espacio en memoria");
+	}
+	return *codigoRespuesta;
+}
+
+void escribir_en_Memoria(t_metadata_program * metadata, t_PCB *pcb,
+		const char *literal) {
+	int *razon = malloc(sizeof(int));
+	*razon = ESCRIBIR_EN_UMV_OFFSET_CERO;
+	char error = 1;
+	//Segmento codigo
+	t_paquete *paquete = serializar2(crear_nodoVar(&(pcb->program_id), 4),
+			crear_nodoVar((pcb->segmento_Codigo), 4),
+			crear_nodoVar(literal, strlen(literal)), 0);
+	t_paquete *header = serializar2(crear_nodoVar(&(paquete->tamano), 4),
+			crear_nodoVar(razon, sizeof(int)), 0);
+	if (error)
+		error = send(socketUMV, (void*) header, TAMANO_CABECERA, 0);
+	if (error)
+		error = send(socketUMV, (void*) paquete, paquete->tamano, 0);
+	//indice etiquetas
+	t_paquete *paquete = serializar2(crear_nodoVar(&(pcb->program_id), 4),
+			crear_nodoVar((pcb->indice_de_Etiquetas), 4),
+			crear_nodoVar(metadata->etiquetas, metadata->etiquetas_size), 0);
+	t_paquete *header = serializar2(crear_nodoVar(&(paquete->tamano), 4),
+			crear_nodoVar(razon, sizeof(int)), 0);
+	if (error)
+		error = send(socketUMV, (void*) header, TAMANO_CABECERA, 0);
+	if (error)
+		error = send(socketUMV, (void*) paquete, paquete->tamano, 0);
+	//indice codigo
+	t_paquete *paquete = serializar2(crear_nodoVar(&(pcb->program_id), 4),
+			crear_nodoVar((pcb->indice_de_Codigo), 4),
+			crear_nodoVar(metadata->instrucciones_serializado,
+					metadata->instrucciones_size), 0);
+	t_paquete *header = serializar2(crear_nodoVar(&(paquete->tamano), 4),
+			crear_nodoVar(razon, sizeof(int)), 0);
+	if (error)
+		error = send(socketUMV, (void*) header, TAMANO_CABECERA, 0);
+	if (error)
+		error = send(socketUMV, (void*) paquete, paquete->tamano, 0);
+	if (!error)
+		printf("Alguno de los sends fallo, noob");
+}
 
 void gestionarProgramaNuevo(const char* literal) { // UN HILO
 	t_PCB* pcb = malloc(sizeof(t_PCB));
@@ -126,11 +209,11 @@ void gestionarProgramaNuevo(const char* literal) { // UN HILO
 	pcb->program_id = generarProgramID();
 	asignaciones_desde_metada(metadata, pcb);
 	int peso = calcularPeso(metadata);
-	if (solicitar_Memoria(metadata, pcb)
+	if (solicitar_Memoria(metadata, pcb, literal)
 			== 0 /*ergo se pudo reservar memoria */) { //HABLAR CON PROJECTS LEADERS DE UMV
-		escribir_en_Memoria(metadata, pcb);
+		escribir_en_Memoria(metadata, pcb, literal);
 		encolar_New(pcb, peso);
-		} else {
+	} else {
 		notificar_Memoria_Llena();
 		free(pcb);
 		liberar_numero(pcb->program_id);
@@ -140,17 +223,17 @@ void gestionarProgramaNuevo(const char* literal) { // UN HILO
 }
 //void encolar_en_Ready(t_PCB*);
 void deNewAReady(int sinParametro) { // OTRO HILO
-	while(1){
-	sem_wait(colaNuevosVacio);
-	sem_wait(grado_Multiprogramacion);
-	t_new* elementoSacado;
-	sem_wait(colaNuevosMutex);
-	elementoSacado = list_remove(colaNew, 0);
-	sem_post(colaNuevosMutex);
-	t_PCB* pcb_Ready;
-	pcb_Ready = elementoSacado->pcb;
-	encolar_en_Ready(pcb_Ready);
-	free(elementoSacado);
+	while (1) {
+		sem_wait(colaNuevosVacio);
+		sem_wait(grado_Multiprogramacion);
+		t_new* elementoSacado;
+		sem_wait(colaNuevosMutex);
+		elementoSacado = list_remove(colaNew, 0);
+		sem_post(colaNuevosMutex);
+		t_PCB* pcb_Ready;
+		pcb_Ready = elementoSacado->pcb;
+		encolar_en_Ready(pcb_Ready);
+		free(elementoSacado);
 	}
 }
 

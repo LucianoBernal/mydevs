@@ -17,6 +17,12 @@ typedef struct {
 	int peso;
 } t_new;
 
+typedef struct{
+	char *msj;
+	int tamano;//un tamano de 255 PUEDE ser poco
+	char cantVar;//pero es mejor que nada
+}t_paquete;
+
 
 void gestionarProgramaNuevo(const char* );
 void deNewAReady();
