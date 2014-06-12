@@ -4,10 +4,19 @@
  *  Created on: 09/06/2014
  *      Author: utnso
  */
-
+#include <biblioteca_comun/definiciones.h>
+#include <parser/parser.h>
+#include <parser/metadata_program.h>
 #include "funcionesParser.h"
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#include <unistd.h>
 
-#define TAMANO_CABECERA 2
+#define TAMANO_CABECERA 16
 
 void vincularPrimitivas() {
 	funciones_Ansisop.AnSISOP_asignar = asignar;
@@ -28,12 +37,30 @@ void vincularPrimitivas() {
 	funciones_kernel.AnSISOP_wait = wait;
 
 }
-int socketUMV;
+int socketUMV, socketKernel;
 int programCounter;
 t_puntero stackBase;
 t_puntero desplazamiento;
 t_dictionary *diccionario;
 t_puntero cursorCtxto;
+char *etiquetas;
+t_PCB *pcb;
+
+typedef enum {
+	SEGMENTATION_FAULT,
+	MEMORY_OVERLOAD,
+	OBTENER_VALOR_COMPARTIDA,
+	ASIGNAR_VALOR_COMPARTIDA,
+	CREAR_SEGMENTO,
+	CREAR_SEGMENTOS_PROGRAMA,
+	DESTRUIR_SEGMENTOS,
+	ESCRIBIR_EN_UMV,
+	ESCRIBIR_EN_UMV_OFFSET_CERO,
+	ENVIAR_PCB,
+	SOLICITAR_A_UMV,
+	PEDIR_ETIQUETAS,
+	PEDIR_INSTRUCCION
+}codigos_mensajes;
 
 typedef struct {
 	t_nombre_variable identificador_variable;
@@ -41,9 +68,59 @@ typedef struct {
 } t_variable;
 
 typedef struct {
+	char *msj;
+	int tamano; //un tamano de 255 PUEDE ser poco
+	char cantVar; //pero es mejor que nada
+} t_paquete;
+
+typedef struct {
 	t_nombre_variable identificador_variable;
 	t_puntero desplazamiento;
 } t_variable_diccionario;
+typedef struct{
+	int tamano;
+	char *p_var;
+}t_tamYDir;
+
+t_tamYDir *crear_nodoVar(void *, int);
+t_paquete *serializar2(t_tamYDir *uno, ...);
+void desempaquetar2(char *, void *, ...);
+
+t_paquete *serializar2(t_tamYDir *uno, ...){
+	va_list(p);
+	va_start(p, uno);
+	int acum = 0;
+	t_tamYDir *arg=uno;
+	t_paquete *paquete=malloc(sizeof(t_paquete));
+	paquete->msj=malloc(50);
+	do{
+		memcpy(acum+(paquete->msj), &(arg->tamano), 4);
+		memcpy(acum+4+(paquete->msj), arg->p_var, arg->tamano);
+		acum+=((arg->tamano)+4);
+	}while((arg = va_arg(p, t_tamYDir *)));
+	va_end(p);
+	paquete->tamano=acum;
+	return paquete;
+}
+void desempaquetar2(char *msjRecibido, void *uno, ...){
+	va_list(p);
+	va_start(p, uno);
+	void * arg=uno;
+	int tamano;
+	int acum=0;
+	do{
+		memcpy(&tamano, msjRecibido+acum, 4);
+		memcpy(arg, msjRecibido+acum+4, tamano);
+		acum+=(tamano+4);
+	}while((arg = va_arg(p, void*)));
+
+}
+t_tamYDir *crear_nodoVar(void *p_var, int tamano){
+	t_tamYDir *nuevo=malloc(sizeof(t_tamYDir));
+	nuevo->p_var=p_var;
+	nuevo->tamano=tamano;
+	return nuevo;
+}
 
 static t_variable_diccionario *crear_nodoDiccionario(
 		t_nombre_variable identificador, int desplazamiento) {
@@ -52,49 +129,49 @@ static t_variable_diccionario *crear_nodoDiccionario(
 	nuevo->desplazamiento = desplazamiento;
 	return nuevo;
 }
-
+/*
 static void destruir_variable(t_variable *self) {
 	free(self);
 }
+*/
 //claramente a este socket hace falta crearlo (y incluir las librerias)
 void enviarBytesAUMV(t_puntero base, t_puntero desplazamiento, void *datos,
 		int tamano) {
-	t_queue *queue = queue_create();
-	queue_push(queue, crear_nodoVar(&base, sizeof(t_puntero)));
-	queue_push(queue, crear_nodoVar(&base, sizeof(t_puntero)));
-	queue_push(queue, crear_nodoVar(datos, tamano));
-	t_paquete *paquete = Serializar(queue);
-	queue_push(queue, crear_nodoVar(&(paquete->tamano), 4));
+	t_paquete *paquete = serializar2(crear_nodoVar(&base, sizeof(t_puntero)),
+			crear_nodoVar(&desplazamiento, sizeof(t_puntero)),
+			crear_nodoVar(datos, tamano), 0);
 	//Aca faltaria un queue_push(queue, crear_nodoVar(ID MENSAJE, 1));
-	t_paquete *header = Serializar(queue);
-	send(socketUMV, header, TAMANO_CABECERA, 0);
+	int *razon = malloc(sizeof(int));
+	*razon = ESCRIBIR_EN_UMV;
+	t_paquete *header = serializar2(crear_nodoVar(&(paquete->tamano), 4),
+			crear_nodoVar(razon, 4), 0);
+	send(socketUMV, header->msj, TAMANO_CABECERA, 0);
 	send(socketUMV, paquete->msj, paquete->tamano, 0);
 	//tambien deberia escuchar un mensaje de confirmacion
 }
 char *solicitarBytesAUMV(t_puntero base, t_puntero desplazamiento, int tamano) {
-	t_queue *queue = queue_create();
-	queue_push(queue, crear_nodoVar(&base, sizeof(t_puntero)));
-	queue_push(queue, crear_nodoVar(&desplazamiento, sizeof(t_puntero)));
-	queue_push(queue, crear_nodoVar(&tamano, 4));
-	t_paquete *paquete = Serializar(queue);
-	queue_push(queue, crear_nodoVar(&(paquete->tamano), 4));
+	t_paquete *paquete = serializar2(crear_nodoVar(&base, sizeof(t_puntero)),
+			crear_nodoVar(&desplazamiento, sizeof(t_puntero)),
+			crear_nodoVar(&tamano, 4));
 	//Tambien faltaria lo mismo que en enviarbytes
-	t_paquete *header = Serializar(queue);
-	send(socketUMV, header, TAMANO_CABECERA, 0);
+	int *razon = malloc(sizeof(int));
+	*razon = SOLICITAR_A_UMV;
+	t_paquete *header = serializar2(crear_nodoVar(&(paquete->tamano), 4),
+			crear_nodoVar(razon, 4));
+	send(socketUMV, header->msj, TAMANO_CABECERA, 0);
 	send(socketUMV, paquete->msj, paquete->tamano, 0);
-	//bind y listen
+	//bind y listen mediante
 	char *msjCabecera = malloc(TAMANO_CABECERA);
 	recv(socketUMV, msjCabecera, TAMANO_CABECERA, MSG_WAITALL);
 	int tamanoMensaje;
-	queue_push(queue, &tamanoMensaje);
-	Desempaquetar(msjCabecera, queue);
+	desempaquetar2(msjCabecera, &tamanoMensaje);
 	char *mensaje = malloc(tamanoMensaje);
 	recv(socketUMV, mensaje, tamanoMensaje, MSG_WAITALL);
 	char *aux = malloc(tamano);
-	queue_push(queue, aux);
-	Desempaquetar(mensaje, queue);
+	desempaquetar2(mensaje, aux);
 	return aux;
 } //UFF SOY TAN HOMBRE
+
 t_puntero definirVariable(t_nombre_variable identificador_variable) {
 	enviarBytesAUMV(stackBase, desplazamiento, &identificador_variable, 1);
 	t_variable_diccionario *aux = crear_nodoDiccionario(identificador_variable,
@@ -119,16 +196,43 @@ void asignar(t_puntero direccion_variable, t_valor_variable valor) {
 }
 
 t_valor_variable obtenerValorCompartida(t_nombre_compartida variable) {
-
+	int *razon=malloc(sizeof(int));
+	*razon=OBTENER_VALOR_COMPARTIDA;
+	t_paquete *paquete=serializar2(crear_nodoVar(variable, strlen(variable)));
+	t_paquete *header=serializar2(crear_nodoVar(&(paquete->tamano), 4), crear_nodoVar(razon, 4));
+	send(socketKernel, header->msj, TAMANO_CABECERA, 0);
+	send(socketKernel, paquete->msj, paquete->tamano, 0);
+	char *msjCabecera = malloc(TAMANO_CABECERA);
+	//bind y listen mediante
+	recv(socketKernel, msjCabecera, TAMANO_CABECERA, MSG_WAITALL);
+	int tamanoMensaje;
+	desempaquetar2(msjCabecera, &tamanoMensaje, razon, 0);
+	//quizas deberia preguntar por la razon, pero ni da la verdad.
+	char *mensaje = malloc(tamanoMensaje);
+	recv(socketKernel, mensaje, tamanoMensaje, MSG_WAITALL);
+	t_valor_variable *aux = malloc(sizeof(t_valor_variable));
+	desempaquetar2(mensaje, aux, 0);
+	return *aux;
 }
 
 t_valor_variable asignarValorCompartida(t_nombre_compartida variable,
 		t_valor_variable valor) {
+	int *razon=malloc(sizeof(int));
+	*razon=ASIGNAR_VALOR_COMPARTIDA;
+	t_paquete *paquete=serializar2(crear_nodoVar(&variable, sizeof(t_nombre_compartida)), crear_nodoVar(&valor, sizeof(t_valor_variable)), 0);
+	t_paquete *header=serializar2(crear_nodoVar(&(paquete->tamano), 4), crear_nodoVar(razon, 4), 0);
+	send(socketKernel, header->msj, TAMANO_CABECERA, 0);
+	send(socketKernel, paquete->msj, paquete->tamano, 0);
+	//Quizas deberias esperar a la confirmacion PROBABLEMENTE
+	return valor;
+}
 
-}
 void irAlLabel(t_nombre_etiqueta etiqueta) {
-	//Ni idea che;
+	//Segun yo a las 12, al comienzo del programa en el cpu, debemos traer el segmento de etiquetas hacia el.
+	//etiquetas es una global en la que copiamos TODO el indice de etiquetas
+	programCounter=metadata_buscar_etiqueta(etiqueta, etiquetas, pcb->tamanio_Indice_de_Etiquetas);
 }
+
 void llamarSinRetorno(t_nombre_etiqueta etiqueta) {
 	//Yo crearia un nuevo diccionario, pero no se como es esta cosa.
 	enviarBytesAUMV(stackBase, desplazamiento, &cursorCtxto, 4);
