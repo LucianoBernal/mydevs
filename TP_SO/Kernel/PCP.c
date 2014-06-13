@@ -13,13 +13,18 @@ static t_queue* colaExec;
 pthread_t mandarAEjecutar;
 pthread_t enviarCPU;
 pthread_t recibirCPU;
+int retMandarAEjecutar, retEnviarCPU, retRecibirCPU;
+int* p = 0;
 t_dictionary diccionarioDispositivos;
 t_list CPUs;
+int idUltimaCPUDesconectada;
 
 void crearHilosPrincipales() {
-	pthread_create(&mandarAEjecutar, NULL, mandarAEjecutar, NULL );
-	pthread_create(&enviarCPU, NULL, enviarCPU, NULL );
-	pthread_create(&recibirCPU, NULL, recibirCPU, NULL );
+
+	retMandarAEjecutar = pthread_create(&mandarAEjecutar, NULL, mandarAEjecutar,
+			(void*) p);
+	retEnviarCPU = pthread_create(&enviarCPU, NULL, enviarCPU, (void*) p);
+	retRecibirCPU = pthread_create(&recibirCPU, NULL, recibirCPU, (void*) p);
 }
 
 void crearHilosDeEntradaSalida() {
@@ -35,12 +40,12 @@ void crearHilosDeEntradaSalida() {
 		dictionary_put(diccionarioDispositivos, dispositivosEntradaSalida[i],
 				estructuraDispositivo);
 		pthread_t dispositivo;
-		pthread_create(dispositivo, NULL, bloquearYDevolverAReady,
+		pthread_create(&dispositivo, NULL, bloquearYDevolverAReady,
 				(void*) &estructuraDispositivo);
 	}
 }
 
-void* mandarAEjecutar() {
+void* mandarAEjecutar(void* j) {
 // saca procesos de la cola de ready y los manda a la cola de Exec
 
 	sem_wait(vacioReady);
@@ -48,8 +53,6 @@ void* mandarAEjecutar() {
 	queue_push(colaExec, queue_pop(colaReady));
 	sem_post(colaReadyMutex);
 	sem_post(colaExecVacia);
-	return (NULL );
-
 }
 
 void* recibirCPU() {
@@ -84,6 +87,7 @@ void* recibirCPU() {
 			break;
 		case 'd': //la CPU se desconectó
 			seDesconectoCPU(paquete_CPU.IDCpu);
+			idUltimaCPUDesconectada = paquete_CPU.IDCpu;
 			break;
 		}
 	}
@@ -97,7 +101,7 @@ void* recibirCPU() {
 void* enviarCPU() {
 	sem_wait(colaExecVacia);
 	sem_wait(CPUsLibres);
-	int IDCpuLibre = encontrarPrimeraCpuLibre();
+	int IDCpuLibre = encontrarPrimeraCpuLibreYOcuparla();
 	t_PCB* pcb = queue_pop(colaExec);
 	t_paquete_enviar_CPU paquete;
 	paquete.pcb = pcb;
@@ -118,7 +122,6 @@ void* bloquearYDevolverAReady(void * param) {
 	sem_wait(colaReadyMutex);
 	queue_pop(colaReady, estructuraBloqueada.pcb);
 	sem_post(colaReadyMutex);
-	return (NULL );
 
 }
 
@@ -130,7 +133,7 @@ int buscarRetardo(char* dispositivo) {
 	return retardosDispositivos[i];
 }
 
-int encontrarPrimeraCpuLibre() {
+int encontrarPrimeraCpuLibreYOcuparla() {
 	t_estructuraCPU estructura = list_find_element(CPUs, (void*) estaLibre,
 			NULL );
 	estructura.estado = 1;
@@ -176,17 +179,17 @@ void seLiberoUnaCPU(int idCPU) {
 	sem_post(CPUsLibres);
 }
 
-bool tieneID(int id, t_estructuraCPU estructura) //no se si se banca esto
+bool tieneID(t_estructuraCPU estructura)
 {
-	return (estructura.idCPU == id);
+	return (estructura.idCPU == idUltimaCPUDesconectada);
 }
 
 void seDesconectoCPU(int idCPU) {
 	if (la cpu esta libre /*me falta esto*/) {
-		list_remove_by_condition(CPUs, (void*) tieneID(paquete_CPU.IDCpu));
+		list_remove_by_condition(CPUs, (void*) tieneID());
 	} else {
 		//se manda un error a la consola del programa
-		queue_push(colaExit, paquete_CPU->pcb);
+		queue_push(colaExit, paquete_CPU.pcb);
 		list_remove_by_condition(CPUs, (void*) tieneID(paquete_CPU.IDCpu));
 	}
 }

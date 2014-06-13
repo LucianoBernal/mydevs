@@ -24,6 +24,8 @@ void kernel_main(){
 	sem_init(colaReadyMutex,0,1);
 	static sem_t * vacioReady;
 	sem_init(vacioReady,0,0);
+
+	pthread_create()
 }
 
 void* plp(void* parametro){
