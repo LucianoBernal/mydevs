@@ -30,18 +30,17 @@ int main(int argc, char** argv) {
 	listaProcesos = list_create();
 
 	//Creo hilo que atiende a la consola.
-	if(pthread_create(&atencion_consola, NULL, (void *) consola, NULL )){
+	if (pthread_create(&atencion_consola, NULL, (void *) consola, NULL )) {
 		//ERROR. Acá van cosas con log.
-	}
-	else{
+	} else {
 		//Se creó hilo correctamente.
 	}
 
 	//Creo hilo que creará hilos que atienden al kernel/cpu's.
-	if(pthread_create(&atencion_interna, NULL, (void *) atencionInterna, NULL )){
+	if (pthread_create(&atencion_interna, NULL, (void *) atencionInterna,
+			NULL )) {
 		//ERROR. Acá van cosas con log.
-	}
-	else{
+	} else {
 		//Se creó correctamente.
 	}
 	list_destroy(listaProcesos);
@@ -49,10 +48,17 @@ int main(int argc, char** argv) {
 	return EXIT_SUCCESS;
 }
 
-
 int32_t validarConfig(t_config *config) {
 	if (!config_has_property(config, "TAMANIO_UMV")) {
 		perror("Falta TAMANIO_UMV");
+		return EXIT_FAILURE;
+	}
+	if (!config_has_property(config, "RETARDO")) {
+		perror("Falta RETARDO");
+		return EXIT_FAILURE;
+	}
+	if (!config_has_property(config, "ALGORITMO")) {
+		perror("Falta ALGORITMO");
 		return EXIT_FAILURE;
 	}
 
@@ -60,7 +66,11 @@ int32_t validarConfig(t_config *config) {
 }
 
 void cargarConfig(t_config *config) {
-	char *key = "TAMANIO_UMV";
-	tamanio_umv = config_get_int_value(config, key);
+	char *keyTamanio = "TAMANIO_UMV";
+	tamanio_umv = config_get_int_value(config, keyTamanio);
+	char *keyRetardo = "RETARDO";
+	retardo = config_get_int_value(config, keyRetardo);
+	char *keyAlgoritmo = "ALGORITMO";
+	algoritmo = config_get_int_value(config, keyAlgoritmo);
 }
 

@@ -20,8 +20,12 @@
 #include "consola.h"
 #include "atencionInterna.h"
 
+/*Constantes*/
+
 /*Variables Globales*/
 extern uint32_t tamanio_umv;
+extern uint32_t retardo;
+extern uint32_t algoritmo;
 extern void *baseUMV;
 extern t_list *listaProcesos;
 
@@ -35,8 +39,6 @@ typedef struct {
 } t_tablaProceso;
 
 t_tablaProceso vectorProcesos[10];
-
-/*Constantes*/
 
 /*Funciones*/
 int32_t validarConfig(t_config *config);
