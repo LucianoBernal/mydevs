@@ -425,6 +425,7 @@ void dumpMemoriaLibreYSegmentos(bool archivo) {
 	}
 	list_iterate(obtenerEspaciosDisponibles(), (void*) _acumularEspacio);
 	printf("El espacio actual disponible en memoria es: %d b\n", i);
+	//TODO: guardar en archivo
 }
 void dumpTablaSegmentos(bool archivo, int pid) {
 	int i;
@@ -441,6 +442,7 @@ void dumpTablaSegmentos(bool archivo, int pid) {
 		mostrarListaSegmentos(
 				((t_tablaProceso *) list_get(listaProcesos, buscarPid(pid)))->tabla);
 	}
+	//TODO: guardar en archivo
 }
 
 void dumpMemoriaChata(int offset, int tamano, bool archivo) {
@@ -455,6 +457,7 @@ void dumpMemoriaChata(int offset, int tamano, bool archivo) {
 		if (i % 96 == 0)
 			printf(" \n");
 	}
+	//TODO: guardar en archivo
 }
 
 /*FIXME: no funciona si se pasa el retardo por parámetro

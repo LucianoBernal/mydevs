@@ -144,8 +144,28 @@ void analizarYEjecutar(char *comando) {
 	}	//Termina if de compactación.
 
 	else if (!strncmp("dump", comando, 4)) {
+		int pidPedido;
+		int off;
+		int tam;
+		bool arch;//TODO: archivo = log ?
+
+		printf("Estructuras de memoria.\n");
+		printf("Si quiere las tablas de segmentos de un proceso ingrese su pid, sino ingrese -1: \n");
+		scanf("%d",pidPedido);
+		dumpTablaSegmentos(arch,pidPedido);
+
+		printf("Memoria principal:\n");
+		dumpMemoriaLibreYSegmentos(arch);
+
+		printf("\n Contenido de memoria principal.\n");
+		printf("Ingrese offset: ");
+		scanf("%d",off);
+		printf("Ingrese tamaño: ");
+		scanf("%d",tam);
+		dumpMemoriaChata(off,tam,arch);
 
 	}	//Termina if de dump.
+
 	else if (!strncmp("exit", comando, 4)) {
 		return;
 	} else {
