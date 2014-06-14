@@ -22,7 +22,7 @@ int k = 0; //Esta esta solo para mostrar unos mensajes.
 bool algoritmo = 0; //0 significa FF, lo ponemos por defecto porque es el mas lindo*
 static t_tablaSegmento *crear_nodoSegm(int, int, int, int, void *);
 static void tsegm_destroy(t_tablaSegmento *);
-
+pthread_mutex_init(&m_Segmentos,NULL);
 static t_limites *crear_nodoLim(void *comienzo, void *final) {
 	t_limites *nuevo = malloc(sizeof(t_limites));
 	nuevo->comienzo = comienzo;
