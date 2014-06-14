@@ -202,7 +202,7 @@ void obtenerParametroI(int numero, char* destino, char* origen){
 			list_destroy_and_destroy_elemnts(aux, element_destroyer);
 			break;
 		default:
-			printf("JODETEE!!!!1");
+			printf("No ingresó ninguna opción válida.");
 	}
 
 }

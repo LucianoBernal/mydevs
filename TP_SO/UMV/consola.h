@@ -11,7 +11,24 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "funcionesaux.h"
+#include <stdint.h>
+#include "commons/collections/list.h"
+//#include "funcionesaux.h"
+#include "pruebasUMV.h"
 
+/*Constantes*/
+
+/*Variables Globales*/
+typedef struct{
+	//int32_t proceso;
+	int32_t base;
+	int32_t offset;
+	int32_t tamano;
+	char accion;
+	char *archivo;
+}t_operacion;
+
+/*Funciones*/
 int consola();
+
 #endif /* CONSOLA_H_ */

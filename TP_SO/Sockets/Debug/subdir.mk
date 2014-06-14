@@ -9,6 +9,7 @@ C_SRCS += \
 ../Server.c \
 ../ServerSerializacion.c \
 ../bibSockets.c \
+../bibSockets2.c \
 ../dictionary.c \
 ../list.c \
 ../queue.c 
@@ -19,6 +20,7 @@ OBJS += \
 ./Server.o \
 ./ServerSerializacion.o \
 ./bibSockets.o \
+./bibSockets2.o \
 ./dictionary.o \
 ./list.o \
 ./queue.o 
@@ -29,6 +31,7 @@ C_DEPS += \
 ./Server.d \
 ./ServerSerializacion.d \
 ./bibSockets.d \
+./bibSockets2.d \
 ./dictionary.d \
 ./list.d \
 ./queue.d 

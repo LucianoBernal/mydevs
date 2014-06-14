@@ -4,22 +4,28 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
+../atencionInterna.c \
 ../consola.c \
 ../funcionesaux.c \
 ../principal.c \
-../pruebasUMV.c 
+../pruebasUMV.c \
+../umv.c 
 
 OBJS += \
+./atencionInterna.o \
 ./consola.o \
 ./funcionesaux.o \
 ./principal.o \
-./pruebasUMV.o 
+./pruebasUMV.o \
+./umv.o 
 
 C_DEPS += \
+./atencionInterna.d \
 ./consola.d \
 ./funcionesaux.d \
 ./principal.d \
-./pruebasUMV.d 
+./pruebasUMV.d \
+./umv.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

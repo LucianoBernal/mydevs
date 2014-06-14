@@ -457,3 +457,14 @@ void dumpMemoriaChata(int offset, int tamano, bool archivo) {
 	}
 }
 
+/*FIXME: no funciona si se pasa el retardo por parámetro
+void aplicarRetardo(){
+int const NANO_TO_MILI 1000000;
+int tiempoRetardo;
+tiempoRetardo= retardo * NANO_TO_MILI;
+struct timespec ts;
+ts.tv_sec = 5;
+ts.tv_nsec = tiempoRetardo;
+nanosleep(&ts,NULL);
+}*/
+

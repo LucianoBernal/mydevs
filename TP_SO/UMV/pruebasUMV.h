@@ -62,6 +62,7 @@ int buscarPid(int);
 int procesoActivo();
 void cambiarProcesoActivo(int);
 int verificarEspacio(int, int, int, int);
+void cambiarAlgoritmo();
 
 
 #endif /* PRUEBASUMV_H_ */
