@@ -15,6 +15,8 @@
 
 /*Variables Globales*/
 int32_t cantCpu;
+pthread_t hiloKernel;
+pthread_t hiloCpu;
 
 /*Funciones*/
 void atencionInterna();

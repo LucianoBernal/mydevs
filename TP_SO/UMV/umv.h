@@ -23,20 +23,20 @@
 /*Constantes*/
 
 /*Variables Globales*/
-extern uint32_t tamanio_umv;
-extern uint32_t retardo;
-extern uint32_t algoritmo;
+extern int tamanio_umv;
+extern int retardo;
+//extern bool algoritmo;
 extern void *baseUMV;
 extern t_list *listaProcesos;
 
 pthread_t atencion_consola;
 pthread_t atencion_interna;
 
-typedef struct {
+/*typedef struct {
 	int pid, activo;
 	char tipo;
 	t_list *tabla;
-} t_tablaProceso;
+} t_tablaProceso;*/
 
 t_tablaProceso vectorProcesos[10];
 

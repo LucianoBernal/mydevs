@@ -30,7 +30,7 @@ static t_limites *crear_nodoLim(void *comienzo, void *final) {
 	return nuevo;
 }
 
-int main33() {
+/*int main33() {
 	crearEstructurasGlobales();
 	agregarProceso(1001, 'c');
 	cambiarProcesoActivo(1001);
@@ -52,7 +52,7 @@ int main33() {
 	compactarMemoria();
 	dumpMemoriaLibreYSegmentos(0);
 	return 0;
-}
+}*/
 
 static t_tablaProceso *crear_nodoProc(int pid, int activo, char tipo) {
 	t_tablaProceso *nuevo = malloc(sizeof(t_tablaProceso));

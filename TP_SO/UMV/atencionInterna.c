@@ -19,11 +19,48 @@ void atencionInterna() {
 	//Si conexión es correcta, entonces:
 	 cantCpu++;
 	//Creo hilo que atiende a las cpu's.
-			if (pthread_create(&hiloCpu[cantCpu], NULL, (void *) atencionCpu, NULL )) {
+			if (pthread_create(&hiloCpu, NULL, (void *) atencionCpu, NULL )) {
 				//ERROR. Acá van cosas con log.
 			} else {
 				//Se creó correctamente.
 			}
 	}
+
+}
+
+void atencionKernel(){
+	typedef enum {
+	CONFIRMACION,
+		SEGMENTATION_FAULT,
+		MEMORY_OVERLOAD,
+		MOSTRAR_VALOR,
+		MOSTRAR_TEXTO,
+		CREAR_SEGMENTO,
+		CREAR_SEGMENTOS_PROGRAMA,
+		DESTRUIR_SEGMENTOS,
+		ESCRIBIR_EN_UMV,
+		ESCRIBIR_EN_UMV_OFFSET_CERO,
+		SOLICITAR_A_UMV,
+		PEDIR_ETIQUETAS,
+		PEDIR_INSTRUCCION
+}codigos_mensajes;
+}
+
+void atencionCpu(){
+	typedef enum {
+		CONFIRMACION,
+			SEGMENTATION_FAULT,
+			MEMORY_OVERLOAD,
+			MOSTRAR_VALOR,
+			MOSTRAR_TEXTO,
+			CREAR_SEGMENTO,
+			CREAR_SEGMENTOS_PROGRAMA,
+			DESTRUIR_SEGMENTOS,
+			ESCRIBIR_EN_UMV,
+			ESCRIBIR_EN_UMV_OFFSET_CERO,
+			SOLICITAR_A_UMV,
+			PEDIR_ETIQUETAS,
+			PEDIR_INSTRUCCION
+	}codigos_mensajes;
 
 }

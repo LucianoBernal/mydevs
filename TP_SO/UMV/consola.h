@@ -30,5 +30,6 @@ typedef struct{
 
 /*Funciones*/
 int consola();
+void analizarYEjecutar(char*);
 
 #endif /* CONSOLA_H_ */
