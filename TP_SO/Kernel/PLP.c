@@ -219,7 +219,6 @@ void gestionarProgramaNuevo(const char* literal) { // UN HILO
 		liberar_numero(pcb->program_id);
 	}
 	metadata_destruir(metadata); //OJO QUIZAS SOLO SEA EN EL ELSE REVISAR!
-
 }
 //void encolar_en_Ready(t_PCB*);
 void deNewAReady(int sinParametro) { // OTRO HILO

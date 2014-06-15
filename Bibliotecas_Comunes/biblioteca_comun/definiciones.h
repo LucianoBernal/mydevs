@@ -33,4 +33,5 @@ typedef struct{
 	char *p_var;
 }t_tamYDir;
 
+
 #endif /* DEFINICIONES_H_ */
