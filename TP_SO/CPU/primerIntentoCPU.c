@@ -32,8 +32,8 @@ int laSenialDeTerminar() {
 	return terminar;
 }
 
-t_PCB *conseguirPCB();
-
+//t_PCB *conseguirPCB();
+/*
 int main() {
 	struct addrinfo *serverInfo;
 	obtenerAddrInfoServer(IP_KERNEL, PUERTO_PCP, &serverInfo); //Estan en bibsockets2
@@ -65,3 +65,4 @@ int main() {
 	}
 	return 0;
 }
+*/

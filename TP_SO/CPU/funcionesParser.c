@@ -18,6 +18,7 @@
 
 #define TAMANO_CABECERA 16
 
+
 void vincularPrimitivas() {
 	funciones_Ansisop.AnSISOP_asignar = asignar;
 	funciones_Ansisop.AnSISOP_asignarValorCompartida = asignarValorCompartida;
