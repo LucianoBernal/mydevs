@@ -70,7 +70,7 @@ void* recibirCPU(void* j) {
 		recv(socketCliente, (void*) paquete_R, sizeof(t_paquete_recibir_CPU),
 				MSG_WAITALL);
 		serializameCPU(paquete_R, &paquete_CPU);
-		queue_push(cCPUs, &paquete_CPU); //Guardo el puntero en la lista asi puedo acceder a todos los datos
+		queue_push(cCPUs, &paquete_CPU); //Guardo el puntero en la lista asi puedo acceder a todos los datos ?
 		switch (paquete_CPU->razon) {
 		case 'n': //La instancia de CPU es nueva
 			nuevaCPU(paquete_CPU.IDCpu);
@@ -133,10 +133,9 @@ int buscarRetardo(char* dispositivo) {
 }
 
 int encontrarPrimeraCpuLibreYOcuparla() {
-	t_estructuraCPU estructura = list_find_element(CPUs, (void*) estaLibre,
-			NULL );
-	estructura.estado = 1;
-	return (estructura.idCPU);
+	t_estructuraCPU* estructura = list_find(CPUs, (void*) estaLibre);
+	estructura->estado = 1;
+	return (estructura->idCPU);
 }
 
 bool estaLibre(t_estructuraCPU estructura) {
