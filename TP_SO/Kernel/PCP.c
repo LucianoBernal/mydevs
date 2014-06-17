@@ -1,7 +1,7 @@
 #include "PCP.h"
 
 int puertoCPU; //se saca del config tambien
-const dispositivosEntradaSalida, retardosDispositivos; //son dos vectores que están en el Kernel, se leen también del config
+const dispositivosEntradaSalida, retardosDispositivos; // se leen también del config
 
 sem_t * CPUsLibres = 0;
 sem_t * sPLP = 0;
@@ -9,34 +9,34 @@ sem_t * sYaInicializoElMT = 0;
 sem_t * sBloqueado = 0;
 sem_t * colaExecVacia = 0;
 int laSenialDeTerminar = 0;
-static t_queue* colaExec;
-pthread_t mandarAEjecutar;
-pthread_t enviarCPU;
-pthread_t recibirCPU;
+static t_queue* colaExec = queue_create();
+pthread_t ejecutar;
+pthread_t envCPU;
+pthread_t recCPU;
 int retMandarAEjecutar, retEnviarCPU, retRecibirCPU;
 int* p = 0;
-t_dictionary diccionarioDispositivos;
-t_list CPUs;
+static t_dictionary diccionarioDispositivos =dictionary_create();
+static t_list CPUs = list_create();
 int idUltimaCPUDesconectada;
 
 void crearHilosPrincipales() {
 
-	retMandarAEjecutar = pthread_create(&mandarAEjecutar, NULL, mandarAEjecutar,
+	retMandarAEjecutar = pthread_create(&ejecutar, NULL, mandarAEjecutar,
 			(void*) p);
-	retEnviarCPU = pthread_create(&enviarCPU, NULL, enviarCPU, (void*) p);
-	retRecibirCPU = pthread_create(&recibirCPU, NULL, recibirCPU, (void*) p);
+	retEnviarCPU = pthread_create(&envCPU, NULL, enviarCPU, (void*) p);
+	retRecibirCPU = pthread_create(&recCPU, NULL, recibirCPU, (void*) p);
 }
 
 void crearHilosDeEntradaSalida() {
 	int i = 0;
 	while (dispositivosEntradaSalida[i] != '\0') {
 		int retardo = buscarRetardo(dispositivosEntradaSalida[i]);
-		static t_queue* colaDispositivo;
-		sem_t* semaforo = 0;
-		t_estructuraDispositivoIO estructuraDispositivo;
-		estructuraDispositivo.retardo = retardo;
-		estructuraDispositivo.procesosBloqueados = colaDispositivo;
-		estructuraDispositivo.semaforoCola = semaforo;
+		static t_queue* colaDispositivo = queue_create();
+		static sem_t* semaforo = 0;
+		t_estructuraDispositivoIO* estructuraDispositivo;
+		estructuraDispositivo->retardo = retardo;
+		estructuraDispositivo->procesosBloqueados = colaDispositivo;
+		estructuraDispositivo->semaforoCola = semaforo;
 		dictionary_put(diccionarioDispositivos, dispositivosEntradaSalida[i],
 				estructuraDispositivo);
 		pthread_t dispositivo;
@@ -47,15 +47,15 @@ void crearHilosDeEntradaSalida() {
 
 void* mandarAEjecutar(void* j) {
 // saca procesos de la cola de ready y los manda a la cola de Exec
-
 	sem_wait(vacioReady);
 	sem_wait(colaReadyMutex);
 	queue_push(colaExec, queue_pop(colaReady));
 	sem_post(colaReadyMutex);
 	sem_post(colaExecVacia);
+
 }
 
-void* recibirCPU() {
+void* recibirCPU(void* j) {
 	//recibe procesos que salieron de la cpu y según el motivo hace lo que tenga que hacer
 	int listenningSocket;
 	sem_wait(sYaInicializoElMT);
@@ -86,8 +86,8 @@ void* recibirCPU() {
 					paquete_CPU.dispositivoIO, paquete_CPU.IDCpu);
 			break;
 		case 'd': //la CPU se desconectó
-			seDesconectoCPU(paquete_CPU.IDCpu);
 			idUltimaCPUDesconectada = paquete_CPU.IDCpu;
+			seDesconectoCPU(paquete_CPU.IDCpu);
 			break;
 		}
 	}
@@ -98,7 +98,7 @@ void* recibirCPU() {
 	return (NULL );
 }
 
-void* enviarCPU() {
+void* enviarCPU(void* j) {
 	sem_wait(colaExecVacia);
 	sem_wait(CPUsLibres);
 	int IDCpuLibre = encontrarPrimeraCpuLibreYOcuparla();
@@ -108,7 +108,6 @@ void* enviarCPU() {
 	paquete.IDCpu = IDCpuLibre;
 //paquete ->esto hay que mandarselo a la cpu por sockets, aunque no sé si hay que sacarlo de la cola...
 
-	return (NULL );
 }
 
 void* bloquearYDevolverAReady(void * param) {
@@ -164,7 +163,8 @@ void moverAColaExit(t_PCB* pcb, int idCPU) {
 	seLiberoUnaCPU(idCPU);
 }
 
-void programaSalioPorBloqueo(t_PCB* pcb, int tiempo, dispositivo, int idCPU) {
+void programaSalioPorBloqueo(t_PCB* pcb, int tiempo, char* dispositivo,
+		int idCPU) {
 	t_estructuraDispositivoIO estructura = dictionary_get(
 			diccionarioDispositivos, dispositivo);
 	t_estructuraProcesoBloqueado procesoBloqueado;
@@ -179,8 +179,7 @@ void seLiberoUnaCPU(int idCPU) {
 	sem_post(CPUsLibres);
 }
 
-bool tieneID(t_estructuraCPU estructura)
-{
+bool tieneID(t_estructuraCPU estructura) {
 	return (estructura.idCPU == idUltimaCPUDesconectada);
 }
 
