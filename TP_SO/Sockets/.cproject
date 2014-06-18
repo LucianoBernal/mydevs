@@ -31,6 +31,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Bibliotecas_Comunes}&quot;"/>
 								</option>
 								<option id="gnu.c.compiler.option.misc.other.1615859113" name="Other flags" superClass="gnu.c.compiler.option.misc.other" value="-pthread -c -fmessage-length=0" valueType="string"/>
+								<option id="gnu.c.compiler.option.misc.pic.357809670" name="Position Independent Code (-fPIC)" superClass="gnu.c.compiler.option.misc.pic" value="true" valueType="boolean"/>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.545546681" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.exe.debug.530231742" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.exe.debug">
@@ -41,6 +42,7 @@
 									<listOptionValue builtIn="false" value="Bibliotecas_Comunes"/>
 									<listOptionValue builtIn="false" value="pthread"/>
 								</option>
+								<option id="gnu.c.link.option.shared.723929423" name="Shared (-shared)" superClass="gnu.c.link.option.shared" value="true" valueType="boolean"/>
 								<inputType id="cdt.managedbuild.tool.gnu.c.linker.input.651442123" superClass="cdt.managedbuild.tool.gnu.c.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
@@ -115,6 +117,15 @@
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
 		<project id="Sockets.cdt.managedbuild.target.gnu.exe.1464961228" name="Executable" projectType="cdt.managedbuild.target.gnu.exe"/>
 	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
+	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="Release">
+			<resource resourceType="PROJECT" workspacePath="/Sockets"/>
+		</configuration>
+		<configuration configurationName="Debug">
+			<resource resourceType="PROJECT" workspacePath="/Sockets"/>
+		</configuration>
+	</storageModule>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.debug.1871331557;cdt.managedbuild.config.gnu.exe.debug.1871331557.;cdt.managedbuild.tool.gnu.c.compiler.exe.debug.1964630588;cdt.managedbuild.tool.gnu.c.compiler.input.1156764536">
@@ -123,10 +134,10 @@
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.debug.190377193;cdt.managedbuild.config.gnu.exe.debug.190377193.;cdt.managedbuild.tool.gnu.c.compiler.exe.debug.1939874668;cdt.managedbuild.tool.gnu.c.compiler.input.545546681">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.release.917435576;cdt.managedbuild.config.gnu.exe.release.917435576.;cdt.managedbuild.tool.gnu.c.compiler.exe.release.1623998417;cdt.managedbuild.tool.gnu.c.compiler.input.1496733694">
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.release.1488037259;cdt.managedbuild.config.gnu.exe.release.1488037259.;cdt.managedbuild.tool.gnu.c.compiler.exe.release.633761223;cdt.managedbuild.tool.gnu.c.compiler.input.1820872164">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.release.1488037259;cdt.managedbuild.config.gnu.exe.release.1488037259.;cdt.managedbuild.tool.gnu.c.compiler.exe.release.633761223;cdt.managedbuild.tool.gnu.c.compiler.input.1820872164">
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.release.917435576;cdt.managedbuild.config.gnu.exe.release.917435576.;cdt.managedbuild.tool.gnu.c.compiler.exe.release.1623998417;cdt.managedbuild.tool.gnu.c.compiler.input.1496733694">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.debug.1501368903;cdt.managedbuild.config.gnu.exe.debug.1501368903.;cdt.managedbuild.tool.gnu.c.compiler.exe.debug.1051825603;cdt.managedbuild.tool.gnu.c.compiler.input.559427952">
@@ -136,5 +147,4 @@
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
 	</storageModule>
-	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 </cproject>

@@ -9,7 +9,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
-#include <commons/collections/list.h>
+#include "commons/collections/list.h"
+#include <stdbool.h>
+
 #include "pruebasUMV.h"
 
 int cantProcesosActivos = 0;
@@ -22,7 +24,7 @@ int k = 0; //Esta esta solo para mostrar unos mensajes.
 bool algoritmo = 0; //0 significa FF, lo ponemos por defecto porque es el mas lindo*
 static t_tablaSegmento *crear_nodoSegm(int, int, int, int, void *);
 static void tsegm_destroy(t_tablaSegmento *);
-pthread_mutex_init(&m_Segmentos,NULL);
+//pthread_mutex_init(&m_Segmentos,NULL);
 static t_limites *crear_nodoLim(void *comienzo, void *final) {
 	t_limites *nuevo = malloc(sizeof(t_limites));
 	nuevo->comienzo = comienzo;
@@ -30,7 +32,7 @@ static t_limites *crear_nodoLim(void *comienzo, void *final) {
 	return nuevo;
 }
 
-/*int main33() {
+int main() {
 	crearEstructurasGlobales();
 	agregarProceso(1001, 'c');
 	cambiarProcesoActivo(1001);
@@ -51,8 +53,9 @@ static t_limites *crear_nodoLim(void *comienzo, void *final) {
 	dumpMemoriaLibreYSegmentos(0);
 	compactarMemoria();
 	dumpMemoriaLibreYSegmentos(0);
+	free(baseUMV);
 	return 0;
-}*/
+}
 
 static t_tablaProceso *crear_nodoProc(int pid, int activo, char tipo) {
 	t_tablaProceso *nuevo = malloc(sizeof(t_tablaProceso));
@@ -162,7 +165,9 @@ bool tieneProblemas(int inicio, int pid, int tamano) {
 		return ((inicio > espacio->comienzo)
 				&& ((inicio + tamano) < (espacio->final)));
 	}
+	list_destroy_and_destroy_elements(tabla, (void*)tsegm_destroy);
 	return !list_any_satisfy(listaEspacios, (void*) estaDentroDeUnEspacio);
+	//list_destroy_and_destroy_elements(listaEspacios, (void*) free);//TODO guarda!!!
 }
 
 int obtenerInicioLogico(int pid, int tamano) {
@@ -196,6 +201,7 @@ void compactarMemoria() {
 	list_iterate(listaSegmentosOrdenada,
 			(void*) _cambiar_posiciones_chetamente);
 	printf("Compacte\n");
+	list_destroy_and_destroy_elements(listaSegmentosOrdenada, (void*)free);
 }
 
 void *obtenerInicioReal(int tamano) {
@@ -211,14 +217,19 @@ void *obtenerInicioReal(int tamano) {
 		if (flag_compactado == 0) {
 			compactarMemoria();
 			flag_compactado = 1;
+			list_destroy_and_destroy_elements(lista_mascapita, (void*)free);
 			return obtenerInicioReal(tamano);
 		} else {
 			printf("Memory overload, u win \n");
+			list_destroy_and_destroy_elements(lista_mascapita, (void*)free);
 			return baseUMV; //Solo pongo esto para que me deje compilar, deberiamos crear un error.
 		}
 	} else {
-		if (list_is_empty(lista_mascapita))
+		if (list_is_empty(lista_mascapita)){
+			list_destroy_and_destroy_elements(lista_mascapita, (void*)free);
 			return baseUMV;
+		}
+		list_destroy_and_destroy_elements(lista_mascapita, (void*)free);
 		return seleccionarSegunAlgoritmo(lista_mascapita2);
 	}
 }
@@ -273,7 +284,7 @@ t_list *obtenerEspaciosDisponibles() {
 	}
 
 	t_list *lista2 = list_map(listaParaAmasar, (void*) _mapear_t_limites);
-
+	list_destroy_and_destroy_elements(listaParaAmasar, (void*)free);
 	t_limites *_delimitar_espacios_fisicos_libres(t_limites *limites) {
 		t_limites *aux = malloc(sizeof(t_limites));
 		if ((i == 1) && (limites->comienzo != baseUMV)) { //A esto lo hago por si hay un espacio libre antes del primer segmento
@@ -292,6 +303,7 @@ t_list *obtenerEspaciosDisponibles() {
 	}
 	t_list *lista3 = list_map(lista2,
 			(void*) _delimitar_espacios_fisicos_libres);
+	list_destroy_and_destroy_elements(lista2, (void*)free);
 	if (list_is_empty(lista3))
 		list_add(lista3, crear_nodoLim(baseUMV, baseUMV + tamanoUMV));
 	bool _no_es_un_error(t_limites *unaCosa) {
@@ -299,6 +311,7 @@ t_list *obtenerEspaciosDisponibles() {
 	} //Antes habia algo mal, ahora solo sirve para sacar los que tiene comienzo==final
 //Generan nodos de tamaño==0 al dope
 	t_list *lista4 = list_filter(lista3, (void*) _no_es_un_error);
+	list_destroy_and_destroy_elements(lista3, (void*)free);
 	return lista4;
 }
 

@@ -4,6 +4,7 @@
 	<comment></comment>
 	<projects>
 		<project>Bibliotecas_Comunes</project>
+		<project>Sockets</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

@@ -9,6 +9,7 @@
 #define ATENCIONINTERNA_H_
 
 #include "umv.h"
+#include <bibSockets2.h>
 
 /*Constantes*/
 #define MAX_CPUS 25;
@@ -20,5 +21,7 @@ pthread_t hiloCpu;
 
 /*Funciones*/
 void atencionInterna();
+void atencionKernel();
+void atencionCpu();
 
 #endif /* ATENCIONINTERNA_H_ */

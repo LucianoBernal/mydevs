@@ -15,7 +15,7 @@
 #include <commons/collections/queue.h>
 #include "bibSockets.h"
 #include "Serializacion.h"
-
+/*
 int main777(){
 	int serverSocket;
 	crearSocketS(&serverSocket, "6666");
@@ -33,5 +33,16 @@ int main777(){
 	send(serverSocket, paquete->msj, paquete->tamano, 0);
 	printf("Ya te mande todo\n");
 	return 0;
-}
+}*/
+
+/*int main(){
+	int serverSocket;
+	crearSocketS(&serverSocket, "8888");
+	char* mensaje="Hola mundo";
+	//char buffer[1025];
+	//gets(mensaje);
+	send(serverSocket,mensaje,strlen(mensaje), 0);
+	return 0;
+}*/
+
 

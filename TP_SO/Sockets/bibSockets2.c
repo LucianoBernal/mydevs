@@ -29,11 +29,19 @@ void obtenerAddrInfoLocalHost(char *puerto, struct addrinfo **serverInfo){
 	getaddrinfo(NULL, puerto, &hints, serverInfo);
 	//BLA
 }
-
+/*
 void escucharYCrearSocketCliente(int listenningSocket, int backlog, int *socketCliente, struct sockaddr_in * addr, socklen_t *addrlen){
 	listen(listenningSocket, backlog);
 	//tristemente se bloquea (?
 	*socketCliente = accept(listenningSocket, (struct sockaddr *) addr, addrlen);
+	//y creo que se bloquea otra vez.
+}
+*/
+
+void escucharYCrearSocketCliente(int listenningSocket, int backlog, int *socketCliente, struct addrinfo *serverInfo){
+	listen(listenningSocket, backlog);
+	//tristemente se bloquea (?
+	*socketCliente = accept(listenningSocket, serverInfo->ai_addr, serverInfo->ai_addrlen);
 	//y creo que se bloquea otra vez.
 }
 

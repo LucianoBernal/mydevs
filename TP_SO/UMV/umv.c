@@ -6,7 +6,7 @@
  */
 #include "umv.h"
 
-int main(int argc, char** argv) {
+int main0o(int argc, char** argv) {
 
 	//Verifico que se haya recibido por parámetro el archivo config.
 	if (argc <= 1) {
@@ -43,7 +43,7 @@ int main(int argc, char** argv) {
 	} else {
 		//Se creó correctamente.
 	}
-	list_destroy(listaProcesos);
+	list_destroy_and_destroy_elements(listaProcesos, (void*)free);
 	config_destroy(config);
 	return EXIT_SUCCESS;
 }
@@ -61,6 +61,10 @@ int32_t validarConfig(t_config *config) {
 		perror("Falta ALGORITMO");
 		return EXIT_FAILURE;
 	}
+	if (!config_has_property(config, "PUERTO")) {
+			perror("Falta PUERTO");
+			return EXIT_FAILURE;
+		}
 
 	return EXIT_SUCCESS;
 }
@@ -72,5 +76,7 @@ void cargarConfig(t_config *config) {
 	retardo = config_get_int_value(config, keyRetardo);
 	char *keyAlgoritmo = "ALGORITMO";
 	algoritmo = config_get_int_value(config, keyAlgoritmo);
+	char *keyPuerto = "PUERTO";
+	puertoUMV = config_get_int_value(config, keyPuerto);
 }
 

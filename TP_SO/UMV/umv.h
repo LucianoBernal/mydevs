@@ -25,6 +25,7 @@
 /*Variables Globales*/
 extern int tamanio_umv;
 extern int retardo;
+extern int puertoUMV;
 //extern bool algoritmo;
 extern void *baseUMV;
 extern t_list *listaProcesos;

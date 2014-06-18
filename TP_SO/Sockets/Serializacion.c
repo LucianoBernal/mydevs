@@ -16,7 +16,7 @@ t_tamYDir *crear_nodoVar(void *, int);
 t_paquete *serializar2(t_tamYDir *uno, ...);
 void desempaquetar2(char *, void *, ...);
 
-int main(){
+int mainNO(){
 	int g=333, h=0;
 	char *a="pato ", *b ="es muy", *c=" pro", *e=malloc(10), *d=malloc(10), *f=malloc(10);
 

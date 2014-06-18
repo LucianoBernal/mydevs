@@ -11,7 +11,7 @@
 void obtenerAddrInfoServer(char *IP, char *PUERTO, struct addrinfo **serverInfo);
 
 void obtenerAddrInfoLocalHost(char *puerto, struct addrinfo **serverInfo);
-void escucharYCrearSocketCliente(int listenningSocket, int backlog, int *socketCliente, struct sockaddr_in * addr, socklen_t *addrlen);
+void escucharYCrearSocketCliente(int listenningSocket, int backlog, int *socketCliente, struct addrinfo * serverInfo);
 void bindearSocket(int listenningSocket, struct addrinfo *serverInfo);
 int crearSocket(struct addrinfo *serverInfo);
 void conectarSocket(int serverSocket, struct addrinfo *serverInfo);

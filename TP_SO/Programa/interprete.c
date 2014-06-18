@@ -18,6 +18,7 @@ int enviarArchivoPorSocket(FILE* archivo){
 	crearSocketS(&serverSocket, PUERTO);
 	printf("Ya voy a empezar \n");
 	char message[PACKAGESIZE];
+	int tamanoArchivo = sizeof(archivo);
 	while(! feof(archivo)){
 		fgets(message, PACKAGESIZE, archivo);
 		send(serverSocket, (void*)strlen(message), 4, 0);

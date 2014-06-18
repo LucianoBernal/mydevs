@@ -25,6 +25,7 @@ void analizarYEjecutar(char *comando) {
 		printf(
 				"Qué operación desea ralizar?-para saber como usarlo enviar 'h'- \n");
 		scanf("%c", &operacion.accion);
+		char* msj;
 		switch (operacion.accion) {
 
 		case 'h':
@@ -46,12 +47,12 @@ void analizarYEjecutar(char *comando) {
 			printf("\ningrese tamaño: ");
 			scanf("%d", &operacion.tamano);
 
-			char mensaje[operacion.tamano];
+			msj=malloc(operacion.tamano);
 			printf("\n Ingrese bloque de mensaje: \n");
-			scanf("%s", mensaje);
+			scanf("%s", msj);
 
 			enviarUnosBytes(operacion.base, operacion.offset, operacion.tamano,
-					mensaje);
+					msj);
 
 			break;
 
@@ -65,10 +66,10 @@ void analizarYEjecutar(char *comando) {
 			printf("\ningrese tamaño: ");
 			scanf("%d", &operacion.tamano);
 
-			char mensaje[operacion.tamano];
-			mensaje = solicitarBytes(operacion.base, operacion.offset,
+			msj=malloc(operacion.tamano);
+			msj = solicitarBytes(operacion.base, operacion.offset,
 					operacion.tamano);
-			printf("%s", mensaje);
+			printf("%s", msj);
 
 			break;
 
@@ -97,7 +98,7 @@ void analizarYEjecutar(char *comando) {
 	else if (!strncmp("retardo", comando, 7)) {
 		int ret;
 		printf("\n ingrese el retardo: ");
-		scanf("%d", ret);
+		scanf("%d", &ret);
 		retardo = ret;
 
 	}			//Termina if de retardo.
@@ -106,7 +107,7 @@ void analizarYEjecutar(char *comando) {
 		char alg;
 		printf(
 				"Si quiere cambiar a Worst-Fit, ingrese w\n Si quiere cambiar a First-Fit, ingrese f:\n");
-		scanf("%c", alg);
+		scanf("%c", &alg);
 		if (algoritmo) {
 			switch (alg) {
 			case 'w':
@@ -138,7 +139,7 @@ void analizarYEjecutar(char *comando) {
 	}	//Termina if de algoritmo.
 
 	else if (!strncmp("compactacion", comando, 12)) {
-		copactarMemoria();
+		compactarMemoria();
 		printf("Compactación de memoria finalizad correctamente.");
 
 	}	//Termina if de compactación.
@@ -151,7 +152,7 @@ void analizarYEjecutar(char *comando) {
 
 		printf("Estructuras de memoria.\n");
 		printf("Si quiere las tablas de segmentos de un proceso ingrese su pid, sino ingrese -1: \n");
-		scanf("%d",pidPedido);
+		scanf("%d",&pidPedido);
 		dumpTablaSegmentos(arch,pidPedido);
 
 		printf("Memoria principal:\n");
@@ -159,9 +160,9 @@ void analizarYEjecutar(char *comando) {
 
 		printf("\n Contenido de memoria principal.\n");
 		printf("Ingrese offset: ");
-		scanf("%d",off);
+		scanf("%d",&off);
 		printf("Ingrese tamaño: ");
-		scanf("%d",tam);
+		scanf("%d",&tam);
 		dumpMemoriaChata(off,tam,arch);
 
 	}	//Termina if de dump.
