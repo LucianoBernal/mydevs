@@ -8,8 +8,6 @@ RM := rm -rf
 
 # All of the sources participating in the build are defined here
 -include sources.mk
--include commons/collections/subdir.mk
--include commons/subdir.mk
 -include subdir.mk
 -include objects.mk
 
@@ -24,28 +22,22 @@ endif
 # Add inputs and outputs from these tool invocations to the build variables 
 
 # All Target
-all: UMV
-
-dependents:
-	-cd /home/utnso/tp-2014-1c-skynet/Bibliotecas_Comunes/Debug && $(MAKE) all
-	-cd /home/utnso/tp-2014-1c-skynet/TP_SO/Sockets/Debug && $(MAKE) all
+all: Sockets
 
 # Tool invocations
-UMV: $(OBJS) $(USER_OBJS) /home/utnso/tp-2014-1c-skynet/Bibliotecas_Comunes/Debug/libBibliotecas_Comunes.so /home/utnso/tp-2014-1c-skynet/TP_SO/Sockets/Debug/Sockets
+Sockets: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C Linker'
-	gcc -L"/home/utnso/tp-2014-1c-skynet/Bibliotecas_Comunes/Debug" -o "UMV" $(OBJS) $(USER_OBJS) $(LIBS)
+	gcc  -o "Sockets" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) $(OBJS)$(C_DEPS)$(EXECUTABLES) UMV
+	-$(RM) $(OBJS)$(C_DEPS)$(EXECUTABLES) Sockets
 	-@echo ' '
 
 .PHONY: all clean dependents
 .SECONDARY:
-/home/utnso/tp-2014-1c-skynet/Bibliotecas_Comunes/Debug/libBibliotecas_Comunes.so:
-/home/utnso/tp-2014-1c-skynet/TP_SO/Sockets/Debug/Sockets:
 
 -include ../makefile.targets

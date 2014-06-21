@@ -12,17 +12,22 @@
 #include <parser/metadata_program.h>
 #include <commons/collections/list.h>
 #include <commons/collections/queue.h>
+#include <commons/collections/dictionary.h>
 #include <semaphore.h>
 #include <sys/socket.h>
 
 static t_list* colaNew;
 static t_list* randoms;
+static t_dictionary* pidYSockets=dictionary_create();
 static int numAleatorio;
 static int numABorrar;
+static sem_t * PidSD_Mutex = NULL;
+sem_init(PidSD_Mutex,0,1);
 static sem_t * colaNuevosVacio = NULL;
 static sem_t * randomMutex = NULL;
 static sem_t * numABorrarMutex = NULL;
 static sem_t * colaNuevosMutex = NULL;
+
 typedef enum {
 	SEGMENTATION_FAULT,
 	MEMORY_OVERLOAD,
@@ -203,7 +208,14 @@ void escribir_en_Memoria(t_metadata_program * metadata, t_PCB *pcb,
 		printf("Alguno de los sends fallo, noob");
 }
 
-void gestionarProgramaNuevo(const char* literal) { // UN HILO
+agregar_En_Diccionario(int pid, int sd){
+	sem_wait(PidSD_Mutex);
+	dictionary_put(pidYSockets,(char*)&pid,&sd); //FIXME
+	sem_post(PidSD_Mutex);
+
+}
+
+void gestionarProgramaNuevo(const char* literal,int sd) { // UN HILO
 	t_PCB* pcb = malloc(sizeof(t_PCB));
 	t_metadata_program* metadata = metadatada_desde_literal(literal);
 	pcb->program_id = generarProgramID();
@@ -213,6 +225,7 @@ void gestionarProgramaNuevo(const char* literal) { // UN HILO
 			== 0 /*ergo se pudo reservar memoria */) { //HABLAR CON PROJECTS LEADERS DE UMV
 		escribir_en_Memoria(metadata, pcb, literal);
 		encolar_New(pcb, peso);
+		agregar_En_Diccionario(pcb->program_id,sd);
 	} else {
 		notificar_Memoria_Llena();
 		free(pcb);
