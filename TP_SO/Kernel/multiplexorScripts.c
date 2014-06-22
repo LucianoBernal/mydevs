@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
 	fd_set readfds;
 
 	//a message
-	char *message = "El programa se ha conectado \r\n";
+	char *message = "El programa se ha conectado al Kernel exitosamente \r\n";
 	char handshake[21] = "Soy un nuevo Programa";
 
 	//initialise all client_socket[] to 0 so not checked
@@ -124,18 +124,18 @@ int main(int argc, char *argv[]) {
 					new_socket, inet_ntoa(address.sin_addr),
 					ntohs(address.sin_port));
 
-			if ((valread =recv(new_socket, buffer, 21, MSG_WAITALL)) < 0) {
+			if ((valread =recv(new_socket, buffer, 21, 0)) < 0) {
 				perror("recive");
 				close(new_socket);
 			}
-			buffer[valread]='\0';
-			/*if (strcmp(buffer, handshake)!=0) {
+			if (strncmp(buffer, handshake,21)!=0) {
 				printf(
 						"Host disconnected No es un Programa Valido ,socket fd is %d , ip is : %s , port : %d \n",
 						new_socket, inet_ntoa(address.sin_addr),
 						ntohs(address.sin_port));
 						close(new_socket);
-			}*/
+			}
+			else{
 			//send new connection greeting message
 			if (send(new_socket, message, strlen(message), 0)
 					!= strlen(message)) {
@@ -161,6 +161,7 @@ int main(int argc, char *argv[]) {
 			puts(literal);
 
 		}
+}
 
 		//else its some IO operation on some other socket :)
 		for (i = 0; i < max_clients; i++) {
@@ -183,7 +184,6 @@ int main(int argc, char *argv[]) {
 
 				//Echo back the message that came in
 				/*else {
-
 				}*/
 			}
 		}
