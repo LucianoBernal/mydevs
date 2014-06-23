@@ -37,8 +37,8 @@ int main(int argc, char *argv[]) {
 	fd_set readfds;
 
 	//a message
-	char *message = "El programa se ha conectado al Kernel exitosamente \r\n";
-	char handshake[21] = "Soy un nuevo Programa";
+	char *message = "La CPU se ha conectado al Kernel exitosamente \r\n";
+	char handshake[17] = "Soy una nueva CPU";
 
 	//initialise all client_socket[] to 0 so not checked
 	for (i = 0; i < max_clients; i++) {
@@ -124,13 +124,13 @@ int main(int argc, char *argv[]) {
 					new_socket, inet_ntoa(address.sin_addr),
 					ntohs(address.sin_port));
 
-			if ((valread =recv(new_socket, buffer, 21, 0)) < 0) {
+			if ((valread =recv(new_socket, buffer,17, 0)) < 0) {
 				perror("recive");
 				close(new_socket);
 			}
-			if (strncmp(buffer, handshake,21)!=0) {
+			if (strncmp(buffer, handshake,17)!=0) {
 				printf(
-						"Host disconnected No es un Programa Valido ,socket fd is %d , ip is : %s , port : %d \n",
+						"Host disconnected No es una CPU Valida ,socket fd is %d , ip is : %s , port : %d \n",
 						new_socket, inet_ntoa(address.sin_addr),
 						ntohs(address.sin_port));
 						close(new_socket);
@@ -154,11 +154,9 @@ int main(int argc, char *argv[]) {
 					break;
 				}
 			}
-			recv(new_socket, tamano, 4, MSG_WAITALL);
-			char* literal = malloc(*tamano);
-			recv(new_socket, literal, *tamano, MSG_WAITALL);
-			//gestionarProgramaNuevo(literal,new_socket);
-			puts(literal);
+
+			//TODO Aca va to.do lo que queres hacer con una nueva CPU, llamese agregarla
+			//a la lista de cpus etc.
 
 		}
 }
@@ -169,7 +167,7 @@ int main(int argc, char *argv[]) {
 
 			if (FD_ISSET( sd , &readfds)) {
 				//Check if it was for closing , and also read the incoming message
-				if ((valread = read(sd, buffer, 1024)) == 0) {
+				if ((valread = read(sd, buffer, 1024)) == 0) {//FIXME
 					//Somebody disconnected , get his details and print
 					getpeername(sd, (struct sockaddr*) &address,
 							(socklen_t*) &addrlen);
@@ -180,11 +178,16 @@ int main(int argc, char *argv[]) {
 					//Close the socket and mark as 0 in list for reuse
 					close(sd);
 					client_socket[i] = 0;
+					//TODO Aca va lo que haces despues que una CPU se te desconecto,
+					//como ser sacarla de tu lista de CPUs
 				}
 
 				//Echo back the message that came in
-				/*else {
-				}*/
+				else {
+					//TODO aca va el swich para saber porque volvio(pero no preguntas por
+					//desconexion, eso ya se sabe de antes. MMM igual ojo, quizas si
+					//porque quizas convenga que el que el que haga el close se el kernel
+				}
 			}
 		}
 	}
