@@ -63,7 +63,7 @@ int estaRepetido() {
 	return (!(list_all_satisfy(randoms, (void*) esDistintoANumAleatorio)));
 }
 
-//int estaRepetido();
+int estaRepetido();
 int generarProgramID() {
 	srand(time(NULL )); // Semilla
 	sem_wait(randomMutex);
@@ -71,10 +71,11 @@ int generarProgramID() {
 	while (estaRepetido()) {
 		numAleatorio = rand() % 10000;
 	}
-	list_add(randoms, &numAleatorio);
-	int numFinal = numAleatorio;
+	int* numFinal = malloc(4);
+	*numFinal=numAleatorio;
+	list_add(randoms, numFinal);
 	sem_post(randomMutex);
-	return (numFinal);
+	return (*numFinal);
 }
 
 static t_new *crear_nodoNew(t_PCB* pcb, int peso) {
@@ -254,4 +255,33 @@ void encolar_en_Ready(t_PCB* pcb) {
 	queue_push(colaReady, pcb);
 	sem_post(colaReadyMutex);
 	sem_post(vacioReady);
+}
+
+
+void imprimirNodosNew(t_new* nodo){
+	printf("Program id:%i     Peso:%i\n",nodo->pcb->program_id,nodo->peso);
+}
+
+
+void mostrarListaNew(){
+	printf("El estado de la Cola New es el siguiente:\n");
+	list_iterate(colaNew,(void*)(void*)imprimirNodosNew);
+}
+
+void pcb_destroy(t_PCB *self){
+	free(self->cursor_Stack);
+	free(self->indice_de_Codigo);
+	free(self->indice_de_Etiquetas);
+	free(self->segmento_Codigo);
+	free(self->segmento_Stack);
+	free(self);
+}
+
+void imprimirNodosPCBs(t_PCB* pcb){
+	printf("Program id:%i \n",pcb->program_id);
+}
+
+void mostrarColaDePCBs(t_queue* cola){
+	//printf("El estado de la Cola Zarasa es el siguiente:\n"); SE HACE EN EL LLAMADO
+	list_iterate(cola->elements,(void*)(void*)imprimirNodosPCBs);
 }
