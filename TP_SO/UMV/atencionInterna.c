@@ -4,7 +4,24 @@
  *  Created on: 11/06/2014
  *      Author: utnso
  */
-/*#include "atencionInterna.h"
+#include "atencionInterna.h"
+
+
+typedef enum {
+		CONFIRMACION,
+		SEGMENTATION_FAULT,
+		MEMORY_OVERLOAD,
+		MOSTRAR_VALOR,
+		MOSTRAR_TEXTO,
+		CREAR_SEGMENTO,/*listo*/
+		CREAR_SEGMENTOS_PROGRAMA,
+		DESTRUIR_SEGMENTOS,/*listo*/
+		ESCRIBIR_EN_UMV,
+		ESCRIBIR_EN_UMV_OFFSET_CERO,
+		SOLICITAR_A_UMV,/*listo*/
+		PEDIR_ETIQUETAS,
+		PEDIR_INSTRUCCION
+	} codigos_mensajes;
 
 void atencionInterna() {
 	char* saludoKernel= malloc(7);
@@ -33,7 +50,7 @@ void atencionInterna() {
 		} else {
 			close(socketCliente);
 		}
-		/*
+
 		 //Creo hilo que atiende al kernel.
 		 if (pthread_create(&hiloKernel, NULL, (void *) atencionKernel, NULL )) {
 		 //ERROR. Acá van cosas con log.
@@ -49,32 +66,30 @@ void atencionInterna() {
 		 } else {
 		 //Se creó correctamente.
 		 }
-		 */
-/*
+
+
 	}
 
 }
 
-void atencionKernel() {
+void atencionKernel(codigos_mensajes mensaje) {
+	int paramInex;//Esto es momentáneo. Borrar!!
 	printf("Se conectó el Kernel y se creó un hilo que atiende su ejecución :D");
-	/*typedef enum {
-		CONFIRMACION,
-		SEGMENTATION_FAULT,
-		MEMORY_OVERLOAD,
-		MOSTRAR_VALOR,
-		MOSTRAR_TEXTO,
-		CREAR_SEGMENTO,
-		CREAR_SEGMENTOS_PROGRAMA,
-		DESTRUIR_SEGMENTOS,
-		ESCRIBIR_EN_UMV,
-		ESCRIBIR_EN_UMV_OFFSET_CERO,
-		SOLICITAR_A_UMV,
-		PEDIR_ETIQUETAS,
-		PEDIR_INSTRUCCION
-	} codigos_mensajes;
-*/
-/*}
+	switch(mensaje){
+	case CREAR_SEGMENTO:
+		crearSegmento(paramInex/*parametro que no se de donde saco*/);
+		break;
+	case DESTRUIR_SEGMENTOS:
+		destruirTodosLosSegmentos();
+		break;
+	case SOLICITAR_A_UMV:
+		solicitarBytes(paramInex,paramInex,paramInex);
+		break;
+	}
+
+
+}
 void atencionCpu() {
 	printf("Se conectó una CPU y se creó un hilo que la atiende :D :D");
 }
-*/
+

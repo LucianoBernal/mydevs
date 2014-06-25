@@ -1,1 +1,0 @@
-atencionInterna.d: ../atencionInterna.c
