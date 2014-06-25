@@ -49,7 +49,7 @@ int crearSegmento(int);
 void destruirSegmento(int);
 void destruirTodosLosSegmentos();
 void *obtenerInicioReal(int);
-void *seleccionarSegunAlgoritmo(t_list *);
+void *seleccionarSegunAlgoritmo(t_list*);
 void compactarMemoria();
 void mostrarListaSegmentos(t_list*);
 void mostrarListaEspacios(t_list*);

@@ -4,7 +4,7 @@
  *  Created on: 11/06/2014
  *      Author: utnso
  */
-#include "atencionInterna.h"
+/*#include "atencionInterna.h"
 
 void atencionInterna() {
 	char* saludoKernel= malloc(7);
@@ -50,7 +50,7 @@ void atencionInterna() {
 		 //Se creó correctamente.
 		 }
 		 */
-
+/*
 	}
 
 }
@@ -73,8 +73,8 @@ void atencionKernel() {
 		PEDIR_INSTRUCCION
 	} codigos_mensajes;
 */
-}
+/*}
 void atencionCpu() {
 	printf("Se conectó una CPU y se creó un hilo que la atiende :D :D");
 }
-
+*/

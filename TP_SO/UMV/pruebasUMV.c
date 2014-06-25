@@ -9,7 +9,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
-#include "commons/collections/list.h"
+#include <commons/collections/list.h>
 #include <stdbool.h>
 
 #include "pruebasUMV.h"
@@ -24,7 +24,7 @@ int k = 0; //Esta esta solo para mostrar unos mensajes.
 bool algoritmo = 0; //0 significa FF, lo ponemos por defecto porque es el mas lindo*
 static t_tablaSegmento *crear_nodoSegm(int, int, int, int, void *);
 static void tsegm_destroy(t_tablaSegmento *);
-//pthread_mutex_init(&m_Segmentos,NULL);
+pthread_mutex_t mutexCantProcActivos, mutexFlagCompactado, mutexAlgoritmo = PTHREAD_MUTEX_INITIALIZER;
 static t_limites *crear_nodoLim(void *comienzo, void *final) {
 	t_limites *nuevo = malloc(sizeof(t_limites));
 	nuevo->comienzo = comienzo;
@@ -33,6 +33,7 @@ static t_limites *crear_nodoLim(void *comienzo, void *final) {
 }
 
 int main() {
+	tamanoUMV=1000;
 	crearEstructurasGlobales();
 	agregarProceso(1001, 'c');
 	cambiarProcesoActivo(1001);
@@ -90,7 +91,9 @@ void crearEstructurasGlobales() {
 void agregarProceso(int pid, char tipo) {
 	if (buscarPid(pid) == -1) {
 		list_add(listaProcesos, crear_nodoProc(pid, 0, tipo));
+		pthread_mutex_lock(&mutexCantProcActivos);
 		cantProcesosActivos++;
+		pthread_mutex_unlock(&mutexCantProcActivos);
 	} else {
 		printf("El numero pid ya esta en uso (?");
 		//Creo que lean ya evito esto desde el plp
@@ -165,7 +168,8 @@ bool tieneProblemas(int inicio, int pid, int tamano) {
 		return ((inicio > espacio->comienzo)
 				&& ((inicio + tamano) < (espacio->final)));
 	}
-	list_destroy_and_destroy_elements(tabla, (void*)tsegm_destroy);
+	//list_destroy_and_destroy_elements(tabla, (void*)tsegm_destroy);//con esta tira segmentation fault
+	//list_clean_and_destroy_elements(tabla, (void*)tsegm_destroy);//con esta tiene comportamiento raro (un memory overload nuestro)
 	return !list_any_satisfy(listaEspacios, (void*) estaDentroDeUnEspacio);
 	//list_destroy_and_destroy_elements(listaEspacios, (void*) free);//TODO guarda!!!
 }
@@ -201,7 +205,7 @@ void compactarMemoria() {
 	list_iterate(listaSegmentosOrdenada,
 			(void*) _cambiar_posiciones_chetamente);
 	printf("Compacte\n");
-	list_destroy_and_destroy_elements(listaSegmentosOrdenada, (void*)free);
+	//list_destroy_and_destroy_elements(listaSegmentosOrdenada, (void*)free);
 }
 
 void *obtenerInicioReal(int tamano) {
@@ -214,27 +218,30 @@ void *obtenerInicioReal(int tamano) {
 	lista_mascapita2 = list_filter(lista_mascapita,
 			(void*) _tiene_tamano_suficiente);
 	if (list_is_empty(lista_mascapita2) && !list_is_empty(lista_mascapita)) {
+		pthread_mutex_lock(&mutexFlagCompactado);
 		if (flag_compactado == 0) {
 			compactarMemoria();
 			flag_compactado = 1;
-			list_destroy_and_destroy_elements(lista_mascapita, (void*)free);
+			//list_destroy_and_destroy_elements(lista_mascapita, (void*)free);
 			return obtenerInicioReal(tamano);
 		} else {
 			printf("Memory overload, u win \n");
-			list_destroy_and_destroy_elements(lista_mascapita, (void*)free);
+			//list_destroy_and_destroy_elements(lista_mascapita, (void*)free);
 			return baseUMV; //Solo pongo esto para que me deje compilar, deberiamos crear un error.
 		}
+		pthread_mutex_unlock(&mutexFlagCompactado);
 	} else {
 		if (list_is_empty(lista_mascapita)){
-			list_destroy_and_destroy_elements(lista_mascapita, (void*)free);
+			//list_destroy_and_destroy_elements(lista_mascapita, (void*)free);
 			return baseUMV;
 		}
-		list_destroy_and_destroy_elements(lista_mascapita, (void*)free);
+		//list_destroy_and_destroy_elements(lista_mascapita, (void*)free);
 		return seleccionarSegunAlgoritmo(lista_mascapita2);
 	}
 }
 
 void *seleccionarSegunAlgoritmo(t_list *lista) {
+	pthread_mutex_lock(&mutexAlgoritmo);
 	if (algoritmo) {
 		bool _mayorTamano(t_limites *mayorTamano, t_limites *menorTamano) {
 			return (mayorTamano->final - mayorTamano->comienzo)
@@ -242,14 +249,17 @@ void *seleccionarSegunAlgoritmo(t_list *lista) {
 		}
 		list_sort(lista, (void*) _mayorTamano);
 	}
+	pthread_mutex_unlock(&mutexAlgoritmo);
 	return (((t_limites *) list_head(lista))->comienzo);
 }
 //Habla bastante por si sola.
 void cambiarAlgoritmo() {
+	pthread_mutex_lock(&mutexAlgoritmo);
 	algoritmo = !algoritmo;
 	algoritmo ?
 			printf("Ahora el algoritmo es First-Fit") :
 			printf("Ahora el algoritmo es Worst-Fit");
+	pthread_mutex_unlock(&mutexAlgoritmo);
 }
 
 void mostrarListaSegmentos(t_list *listaSegmento) {
@@ -284,7 +294,7 @@ t_list *obtenerEspaciosDisponibles() {
 	}
 
 	t_list *lista2 = list_map(listaParaAmasar, (void*) _mapear_t_limites);
-	list_destroy_and_destroy_elements(listaParaAmasar, (void*)free);
+	//list_destroy_and_destroy_elements(listaParaAmasar, (void*)free);
 	t_limites *_delimitar_espacios_fisicos_libres(t_limites *limites) {
 		t_limites *aux = malloc(sizeof(t_limites));
 		if ((i == 1) && (limites->comienzo != baseUMV)) { //A esto lo hago por si hay un espacio libre antes del primer segmento
@@ -303,7 +313,7 @@ t_list *obtenerEspaciosDisponibles() {
 	}
 	t_list *lista3 = list_map(lista2,
 			(void*) _delimitar_espacios_fisicos_libres);
-	list_destroy_and_destroy_elements(lista2, (void*)free);
+	//list_destroy_and_destroy_elements(lista2, (void*)free);
 	if (list_is_empty(lista3))
 		list_add(lista3, crear_nodoLim(baseUMV, baseUMV + tamanoUMV));
 	bool _no_es_un_error(t_limites *unaCosa) {
@@ -311,7 +321,7 @@ t_list *obtenerEspaciosDisponibles() {
 	} //Antes habia algo mal, ahora solo sirve para sacar los que tiene comienzo==final
 //Generan nodos de tamaño==0 al dope
 	t_list *lista4 = list_filter(lista3, (void*) _no_es_un_error);
-	list_destroy_and_destroy_elements(lista3, (void*)free);
+	//list_destroy_and_destroy_elements(lista3, (void*)free);
 	return lista4;
 }
 
@@ -323,6 +333,7 @@ t_list *obtenerListaSegmentosOrdenada() {
 		return self->pidOwner
 				== ((t_tablaProceso *) list_get(listaProcesos, i))->pid;
 	}
+	pthread_mutex_lock(&mutexCantProcActivos);
 	for (i = 0; i < cantProcesosActivos; i++) {
 		listaAux = list_filter(
 				((t_tablaProceso *) list_get(listaProcesos, i))->tabla,
@@ -335,6 +346,7 @@ t_list *obtenerListaSegmentosOrdenada() {
 		return posicionMenor->memPpal < posicionMayor->memPpal;
 	}
 	list_sort(listaSegmentos, (void*) _posicion_menor);
+	pthread_mutex_unlock(&mutexCantProcActivos);
 	return listaSegmentos;
 }
 //No me consta que sea necesaria esta funcion.
@@ -359,7 +371,6 @@ void destruirTodosLosSegmentos() {
 }
 
 void conseguirDeArchivo(int *p_tamanoUMV) {
-//en un futuro buscaria en el archivo de config.
 	*p_tamanoUMV = 2000;
 }
 //Estaria bueno agregarla a las commons
