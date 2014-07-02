@@ -184,7 +184,30 @@ int main(int argc, char *argv[]) {
 
 				//Echo back the message that came in
 				else {
-					//TODO aca va el swich para saber porque volvio(pero no preguntas por
+					serializameCPU(buffer, &paquete_CPU);
+					switch (paquete_CPU->razon) {
+							case 'n': //La instancia de CPU es nueva
+								nuevaCPU(paquete_CPU.IDCpu);
+								break;
+							case 'q': //El Programa salio del CPU por quantum
+								programaSalioPorQuantum(paquete_CPU.pcb, paquete_CPU.IDCpu);
+								break;
+							case 't': //El Programa termino normalmente
+								moverAColaExit(paquete_CPU.pcb, paquete_CPU.IDCpu);
+								break;
+							case 'b': //El Programa salio por bloqueo
+								programaSalioPorBloqueo(paquete_CPU.pcb, paquete_CPU.tiempo,
+										paquete_CPU.dispositivoIO, paquete_CPU.IDCpu);
+								break;
+							case 'd': //la CPU se desconectó
+								sem_wait(semCPUDesconectadaMutex);
+								idUltimaCPUDesconectada = paquete_CPU.IDCpu;
+								seDesconectoCPU(paquete_CPU.IDCpu);
+								sem_post(semCPUDesconectadaMutex);
+								break;
+							}
+
+					//TODO aca va el switch para saber porque volvio(pero no preguntas por
 					//desconexion, eso ya se sabe de antes. MMM igual ojo, quizas si
 					//porque quizas convenga que el que el que haga el close se el kernel
 				}
