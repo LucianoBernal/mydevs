@@ -178,11 +178,12 @@ void programaSalioPorBloqueo(t_PCB* pcb, int tiempo, char* dispositivo,
 }
 
 void seLiberoUnaCPU(int idCPU) {
-int i = posicionEnLaLista = (CPUs, idCPU);
-t_estructuraCPU* estructura;
-estructura->idCPU = idCPU;
-estructura -> estado = 0;
-list_replace_and_destroy_element(CPUs, i, estructura, nose) //TODO
+	int i = posicionEnLaLista = (CPUs, idCPU);
+	t_estructuraCPU* estructura;
+	estructura->idCPU = idCPU;
+	estructura->estado = 0;
+	list_replace_and_destroy_element(CPUs, i, estructura, nose)
+	//TODO
 	sem_post(CPUsLibres);
 }
 
@@ -200,6 +201,14 @@ void seDesconectoCPU(int idCPU) {
 	}
 }
 
+void seDesconectoCPUSigusr(int idCPU, t_PCB* pcb) {
+	list_remove_by_condition(CPUs, (void*) tieneID());
+	sem_wait(colaReadyMutex);
+	queue_push(colaReady, pcb);
+	sem_post(colaReadyMutex);
+
+}
+
 int posicionEnLaLista(t_list* lista, int idCpu) {
 	int i = 0;
 	while ((*(t_estructuraCPU*) list_get(lista, i)).idCPU != idCPU) {
@@ -208,10 +217,10 @@ int posicionEnLaLista(t_list* lista, int idCpu) {
 	return i;
 }
 
-int estaLibre(int idCPU){
-int i = posicionEnLaLista(CPUs, idCPU);
-t_estructuraCPU* estructura = list_get(CPUs, i);
-return (estructura-> estado == 0);
+int estaLibre(int idCPU) {
+	int i = posicionEnLaLista(CPUs, idCPU);
+	t_estructuraCPU* estructura = list_get(CPUs, i);
+	return (estructura->estado == 0);
 
-	}
+}
 

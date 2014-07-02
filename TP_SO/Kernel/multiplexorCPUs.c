@@ -199,10 +199,10 @@ int main(int argc, char *argv[]) {
 								programaSalioPorBloqueo(paquete_CPU.pcb, paquete_CPU.tiempo,
 										paquete_CPU.dispositivoIO, paquete_CPU.IDCpu);
 								break;
-							case 'd': //la CPU se desconectó
+							case 'd': //la CPU se desconectó CON SIGUSR//TODO
 								sem_wait(semCPUDesconectadaMutex);
 								idUltimaCPUDesconectada = paquete_CPU.IDCpu;
-								seDesconectoCPU(paquete_CPU.IDCpu);
+								seDesconectoCPUSigusr(paquete_CPU.IDCpu);
 								sem_post(semCPUDesconectadaMutex);
 								break;
 							}
