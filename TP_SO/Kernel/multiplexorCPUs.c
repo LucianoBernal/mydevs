@@ -177,6 +177,7 @@ int main(int argc, char *argv[]) {
 					//Close the socket and mark as 0 in list for reuse
 					close(sd);
 					client_socket[i] = 0;
+					seDesconectoCpu(sd);
 					//TODO Aca va lo que haces despues que una CPU se te desconecto,
 					//como ser sacarla de tu lista de CPUs
 				}
