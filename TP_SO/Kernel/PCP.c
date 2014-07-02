@@ -8,6 +8,7 @@ sem_t * sPLP = 0;
 sem_t * sYaInicializoElMT = 0;
 sem_t * sBloqueado = 0;
 sem_t * colaExecVacia = 0;
+sem_t * semCPUDesconectadaMutex = 1;
 int laSenialDeTerminar = 0;
 static t_queue* colaExec = queue_create();
 pthread_t ejecutar;
@@ -15,8 +16,8 @@ pthread_t envCPU;
 pthread_t recCPU;
 int retMandarAEjecutar, retEnviarCPU, retRecibirCPU;
 int* p = 0;
-static t_dictionary diccionarioDispositivos =dictionary_create();
-static t_list CPUs = list_create();
+static t_dictionary diccionarioDispositivos = dictionary_create();
+t_list* CPUs = list_create();
 int idUltimaCPUDesconectada;
 
 void crearHilosPrincipales() {
@@ -42,6 +43,7 @@ void crearHilosDeEntradaSalida() {
 		pthread_t dispositivo;
 		pthread_create(&dispositivo, NULL, bloquearYDevolverAReady,
 				(void*) &estructuraDispositivo);
+		i++;
 	}
 }
 
@@ -49,7 +51,8 @@ void* mandarAEjecutar(void* j) {
 // saca procesos de la cola de ready y los manda a la cola de Exec
 	sem_wait(vacioReady);
 	sem_wait(colaReadyMutex);
-	queue_push(colaExec, queue_pop(colaReady));
+	t_PCB* procesoAEjecutar = queue_pop(colaReady);
+	queue_push(colaExec, procesoAEjecutar);
 	sem_post(colaReadyMutex);
 	sem_post(colaExecVacia);
 
@@ -86,8 +89,10 @@ void* recibirCPU(void* j) {
 					paquete_CPU.dispositivoIO, paquete_CPU.IDCpu);
 			break;
 		case 'd': //la CPU se desconectó
+			sem_wait(semCPUDesconectadaMutex);
 			idUltimaCPUDesconectada = paquete_CPU.IDCpu;
 			seDesconectoCPU(paquete_CPU.IDCpu);
+			sem_post(semCPUDesconectadaMutex);
 			break;
 		}
 	}
@@ -95,7 +100,6 @@ void* recibirCPU(void* j) {
 	printf("Si ves esto es que algo mal hicimos");
 	break;
 
-	return (NULL );
 }
 
 void* enviarCPU(void* j) {
@@ -138,15 +142,15 @@ int encontrarPrimeraCpuLibreYOcuparla() {
 	return (estructura->idCPU);
 }
 
-bool estaLibre(t_estructuraCPU estructura) {
-	return (estructura.estado == 0);
+bool estaLibre(t_estructuraCPU* estructura) {
+	return (estructura->estado == 0);
 }
 
 void nuevaCPU(int idCPU) {
 	t_estructuraCPU estructura;
 	estructura.idCPU = idCPU;
 	estructura.estado = 0;
-	list_add(CPUs, estructura);
+	list_add(CPUs, &estructura);
 	sem_post(CPUsLibres);
 }
 
@@ -169,12 +173,16 @@ void programaSalioPorBloqueo(t_PCB* pcb, int tiempo, char* dispositivo,
 	t_estructuraProcesoBloqueado procesoBloqueado;
 	procesoBloqueado.pcb = pcb;
 	procesoBloqueado.tiempo = tiempo;
-	queue_push(estructura.procesosBloqueados, procesoBloqueado); //lo cambia en el diccionario?
+	queue_push(estructura.procesosBloqueados, procesoBloqueado); //lo cambia en el diccionario? TODO
 	seLiberoUnaCPU(idCPU);
 }
 
 void seLiberoUnaCPU(int idCPU) {
-//me falta seguir aca
+int i = posicionEnLaLista = (CPUs, idCPU);
+t_estructuraCPU* estructura;
+estructura->idCPU = idCPU;
+estructura -> estado = 0;
+list_replace_and_destroy_element(CPUs, i, estructura, nose) //TODO
 	sem_post(CPUsLibres);
 }
 
@@ -183,7 +191,7 @@ bool tieneID(t_estructuraCPU estructura) {
 }
 
 void seDesconectoCPU(int idCPU) {
-	if (la cpu esta libre /*me falta esto*/) {
+	if (estaLibre(idCPU)) {
 		list_remove_by_condition(CPUs, (void*) tieneID());
 	} else {
 		//se manda un error a la consola del programa
@@ -191,3 +199,19 @@ void seDesconectoCPU(int idCPU) {
 		list_remove_by_condition(CPUs, (void*) tieneID(paquete_CPU.IDCpu));
 	}
 }
+
+int posicionEnLaLista(t_list* lista, int idCpu) {
+	int i = 0;
+	while ((*(t_estructuraCPU*) list_get(lista, i)).idCPU != idCPU) {
+		i++;
+	}
+	return i;
+}
+
+int estaLibre(int idCPU){
+int i = posicionEnLaLista(CPUs, idCPU);
+t_estructuraCPU* estructura = list_get(CPUs, i);
+return (estructura-> estado == 0);
+
+	}
+
