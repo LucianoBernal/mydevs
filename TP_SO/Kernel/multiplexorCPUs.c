@@ -155,8 +155,7 @@ int main(int argc, char *argv[]) {
 				}
 			}
 
-			//TODO Aca va to.do lo que queres hacer con una nueva CPU, llamese agregarla
-			//a la lista de cpus etc.
+			nuevaCPU(sd); //TODO es una nueva CPU
 
 		}
 }
