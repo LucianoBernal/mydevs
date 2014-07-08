@@ -234,6 +234,7 @@ void gestionarProgramaNuevo(t_gestionarPrograma paquete) { // UN HILO
 		agregar_En_Diccionario(pcb->program_id, paquete.sd);
 	} else {
 		notificar_Memoria_Llena(paquete.sd);
+		close(paquete.sd);
 		free(pcb);
 		liberar_numero(pcb->program_id);
 	}
@@ -290,15 +291,15 @@ void mostrarColaDePCBs(t_queue* cola) {
 }
 
 void notificar_Memoria_Llena(int sd) {
-	char* message ="No hay espacio Suficiente espacio en memoria para alojar el programa\r\n";
+	char* message ="No hay espacio Suficiente en memoria para alojar el programa\r\n";
 	int* tamano = malloc(4);
 	*tamano=strlen(message);
 	if (send(sd, tamano, 4, 0) == 0) {
 		perror("send");
-		return;
-}
-if (send(sd, message,*tamano, 0) != *tamano) {
-	perror("send");
-	return;
-}
+		}
+	else {if (send(sd, message,*tamano, 0) != *tamano) {
+	perror("send");}
+	free(message);
+	free(tamano);
+	}
 }
