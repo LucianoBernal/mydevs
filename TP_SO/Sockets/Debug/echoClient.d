@@ -1,1 +1,0 @@
-echoClient.d: ../echoClient.c

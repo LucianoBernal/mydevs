@@ -18,7 +18,7 @@
 
 static t_list* colaNew;
 static t_list* randoms;
-static t_dictionary* pidYSockets=dictionary_create();
+static t_dictionary* pidYSockets = dictionary_create();
 static int numAleatorio;
 static int numABorrar;
 static sem_t * PidSD_Mutex = NULL;
@@ -27,6 +27,11 @@ static sem_t * colaNuevosVacio = NULL;
 static sem_t * randomMutex = NULL;
 static sem_t * numABorrarMutex = NULL;
 static sem_t * colaNuevosMutex = NULL;
+
+typedef struct {
+	char* literal;
+	int sd;
+} t_gestionarPrograma;
 
 typedef enum {
 	SEGMENTATION_FAULT,
@@ -72,7 +77,7 @@ int generarProgramID() {
 		numAleatorio = rand() % 10000;
 	}
 	int* numFinal = malloc(4);
-	*numFinal=numAleatorio;
+	*numFinal = numAleatorio;
 	list_add(randoms, numFinal);
 	sem_post(randomMutex);
 	return (*numFinal);
@@ -138,7 +143,7 @@ void lanzarHiloColaNewAReady() {
 int solicitar_Memoria(t_metadata_program*, t_PCB*);
 void escribir_en_Memoria(t_metadata_program*, t_PCB*);
 //void encolar_New(t_PCB*, int);
-void notificar_Memoria_Llena();
+void notificar_Memoria_Llena(int);
 //int calcularPeso(t_metadata_program*);
 //void liberar_numero(int pid);
 int solicitar_Memoria(t_metadata_program *metadata, t_PCB *pcb,
@@ -209,26 +214,26 @@ void escribir_en_Memoria(t_metadata_program * metadata, t_PCB *pcb,
 		printf("Alguno de los sends fallo, noob");
 }
 
-agregar_En_Diccionario(int pid, int sd){
+agregar_En_Diccionario(int pid, int sd) {
 	sem_wait(PidSD_Mutex);
-	dictionary_put(pidYSockets,(char*)&pid,&sd); //FIXME
+	dictionary_put(pidYSockets, (char*) &pid, &sd); //FIXME
 	sem_post(PidSD_Mutex);
 
 }
 
-void gestionarProgramaNuevo(const char* literal,int sd) { // UN HILO
+void gestionarProgramaNuevo(t_gestionarPrograma paquete) { // UN HILO
 	t_PCB* pcb = malloc(sizeof(t_PCB));
-	t_metadata_program* metadata = metadatada_desde_literal(literal);
+	t_metadata_program* metadata = metadatada_desde_literal(paquete.literal);
 	pcb->program_id = generarProgramID();
 	asignaciones_desde_metada(metadata, pcb);
 	int peso = calcularPeso(metadata);
-	if (solicitar_Memoria(metadata, pcb, literal)
-			== 0 /*ergo se pudo reservar memoria */) { //HABLAR CON PROJECTS LEADERS DE UMV
-		escribir_en_Memoria(metadata, pcb, literal);
+	if (solicitar_Memoria(metadata, pcb, paquete.literal)
+			!= 0 /*ergo se pudo reservar memoria */) { //HABLAR CON PROJECTS LEADERS DE UMV
+		escribir_en_Memoria(metadata, pcb, paquete.literal);
 		encolar_New(pcb, peso);
-		agregar_En_Diccionario(pcb->program_id,sd);
+		agregar_En_Diccionario(pcb->program_id, paquete.sd);
 	} else {
-		notificar_Memoria_Llena();
+		notificar_Memoria_Llena(paquete.sd);
 		free(pcb);
 		liberar_numero(pcb->program_id);
 	}
@@ -257,18 +262,16 @@ void encolar_en_Ready(t_PCB* pcb) {
 	sem_post(vacioReady);
 }
 
-
-void imprimirNodosNew(t_new* nodo){
-	printf("Program id:%i     Peso:%i\n",nodo->pcb->program_id,nodo->peso);
+void imprimirNodosNew(t_new* nodo) {
+	printf("Program id:%i     Peso:%i\n", nodo->pcb->program_id, nodo->peso);
 }
 
-
-void mostrarListaNew(){
+void mostrarListaNew() {
 	printf("El estado de la Cola New es el siguiente:\n");
-	list_iterate(colaNew,(void*)(void*)imprimirNodosNew);
+	list_iterate(colaNew, (void*) (void*) imprimirNodosNew);
 }
 
-void pcb_destroy(t_PCB *self){
+void pcb_destroy(t_PCB *self) {
 	free(self->cursor_Stack);
 	free(self->indice_de_Codigo);
 	free(self->indice_de_Etiquetas);
@@ -277,11 +280,25 @@ void pcb_destroy(t_PCB *self){
 	free(self);
 }
 
-void imprimirNodosPCBs(t_PCB* pcb){
-	printf("Program id:%i \n",pcb->program_id);
+void imprimirNodosPCBs(t_PCB* pcb) {
+	printf("Program id:%i \n", pcb->program_id);
 }
 
-void mostrarColaDePCBs(t_queue* cola){
+void mostrarColaDePCBs(t_queue* cola) {
 	//printf("El estado de la Cola Zarasa es el siguiente:\n"); SE HACE EN EL LLAMADO
-	list_iterate(cola->elements,(void*)(void*)imprimirNodosPCBs);
+	list_iterate(cola->elements, (void*) (void*) imprimirNodosPCBs);
+}
+
+void notificar_Memoria_Llena(int sd) {
+	char* message ="No hay espacio Suficiente espacio en memoria para alojar el programa\r\n";
+	int* tamano = malloc(4);
+	*tamano=strlen(message);
+	if (send(sd, tamano, 4, 0) == 0) {
+		perror("send");
+		return;
+}
+if (send(sd, message,*tamano, 0) != *tamano) {
+	perror("send");
+	return;
+}
 }

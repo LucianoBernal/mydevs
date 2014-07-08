@@ -31,6 +31,7 @@ int main(int argc, char **argv) {
 				strcat (literal, lineaLiteral);
 				}
 		fclose(archivo);
+		free(archivo);
 
 		//Create socket
 		sock = socket(AF_INET, SOCK_STREAM, 0);
@@ -72,20 +73,25 @@ int main(int argc, char **argv) {
 			}
 
 		while(1){
-			if ((valread = recv(sock, server_reply, PACKAGESIZE,MSG_WAITALL)) == 0) {
+			if ((valread = recv(sock, tamano, 4,MSG_WAITALL)) == 0) {
 						puts("recv failed");
 						break;
 
 					}
-			if ((valread = recv(sock, server_reply, PACKAGESIZE,MSG_WAITALL)) == 0) {
+			char* respuesta = malloc(*tamano);
+			if ((valread = recv(sock, respuesta, *tamano,MSG_WAITALL)) == 0) {
 						puts("recv failed");
 						break;
 					}
+			puts(server_reply);
+			free(respuesta);
 
 		}
 
 
 		close(sock);
+		free(tamano);
+		free(literal);
 		return 0;
 	}
 	int obtenerTamanoArchivo(FILE* archivoAbierto){
