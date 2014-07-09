@@ -23,11 +23,11 @@
 /*Constantes*/
 
 /*Variables Globales*/
-extern int tamanio_umv;
-extern int retardo;
-extern int puertoUMV;
+int tamanio_umv;
+int retardo;
+int puertoUMV;
 //extern bool algoritmo;
-extern void *baseUMV;
+void *baseUMV;
 extern t_list *listaProcesos;
 
 pthread_t atencion_consola;

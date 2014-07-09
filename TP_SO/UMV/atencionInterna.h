@@ -9,7 +9,7 @@
 #define ATENCIONINTERNA_H_
 
 #include "umv.h"
-#include <bibSockets2.h>
+#include <sockets/bibSockets2.h>
 
 /*Constantes*/
 #define MAX_CPUS 25;

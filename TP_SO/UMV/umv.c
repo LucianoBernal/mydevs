@@ -4,7 +4,7 @@
  *  Created on: 11/06/2014
  *      Author: utnso
  */
-/*#include "umv.h"
+#include "umv.h"
 
 int main0o(int argc, char** argv) {
 
@@ -79,4 +79,4 @@ void cargarConfig(t_config *config) {
 	char *keyPuerto = "PUERTO";
 	puertoUMV = config_get_int_value(config, keyPuerto);
 }
-*/
+
