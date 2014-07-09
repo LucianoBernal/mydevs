@@ -234,20 +234,20 @@ agregar_En_Diccionario(int pid, int sd) {
 
 }
 
-void gestionarProgramaNuevo(t_gestionarPrograma paquete) { // UN HILO
+void gestionarProgramaNuevo(const char* literal, int sd) { // UN HILO
 	t_PCB* pcb = malloc(sizeof(t_PCB));
-	t_metadata_program* metadata = metadatada_desde_literal(paquete.literal);
+	t_metadata_program* metadata = metadatada_desde_literal(literal);
 	pcb->program_id = generarProgramID();
 	asignaciones_desde_metada(metadata, pcb);
 	int peso = calcularPeso(metadata);
-	if (solicitar_Memoria(metadata, pcb, paquete.literal)
+	if (solicitar_Memoria(metadata, pcb, literal)
 			!= 0 /*ergo se pudo reservar memoria */) { //HABLAR CON PROJECTS LEADERS DE UMV
-		escribir_en_Memoria(metadata, pcb, paquete.literal);
+		escribir_en_Memoria(metadata, pcb, literal);
 		encolar_New(pcb, peso);
-		agregar_En_Diccionario(pcb->program_id, paquete.sd);
+		agregar_En_Diccionario(pcb->program_id,sd);
 	} else {
-		notificar_Memoria_Llena(paquete.sd);
-		close(paquete.sd);
+		notificar_Memoria_Llena(sd);
+		close(sd);
 		free(pcb);
 		liberar_numero(pcb->program_id);
 	}

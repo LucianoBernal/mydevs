@@ -23,11 +23,6 @@
 #define FALSE  0
 #define PORT 8888
 
-typedef struct{
-	char* literal;
-	int sd;
-}t_gestionarPrograma;
-
 
 int main(int argc, char *argv[]) {
 	int opt = TRUE;
@@ -163,18 +158,8 @@ int main(int argc, char *argv[]) {
 			recv(new_socket, tamano, 4, MSG_WAITALL);
 			char* literal = malloc(*tamano);
 			recv(new_socket, literal, *tamano, MSG_WAITALL);
-			t_gestionarPrograma paquete;
-			paquete.literal=literal;
-			paquete.sd=new_socket;
-			pthread_t thread;
-		    int  iret;
-            iret = pthread_create( &thread, NULL, gestionarProgramaNuevo, (void*) paquete);
-		     if(iret)
-		     {
-		         fprintf(stderr,"Error - pthread_create() return code: %d\n",iret);
-		      }
-
-			//puts(literal);
+			gestionarProgramaNuevo(literal,new_socket);
+            //puts(literal);
 
 		}
 }

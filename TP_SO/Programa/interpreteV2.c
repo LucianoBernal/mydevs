@@ -31,7 +31,7 @@ int main(int argc, char **argv) {
 				strcat (literal, lineaLiteral);
 				}
 		fclose(archivo);
-		free(archivo);
+
 
 		//Create socket
 		sock = socket(AF_INET, SOCK_STREAM, 0);

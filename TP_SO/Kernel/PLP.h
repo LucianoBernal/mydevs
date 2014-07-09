@@ -18,7 +18,7 @@ typedef struct {
 } t_new;
 
 
-void gestionarProgramaNuevo(const char* );
+void gestionarProgramaNuevo(const char*, int );
 void deNewAReady();
 void* plp_main(void*);
 

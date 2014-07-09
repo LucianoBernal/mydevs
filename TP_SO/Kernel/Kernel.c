@@ -61,8 +61,8 @@ int kernel_main(int argc, char** argv) {
 		exit(EXIT_FAILURE);
 	}
 	printf("Hilo pcp exitoso");
-	int* parametroPLP=NULL;
-	iretPLP = pthread_create(&plp, NULL, plp_main, (void*) parametroPLP); //TODO obvio noob todavia no lo hice
+	int* parametroPLP=NULL;//FIXME
+	iretPLP = pthread_create(&plp, NULL, plp_main, (void*) parametroPLP);
 	if (iretPLP) {
 		fprintf(stderr, "Error - pthread_create() return code: %d\n", iretPLP);
 		exit(EXIT_FAILURE);
