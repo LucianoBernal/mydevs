@@ -8,14 +8,26 @@
 #include "PLP.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
+#include <string.h>
 #include <stdbool.h>
 #include <time.h>
 #include <parser/metadata_program.h>
 #include <commons/collections/list.h>
 #include <commons/collections/queue.h>
+#include <commons/config.h>
 #include <semaphore.h>
+#include <pthread.h>
 
-void kernel_main() {
+static int puerto_programa;
+static int puerto_CPU;
+static int quantum;
+static int retardo;
+static t_queue* colaReady;
+
+void cargarConfig(t_config *);
+int32_t validarConfig(t_config*);
+int kernel_main(int argc, char** argv) {
 	//Verifico que se haya recibido por parámetro el archivo config.
 	if (argc <= 1) {
 		perror(
@@ -34,16 +46,31 @@ void kernel_main() {
 	//Cargo parámetros del config en variables de Kernel.
 	cargarConfig(config);
 	config_destroy(config);
-	return EXIT_SUCCESS;
-
-	static t_queue* colaReady;
-	colaReady = list_create();
+	colaReady = queue_create();
 	static sem_t * colaReadyMutex;
 	sem_init(colaReadyMutex, 0, 1);
 	static sem_t * vacioReady;
 	sem_init(vacioReady, 0, 0);
 
-	pthread_create()
+	pthread_t plp, pcp;
+	int iretPLP, iretPCP;
+
+	iretPCP = pthread_create(&pcp, NULL, pcp_main, (void*) parametrosPCP); //TODO bely definir pcp_main y si lleva parametros
+	if (iretPCP) {
+		fprintf(stderr, "Error - pthread_create() return code: %d\n", iretPCP);
+		exit(EXIT_FAILURE);
+	}
+	printf("Hilo pcp exitoso");
+
+	iretPLP = pthread_create(&plp, NULL, plp_main, (void*) parametroPLP); //TODO obvio noob todavia no lo hice
+	if (iretPLP) {
+		fprintf(stderr, "Error - pthread_create() return code: %d\n", iretPLP);
+		exit(EXIT_FAILURE);
+	}
+	printf("Hilo plp exitoso");
+	pthread_join( pcp, NULL);
+	pthread_join( plp, NULL);
+	return EXIT_FAILURE;
 }
 
 int32_t validarConfig(t_config *config) {
@@ -91,23 +118,14 @@ int32_t validarConfig(t_config *config) {
 }
 
 void cargarConfig(t_config *config) {
-	char *keyTamanio = "PUERTO_PROG";
-	puerto_programa = config_get_int_value(config, keyPuerto_Prog);
+	char *keyPUERTO_PROG = "PUERTO_PROG";
+	puerto_programa = config_get_int_value(config, keyPUERTO_PROG);
 	char *keyPUERTO_CPU = "PUERTO_CPU";
-	puerto_CPU = config_get_int_value(config, keyPuerto_CPU);
+	puerto_CPU = config_get_int_value(config, keyPUERTO_CPU);
 	char *keyQUANTUM = "QUANTUM";
-	quantum = config_get_int_value(config, keyQuantum);
+	quantum = config_get_int_value(config, keyQUANTUM);
 	char *keyRETARDO = "RETARDO";
-	retardo = config_get_int_value(config, keyRetardo);
+	retardo = config_get_int_value(config, keyRETARDO);
 
 	//TODO ME FALTA SEGUIR ACÁ
-}
-
-void* plp(void* parametro) {
-	colaNew = list_create();
-	randoms = list_create();
-	sem_init(colaNuevosVacio, 0, 0);
-	sem_init(randomMutex, 0, 1);
-	sem_init(numABorrarMutex, 0, 1);
-	sem_init(colaNuevosMutex, 0, 1);
 }

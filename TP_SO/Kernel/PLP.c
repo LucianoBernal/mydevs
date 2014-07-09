@@ -49,6 +49,19 @@ typedef enum {
 #define TAMANO_CABECERA 7
 int socketUMV; //Agregada por pato, deberias crear el socket en algun momento.
 int tamanoStack; //Deberia leerlo desde config
+
+
+void* plp(void* parametro) {
+	colaNew = list_create();
+	randoms = list_create();
+	sem_init(colaNuevosVacio, 0, 0);
+	sem_init(randomMutex, 0, 1);
+	sem_init(numABorrarMutex, 0, 1);
+	sem_init(colaNuevosMutex, 0, 1);
+	return EXIT_SUCCESS;
+}
+
+
 void asignaciones_desde_metada(t_metadata_program* metadata, t_PCB* pcb) {
 	pcb->program_Counter = metadata->instruccion_inicio;
 	pcb->tamanio_Indice_de_Etiquetas = metadata->etiquetas_size;

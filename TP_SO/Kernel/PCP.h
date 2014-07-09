@@ -1,8 +1,8 @@
 #ifndef PCP__H_
 #define PCP__H_
 
-#include<semaphore.h>
-#include<pthread.h>
+#include <semaphore.h>
+#include <pthread.h>
 #include <commons/collections/list.h>
 #include <commons/collections/queue.h>
 
