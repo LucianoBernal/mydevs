@@ -11,7 +11,8 @@ C_SRCS += \
 ../sockets/bibSockets.c \
 ../sockets/bibSockets2.c \
 ../sockets/comenzandoConSelect.c \
-../sockets/echoClient.c 
+../sockets/echoClient.c \
+../sockets/sockets.c 
 
 OBJS += \
 ./sockets/ClienteSerializacion.o \
@@ -21,7 +22,8 @@ OBJS += \
 ./sockets/bibSockets.o \
 ./sockets/bibSockets2.o \
 ./sockets/comenzandoConSelect.o \
-./sockets/echoClient.o 
+./sockets/echoClient.o \
+./sockets/sockets.o 
 
 C_DEPS += \
 ./sockets/ClienteSerializacion.d \
@@ -31,7 +33,8 @@ C_DEPS += \
 ./sockets/bibSockets.d \
 ./sockets/bibSockets2.d \
 ./sockets/comenzandoConSelect.d \
-./sockets/echoClient.d 
+./sockets/echoClient.d \
+./sockets/sockets.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
