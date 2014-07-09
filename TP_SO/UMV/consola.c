@@ -4,7 +4,7 @@
  *  Created on: 03/05/2014
  *      Author: utnso
  */
-/*#include "consola.h"
+#include "consola.h"
 
 int consola() {
 	const int COMANDO_SIZE = 30;
@@ -174,4 +174,4 @@ void analizarYEjecutar(char *comando) {
 		return;
 	}
 }
-*/
+

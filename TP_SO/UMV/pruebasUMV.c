@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <time.h>
+#include <unistd.h>
 #include <commons/collections/list.h>
 #include <stdbool.h>
 
@@ -484,16 +484,8 @@ void dumpMemoriaChata(int offset, int tamano, bool archivo) {
 	//TODO: guardar en archivo
 }
 
-//FIXME: no funciona si se pasa el retardo por parámetro
+
 void aplicarRetardo(int ret){
-/*int const NANO_TO_MILI 1000000;
-int tiempoRetardo;
-tiempoRetardo= retardo * NANO_TO_MILI;
-struct timespec ts;
-ts.tv_sec = 5;
-ts.tv_nsec = tiempoRetardo;
-nanosleep(&ts,NULL);*/
-	float retardoPosta = ret / 1000;
-	sleep(retardoPosta);
+usleep(ret);
 }
 
