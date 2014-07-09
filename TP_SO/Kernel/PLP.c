@@ -51,7 +51,7 @@ int socketUMV; //Agregada por pato, deberias crear el socket en algun momento.
 int tamanoStack; //Deberia leerlo desde config
 
 
-void* plp(void* parametro) {
+void* plp_main(void* parametro) {
 	colaNew = list_create();
 	randoms = list_create();
 	sem_init(colaNuevosVacio, 0, 0);

@@ -20,6 +20,7 @@ typedef struct {
 
 void gestionarProgramaNuevo(const char* );
 void deNewAReady();
+void* plp_main(void*);
 
 
 #endif /* PLP_H_ */
