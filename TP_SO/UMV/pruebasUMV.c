@@ -32,7 +32,7 @@ static t_limites *crear_nodoLim(void *comienzo, void *final) {
 	return nuevo;
 }
 
-int main() {
+int main0() {
 	tamanoUMV=1000;
 	crearEstructurasGlobales();
 	agregarProceso(1001, 'c');

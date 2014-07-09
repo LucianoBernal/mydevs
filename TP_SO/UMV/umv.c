@@ -6,7 +6,7 @@
  */
 #include "umv.h"
 
-int main0o(int argc, char** argv) {
+int main(int argc, char** argv) {
 
 	//Verifico que se haya recibido por parámetro el archivo config.
 	if (argc <= 1) {
@@ -25,23 +25,29 @@ int main0o(int argc, char** argv) {
 
 	//Cargo parámetros del config en variables de UMV.
 	cargarConfig(config);
+	//Creo Log.
+	logger = log_create("logUmv", "UMV", true, LOG_LEVEL_INFO);
+	log_info(logger, "Comienza la ejecución de la UMV.");
 
 	baseUMV = malloc(tamanio_umv);
 	listaProcesos = list_create();
-
 	//Creo hilo que atiende a la consola.
 	if (pthread_create(&atencion_consola, NULL, (void *) consola, NULL )) {
-		//ERROR. Acá van cosas con log.
+		//ERROR.
+		log_info(logger, "Hubo un error en la creación del hilo de consola");
 	} else {
 		//Se creó hilo correctamente.
+		log_info(logger, "El hilo de consola se creó correctamente");
 	}
 
 	//Creo hilo que creará hilos que atienden al kernel/cpu's.
 	if (pthread_create(&atencion_interna, NULL, (void *) atencionInterna,
 			NULL )) {
-		//ERROR. Acá van cosas con log.
+		//ERROR.
+		log_info(logger, "Hubo un error en la creación del hilo de atención interna");
 	} else {
 		//Se creó correctamente.
+		log_info(logger, "El hilo de atención interna se creó correctamente");
 	}
 	list_destroy_and_destroy_elements(listaProcesos, (void*)free);
 	config_destroy(config);

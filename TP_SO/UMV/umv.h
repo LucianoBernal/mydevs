@@ -14,6 +14,7 @@
 #include <string.h>
 #include <commons/config.h>
 #include <commons/string.h>
+#include <commons/log.h>
 #include <commons/collections/list.h>
 #include <pthread.h>
 #include <semaphore.h>
@@ -23,6 +24,7 @@
 /*Constantes*/
 
 /*Variables Globales*/
+t_log* logger;
 int tamanio_umv;
 int retardo;
 int puertoUMV;

@@ -6,19 +6,19 @@
  */
 #include "atencionInterna.h"
 
-
+/*
 typedef enum {
 		CONFIRMACION,
 		SEGMENTATION_FAULT,
 		MEMORY_OVERLOAD,
 		MOSTRAR_VALOR,
 		MOSTRAR_TEXTO,
-		CREAR_SEGMENTO,/*listo*/
+		CREAR_SEGMENTO,
 		CREAR_SEGMENTOS_PROGRAMA,
-		DESTRUIR_SEGMENTOS,/*listo*/
+		DESTRUIR_SEGMENTOS,
 		ESCRIBIR_EN_UMV,
 		ESCRIBIR_EN_UMV_OFFSET_CERO,
-		SOLICITAR_A_UMV,/*listo*/
+		SOLICITAR_A_UMV,
 		PEDIR_ETIQUETAS,
 		PEDIR_INSTRUCCION
 	} codigos_mensajes;
@@ -75,9 +75,10 @@ void atencionInterna() {
 void atencionKernel(codigos_mensajes mensaje) {
 	int paramInex;//Esto es momentáneo. Borrar!!
 	printf("Se conectó el Kernel y se creó un hilo que atiende su ejecución :D");
+	recv(socketKernel,);
 	switch(mensaje){
 	case CREAR_SEGMENTO:
-		crearSegmento(paramInex/*parametro que no se de donde saco*/);
+		crearSegmento(paramInex);
 		break;
 	case DESTRUIR_SEGMENTOS:
 		destruirTodosLosSegmentos();
@@ -92,4 +93,4 @@ void atencionKernel(codigos_mensajes mensaje) {
 void atencionCpu() {
 	printf("Se conectó una CPU y se creó un hilo que la atiende :D :D");
 }
-
+*/
