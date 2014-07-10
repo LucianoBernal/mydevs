@@ -36,8 +36,10 @@ void cargarConfig(t_config *);
 int32_t validarConfig(t_config*);
 void obtener_valor(char id, int idCpu);
 void grabar_valor(char id, int valor);
-void wait(int idSem);
-void signal(int idSem);
+void wait(char* idSem, int idCpu);
+void signal(char* idSem);
+int buscarValorSemaforo(char* semaforo);
+int buscarPosicion(char* semaforo);
 
 int kernel_main(int argc, char** argv) {
 	//Verifico que se haya recibido por parámetro el archivo config.
@@ -147,11 +149,10 @@ void cargarConfig(t_config *config) {
 	char *keyHIO = "HIO";
 	hio = config_get_int_value(config, keyHIO);
 	char *keyIDHIO = "IDHIO";
-	idhio= config_get_int_value(config, keyIDHIO);
+	idhio = config_get_int_value(config, keyIDHIO);
 	char *keyVARIABLES_GLOBALES = "VARIABLES_GLOBALES";
-	variables_globales= config_get_int_value(config, keyVARIABLES_GLOBALES);
-		}
-
+	variables_globales = config_get_int_value(config, keyVARIABLES_GLOBALES);
+}
 
 void obtener_valor(char id, int idCpu) {
 	sem_wait(mutexVG);
@@ -165,10 +166,35 @@ void grabar_valor(char id, int valor) {
 	sem_wait(mutexVG);
 }
 
+void signal(char* idSem) {
+	int pos = buscarPosicion(idSem);
+	semaforos[pos] = semaforos[pos] + 1;
+}
+
+void wait(char* idSem, int idCpu) {
+	int a = buscarValorSemaforo(idSem);
+	int pos = buscarPosicion(idSem);
+	if (a > 0) {
+		semaforos[pos] = semaforos[pos] - 1;
+		send(idCpu, 's', strlen(), 0); //ya sé que esto está mal xD
+	}
+	else
+	{
+		//encolar el proceso
+	}
+}
 int buscarValorSemaforo(char* semaforo) {
 	int i = 0;
 	while (valor_semaforos[i] != semaforo) {
 		i++;
 	}
 	return semaforos[i];
+}
+
+int buscarPosicion(char* semaforo) {
+	int i = 0;
+	while (valor_semaforos[i] != semaforo) {
+		i++;
+	}
+	return i;
 }
