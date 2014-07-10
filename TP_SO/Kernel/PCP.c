@@ -20,6 +20,11 @@ static t_dictionary diccionarioDispositivos = dictionary_create();
 t_list* CPUs = list_create();
 int idUltimaCPUDesconectada;
 
+void mainPCP(){
+	crearHilosPrincipales();
+	crearHilosDeEntradSalida();
+}
+
 void crearHilosPrincipales() {
 
 	retMandarAEjecutar = pthread_create(&ejecutar, NULL, mandarAEjecutar,
