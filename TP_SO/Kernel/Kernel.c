@@ -165,3 +165,10 @@ void grabar_valor(char id, int valor) {
 	sem_wait(mutexVG);
 }
 
+int buscarValorSemaforo(char* semaforo) {
+	int i = 0;
+	while (valor_semaforos[i] != semaforo) {
+		i++;
+	}
+	return semaforos[i];
+}
