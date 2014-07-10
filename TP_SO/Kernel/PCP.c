@@ -1,8 +1,5 @@
 #include "PCP.h"
 
-int puertoCPU; //se saca del config tambien
-const dispositivosEntradaSalida, retardosDispositivos; // se leen también del config
-
 sem_t * CPUsLibres = 0;
 sem_t * sPLP = 0;
 sem_t * sYaInicializoElMT = 0;
@@ -35,15 +32,15 @@ void crearHilosPrincipales() {
 
 void crearHilosDeEntradaSalida() {
 	int i = 0;
-	while (dispositivosEntradaSalida[i] != '\0') {
-		int retardo = buscarRetardo(dispositivosEntradaSalida[i]);
+	while (idhio[i] != '\0') {
+		int retardo = buscarRetardo(idhio[i]);
 		static t_queue* colaDispositivo = queue_create();
 		static sem_t* semaforo = 0;
 		t_estructuraDispositivoIO* estructuraDispositivo;
 		estructuraDispositivo->retardo = retardo;
 		estructuraDispositivo->procesosBloqueados = colaDispositivo;
 		estructuraDispositivo->semaforoCola = semaforo;
-		dictionary_put(diccionarioDispositivos, dispositivosEntradaSalida[i],
+		dictionary_put(diccionarioDispositivos, idhio[i],
 				estructuraDispositivo);
 		pthread_t dispositivo;
 		pthread_create(&dispositivo, NULL, bloquearYDevolverAReady,
@@ -67,7 +64,7 @@ void* recibirCPU(void* j) {
 	//recibe procesos que salieron de la cpu y según el motivo hace lo que tenga que hacer
 	int listenningSocket;
 	sem_wait(sYaInicializoElMT);
-	crearSocketL(listeningSocket, PUERTOCPU);
+	crearSocketL(listeningSocket, puerto_CPU);
 	listen(listenningSocket, BACKLOG);
 	struct sockaddr_in addr;
 	socklen_t addrlen = sizeof(addr);
@@ -135,10 +132,10 @@ void* bloquearYDevolverAReady(void * param) {
 
 int buscarRetardo(char* dispositivo) {
 	int i = 0;
-	while (dispositivosEntradaSalida[i] != dispositivo) {
+	while (idhio[i] != dispositivo) {
 		i++;
 	}
-	return retardosDispositivos[i];
+	return hio[i];
 }
 
 int encontrarPrimeraCpuLibreYOcuparla() {
