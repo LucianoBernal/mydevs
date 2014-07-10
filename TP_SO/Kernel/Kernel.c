@@ -63,11 +63,13 @@ int kernel_main(int argc, char** argv) {
 	cargarConfig(config);
 	config_destroy(config);
 	colaReady = queue_create();
+	static sem_t * grado_Multiprogramacion;
+	sem_init(grado_Multiprogramacion, 0, multiprogramacion);
 	static sem_t * colaReadyMutex;
 	sem_init(colaReadyMutex, 0, 1);
 	static sem_t * vacioReady;
 	sem_init(vacioReady, 0, 0);
-	struct sockaddr_in address;
+	/*struct sockaddr_in address;
 	int sd_UMV;
 	if ((sd_UMV = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
 			perror("socket failed");
@@ -76,7 +78,7 @@ int kernel_main(int argc, char** argv) {
 	address.sin_family = AF_INET;
 	address.sin_addr.s_addr = INADDR_ANY;
 	address.sin_port = htons(puertoUMV);
-
+*/
 
 
 
@@ -146,13 +148,13 @@ int32_t validarConfig(t_config *config) {
 }
 
 void cargarConfig(t_config *config) {
-	static char *keyPUERTO_PROG = "PUERTO_PROG";
+	char *keyPUERTO_PROG = "PUERTO_PROG";
 	puerto_programa = config_get_int_value(config, keyPUERTO_PROG);
-	static char *keyPUERTO_CPU = "PUERTO_CPU";
+	char *keyPUERTO_CPU = "PUERTO_CPU";
 	puerto_CPU = config_get_int_value(config, keyPUERTO_CPU);
-	static char *keyQUANTUM = "QUANTUM";
+	char *keyQUANTUM = "QUANTUM";
 	quantum = config_get_int_value(config, keyQUANTUM);
-	static char *keyRETARDO = "RETARDO";
+	char *keyRETARDO = "RETARDO";
 	retardo = config_get_int_value(config, keyRETARDO);
 	char *keyMULTIPROGRAMACION = "MULTIPROGRAMACION";
 	multiprogramacion = config_get_int_value(config, keyMULTIPROGRAMACION);

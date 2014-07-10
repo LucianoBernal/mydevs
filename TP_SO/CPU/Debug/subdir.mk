@@ -5,16 +5,19 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../EsqueletoCPU.c \
+../bibSockets2.c \
 ../funcionesParser.c \
 ../primerIntentoCPU.c 
 
 OBJS += \
 ./EsqueletoCPU.o \
+./bibSockets2.o \
 ./funcionesParser.o \
 ./primerIntentoCPU.o 
 
 C_DEPS += \
 ./EsqueletoCPU.d \
+./bibSockets2.d \
 ./funcionesParser.d \
 ./primerIntentoCPU.d 
 
