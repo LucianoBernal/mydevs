@@ -18,6 +18,8 @@
 #include <commons/config.h>
 #include <semaphore.h>
 #include <pthread.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
 
 static int puerto_programa;
 static int puerto_CPU;
@@ -51,6 +53,18 @@ int kernel_main(int argc, char** argv) {
 	sem_init(colaReadyMutex, 0, 1);
 	static sem_t * vacioReady;
 	sem_init(vacioReady, 0, 0);
+	struct sockaddr_in address;
+	int sd_UMV;
+	if ((sd_UMV = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
+			perror("socket failed");
+			exit(EXIT_FAILURE);
+		}
+	address.sin_family = AF_INET;
+	address.sin_addr.s_addr = INADDR_ANY;
+	address.sin_port = htons(puertoUMV);
+
+
+
 
 	pthread_t plp, pcp;
 	int iretPLP, iretPCP;
@@ -118,13 +132,13 @@ int32_t validarConfig(t_config *config) {
 }
 
 void cargarConfig(t_config *config) {
-	char *keyPUERTO_PROG = "PUERTO_PROG";
+	static char *keyPUERTO_PROG = "PUERTO_PROG";
 	puerto_programa = config_get_int_value(config, keyPUERTO_PROG);
-	char *keyPUERTO_CPU = "PUERTO_CPU";
+	static char *keyPUERTO_CPU = "PUERTO_CPU";
 	puerto_CPU = config_get_int_value(config, keyPUERTO_CPU);
-	char *keyQUANTUM = "QUANTUM";
+	static char *keyQUANTUM = "QUANTUM";
 	quantum = config_get_int_value(config, keyQUANTUM);
-	char *keyRETARDO = "RETARDO";
+	static char *keyRETARDO = "RETARDO";
 	retardo = config_get_int_value(config, keyRETARDO);
 
 	//TODO ME FALTA SEGUIR ACÁ
