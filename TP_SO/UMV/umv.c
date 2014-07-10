@@ -49,6 +49,7 @@ int main(int argc, char** argv) {
 		//Se creó correctamente.
 		log_info(logger, "El hilo de atención interna se creó correctamente");
 	}
+	log_info(logger, "El proceso UMV ha finalizado");
 	list_destroy_and_destroy_elements(listaProcesos, (void*)free);
 	config_destroy(config);
 	log_destroy(logger);

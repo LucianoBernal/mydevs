@@ -73,10 +73,12 @@ void atencionInterna() {
 }
 
 void atencionKernel(int* socketKernel) {
+	char* paquete_recibido;
 	codigos_mensajes mensaje;
 	int paramInex;//Esto es momentáneo. Borrar!!
 	printf("Se conectó el Kernel y se creó un hilo que atiende su ejecución :D");
-	recv(socketKernel,(void*)mensaje,20,0);//TODO El tercer parámetro es la longitud del mensaje. La ponemos constante?
+	recv(socketKernel,(void*) mensaje,20,0);//TODO El tercer parámetro es la longitud del mensaje. La ponemos constante?
+	desempaquetar2(paquete_recibido,mensaje);//FIXME El deserializado, se tiene que hacer acá? Yo no se cuántos parámetros sacar. Y si lo hago en cada case, no tengo de donde sacar mensaje.
 	switch(mensaje){
 	case CREAR_SEGMENTO:
 		crearSegmento(paramInex);
