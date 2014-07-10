@@ -4,7 +4,7 @@
  *  Created on: 09/06/2014
  *      Author: utnso
  */
-#include <biblioteca_comun/definiciones.h>
+//#include <biblioteca_comun/definiciones.h>
 #include <parser/parser.h>
 #include <parser/metadata_program.h>
 #include "funcionesParser.h"
@@ -45,7 +45,7 @@ t_puntero desplazamiento;
 t_dictionary *diccionario;
 t_puntero cursorCtxto;
 extern char *etiquetas;
-t_PCB *pcb;
+
 
 typedef enum {
 	CONFIRMACION,
@@ -76,6 +76,19 @@ typedef struct {
 } t_variable;
 
 typedef struct {
+	int program_id;	//Identificador único del Programa en el sistema
+	int* segmento_Codigo;// Dirección del primer byte en la UMV del segmento de código
+	int* segmento_Stack;// Dirección del primer byte en la UMV del segmento de stack
+
+	int* cursor_Stack;	// Dirección del primer byte en la UMV del Contexto de Ejecución Actual
+	int* indice_de_Codigo;	// Dirección del primer byte en la UMV del Índice de Código
+	int* indice_de_Etiquetas;//Dirección del primer byte en la UMV del Índice de Etiquetas
+	int program_Counter;	//Número de la próxima instrucción a ejecutar
+	int tamanio_Contexto_Actual;//Cantidad de variables (locales y parámetros) del Contexto de Ejecución Actual
+	int tamanio_Indice_de_Etiquetas;//Cantidad de bytes que ocupa el Índice de etiquetas
+} t_PCB;
+
+typedef struct {
 	char *msj;
 	int tamano; //un tamano de 255 PUEDE ser poco
 	char cantVar; //pero es mejor que nada
@@ -93,7 +106,7 @@ typedef struct{
 t_tamYDir *crear_nodoVar(void *, int);
 t_paquete *serializar2(t_tamYDir *uno, ...);
 void desempaquetar2(char *, void *, ...);
-
+t_PCB *pcb;
 t_paquete *serializar2(t_tamYDir *uno, ...){
 	va_list(p);
 	va_start(p, uno);

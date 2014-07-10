@@ -1,0 +1,40 @@
+[ERROR] 13:47:29:514 TEST/(4235:4235): Error al conectar socket
+[ERROR] 13:47:29:514 TEST/(4235:4235): No se pudo conectar a la UMV exitosamente
+[ERROR] 13:47:29:514 TEST/(4235:4235): Deberia estar cerrando el CPU
+[ERROR] 13:47:29:514 TEST/(4235:4235): Error al conectar socket
+[ERROR] 13:47:29:514 TEST/(4235:4235): No se pudo conectar al Kernel exitosamente
+[ERROR] 13:47:29:514 TEST/(4235:4235): Deberia estar cerrando el CPU
+[INFO] 13:47:29:514 TEST/(4235:4235): ApruebenmeN pls
+[INFO] 13:47:29:514 TEST/(4235:4235): El handshake con la UMV salio bien
+[INFO] 13:47:29:514 TEST/(4235:4235): El handshake con el Kernel salio bien
+[ERROR] 13:47:48:378 TEST/(4264:4264): Error al conectar socket
+[ERROR] 13:47:48:378 TEST/(4264:4264): No se pudo conectar a la UMV exitosamente
+[ERROR] 13:47:48:378 TEST/(4264:4264): Deberia estar cerrando el CPU
+[ERROR] 13:47:48:378 TEST/(4264:4264): Error al conectar socket
+[ERROR] 13:47:48:378 TEST/(4264:4264): No se pudo conectar al Kernel exitosamente
+[ERROR] 13:47:48:378 TEST/(4264:4264): Deberia estar cerrando el CPU
+[INFO] 13:47:48:378 TEST/(4264:4264): ApruebenmeN pls
+[ERROR] 13:47:48:378 TEST/(4264:4264): El handshake con la UMV salio mal
+[ERROR] 13:47:48:378 TEST/(4264:4264): El handshake con el Kernel salio mal
+[ERROR] 13:53:44:345 TEST/(4505:4505): Error al conectar socket
+[ERROR] 13:53:44:345 TEST/(4505:4505): No se pudo conectar a la UMV exitosamente
+[ERROR] 13:53:44:346 TEST/(4505:4505): Deberia estar cerrando el CPU
+[ERROR] 13:53:44:346 TEST/(4505:4505): No se pudo conectar al Kernel exitosamente
+[ERROR] 13:53:44:346 TEST/(4505:4505): Deberia estar cerrando el CPU
+[INFO] 13:53:44:346 TEST/(4505:4505): ApruebenmeN pls
+[ERROR] 13:53:44:346 TEST/(4505:4505): El handshake con la UMV salio mal
+[ERROR] 13:54:16:454 TEST/(4505:4505): El handshake con el Kernel salio mal
+[ERROR] 13:54:19:287 TEST/(4507:4507): Error al conectar socket
+[ERROR] 13:54:19:287 TEST/(4507:4507): No se pudo conectar a la UMV exitosamente
+[ERROR] 13:54:19:287 TEST/(4507:4507): Deberia estar cerrando el CPU
+[ERROR] 13:54:19:287 TEST/(4507:4507): Error al conectar socket
+[ERROR] 13:54:19:287 TEST/(4507:4507): No se pudo conectar al Kernel exitosamente
+[ERROR] 13:54:19:287 TEST/(4507:4507): Deberia estar cerrando el CPU
+[INFO] 13:54:19:287 TEST/(4507:4507): ApruebenmeN pls
+[ERROR] 13:54:19:287 TEST/(4507:4507): El handshake con la UMV salio mal
+[ERROR] 13:54:19:287 TEST/(4507:4507): El handshake con el Kernel salio mal
+[ERROR] 13:56:18:454 TEST/(4657:4657): Error al conectar socket
+[ERROR] 13:56:18:454 TEST/(4657:4657): No se pudo conectar a la UMV exitosamente
+[ERROR] 13:56:18:454 TEST/(4657:4657): Deberia estar cerrando el CPU
+[INFO] 13:56:18:454 TEST/(4657:4657): ApruebenmeN pls
+[ERROR] 13:56:18:454 TEST/(4657:4657): El handshake con la UMV salio mal

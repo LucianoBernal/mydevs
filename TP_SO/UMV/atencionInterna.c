@@ -13,12 +13,12 @@ typedef enum {
 		MEMORY_OVERLOAD,
 		MOSTRAR_VALOR,
 		MOSTRAR_TEXTO,
-		CREAR_SEGMENTO,/*listo*/
+		CREAR_SEGMENTO,
 		CREAR_SEGMENTOS_PROGRAMA,
-		DESTRUIR_SEGMENTOS,/*listo*/
+		DESTRUIR_SEGMENTOS,
 		ESCRIBIR_EN_UMV,
 		ESCRIBIR_EN_UMV_OFFSET_CERO,
-		SOLICITAR_A_UMV,/*listo*/
+		SOLICITAR_A_UMV,
 		PEDIR_ETIQUETAS,
 		PEDIR_INSTRUCCION
 	} codigos_mensajes;
@@ -72,12 +72,16 @@ void atencionInterna() {
 
 }
 
-void atencionKernel(codigos_mensajes mensaje) {
+void atencionKernel(int* socketKernel) {
+	char* paquete_recibido;
+	codigos_mensajes mensaje;
 	int paramInex;//Esto es momentáneo. Borrar!!
 	printf("Se conectó el Kernel y se creó un hilo que atiende su ejecución :D");
+	recv(socketKernel,(void*) mensaje,20,0);//TODO El tercer parámetro es la longitud del mensaje. La ponemos constante?
+	desempaquetar2(paquete_recibido,mensaje);//FIXME El deserializado, se tiene que hacer acá? Yo no se cuántos parámetros sacar. Y si lo hago en cada case, no tengo de donde sacar mensaje.
 	switch(mensaje){
 	case CREAR_SEGMENTO:
-		crearSegmento(paramInex/*parametro que no se de donde saco*/);
+		crearSegmento(paramInex);
 		break;
 	case DESTRUIR_SEGMENTOS:
 		destruirTodosLosSegmentos();

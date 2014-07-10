@@ -25,10 +25,24 @@ static int puerto_programa;
 static int puerto_CPU;
 static int quantum;
 static int retardo;
+static int multiprogramacion;
 static t_queue* colaReady;
+static t_dictionary* variables_globales;
+static int semaforos[];
+static char* valor_semaforos[];
+static int hio[];
+static char* idhio[];
+sem_t* mutexVG = 1;
 
 void cargarConfig(t_config *);
 int32_t validarConfig(t_config*);
+void obtener_valor(char id, int idCpu);
+void grabar_valor(char id, int valor);
+void wait(char* idSem, int idCpu);
+void signal(char* idSem);
+int buscarValorSemaforo(char* semaforo);
+int buscarPosicion(char* semaforo);
+
 int kernel_main(int argc, char** argv) {
 	//Verifico que se haya recibido por parámetro el archivo config.
 	if (argc <= 1) {
@@ -75,15 +89,15 @@ int kernel_main(int argc, char** argv) {
 		exit(EXIT_FAILURE);
 	}
 	printf("Hilo pcp exitoso");
-	int* parametroPLP=NULL;//FIXME
+	int* parametroPLP = NULL; //FIXME
 	iretPLP = pthread_create(&plp, NULL, plp_main, (void*) parametroPLP);
 	if (iretPLP) {
 		fprintf(stderr, "Error - pthread_create() return code: %d\n", iretPLP);
 		exit(EXIT_FAILURE);
 	}
 	printf("Hilo plp exitoso");
-	pthread_join( pcp, NULL);
-	pthread_join( plp, NULL);
+	pthread_join(pcp, NULL );
+	pthread_join(plp, NULL );
 	return EXIT_FAILURE;
 }
 
@@ -108,8 +122,8 @@ int32_t validarConfig(t_config *config) {
 		perror("Falta MULTIPROGRAMACION");
 		return EXIT_FAILURE;
 	}
-	if (!config_has_property(config, "VALOR_SEMAFORO")) {
-		perror("Falta VALOR_SEMAFORO");
+	if (!config_has_property(config, "VALOR_SEMAFOROS")) {
+		perror("Falta VALOR_SEMAFOROS");
 		return EXIT_FAILURE;
 	}
 	if (!config_has_property(config, "SEMAFOROS")) {
@@ -140,6 +154,61 @@ void cargarConfig(t_config *config) {
 	quantum = config_get_int_value(config, keyQUANTUM);
 	static char *keyRETARDO = "RETARDO";
 	retardo = config_get_int_value(config, keyRETARDO);
+	char *keyMULTIPROGRAMACION = "MULTIPROGRAMACION";
+	multiprogramacion = config_get_int_value(config, keyMULTIPROGRAMACION);
+	char *keyVALOR_SEMAFOROS = "VALOR_SEMAFOROS";
+	valor_semaforos = config_get_int_value(config, keyVALOR_SEMAFOROS);
+	char *keySEMAFOROS = "SEMAFOROS";
+	semaforos = config_get_int_value(config, keySEMAFOROS);
+	char *keyHIO = "HIO";
+	hio = config_get_int_value(config, keyHIO);
+	char *keyIDHIO = "IDHIO";
+	idhio = config_get_int_value(config, keyIDHIO);
+	char *keyVARIABLES_GLOBALES = "VARIABLES_GLOBALES";
+	variables_globales = config_get_int_value(config, keyVARIABLES_GLOBALES);
+}
 
-	//TODO ME FALTA SEGUIR ACÁ
+void obtener_valor(char id, int idCpu) {
+	sem_wait(mutexVG);
+	int a = dictionary_get(variables_globales, &id);
+	send(idCpu, a, strlen(a), 0);
+	sem_wait(mutexVG);
+}
+void grabar_valor(char id, int valor) {
+	sem_wait(mutexVG);
+	dictionary_put(variables_globales, &id, &valor);
+	sem_wait(mutexVG);
+}
+
+void signal(char* idSem) {
+	int pos = buscarPosicion(idSem);
+	semaforos[pos] = semaforos[pos] + 1;
+}
+
+void wait(char* idSem, int idCpu) {
+	int a = buscarValorSemaforo(idSem);
+	int pos = buscarPosicion(idSem);
+	if (a > 0) {
+		semaforos[pos] = semaforos[pos] - 1;
+		send(idCpu, 's', strlen(), 0); //ya sé que esto está mal xD
+	}
+	else
+	{
+		//encolar el proceso
+	}
+}
+int buscarValorSemaforo(char* semaforo) {
+	int i = 0;
+	while (valor_semaforos[i] != semaforo) {
+		i++;
+	}
+	return semaforos[i];
+}
+
+int buscarPosicion(char* semaforo) {
+	int i = 0;
+	while (valor_semaforos[i] != semaforo) {
+		i++;
+	}
+	return i;
 }
