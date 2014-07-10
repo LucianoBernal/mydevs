@@ -31,8 +31,9 @@ int main(int argc, char** argv) {
 
 	baseUMV = malloc(tamanio_umv);
 	listaProcesos = list_create();
+	int* sinParametros;
 	//Creo hilo que atiende a la consola.
-	if (pthread_create(&atencion_consola, NULL, (void *) consola, NULL )) {
+	if (pthread_create(&atencion_consola, NULL, (void *) consola, (void*)sinParametros )) {
 		//ERROR.
 		log_info(logger, "Hubo un error en la creación del hilo de consola");
 	} else {
@@ -42,13 +43,15 @@ int main(int argc, char** argv) {
 
 	//Creo hilo que creará hilos que atienden al kernel/cpu's.
 	if (pthread_create(&atencion_interna, NULL, (void *) atencionInterna,
-			NULL )) {
+			(void*)sinParametros )) {
 		//ERROR.
 		log_info(logger, "Hubo un error en la creación del hilo de atención interna");
 	} else {
 		//Se creó correctamente.
 		log_info(logger, "El hilo de atención interna se creó correctamente");
 	}
+	pthread_join(atencion_consola,NULL);
+	pthread_join(atencion_interna,NULL);
 	log_info(logger, "El proceso UMV ha finalizado");
 	list_destroy_and_destroy_elements(listaProcesos, (void*)free);
 	config_destroy(config);

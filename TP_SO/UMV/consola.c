@@ -6,7 +6,7 @@
  */
 #include "consola.h"
 
-int consola() {
+void* consola(void* sinParametro) {
 	const int COMANDO_SIZE = 30;
 	char* comando = malloc(COMANDO_SIZE);
 	do {
@@ -15,7 +15,6 @@ int consola() {
 
 	} while (strncmp("exit", comando, 4));
 	free(comando);
-	return 0;
 }
 
 void analizarYEjecutar(char *comando) {
