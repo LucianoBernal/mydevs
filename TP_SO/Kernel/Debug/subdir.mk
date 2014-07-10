@@ -7,7 +7,6 @@ C_SRCS += \
 ../Kernel.c \
 ../PCP.c \
 ../PLP.c \
-../abrirPXP.c \
 ../multiplexorCPUs.c \
 ../multiplexorScripts.c 
 
@@ -15,7 +14,6 @@ OBJS += \
 ./Kernel.o \
 ./PCP.o \
 ./PLP.o \
-./abrirPXP.o \
 ./multiplexorCPUs.o \
 ./multiplexorScripts.o 
 
@@ -23,7 +21,6 @@ C_DEPS += \
 ./Kernel.d \
 ./PCP.d \
 ./PLP.d \
-./abrirPXP.d \
 ./multiplexorCPUs.d \
 ./multiplexorScripts.d 
 

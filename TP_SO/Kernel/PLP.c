@@ -59,7 +59,7 @@ void* plp_main(void* parametro) {
 	sem_init(colaNuevosMutex, 0, 1);
 	pthread_t multiplexorScripts, threadColaNew, threadColaExit;
 	int iretMultiScripts, iretColaNew, iretColaExit;
-	int* sinParametros = NULL;
+	 int* sinParametros = NULL;
 	iretMultiScripts = pthread_create(&multiplexorScripts, NULL,
 			multiplexorScripts, (void*) sinParametros);
 	if (iretMultiScripts) {
@@ -238,7 +238,7 @@ void* plp_main(void* parametro) {
 			printf("Alguno de los sends fallo, noob");
 	}
 
-	agregar_En_Diccionario(int pid, int sd) {
+void agregar_En_Diccionario(int pid, int sd) {
 		sem_wait(PidSD_Mutex);
 		dictionary_put(pidYSockets, (char*) &pid, &sd);
 		sem_post(PidSD_Mutex);

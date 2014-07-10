@@ -9,6 +9,7 @@
 #define PLP_H_
 
 #include <biblioteca_comun/definiciones.h>
+#include "Kernel.h"
 
 
 

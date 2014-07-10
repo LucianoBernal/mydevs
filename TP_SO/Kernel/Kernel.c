@@ -5,21 +5,8 @@
  *      Author: utnso
  */
 
-#include "PLP.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <string.h>
-#include <stdbool.h>
-#include <time.h>
-#include <parser/metadata_program.h>
-#include <commons/collections/list.h>
-#include <commons/collections/queue.h>
-#include <commons/config.h>
-#include <semaphore.h>
-#include <pthread.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
+#include "Kernel.h"
+
 
 static int puerto_programa;
 static int puerto_CPU;
@@ -63,7 +50,6 @@ int kernel_main(int argc, char** argv) {
 	cargarConfig(config);
 	config_destroy(config);
 	colaReady = queue_create();
-	static sem_t * grado_Multiprogramacion;
 	sem_init(grado_Multiprogramacion, 0, multiprogramacion);
 	static sem_t * colaReadyMutex;
 	sem_init(colaReadyMutex, 0, 1);
@@ -91,7 +77,7 @@ int kernel_main(int argc, char** argv) {
 		exit(EXIT_FAILURE);
 	}
 	printf("Hilo pcp exitoso");
-	int* parametroPLP = NULL; //FIXME
+	int* parametroPLP = NULL;
 	iretPLP = pthread_create(&plp, NULL, plp_main, (void*) parametroPLP);
 	if (iretPLP) {
 		fprintf(stderr, "Error - pthread_create() return code: %d\n", iretPLP);
@@ -159,6 +145,7 @@ void cargarConfig(t_config *config) {
 	char *keyMULTIPROGRAMACION = "MULTIPROGRAMACION";
 	multiprogramacion = config_get_int_value(config, keyMULTIPROGRAMACION);
 	char *keyVALOR_SEMAFOROS = "VALOR_SEMAFOROS";
+	//FIXME fijate como hicimos con las cosas de config arriba... por eso te tira error.
 	valor_semaforos = config_get_int_value(config, keyVALOR_SEMAFOROS);
 	char *keySEMAFOROS = "SEMAFOROS";
 	semaforos = config_get_int_value(config, keySEMAFOROS);
