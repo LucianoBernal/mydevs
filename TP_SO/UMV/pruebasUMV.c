@@ -96,7 +96,7 @@ void agregarProceso(int pid, char tipo) {
 		pthread_mutex_unlock(&mutexCantProcActivos);
 	} else {
 		printf("El numero pid ya esta en uso (?");
-		//Creo que lean ya evito esto desde el plp
+		//TODO Creo que lean ya evito esto desde el plp
 	}
 }
 
