@@ -4,29 +4,12 @@
  *  Created on: 18/05/2014
  *      Author: utnso
  */
-#include "PLP.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <time.h>
-#include <parser/metadata_program.h>
-#include <commons/collections/list.h>
-#include <commons/collections/queue.h>
-#include <commons/collections/dictionary.h>
-#include <semaphore.h>
-#include <sys/socket.h>
 
-static t_list* colaNew;
-static t_list* randoms;
-static t_dictionary* pidYSockets = dictionary_create();
-static int numAleatorio;
-static int numABorrar;
-static sem_t * PidSD_Mutex = NULL;
+#include "PLP.h"
+#include "PLPtipos.h"
+
 sem_init(PidSD_Mutex,0,1);
-static sem_t * colaNuevosVacio = NULL;
-static sem_t * randomMutex = NULL;
-static sem_t * numABorrarMutex = NULL;
-static sem_t * colaNuevosMutex = NULL;
+pidYSockets = dictionary_create();
 
 typedef struct {
 	char* literal;

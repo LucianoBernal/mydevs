@@ -23,7 +23,24 @@
 #include <pthread.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <commons/collections/dictionary.h>
+#include <biblioteca_comun/definiciones.h>
+
+
 
 static sem_t * grado_Multiprogramacion;
+static int puerto_programa;
+static int puerto_CPU;
+static int quantum;
+static int retardo;
+static int multiprogramacion;
+static t_queue* colaReady;
+static t_dictionary* variables_globales;
+static int semaforos[];
+static char* valor_semaforos[];
+static int hio[];
+static char* idhio[];
+static sem_t * colaReadyMutex;
+static sem_t * vacioReady;
 
 #endif /* KERNEL_H_ */

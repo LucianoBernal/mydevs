@@ -8,17 +8,7 @@
 #include "Kernel.h"
 
 
-static int puerto_programa;
-static int puerto_CPU;
-static int quantum;
-static int retardo;
-static int multiprogramacion;
-static t_queue* colaReady;
-static t_dictionary* variables_globales;
-static int semaforos[];
-static char* valor_semaforos[];
-static int hio[];
-static char* idhio[];
+
 sem_t* mutexVG = 1;
 
 void cargarConfig(t_config *);
@@ -51,9 +41,7 @@ int kernel_main(int argc, char** argv) {
 	config_destroy(config);
 	colaReady = queue_create();
 	sem_init(grado_Multiprogramacion, 0, multiprogramacion);
-	static sem_t * colaReadyMutex;
 	sem_init(colaReadyMutex, 0, 1);
-	static sem_t * vacioReady;
 	sem_init(vacioReady, 0, 0);
 	/*struct sockaddr_in address;
 	int sd_UMV;
