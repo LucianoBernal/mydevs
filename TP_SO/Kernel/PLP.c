@@ -6,7 +6,7 @@
  */
 
 #include "PLP.h"
-#include "PLPtipos.h"
+#include "PLPinterface.h"
 
 sem_init(PidSD_Mutex,0,1);
 pidYSockets = dictionary_create();

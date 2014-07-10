@@ -8,7 +8,7 @@
 #ifndef KERNEL_H_
 #define KERNEL_H_
 
-#include "PLP.h"
+#include "PLPinterface.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>

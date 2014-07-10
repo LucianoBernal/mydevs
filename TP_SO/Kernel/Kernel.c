@@ -9,7 +9,7 @@
 
 
 
-sem_t* mutexVG = 1;
+sem_t* mutexVG = 1;//FIXME
 
 void cargarConfig(t_config *);
 int32_t validarConfig(t_config*);
