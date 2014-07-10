@@ -51,6 +51,7 @@ int main(int argc, char** argv) {
 	}
 	list_destroy_and_destroy_elements(listaProcesos, (void*)free);
 	config_destroy(config);
+	log_destroy(logger);
 	return EXIT_SUCCESS;
 }
 

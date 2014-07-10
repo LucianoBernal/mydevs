@@ -12,6 +12,8 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
+//#include <sys/socket.h>
+//#include <sys/types.h>
 #include <commons/config.h>
 #include <commons/string.h>
 #include <commons/log.h>
@@ -35,11 +37,11 @@ extern t_list *listaProcesos;
 pthread_t atencion_consola;
 pthread_t atencion_interna;
 
-/*typedef struct {
+typedef struct {
 	int pid, activo;
 	char tipo;
 	t_list *tabla;
-} t_tablaProceso;*/
+} t_tablaProceso;
 
 t_tablaProceso vectorProcesos[10];
 

@@ -9,6 +9,7 @@
 #define PRUEBASUMV_H_
 
 #include <pthread.h>
+#include "umv.h"//TODO se borra?
 extern int cantProcesosActivos;
 extern t_list *listaProcesos; //dinamico>estatico
 //t_tablaProceso vectorProcesos[10];
@@ -32,11 +33,11 @@ typedef struct {
 	void* memPpal;
 } t_tablaSegmento;
 
-typedef struct {
+/*typedef struct {
 	int pid, activo;
 	char tipo;
 	t_list *tabla;
-} t_tablaProceso;
+} t_tablaProceso;*/
 
 t_link_element *list_head(t_list *);
 t_tablaSegmento *obtenerPtrASegmento(int, int);

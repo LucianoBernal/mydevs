@@ -6,7 +6,7 @@
  */
 #include "atencionInterna.h"
 
-/*
+
 typedef enum {
 		CONFIRMACION,
 		SEGMENTATION_FAULT,
@@ -72,10 +72,11 @@ void atencionInterna() {
 
 }
 
-void atencionKernel(codigos_mensajes mensaje) {
+void atencionKernel(int* socketKernel) {
+	codigos_mensajes mensaje;
 	int paramInex;//Esto es momentáneo. Borrar!!
 	printf("Se conectó el Kernel y se creó un hilo que atiende su ejecución :D");
-	recv(socketKernel,);
+	recv(socketKernel,(void*)mensaje,20,0);//TODO El tercer parámetro es la longitud del mensaje. La ponemos constante?
 	switch(mensaje){
 	case CREAR_SEGMENTO:
 		crearSegmento(paramInex);
@@ -93,4 +94,4 @@ void atencionKernel(codigos_mensajes mensaje) {
 void atencionCpu() {
 	printf("Se conectó una CPU y se creó un hilo que la atiende :D :D");
 }
-*/
+
