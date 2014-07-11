@@ -186,7 +186,7 @@ void programaSalioPorBloqueo(t_PCB* pcb, int tiempo, char* dispositivo,
 
 void seLiberoUnaCPU(int idCPU) {
 	int i = posicionEnLaLista(CPUs, idCPU);
-	t_estructuraCPU* estructura;
+	t_estructuraCPU* estructura = malloc(sizeof(t_estructuraCPU));
 	estructura->idCPU = idCPU;
 	estructura->estado = 0;
 	list_replace_and_destroy_element(CPUs, i, estructura, (void*) cpu_destroy);
