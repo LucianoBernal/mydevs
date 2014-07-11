@@ -313,7 +313,7 @@ void notificar_Memoria_Llena(int sd) {
 
 	}
 }
-}
+
 
 void* manejoColaExit(void* sinParametros) {
 while (1) {
