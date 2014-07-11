@@ -278,10 +278,6 @@ void mostrarListaNew() {
 	list_iterate(colaNew, (void*) (void*) imprimirNodosNew);
 }
 
-void pcb_destroy(t_PCB *self) {
-	free(self);
-}
-
 void imprimirNodosPCBs(t_PCB* pcb) {
 	printf("Program id:%i \n", pcb->program_id);
 }
@@ -318,6 +314,6 @@ while (1) {
 	sem_post(colaExitMutex);
 	solicitar_Destruccion_Segmentos(pcb);
 	enviar_Mensaje_Final(pcb->program_id);
-	pcb_destroy(pcb);
+	free(pcb);
 }
 }
