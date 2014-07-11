@@ -17,13 +17,13 @@ static t_dictionary diccionarioDispositivos = dictionary_create();
 t_list* CPUs = list_create();
 int idUltimaCPUDesconectada;
 
-void mainPCP(){
-	sem_init(CPUsLibres, 0,0);
-	sem_init(sPLP,0,0);
-	sem_init(sYaInicializoElMT,0,0);
-	sem_init(sBloqueado,0,0);
-	sem_init(colaExecVacia,0,0);
-	sem_init(semCPUDesconectadaMutex,0,1);
+void mainPCP() {
+	sem_init(CPUsLibres, 0, 0);
+	sem_init(sPLP, 0, 0);
+	sem_init(sYaInicializoElMT, 0, 0);
+	sem_init(sBloqueado, 0, 0);
+	sem_init(colaExecVacia, 0, 0);
+	sem_init(semCPUDesconectadaMutex, 0, 1);
 	crearHilosPrincipales();
 	crearHilosDeEntradSalida();
 }
@@ -42,7 +42,7 @@ void crearHilosDeEntradaSalida() {
 		int retardo = buscarRetardo(idhio[i]);
 		static t_queue* colaDispositivo = queue_create();
 		static sem_t* semaforo = NULL;
-		sem_init(semaforo, 0,0);
+		sem_init(semaforo, 0, 0);
 		t_estructuraDispositivoIO* estructuraDispositivo;
 		estructuraDispositivo->retardo = retardo;
 		estructuraDispositivo->procesosBloqueados = colaDispositivo;
@@ -185,15 +185,17 @@ void programaSalioPorBloqueo(t_PCB* pcb, int tiempo, char* dispositivo,
 }
 
 void seLiberoUnaCPU(int idCPU) {
-	int i = posicionEnLaLista = (CPUs, idCPU);
+	int i = posicionEnLaLista(CPUs, idCPU);
 	t_estructuraCPU* estructura;
 	estructura->idCPU = idCPU;
 	estructura->estado = 0;
-	list_replace_and_destroy_element(CPUs, i, estructura, nose)
-	//TODO
+	list_replace_and_destroy_element(CPUs, i, estructura, (void*) cpu_destroy);
 	sem_post(CPUsLibres);
 }
 
+void cpu_destroy(t_estructuraCPU* estructura) {
+	free(estructura);
+}
 bool tieneID(t_estructuraCPU estructura) {
 	return (estructura.idCPU == idUltimaCPUDesconectada);
 }

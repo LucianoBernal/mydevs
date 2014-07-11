@@ -5,6 +5,7 @@
 #include <pthread.h>
 #include <commons/collections/list.h>
 #include <commons/collections/queue.h>
+#include <stdlib.h>
 
 typedef struct {
 	t_PCB* pcb;
