@@ -8,8 +8,23 @@
 #include "Kernel.h"
 
 
+<<<<<<< HEAD
 
 sem_t* mutexVG = 1;//FIXME
+=======
+static int puerto_programa;
+static int puerto_CPU;
+static int quantum;
+static int retardo;
+static int multiprogramacion;
+static t_queue* colaReady;
+static t_dictionary* variables_globales;
+static int semaforos[];
+static char* valor_semaforos[];
+static int hio[];
+static char* idhio[];
+sem_t* mutexVG = NULL;
+>>>>>>> 5becce3dd1dfe17c5c87a1e1d6b35b24d423360c
 
 void cargarConfig(t_config *);
 int32_t validarConfig(t_config*);
@@ -40,6 +55,7 @@ int kernel_main(int argc, char** argv) {
 	cargarConfig(config);
 	config_destroy(config);
 	colaReady = queue_create();
+	sem_init(mutexVG, 0, 1);
 	sem_init(grado_Multiprogramacion, 0, multiprogramacion);
 	sem_init(colaReadyMutex, 0, 1);
 	sem_init(vacioReady, 0, 0);
@@ -160,6 +176,7 @@ void grabar_valor(char id, int valor) {
 void signal(char* idSem) {
 	int pos = buscarPosicion(idSem);
 	semaforos[pos] = semaforos[pos] + 1;
+
 }
 
 void wait(char* idSem, int idCpu) {

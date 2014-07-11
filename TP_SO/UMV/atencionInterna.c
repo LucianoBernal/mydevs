@@ -6,26 +6,25 @@
  */
 #include "atencionInterna.h"
 
-
 typedef enum {
-		CONFIRMACION,
-		SEGMENTATION_FAULT,
-		MEMORY_OVERLOAD,
-		MOSTRAR_VALOR,
-		MOSTRAR_TEXTO,
-		CREAR_SEGMENTO,
-		CREAR_SEGMENTOS_PROGRAMA,
-		DESTRUIR_SEGMENTOS,
-		ESCRIBIR_EN_UMV,
-		ESCRIBIR_EN_UMV_OFFSET_CERO,
-		SOLICITAR_A_UMV,
-		PEDIR_ETIQUETAS,
-		PEDIR_INSTRUCCION
-	} codigos_mensajes;
+	CONFIRMACION,
+	SEGMENTATION_FAULT,
+	MEMORY_OVERLOAD,
+	MOSTRAR_VALOR,
+	MOSTRAR_TEXTO,
+	CREAR_SEGMENTO,
+	CREAR_SEGMENTOS_PROGRAMA,
+	DESTRUIR_SEGMENTOS,
+	ESCRIBIR_EN_UMV,
+	ESCRIBIR_EN_UMV_OFFSET_CERO,
+	SOLICITAR_A_UMV,
+	PEDIR_ETIQUETAS,
+	PEDIR_INSTRUCCION
+} codigos_mensajes;
 
 void* atencionInterna(void* sinParametro) {
-	char* saludoKernel= malloc(7);
-	char* saludoCpu=malloc(4);
+	char* saludoKernel = malloc(7);
+	char* saludoCpu = malloc(4);
 	struct addrInfo* addrInfo;
 	obtenerAddrInfoLocalHost(addrInfo, puertoUMV);
 	int socket = crearSocket(addrInfo);
@@ -51,49 +50,63 @@ void* atencionInterna(void* sinParametro) {
 			close(socketCliente);
 		}
 
-		 //Creo hilo que atiende al kernel.
-		 if (pthread_create(&hiloKernel, NULL, (void *) atencionKernel, NULL )) {
-		 //ERROR. Acá van cosas con log.
-		 } else {
-		 //Se creó correctamente.
-		 }
-		 //Espero conexión de cpu.
-		 //Si conexión es correcta, entonces:
-		 cantCpu++;
-		 //Creo hilo que atiende a las cpu's.
-		 if (pthread_create(&hiloCpu, NULL, (void *) atencionCpu, NULL )) {
-		 //ERROR. Acá van cosas con log.
-		 } else {
-		 //Se creó correctamente.
-		 }
-
+		//Creo hilo que atiende al kernel.
+		if (pthread_create(&hiloKernel, NULL, (void *) atencionKernel, NULL )) {
+			//ERROR. Acá van cosas con log.
+		} else {
+			//Se creó correctamente.
+		}
+		//Espero conexión de cpu.
+		//Si conexión es correcta, entonces:
+		cantCpu++;
+		//Creo hilo que atiende a las cpu's.
+		if (pthread_create(&hiloCpu, NULL, (void *) atencionCpu, NULL )) {
+			//ERROR. Acá van cosas con log.
+		} else {
+			//Se creó correctamente.
+		}
 
 	}
 
 }
 
 void atencionKernel(int* socketKernel) {
-	char* paquete_recibido;
+
+	typedef struct {
+		char *msj;
+		int tamano;
+		char cantVar;
+	} t_paquete;
 
 	codigos_mensajes mensaje;
-	int paramInex;//Esto es momentáneo. Borrar!!
-	printf("Se conectó el Kernel y se creó un hilo que atiende su ejecución :D");
-	recv(socketKernel,(void*) mensaje,20,0);//TODO El tercer parámetro es la longitud del mensaje. La ponemos constante?
-	desempaquetar2(paquete_recibido,mensaje,0);//FIXME El deserializado, se tiene que hacer acá? Yo no se cuántos parámetros sacar. Y si lo hago en cada case, no tengo de donde sacar mensaje.
-	switch(mensaje){
+	int pid;
+	int base, offset, tamano;
+
+	t_paquete* header; //TODO colocar t_paquete en definiciones.h urgente!!
+	t_paquete* paquete;
+
+	printf( "Se conectó el Kernel y se creó un hilo que atiende su ejecución :D");
+
+	recv(socketKernel, (void*) header->msj, header->tamano, MSG_WAITALL);
+	desempaquetar2(header->msj, mensaje, 0);
+
+	recv(socketKernel, (void*) paquete->msj, paquete->tamano, MSG_WAITALL);
+
+	switch (mensaje) {
 	case CREAR_SEGMENTO:
-		int pid;
-		desempaquetar2(paquete_recibido,pid,0);
+
+		desempaquetar2(paquete->msj, pid, 0);
 		crearSegmento(pid);
 		break;
 	case DESTRUIR_SEGMENTOS:
 		destruirTodosLosSegmentos();
 		break;
 	case SOLICITAR_A_UMV:
-		solicitarBytes(paramInex,paramInex,paramInex);
+
+		desempaquetar2(paquete->msj, base, offset, tamano, 0);
+		solicitarBytes( base, offset, tamano);
 		break;
 	}
-
 
 }
 void atencionCpu() {
