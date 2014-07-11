@@ -12,7 +12,7 @@ pthread_t ejecutar;
 pthread_t envCPU;
 pthread_t recCPU;
 int retMandarAEjecutar, retEnviarCPU, retRecibirCPU;
-int* p = 0;
+int* sinParametros = NULL;
 static t_dictionary diccionarioDispositivos = dictionary_create();
 t_list* CPUs = list_create();
 int idUltimaCPUDesconectada;
@@ -31,9 +31,25 @@ void mainPCP() {
 void crearHilosPrincipales() {
 
 	retMandarAEjecutar = pthread_create(&ejecutar, NULL, mandarAEjecutar,
-			(void*) p);
-	retEnviarCPU = pthread_create(&envCPU, NULL, enviarCPU, (void*) p);
-	retRecibirCPU = pthread_create(&recCPU, NULL, recibirCPU, (void*) p);
+			(void*) sinParametros);
+	if (retMandarAEjecutar) {
+		fprintf(stderr, "Error - pthread_create() return code: %d\n",
+				retMandarAEjecutar);
+		exit(EXIT_FAILURE);
+	}
+	retEnviarCPU = pthread_create(&envCPU, NULL, enviarCPU, (void*) sinParametros);
+	if (retEnviarCPU) {
+		fprintf(stderr, "Error - pthread_create() return code: %d\n",
+				retEnviarCPU);
+		exit(EXIT_FAILURE);
+	}
+	retRecibirCPU = pthread_create(&recCPU, NULL, recibirCPU, (void*) sinParametros);
+	if (retRecibirCPU) {
+		fprintf(stderr, "Error - pthread_create() return code: %d\n",
+				retRecibirCPU);
+		exit(EXIT_FAILURE);
+	}
+
 }
 
 void crearHilosDeEntradaSalida() {
