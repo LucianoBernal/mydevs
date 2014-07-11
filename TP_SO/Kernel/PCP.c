@@ -17,7 +17,7 @@ static t_dictionary diccionarioDispositivos = dictionary_create();
 t_list* CPUs = list_create();
 int idUltimaCPUDesconectada;
 
-void mainPCP() {
+void pcp_main() {
 	sem_init(CPUsLibres, 0, 0);
 	sem_init(sPLP, 0, 0);
 	sem_init(sYaInicializoElMT, 0, 0);
@@ -26,6 +26,7 @@ void mainPCP() {
 	sem_init(semCPUDesconectadaMutex, 0, 1);
 	crearHilosPrincipales();
 	crearHilosDeEntradSalida();
+
 }
 
 void crearHilosPrincipales() {
