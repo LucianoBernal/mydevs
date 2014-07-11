@@ -1,23 +1,6 @@
 #include "PCP.h"
 #include "Kernel.h"
 
-sem_t * CPUsLibres = NULL;
-sem_t * sPLP = NULL;
-sem_t * sYaInicializoElMT = NULL;
-sem_t * sBloqueado = NULL;
-sem_t * colaExecVacia = NULL;
-sem_t * semCPUDesconectadaMutex = NULL;
-int laSenialDeTerminar = 0;
-static t_queue* colaExec = queue_create();
-pthread_t ejecutar;
-pthread_t multiplexorCPUs;
-pthread_t recCPU;
-int retMandarAEjecutar, retRecibirCPU, retMultiplexorCPUs;
-int* sinParametros = NULL;
-static t_dictionary diccionarioDispositivos = dictionary_create();
-t_list* CPUs = list_create();
-int idUltimaCPUDesconectada;
-
 void pcp_main() {
 	sem_init(CPUsLibres, 0, 0);
 	sem_init(sPLP, 0, 0);

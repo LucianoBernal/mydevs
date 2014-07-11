@@ -9,6 +9,7 @@
 #define KERNEL_H_
 
 #include "PLPinterface.h"
+#include "PCPinterface.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -25,7 +26,6 @@
 #include <netinet/in.h>
 #include <commons/collections/dictionary.h>
 #include <biblioteca_comun/definiciones.h>
-
 
 
 static sem_t * grado_Multiprogramacion;
