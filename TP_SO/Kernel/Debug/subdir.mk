@@ -8,21 +8,24 @@ C_SRCS += \
 ../PCP.c \
 ../PLP.c \
 ../multiplexorCPUs.c \
-../multiplexorScripts.c 
+../multiplexorScripts.c \
+../syscall.c 
 
 OBJS += \
 ./Kernel.o \
 ./PCP.o \
 ./PLP.o \
 ./multiplexorCPUs.o \
-./multiplexorScripts.o 
+./multiplexorScripts.o \
+./syscall.o 
 
 C_DEPS += \
 ./Kernel.d \
 ./PCP.d \
 ./PLP.d \
 ./multiplexorCPUs.d \
-./multiplexorScripts.d 
+./multiplexorScripts.d \
+./syscall.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

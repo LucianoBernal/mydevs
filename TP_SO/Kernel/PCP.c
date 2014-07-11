@@ -1,7 +1,7 @@
 #include "PCP.h"
 #include "Kernel.h"
 
-void pcp_main() {
+void* pcp_main(void*) {
 	sem_init(CPUsLibres, 0, 0);
 	sem_init(sPLP, 0, 0);
 	sem_init(sYaInicializoElMT, 0, 0);

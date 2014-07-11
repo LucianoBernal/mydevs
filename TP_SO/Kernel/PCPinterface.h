@@ -8,7 +8,7 @@
 #ifndef PCPINTERFACE_H_
 #define PCPINTERFACE_H_
 #include <stdbool.h>
-void pcp_main();
+void* pcp_main(void*);
 void crearHilosPrincipales();
 void* mandarAEjecutar(void*);
 void enviarCPU();

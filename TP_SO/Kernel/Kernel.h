@@ -47,4 +47,13 @@ static sem_t* colaExitVacio;
 static sem_t* colaExitMutex;
 static t_queue* colaExit;
 
+void cargarConfig(t_config *);
+int32_t validarConfig(t_config*);
+void obtener_valor(char id, int idCpu);
+void grabar_valor(char id, int valor);
+void wait(char* idSem, int idCpu);
+void signal(char* idSem);
+int buscarValorSemaforo(char* semaforo);
+int buscarPosicion(char* semaforo);
+
 #endif /* KERNEL_H_ */
