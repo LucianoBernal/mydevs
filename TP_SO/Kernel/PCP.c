@@ -37,13 +37,15 @@ void crearHilosPrincipales() {
 				retMandarAEjecutar);
 		exit(EXIT_FAILURE);
 	}
-	retEnviarCPU = pthread_create(&envCPU, NULL, enviarCPU, (void*) sinParametros);
+	retEnviarCPU = pthread_create(&envCPU, NULL, enviarCPU,
+			(void*) sinParametros);
 	if (retEnviarCPU) {
 		fprintf(stderr, "Error - pthread_create() return code: %d\n",
 				retEnviarCPU);
 		exit(EXIT_FAILURE);
 	}
-	retRecibirCPU = pthread_create(&recCPU, NULL, recibirCPU, (void*) sinParametros);
+	retRecibirCPU = pthread_create(&recCPU, NULL, recibirCPU,
+			(void*) sinParametros);
 	if (retRecibirCPU) {
 		fprintf(stderr, "Error - pthread_create() return code: %d\n",
 				retRecibirCPU);
@@ -66,8 +68,13 @@ void crearHilosDeEntradaSalida() {
 		dictionary_put(diccionarioDispositivos, idhio[i],
 				estructuraDispositivo);
 		pthread_t dispositivo;
-		pthread_create(&dispositivo, NULL, bloquearYDevolverAReady,
+		int retIO = pthread_create(&dispositivo, NULL, bloquearYDevolverAReady,
 				(void*) &estructuraDispositivo);
+		if (retIO) {
+			fprintf(stderr, "Error - pthread_create() return code: %d\n",
+					retIO);
+			exit(EXIT_FAILURE);
+		}
 		i++;
 	}
 }
