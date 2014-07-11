@@ -56,15 +56,15 @@ void* plp_main(void* parametro) {
 		fprintf(stderr, "Error - pthread_create() return code: %d\n",
 				iretColaNew);
 		iretColaExit = pthread_create(&threadColaExit, NULL, manejoColaExit,
-				(void*) sinParametros);
+				(void*) sinParametros);}
 		if (iretColaExit) {
 			fprintf(stderr, "Error - pthread_create() return code: %d\n",
-					iretColaExit);
+					iretColaExit);}
 
 			pthread_join(multiplexorScripts, NULL );
 			pthread_join(threadColaNew, NULL );
 			pthread_join(threadColaExit, NULL );
-		}
+
 
 		return EXIT_SUCCESS;
 	}
