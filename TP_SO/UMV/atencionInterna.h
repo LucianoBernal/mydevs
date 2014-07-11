@@ -20,7 +20,7 @@ pthread_t hiloKernel;
 pthread_t hiloCpu;
 
 /*Funciones*/
-void atencionInterna();
+void* atencionInterna(void*);
 void atencionKernel();
 void atencionCpu();
 
