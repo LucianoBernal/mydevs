@@ -1,11 +1,11 @@
 #include "PCP.h"
 
-sem_t * CPUsLibres = 0;
-sem_t * sPLP = 0;
-sem_t * sYaInicializoElMT = 0;
-sem_t * sBloqueado = 0;
-sem_t * colaExecVacia = 0;
-sem_t * semCPUDesconectadaMutex = 1;
+sem_t * CPUsLibres = NULL;
+sem_t * sPLP = NULL;
+sem_t * sYaInicializoElMT = NULL;
+sem_t * sBloqueado = NULL;
+sem_t * colaExecVacia = NULL;
+sem_t * semCPUDesconectadaMutex = NULL;
 int laSenialDeTerminar = 0;
 static t_queue* colaExec = queue_create();
 pthread_t ejecutar;
@@ -18,6 +18,12 @@ t_list* CPUs = list_create();
 int idUltimaCPUDesconectada;
 
 void mainPCP(){
+	sem_init(CPUsLibres, 0,0);
+	sem_init(sPLP,0,0);
+	sem_init(sYaInicializoElMT,0,0);
+	sem_init(sBloqueado,0,0);
+	sem_init(colaExecVacia,0,0);
+	sem_init(semCPUDesconectadaMutex,0,1);
 	crearHilosPrincipales();
 	crearHilosDeEntradSalida();
 }
@@ -35,7 +41,8 @@ void crearHilosDeEntradaSalida() {
 	while (idhio[i] != '\0') {
 		int retardo = buscarRetardo(idhio[i]);
 		static t_queue* colaDispositivo = queue_create();
-		static sem_t* semaforo = 0;
+		static sem_t* semaforo = NULL;
+		sem_init(semaforo, 0,0);
 		t_estructuraDispositivoIO* estructuraDispositivo;
 		estructuraDispositivo->retardo = retardo;
 		estructuraDispositivo->procesosBloqueados = colaDispositivo;
@@ -50,7 +57,6 @@ void crearHilosDeEntradaSalida() {
 }
 
 void* mandarAEjecutar(void* j) {
-// saca procesos de la cola de ready y los manda a la cola de Exec
 	sem_wait(vacioReady);
 	sem_wait(colaReadyMutex);
 	t_PCB* procesoAEjecutar = queue_pop(colaReady);
@@ -61,7 +67,6 @@ void* mandarAEjecutar(void* j) {
 }
 
 void* recibirCPU(void* j) {
-	//recibe procesos que salieron de la cpu y según el motivo hace lo que tenga que hacer
 	int listenningSocket;
 	sem_wait(sYaInicializoElMT);
 	crearSocketL(listeningSocket, puerto_CPU);
@@ -175,7 +180,7 @@ void programaSalioPorBloqueo(t_PCB* pcb, int tiempo, char* dispositivo,
 	t_estructuraProcesoBloqueado procesoBloqueado;
 	procesoBloqueado.pcb = pcb;
 	procesoBloqueado.tiempo = tiempo;
-	queue_push(estructura.procesosBloqueados, procesoBloqueado); //lo cambia en el diccionario? TODO
+	queue_push(estructura.procesosBloqueados, procesoBloqueado);
 	seLiberoUnaCPU(idCPU);
 }
 
@@ -193,13 +198,13 @@ bool tieneID(t_estructuraCPU estructura) {
 	return (estructura.idCPU == idUltimaCPUDesconectada);
 }
 
-void seDesconectoCPU(int idCPU) {
+void seDesconectoCPU(int idCPU) { //TODO
 	if (estaLibre(idCPU)) {
 		list_remove_by_condition(CPUs, (void*) tieneID());
 	} else {
 		//se manda un error a la consola del programa
 		queue_push(colaExit, paquete_CPU.pcb);
-		list_remove_by_condition(CPUs, (void*) tieneID(paquete_CPU.IDCpu));
+		list_remove_by_condition(CPUs, (void*) tieneID(idCPU));
 	}
 }
 
@@ -213,7 +218,7 @@ void seDesconectoCPUSigusr(int idCPU, t_PCB* pcb) {
 
 int posicionEnLaLista(t_list* lista, int idCpu) {
 	int i = 0;
-	while ((*(t_estructuraCPU*) list_get(lista, i)).idCPU != idCPU) {
+	while ((*(t_estructuraCPU*) list_get(lista, i)).idCPU != idCpu) {
 		i++;
 	}
 	return i;

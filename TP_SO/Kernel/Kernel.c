@@ -19,7 +19,7 @@ static int semaforos[];
 static char* valor_semaforos[];
 static int hio[];
 static char* idhio[];
-sem_t* mutexVG = 1;
+sem_t* mutexVG = NULL;
 
 void cargarConfig(t_config *);
 int32_t validarConfig(t_config*);
@@ -50,6 +50,7 @@ int kernel_main(int argc, char** argv) {
 	cargarConfig(config);
 	config_destroy(config);
 	colaReady = queue_create();
+	sem_init(mutexVG, 0, 1);
 	sem_init(grado_Multiprogramacion, 0, multiprogramacion);
 	static sem_t * colaReadyMutex;
 	sem_init(colaReadyMutex, 0, 1);
@@ -172,6 +173,7 @@ void grabar_valor(char id, int valor) {
 void signal(char* idSem) {
 	int pos = buscarPosicion(idSem);
 	semaforos[pos] = semaforos[pos] + 1;
+
 }
 
 void wait(char* idSem, int idCpu) {
