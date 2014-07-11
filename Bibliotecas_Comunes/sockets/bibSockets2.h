@@ -7,7 +7,7 @@
 
 #ifndef BIBSOCKETS_H_
 #define BIBSOCKETS_H_
-/*
+
 void obtenerAddrInfoServer(char *IP, char *PUERTO, struct addrinfo **serverInfo);
 
 void obtenerAddrInfoLocalHost(char *puerto, struct addrinfo **serverInfo);
@@ -15,6 +15,6 @@ void escucharYCrearSocketCliente(int listenningSocket, int backlog, int *socketC
 void bindearSocket(int listenningSocket, struct addrinfo *serverInfo);
 int crearSocket(struct addrinfo *serverInfo);
 void conectarSocket(int serverSocket, struct addrinfo *serverInfo);
-*/
+
 
 #endif /* BIBSOCKETS_H_ */

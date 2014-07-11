@@ -5,6 +5,7 @@
  *      Author: utnso
  */
 #include "consola.h"
+#include "consola_interfaz.h"
 
 void* consola(void* sinParametro) {
 	const int COMANDO_SIZE = 30;

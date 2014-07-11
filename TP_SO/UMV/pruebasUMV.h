@@ -8,8 +8,10 @@
 #ifndef PRUEBASUMV_H_
 #define PRUEBASUMV_H_
 
-#include <pthread.h>
+
 #include "umv.h"//TODO se borra?
+
+
 extern int cantProcesosActivos;
 extern t_list *listaProcesos; //dinamico>estatico
 //t_tablaProceso vectorProcesos[10];

@@ -9,8 +9,7 @@
 #define ATENCIONINTERNA_H_
 
 #include "umv.h"
-#include <sockets/bibSockets2.h>
-
+#include "pruebasUMV_interfaz.h"
 /*Constantes*/
 #define MAX_CPUS 25;
 
@@ -19,9 +18,6 @@ int32_t cantCpu;
 pthread_t hiloKernel;
 pthread_t hiloCpu;
 
-/*Funciones*/
-void* atencionInterna(void*);
-void atencionKernel();
-void atencionCpu();
+
 
 #endif /* ATENCIONINTERNA_H_ */

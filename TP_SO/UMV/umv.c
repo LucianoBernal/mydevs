@@ -14,8 +14,9 @@ int main(int argc, char** argv) {
 				"Se debe ingresar la dirección de un archivo de configuración\n");
 		return EXIT_FAILURE;
 	}
-	t_config *config = config_create(argv[1]);
 
+	//t_config *config = config_create(argv[1]);
+ 	t_config *config = config_create("/home/utnso/tp-2014-1c-skynet/TP_SO/UMV/Debug/config");
 	//Verifico que estén todos los valores esperados en el config.
 	if (validarConfig(config)) {
 		config_destroy(config);
@@ -31,7 +32,7 @@ int main(int argc, char** argv) {
 
 	baseUMV = malloc(tamanio_umv);
 	listaProcesos = list_create();
-	int* sinParametros;
+	int* sinParametros=NULL;
 	//Creo hilo que atiende a la consola.
 	if (pthread_create(&atencion_consola, NULL, (void *) consola, (void*)sinParametros )) {
 		//ERROR.
@@ -81,13 +82,9 @@ int32_t validarConfig(t_config *config) {
 }
 
 void cargarConfig(t_config *config) {
-	char *keyTamanio = "TAMANIO_UMV";
-	tamanio_umv = config_get_int_value(config, keyTamanio);
-	char *keyRetardo = "RETARDO";
-	retardo = config_get_int_value(config, keyRetardo);
-	char *keyAlgoritmo = "ALGORITMO";
-	algoritmo = config_get_int_value(config, keyAlgoritmo);
-	char *keyPuerto = "PUERTO";
-	puertoUMV = config_get_int_value(config, keyPuerto);
+	tamanio_umv = config_get_int_value(config, "TAMANIO_UMV");
+	retardo = config_get_int_value(config, "RETARDO");
+	algoritmo = config_get_int_value(config, "ALGORITMO");
+	puertoUMV = config_get_int_value(config, "PUERTO");
 }
 

@@ -5,14 +5,11 @@
  *      Author: utnso
  */
 //La idea es que vallamos probando las funciones auxiliares
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <commons/collections/list.h>
-#include <stdbool.h>
+
 
 #include "pruebasUMV.h"
+#include "pruebasUMV_interfaz.h"
+
 
 int cantProcesosActivos = 0;
 t_list *listaProcesos; //dinamico>estatico

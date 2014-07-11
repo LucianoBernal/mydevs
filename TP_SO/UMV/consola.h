@@ -8,13 +8,9 @@
 #ifndef CONSOLA_H_
 #define CONSOLA_H_
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include "commons/collections/list.h"
+
 #include "umv.h"
-#include "pruebasUMV.h"//TODO fijarse si va
+#include "pruebasUMV_interfaz.h"//TODO fijarse si va
 
 /*Constantes*/
 
@@ -29,7 +25,6 @@ typedef struct{
 }t_operacion;
 
 /*Funciones*/
-int consola();
-void analizarYEjecutar(char*);
+
 
 #endif /* CONSOLA_H_ */

@@ -8,24 +8,6 @@
 #include "Kernel.h"
 
 
-<<<<<<< HEAD
-
-sem_t* mutexVG = 1;//FIXME
-=======
-static int puerto_programa;
-static int puerto_CPU;
-static int quantum;
-static int retardo;
-static int multiprogramacion;
-static t_queue* colaReady;
-static t_dictionary* variables_globales;
-static int semaforos[];
-static char* valor_semaforos[];
-static int hio[];
-static char* idhio[];
-sem_t* mutexVG = NULL;
->>>>>>> 5becce3dd1dfe17c5c87a1e1d6b35b24d423360c
-
 void cargarConfig(t_config *);
 int32_t validarConfig(t_config*);
 void obtener_valor(char id, int idCpu);
@@ -138,27 +120,17 @@ int32_t validarConfig(t_config *config) {
 }
 
 void cargarConfig(t_config *config) {
-	char *keyPUERTO_PROG = "PUERTO_PROG";
-	puerto_programa = config_get_int_value(config, keyPUERTO_PROG);
-	char *keyPUERTO_CPU = "PUERTO_CPU";
-	puerto_CPU = config_get_int_value(config, keyPUERTO_CPU);
-	char *keyQUANTUM = "QUANTUM";
-	quantum = config_get_int_value(config, keyQUANTUM);
-	char *keyRETARDO = "RETARDO";
-	retardo = config_get_int_value(config, keyRETARDO);
-	char *keyMULTIPROGRAMACION = "MULTIPROGRAMACION";
-	multiprogramacion = config_get_int_value(config, keyMULTIPROGRAMACION);
-	char *keyVALOR_SEMAFOROS = "VALOR_SEMAFOROS";
+	puerto_programa = config_get_int_value(config, "PUERTO_PROG");
+	puerto_CPU = config_get_int_value(config, "PUERTO_CPU");
+	quantum = config_get_int_value(config, "QUANTUM");
+	retardo = config_get_int_value(config, "RETARDO");
+	multiprogramacion = config_get_int_value(config, "MULTIPROGRAMACION");
 	//FIXME fijate como hicimos con las cosas de config arriba... por eso te tira error.
-	valor_semaforos = config_get_int_value(config, keyVALOR_SEMAFOROS);
-	char *keySEMAFOROS = "SEMAFOROS";
-	semaforos = config_get_int_value(config, keySEMAFOROS);
-	char *keyHIO = "HIO";
-	hio = config_get_int_value(config, keyHIO);
-	char *keyIDHIO = "IDHIO";
-	idhio = config_get_int_value(config, keyIDHIO);
-	char *keyVARIABLES_GLOBALES = "VARIABLES_GLOBALES";
-	variables_globales = config_get_int_value(config, keyVARIABLES_GLOBALES);
+	valor_semaforos = config_get_int_value(config, "VALOR_SEMAFOROS");
+	semaforos = config_get_int_value(config, "SEMAFOROS");
+	hio = config_get_int_value(config, "HIO");
+	idhio = config_get_int_value(config, "IDHIO");
+	variables_globales = config_get_int_value(config, "VARIABLES_GLOBALES");
 }
 
 void obtener_valor(char id, int idCpu) {

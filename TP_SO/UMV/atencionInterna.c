@@ -5,6 +5,8 @@
  *      Author: utnso
  */
 #include "atencionInterna.h"
+#include "atencioninterna_interfaz.h"
+#include <sockets/Serializacion.h>
 
 typedef enum {
 	CONFIRMACION,
@@ -26,11 +28,11 @@ void* atencionInterna(void* sinParametro) {
 	char* saludoKernel = malloc(7);
 	char* saludoCpu = malloc(4);
 	struct addrInfo* addrInfo;
-	obtenerAddrInfoLocalHost(addrInfo, puertoUMV);
-	int socket = crearSocket(addrInfo);
-	bindearSocket(socket, addrInfo);
+	t_log* log= sinParametro;
+	int socket = crearServidor(puertoUMV, log);
 	int* socketKernel = malloc(4);
-	escucharYCrearSocketCliente(socket, 40, socketKernel, addrInfo);
+	aceptarConexion()
+	//escucharYCrearSocketCliente(socket, 40, socketKernel, addrInfo);
 	recv(socketKernel, (void*) saludoKernel, 30, 0);
 	if (strncmp(saludoKernel, "Kernel", 6)) {
 		pthread_create(&hiloKernel, NULL, (void *) atencionKernel,
@@ -78,24 +80,24 @@ void atencionKernel(int* socketKernel) {
 		char cantVar;
 	} t_paquete;
 
-	codigos_mensajes mensaje;
 	int pid;
 	int base, offset, tamano;
-
+/*
 	t_paquete* header; //TODO colocar t_paquete en definiciones.h urgente!!
 	t_paquete* paquete;
-
+*/
+	char *header, *mensaje;
 	printf( "Se conectó el Kernel y se creó un hilo que atiende su ejecución :D");
+	int *razon=malloc(sizeof(int)), *tamanoMensaje=malloc(4);
+	recv(*socketKernel, (void*) header, 16, MSG_WAITALL);
+	desempaquetar2(header, razon, tamanoMensaje, 0);
 
-	recv(socketKernel, (void*) header->msj, header->tamano, MSG_WAITALL);
-	desempaquetar2(header->msj, mensaje, 0);
+	recv(*socketKernel, (void*) mensaje, *tamanoMensaje, MSG_WAITALL);
 
-	recv(socketKernel, (void*) paquete->msj, paquete->tamano, MSG_WAITALL);
-
-	switch (mensaje) {
+	switch (*razon) {
 	case CREAR_SEGMENTO:
 
-		desempaquetar2(paquete->msj, pid, 0);
+		desempaquetar2(mensaje, &pid, 0);
 		crearSegmento(pid);
 		break;
 	case DESTRUIR_SEGMENTOS:
