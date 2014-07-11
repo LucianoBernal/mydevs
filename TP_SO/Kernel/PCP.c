@@ -196,17 +196,17 @@ void seLiberoUnaCPU(int idCPU) {
 void cpu_destroy(t_estructuraCPU* estructura) {
 	free(estructura);
 }
-bool tieneID(t_estructuraCPU estructura) {
-	return (estructura.idCPU == idUltimaCPUDesconectada);
+bool tieneID(t_estructuraCPU* estructura) {
+	return (estructura->idCPU == idUltimaCPUDesconectada);
 }
 
 void seDesconectoCPU(int idCPU) { //TODO
 	if (estaLibre(idCPU)) {
-		list_remove_by_condition(CPUs, (void*) tieneID());
+		list_remove_by_condition(CPUs, (void*) tieneID);
 	} else {
 		//se manda un error a la consola del programa
 		queue_push(colaExit, paquete_CPU.pcb);
-		list_remove_by_condition(CPUs, (void*) tieneID(idCPU));
+		list_remove_by_condition(CPUs, (void*) tieneID);
 	}
 }
 
