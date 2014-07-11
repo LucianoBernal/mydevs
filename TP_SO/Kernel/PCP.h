@@ -15,10 +15,6 @@ typedef struct {
 	int tiempo;
 } t_paquete_recibir_CPU;
 
-typedef struct {
-	t_PCB* pcb;
-	int IDCpu;
-} t_paquete_enviar_CPU;
 
 
 typedef struct {
@@ -36,6 +32,7 @@ typedef struct
 typedef struct {
 	int idCPU;
 	int estado;
+	int idProceso;
 } t_estructuraCPU;
 
 #endif /* PCP__H_ */

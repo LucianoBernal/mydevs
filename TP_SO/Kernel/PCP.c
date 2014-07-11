@@ -1,4 +1,5 @@
 #include "PCP.h"
+#include "Kernel.h"
 
 sem_t * CPUsLibres = NULL;
 sem_t * sPLP = NULL;
@@ -11,7 +12,7 @@ static t_queue* colaExec = queue_create();
 pthread_t ejecutar;
 pthread_t envCPU;
 pthread_t recCPU;
-int retMandarAEjecutar, retEnviarCPU, retRecibirCPU;
+int retMandarAEjecutar, retRecibirCPU;
 int* sinParametros = NULL;
 static t_dictionary diccionarioDispositivos = dictionary_create();
 t_list* CPUs = list_create();
@@ -24,45 +25,14 @@ void pcp_main() {
 	sem_init(sBloqueado, 0, 0);
 	sem_init(colaExecVacia, 0, 0);
 	sem_init(semCPUDesconectadaMutex, 0, 1);
-	crearHilosPrincipales();
-	crearHilosDeEntradSalida();
-
-}
-
-void crearHilosPrincipales() {
-
-	retMandarAEjecutar = pthread_create(&ejecutar, NULL, mandarAEjecutar,
-			(void*) sinParametros);
-	if (retMandarAEjecutar) {
-		fprintf(stderr, "Error - pthread_create() return code: %d\n",
-				retMandarAEjecutar);
-		exit(EXIT_FAILURE);
-	}
-	retEnviarCPU = pthread_create(&envCPU, NULL, enviarCPU,
-			(void*) sinParametros);
-	if (retEnviarCPU) {
-		fprintf(stderr, "Error - pthread_create() return code: %d\n",
-				retEnviarCPU);
-		exit(EXIT_FAILURE);
-	}
-	retRecibirCPU = pthread_create(&recCPU, NULL, recibirCPU,
-			(void*) sinParametros);
-	if (retRecibirCPU) {
-		fprintf(stderr, "Error - pthread_create() return code: %d\n",
-				retRecibirCPU);
-		exit(EXIT_FAILURE);
-	}
-
-}
-
-void crearHilosDeEntradaSalida() {
+	//crearHilosDeEntradSalida
 	int i = 0;
 	while (idhio[i] != '\0') {
 		int retardo = buscarRetardo(idhio[i]);
 		static t_queue* colaDispositivo = queue_create();
 		static sem_t* semaforo = NULL;
 		sem_init(semaforo, 0, 0);
-		t_estructuraDispositivoIO* estructuraDispositivo;
+		t_estructuraDispositivoIO* estructuraDispositivo=malloc(sizeof(t_estructuraDispositivoIO));
 		estructuraDispositivo->retardo = retardo;
 		estructuraDispositivo->procesosBloqueados = colaDispositivo;
 		estructuraDispositivo->semaforoCola = semaforo;
@@ -78,13 +48,63 @@ void crearHilosDeEntradaSalida() {
 		}
 		i++;
 	}
+	crearHilosPrincipales();
 }
 
+void crearHilosPrincipales() {
+
+	retMandarAEjecutar = pthread_create(&ejecutar, NULL, mandarAEjecutar,
+			(void*) sinParametros);
+	if (retMandarAEjecutar) {
+		fprintf(stderr, "Error - pthread_create() return code: %d\n",
+				retMandarAEjecutar);
+		exit(EXIT_FAILURE);
+	}
+	retRecibirCPU = pthread_create(&recCPU, NULL, recibirCPU,
+			(void*) sinParametros);
+	if (retRecibirCPU) {
+		fprintf(stderr, "Error - pthread_create() return code: %d\n",
+				retRecibirCPU);
+		exit(EXIT_FAILURE);
+	}
+	pthread_join(ejecutar, NULL );
+	pthread_join(recCPU, NULL );
+
+}
+
+/*void crearHilosDeEntradaSalida() {
+	int i = 0;
+	while (idhio[i] != '\0') {
+		int retardo = buscarRetardo(idhio[i]);
+		static t_queue* colaDispositivo = queue_create();
+		static sem_t* semaforo = NULL;
+		sem_init(semaforo, 0, 0);
+		t_estructuraDispositivoIO* estructuraDispositivo; //TODO
+		estructuraDispositivo->retardo = retardo;
+		estructuraDispositivo->procesosBloqueados = colaDispositivo;
+		estructuraDispositivo->semaforoCola = semaforo;
+		dictionary_put(diccionarioDispositivos, idhio[i],
+				estructuraDispositivo);
+		pthread_t dispositivo;
+		int retIO = pthread_create(&dispositivo, NULL, bloquearYDevolverAReady,
+				(void*) &estructuraDispositivo);
+		if (retIO) {
+			fprintf(stderr, "Error - pthread_create() return code: %d\n",
+					retIO);
+			exit(EXIT_FAILURE);
+		}
+		i++;
+	}
+}*/
+
 void* mandarAEjecutar(void* j) {
+	//saca procesos de la cola de ready y los manda a exec
+
 	sem_wait(vacioReady);
 	sem_wait(colaReadyMutex);
 	t_PCB* procesoAEjecutar = queue_pop(colaReady);
 	queue_push(colaExec, procesoAEjecutar);
+	enviarCPU();
 	sem_post(colaReadyMutex);
 	sem_post(colaExecVacia);
 
@@ -133,16 +153,12 @@ void* recibirCPU(void* j) {
 
 }
 
-void* enviarCPU(void* j) {
-	sem_wait(colaExecVacia);
+void enviarCPU() {
 	sem_wait(CPUsLibres);
 	int IDCpuLibre = encontrarPrimeraCpuLibreYOcuparla(CPUs);
-	t_PCB* pcb = queue_pop(colaExec);
-	t_paquete_enviar_CPU paquete;
-	paquete.pcb = pcb;
-	paquete.IDCpu = IDCpuLibre;
-//paquete ->esto hay que mandarselo a la cpu por sockets, aunque no sé si hay que sacarlo de la cola...
-
+	t_PCB* paquete = queue_pop(colaExec);
+	//TODO serializar(paquete);
+	//TODO ponerle el program id de ese pcb a la cpu en la lista
 }
 
 void* bloquearYDevolverAReady(void * param) {
@@ -181,6 +197,7 @@ void nuevaCPU(int idCPU) {
 	t_estructuraCPU* estructura = malloc(sizeof(t_estructuraCPU));
 	estructura->idCPU = idCPU;
 	estructura->estado = 0;
+	estructura->idProceso = -1;
 	list_add(CPUs, estructura);
 	sem_post(CPUsLibres);
 }
@@ -213,6 +230,7 @@ void seLiberoUnaCPU(int idCPU) {
 	t_estructuraCPU* estructura = malloc(sizeof(t_estructuraCPU));
 	estructura->idCPU = idCPU;
 	estructura->estado = 0;
+	estructura->idProceso = -1;
 	list_replace_and_destroy_element(CPUs, i, estructura, (void*) cpu_destroy);
 	sem_post(CPUsLibres);
 }
