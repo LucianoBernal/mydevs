@@ -112,7 +112,7 @@ void* recibirCPU(void* j) {
 void* enviarCPU(void* j) {
 	sem_wait(colaExecVacia);
 	sem_wait(CPUsLibres);
-	int IDCpuLibre = encontrarPrimeraCpuLibreYOcuparla();
+	int IDCpuLibre = encontrarPrimeraCpuLibreYOcuparla(CPUs);
 	t_PCB* pcb = queue_pop(colaExec);
 	t_paquete_enviar_CPU paquete;
 	paquete.pcb = pcb;
@@ -143,8 +143,8 @@ int buscarRetardo(char* dispositivo) {
 	return hio[i];
 }
 
-int encontrarPrimeraCpuLibreYOcuparla() {
-	t_estructuraCPU* estructura = list_find(CPUs, (void*) estaLibre);
+int encontrarPrimeraCpuLibreYOcuparla(t_list* lista) {
+	t_estructuraCPU* estructura = list_find(lista, (void*) estaLibre);
 	estructura->estado = 1;
 	return (estructura->idCPU);
 }
@@ -154,10 +154,10 @@ bool estaLibre(t_estructuraCPU* estructura) {
 }
 
 void nuevaCPU(int idCPU) {
-	t_estructuraCPU estructura;
-	estructura.idCPU = idCPU;
-	estructura.estado = 0;
-	list_add(CPUs, &estructura);
+	t_estructuraCPU* estructura = malloc(sizeof(t_estructuraCPU));
+	estructura->idCPU = idCPU;
+	estructura->estado = 0;
+	list_add(CPUs, estructura);
 	sem_post(CPUsLibres);
 }
 
@@ -204,7 +204,7 @@ void seDesconectoCPU(int idCPU) { //TODO
 	if (estaLibre(idCPU)) {
 		list_remove_by_condition(CPUs, (void*) tieneID);
 	} else {
-		//se manda un error a la consola del programa
+		// TODO se manda un error a la consola del programa
 		queue_push(colaExit, paquete_CPU.pcb);
 		list_remove_by_condition(CPUs, (void*) tieneID);
 	}
