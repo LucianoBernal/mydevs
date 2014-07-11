@@ -58,8 +58,8 @@ int kernel_main(int argc, char** argv) {
 
 	pthread_t plp, pcp;
 	int iretPLP, iretPCP;
-
-	iretPCP = pthread_create(&pcp, NULL, pcp_main, (void*) parametrosPCP); //TODO bely definir pcp_main y si lleva parametros
+int* parametrosPCP= NULL;
+	iretPCP = pthread_create(&pcp, NULL, pcp_main, (void*) parametrosPCP);
 	if (iretPCP) {
 		fprintf(stderr, "Error - pthread_create() return code: %d\n", iretPCP);
 		exit(EXIT_FAILURE);
