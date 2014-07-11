@@ -10,9 +10,9 @@ sem_t * semCPUDesconectadaMutex = NULL;
 int laSenialDeTerminar = 0;
 static t_queue* colaExec = queue_create();
 pthread_t ejecutar;
-pthread_t envCPU;
+pthread_t multiplexorCPUs;
 pthread_t recCPU;
-int retMandarAEjecutar, retRecibirCPU;
+int retMandarAEjecutar, retRecibirCPU, retMultiplexorCPUs;
 int* sinParametros = NULL;
 static t_dictionary diccionarioDispositivos = dictionary_create();
 t_list* CPUs = list_create();
@@ -32,7 +32,8 @@ void pcp_main() {
 		static t_queue* colaDispositivo = queue_create();
 		static sem_t* semaforo = NULL;
 		sem_init(semaforo, 0, 0);
-		t_estructuraDispositivoIO* estructuraDispositivo=malloc(sizeof(t_estructuraDispositivoIO));
+		t_estructuraDispositivoIO* estructuraDispositivo = malloc(
+				sizeof(t_estructuraDispositivoIO));
 		estructuraDispositivo->retardo = retardo;
 		estructuraDispositivo->procesosBloqueados = colaDispositivo;
 		estructuraDispositivo->semaforoCola = semaforo;
@@ -52,7 +53,13 @@ void pcp_main() {
 }
 
 void crearHilosPrincipales() {
-
+	retMultiplexorCPUs = pthread_create(&multiplexorCPUs, NULL, multiplexorCPUs,
+			(void*) sinParametros);
+	if (retMultiplexorCPUs) {
+		fprintf(stderr, "Error - pthread_create() return code: %d\n",
+				retMultiplexorCPUs);
+		exit(EXIT_FAILURE);
+	}
 	retMandarAEjecutar = pthread_create(&ejecutar, NULL, mandarAEjecutar,
 			(void*) sinParametros);
 	if (retMandarAEjecutar) {
@@ -67,35 +74,36 @@ void crearHilosPrincipales() {
 				retRecibirCPU);
 		exit(EXIT_FAILURE);
 	}
+	pthread_join(multiplexorCPUs, NULL );
 	pthread_join(ejecutar, NULL );
 	pthread_join(recCPU, NULL );
 
 }
 
 /*void crearHilosDeEntradaSalida() {
-	int i = 0;
-	while (idhio[i] != '\0') {
-		int retardo = buscarRetardo(idhio[i]);
-		static t_queue* colaDispositivo = queue_create();
-		static sem_t* semaforo = NULL;
-		sem_init(semaforo, 0, 0);
-		t_estructuraDispositivoIO* estructuraDispositivo; //TODO
-		estructuraDispositivo->retardo = retardo;
-		estructuraDispositivo->procesosBloqueados = colaDispositivo;
-		estructuraDispositivo->semaforoCola = semaforo;
-		dictionary_put(diccionarioDispositivos, idhio[i],
-				estructuraDispositivo);
-		pthread_t dispositivo;
-		int retIO = pthread_create(&dispositivo, NULL, bloquearYDevolverAReady,
-				(void*) &estructuraDispositivo);
-		if (retIO) {
-			fprintf(stderr, "Error - pthread_create() return code: %d\n",
-					retIO);
-			exit(EXIT_FAILURE);
-		}
-		i++;
-	}
-}*/
+ int i = 0;
+ while (idhio[i] != '\0') {
+ int retardo = buscarRetardo(idhio[i]);
+ static t_queue* colaDispositivo = queue_create();
+ static sem_t* semaforo = NULL;
+ sem_init(semaforo, 0, 0);
+ t_estructuraDispositivoIO* estructuraDispositivo; //TODO
+ estructuraDispositivo->retardo = retardo;
+ estructuraDispositivo->procesosBloqueados = colaDispositivo;
+ estructuraDispositivo->semaforoCola = semaforo;
+ dictionary_put(diccionarioDispositivos, idhio[i],
+ estructuraDispositivo);
+ pthread_t dispositivo;
+ int retIO = pthread_create(&dispositivo, NULL, bloquearYDevolverAReady,
+ (void*) &estructuraDispositivo);
+ if (retIO) {
+ fprintf(stderr, "Error - pthread_create() return code: %d\n",
+ retIO);
+ exit(EXIT_FAILURE);
+ }
+ i++;
+ }
+ }*/
 
 void* mandarAEjecutar(void* j) {
 	//saca procesos de la cola de ready y los manda a exec
@@ -210,7 +218,10 @@ void programaSalioPorQuantum(t_PCB* pcb, int idCPU) {
 }
 
 void moverAColaExit(t_PCB* pcb, int idCPU) {
+	sem_wait(colaExitMutex);
 	queue_push(colaExit, pcb);
+	sem_post(colaExitMutex);
+	sem_post(colaExitVacio);
 	seLiberoUnaCPU(idCPU);
 }
 
