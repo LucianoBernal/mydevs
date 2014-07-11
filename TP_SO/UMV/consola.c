@@ -11,10 +11,12 @@ void* consola(void* sinParametro) {
 	const int COMANDO_SIZE = 30;
 	char* comando = malloc(COMANDO_SIZE);
 	do {
-		gets(comando);
+		printf("Ingrese comando: \n");
+		scanf("%s",comando);
 		analizarYEjecutar(comando);
 
 	} while (strncmp("exit", comando, 4));
+	log_info(logger,"Se cerró la consola");
 	free(comando);
 }
 
@@ -23,8 +25,10 @@ void analizarYEjecutar(char *comando) {
 	if (!strncmp("operacion", comando, 9)) {
 		t_operacion operacion;
 		printf(
-				"Qué operación desea ralizar?-para saber como usarlo enviar 'h'- \n");
-		scanf("%c", &operacion.accion);
+				"¿Qué operación desea ralizar?-para saber como usarlo enviar 'h'- \n");
+
+		scanf("%s", &operacion.accion);
+		printf("%c",operacion.accion);
 		char* msj;
 		switch (operacion.accion) {
 
@@ -47,7 +51,7 @@ void analizarYEjecutar(char *comando) {
 			printf("\ningrese tamaño: ");
 			scanf("%d", &operacion.tamano);
 
-			msj=malloc(operacion.tamano);
+			msj = malloc(operacion.tamano);
 			printf("\n Ingrese bloque de mensaje: \n");
 			scanf("%s", msj);
 
@@ -66,7 +70,7 @@ void analizarYEjecutar(char *comando) {
 			printf("\ningrese tamaño: ");
 			scanf("%d", &operacion.tamano);
 
-			msj=malloc(operacion.tamano);
+			msj = malloc(operacion.tamano);
 			msj = solicitarBytes(operacion.base, operacion.offset,
 					operacion.tamano);
 			printf("%s", msj);
@@ -107,6 +111,7 @@ void analizarYEjecutar(char *comando) {
 		char alg;
 		printf(
 				"Si quiere cambiar a Worst-Fit, ingrese w\n Si quiere cambiar a First-Fit, ingrese f:\n");
+		fflush(stdin); //FIXME
 		scanf("%c", &alg);
 		if (algoritmo) {
 			switch (alg) {
@@ -148,22 +153,23 @@ void analizarYEjecutar(char *comando) {
 		int pidPedido;
 		int off;
 		int tam;
-		bool arch;//TODO: archivo = log ?
+		bool arch;	//TODO: archivo = log ?
 
 		printf("Estructuras de memoria.\n");
-		printf("Si quiere las tablas de segmentos de un proceso ingrese su pid, sino ingrese -1: \n");
-		scanf("%d",&pidPedido);
-		dumpTablaSegmentos(arch,pidPedido);
+		printf(
+				"Si quiere las tablas de segmentos de un proceso ingrese su pid, sino ingrese -1: \n");
+		scanf("%d", &pidPedido);
+		dumpTablaSegmentos(arch, pidPedido);
 
 		printf("Memoria principal:\n");
 		dumpMemoriaLibreYSegmentos(arch);
 
 		printf("\n Contenido de memoria principal.\n");
 		printf("Ingrese offset: ");
-		scanf("%d",&off);
+		scanf("%d", &off);
 		printf("Ingrese tamaño: ");
-		scanf("%d",&tam);
-		dumpMemoriaChata(off,tam,arch);
+		scanf("%d", &tam);
+		dumpMemoriaChata(off, tam, arch);
 
 	}	//Termina if de dump.
 

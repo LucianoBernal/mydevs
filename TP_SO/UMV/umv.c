@@ -42,17 +42,15 @@ int main(int argc, char** argv) {
 		log_info(logger, "El hilo de consola se creó correctamente");
 	}
 
-	//Creo hilo que creará hilos que atienden al kernel/cpu's.
-	if (pthread_create(&atencion_interna, NULL, (void *) atencionInterna,
-			(void*)sinParametros )) {
-		//ERROR.
-		log_info(logger, "Hubo un error en la creación del hilo de atención interna");
-	} else {
-		//Se creó correctamente.
-		log_info(logger, "El hilo de atención interna se creó correctamente");
-	}
+//	//Creo hilo que creará hilos que atienden al kernel/cpu's.
+//	if (pthread_create(&atencion_interna, NULL, (void *) atencionInterna,
+//			(void*)sinParametros )) {
+//		log_info(logger, "Hubo un error en la creación del hilo de atención interna");
+//	} else {
+//		log_info(logger, "El hilo de atención interna se creó correctamente");
+//	}
 	pthread_join(atencion_consola,NULL);
-	pthread_join(atencion_interna,NULL);
+	//pthread_join(atencion_interna,NULL);
 	log_info(logger, "El proceso UMV ha finalizado");
 	list_destroy_and_destroy_elements(listaProcesos, (void*)free);
 	config_destroy(config);

@@ -9,3 +9,73 @@
 [INFO] 13:40:45:780 UMV/(3375:3375): Comienza la ejecución de la UMV.
 [INFO] 13:40:49:172 UMV/(3375:3375): El hilo de consola se creó correctamente
 [INFO] 13:40:54:797 UMV/(3375:3375): El hilo de atención interna se creó correctamente
+[INFO] 16:17:35:354 UMV/(2916:2916): Comienza la ejecución de la UMV.
+[INFO] 16:17:35:369 UMV/(2916:2916): El hilo de consola se creó correctamente
+[INFO] 16:17:35:370 UMV/(2916:2916): El hilo de atención interna se creó correctamente
+[INFO] 16:19:16:748 UMV/(3011:3011): Comienza la ejecución de la UMV.
+[INFO] 16:19:16:749 UMV/(3011:3011): El hilo de consola se creó correctamente
+[INFO] 16:19:16:749 UMV/(3011:3011): El hilo de atención interna se creó correctamente
+[INFO] 16:19:20:458 UMV/(3011:3013): Se cerró la consola
+[INFO] 16:19:54:79 UMV/(3045:3045): Comienza la ejecución de la UMV.
+[INFO] 16:19:54:79 UMV/(3045:3045): El hilo de consola se creó correctamente
+[INFO] 16:19:54:79 UMV/(3045:3045): El hilo de atención interna se creó correctamente
+[INFO] 16:20:31:337 UMV/(3110:3110): Comienza la ejecución de la UMV.
+[INFO] 16:20:31:339 UMV/(3110:3110): El hilo de consola se creó correctamente
+[INFO] 16:20:31:340 UMV/(3110:3110): El hilo de atención interna se creó correctamente
+[INFO] 16:22:13:197 UMV/(3193:3193): Comienza la ejecución de la UMV.
+[INFO] 16:22:13:197 UMV/(3193:3193): El hilo de consola se creó correctamente
+[INFO] 16:22:17:187 UMV/(3193:3195): Se cerró la consola
+[INFO] 16:22:17:187 UMV/(3193:3193): El proceso UMV ha finalizado
+[INFO] 16:26:09:213 UMV/(3289:3289): Comienza la ejecución de la UMV.
+[INFO] 16:26:09:214 UMV/(3289:3289): El hilo de atención interna se creó correctamente
+[INFO] 16:28:00:874 UMV/(3404:3404): Comienza la ejecución de la UMV.
+[INFO] 16:28:00:874 UMV/(3404:3404): El hilo de atención interna se creó correctamente
+[INFO] 16:57:03:864 UMV/(4142:4142): Comienza la ejecución de la UMV.
+[INFO] 16:57:03:864 UMV/(4142:4142): El hilo de consola se creó correctamente
+[INFO] 16:57:03:864 UMV/(4142:4142): El proceso UMV ha finalizado
+[INFO] 16:57:25:219 UMV/(4205:4205): Comienza la ejecución de la UMV.
+[INFO] 16:57:25:220 UMV/(4205:4205): El hilo de consola se creó correctamente
+[INFO] 16:57:31:638 UMV/(4205:4208): Se cerró la consola
+[INFO] 16:57:31:638 UMV/(4205:4205): El proceso UMV ha finalizado
+[INFO] 17:01:35:405 UMV/(4348:4348): Comienza la ejecución de la UMV.
+[INFO] 17:01:35:405 UMV/(4348:4348): El hilo de consola se creó correctamente
+[INFO] 17:03:44:143 UMV/(4422:4422): Comienza la ejecución de la UMV.
+[INFO] 17:03:44:144 UMV/(4422:4422): El hilo de consola se creó correctamente
+[INFO] 17:03:53:550 UMV/(4422:4427): Se cerró la consola
+[INFO] 17:03:53:551 UMV/(4422:4422): El proceso UMV ha finalizado
+[INFO] 17:06:46:32 UMV/(4546:4546): Comienza la ejecución de la UMV.
+[INFO] 17:06:46:32 UMV/(4546:4546): El hilo de consola se creó correctamente
+[INFO] 17:06:57:855 UMV/(4546:4549): Se cerró la consola
+[INFO] 17:06:57:855 UMV/(4546:4546): El proceso UMV ha finalizado
+[INFO] 17:09:10:365 UMV/(4643:4643): Comienza la ejecución de la UMV.
+[INFO] 17:09:10:366 UMV/(4643:4643): El hilo de consola se creó correctamente
+[INFO] 17:09:27:24 UMV/(4643:4648): Se cerró la consola
+[INFO] 17:09:27:24 UMV/(4643:4643): El proceso UMV ha finalizado
+[INFO] 17:10:37:408 UMV/(4718:4718): Comienza la ejecución de la UMV.
+[INFO] 17:10:37:408 UMV/(4718:4718): El hilo de consola se creó correctamente
+[INFO] 17:11:34:879 UMV/(4718:4723): Se cerró la consola
+[INFO] 17:11:34:879 UMV/(4718:4718): El proceso UMV ha finalizado
+[INFO] 17:15:13:465 UMV/(4829:4829): Comienza la ejecución de la UMV.
+[INFO] 17:15:13:467 UMV/(4829:4829): El hilo de consola se creó correctamente
+[INFO] 17:15:53:640 UMV/(4829:4834): Se cerró la consola
+[INFO] 17:15:53:640 UMV/(4829:4829): El proceso UMV ha finalizado
+[INFO] 17:16:41:313 UMV/(4900:4900): Comienza la ejecución de la UMV.
+[INFO] 17:16:41:315 UMV/(4900:4900): El hilo de consola se creó correctamente
+[INFO] 17:20:39:216 UMV/(5004:5004): Comienza la ejecución de la UMV.
+[INFO] 17:20:39:216 UMV/(5004:5004): El hilo de consola se creó correctamente
+[INFO] 17:20:57:13 UMV/(5035:5035): Comienza la ejecución de la UMV.
+[INFO] 17:20:57:13 UMV/(5035:5035): El hilo de consola se creó correctamente
+[INFO] 17:21:11:192 UMV/(5066:5066): Comienza la ejecución de la UMV.
+[INFO] 17:21:11:192 UMV/(5066:5066): El hilo de consola se creó correctamente
+[INFO] 17:23:29:37 UMV/(5141:5141): Comienza la ejecución de la UMV.
+[INFO] 17:23:29:37 UMV/(5141:5141): El hilo de consola se creó correctamente
+[INFO] 17:32:01:486 UMV/(5469:5469): Comienza la ejecución de la UMV.
+[INFO] 17:32:01:486 UMV/(5469:5469): El hilo de consola se creó correctamente
+[INFO] 17:32:09:534 UMV/(5469:5474): Se cerró la consola
+[INFO] 17:32:09:534 UMV/(5469:5469): El proceso UMV ha finalizado
+[INFO] 17:32:58:287 UMV/(5543:5543): Comienza la ejecución de la UMV.
+[INFO] 17:32:58:287 UMV/(5543:5543): El hilo de consola se creó correctamente
+[INFO] 17:33:12:562 UMV/(5543:5548): Se cerró la consola
+[INFO] 17:33:12:562 UMV/(5543:5543): El proceso UMV ha finalizado
+[INFO] 17:46:09:16 UMV/(5677:5677): Comienza la ejecución de la UMV.
+[INFO] 17:46:09:18 UMV/(5677:5677): El hilo de consola se creó correctamente

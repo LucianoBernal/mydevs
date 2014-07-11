@@ -310,7 +310,9 @@ void agregar_En_Diccionario(int pid, int sd) {
 				perror("send");
 			}
 			free(message);
-			free(tamano);
+			free(tamano);ilosDeEntradSalida();
+
+		}
 		}
 	}
 

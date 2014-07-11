@@ -21,6 +21,7 @@ typedef struct{
 	int32_t offset;
 	int32_t tamano;
 	char accion;
+	char* accionCadena;
 	char *archivo;
 }t_operacion;
 
