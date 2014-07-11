@@ -24,18 +24,22 @@ void analizarYEjecutar(char *comando) {
 
 	if (!strncmp("operacion", comando, 9)) {
 		t_operacion operacion;
+
 		printf(
 				"¿Qué operación desea ralizar?-para saber como usarlo enviar 'h'- \n");
 
+		int flag;
+		do{
+		flag=0;
 		scanf("%s", &operacion.accion);
-		printf("%c",operacion.accion);
+		//printf("%c",operacion.accion);
 		char* msj;
 		switch (operacion.accion) {
 
 		case 'h':
 			printf(
 					"para escribir bytes en memoria, ingrese 'e' \n para solicitar bytes en memoria, ingrese 's' \n para crear un segmento, ingrese 'c' \n para destruir un segmento, ingrese 'd' \n");
-
+			flag=1;
 			break;
 
 		case 'e':
@@ -57,6 +61,7 @@ void analizarYEjecutar(char *comando) {
 
 			enviarUnosBytes(operacion.base, operacion.offset, operacion.tamano,
 					msj);
+			log_info(logger,"se concretó la operación");
 
 			break;
 
@@ -96,7 +101,7 @@ void analizarYEjecutar(char *comando) {
 		default:
 			printf("No ingresó ninguna opción válida.");
 		}			//Termina Switch para ingreso de parámetros de operacion.
-
+		}while(flag);
 	}			//Termina if de operacion.
 
 	else if (!strncmp("retardo", comando, 7)) {
