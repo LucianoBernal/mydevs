@@ -30,3 +30,7 @@
 [INFO] 16:22:33:222 UMV/(3201:3201): El hilo de consola se creó correctamente
 [INFO] 16:26:25:158 UMV/(3297:3297): Comienza la ejecución de la UMV.
 [INFO] 16:26:25:158 UMV/(3297:3297): El hilo de atención interna se creó correctamente
+[INFO] 17:49:27:114 UMV/(5793:5793): Comienza la ejecución de la UMV.
+[INFO] 17:49:27:115 UMV/(5793:5793): El hilo de consola se creó correctamente
+[INFO] 17:49:43:270 UMV/(5793:5794): Se cerró la consola
+[INFO] 17:49:43:270 UMV/(5793:5793): El proceso UMV ha finalizado
