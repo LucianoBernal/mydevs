@@ -45,5 +45,6 @@ static sem_t * vacioReady;
 static sem_t* mutexVG;
 static sem_t* colaExitVacio;
 static sem_t* colaExitMutex;
+static t_queue* colaExit;
 
 #endif /* KERNEL_H_ */
