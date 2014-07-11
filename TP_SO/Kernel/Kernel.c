@@ -37,6 +37,9 @@ int kernel_main(int argc, char** argv) {
 	cargarConfig(config);
 	config_destroy(config);
 	colaReady = queue_create();
+	colaExit= queue_create();
+	sem_init(colaExitMutex, 0,1);
+	sem_init(colaExitVacio,0,0);
 	sem_init(mutexVG, 0, 1);
 	sem_init(grado_Multiprogramacion, 0, multiprogramacion);
 	sem_init(colaReadyMutex, 0, 1);
@@ -56,8 +59,8 @@ int kernel_main(int argc, char** argv) {
 
 	pthread_t plp, pcp;
 	int iretPLP, iretPCP;
-
-	iretPCP = pthread_create(&pcp, NULL, pcp_main, (void*) parametrosPCP); //TODO bely definir pcp_main y si lleva parametros
+int* parametrosPCP= NULL;
+	iretPCP = pthread_create(&pcp, NULL, pcp_main, (void*) parametrosPCP);
 	if (iretPCP) {
 		fprintf(stderr, "Error - pthread_create() return code: %d\n", iretPCP);
 		exit(EXIT_FAILURE);
