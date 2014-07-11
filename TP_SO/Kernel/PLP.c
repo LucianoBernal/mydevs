@@ -279,11 +279,6 @@ void mostrarListaNew() {
 }
 
 void pcb_destroy(t_PCB *self) {
-	free(self->cursor_Stack);
-	free(self->indice_de_Codigo);
-	free(self->indice_de_Etiquetas);
-	free(self->segmento_Codigo);
-	free(self->segmento_Stack);
 	free(self);
 }
 
