@@ -43,5 +43,7 @@ static char* idhio[];
 static sem_t * colaReadyMutex;
 static sem_t * vacioReady;
 static sem_t* mutexVG;
+static sem_t* colaExitVacio;
+static sem_t* colaExitMutex;
 
 #endif /* KERNEL_H_ */

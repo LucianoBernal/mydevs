@@ -37,6 +37,8 @@ int kernel_main(int argc, char** argv) {
 	cargarConfig(config);
 	config_destroy(config);
 	colaReady = queue_create();
+	sem_init(colaExitMutex, 0,1);
+	sem_init(colaExitVacio,0,0);
 	sem_init(mutexVG, 0, 1);
 	sem_init(grado_Multiprogramacion, 0, multiprogramacion);
 	sem_init(colaReadyMutex, 0, 1);
