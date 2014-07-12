@@ -149,7 +149,7 @@ void analizarYEjecutar(char *comando) {
 
 	else if (!strncmp("compactacion", comando, 12)) {
 		compactarMemoria();
-		printf("Compactación de memoria finalizad correctamente. \n");
+		printf("Compactación de memoria finalizada correctamente. \n");
 
 	}	//Termina if de compactación.
 

@@ -88,3 +88,9 @@
 [INFO] 01:41:42:335 UMV/(2911:2911): Comienza la ejecución de la UMV.
 [INFO] 01:41:42:339 UMV/(2911:2911): El hilo de consola se creó correctamente
 [INFO] 01:41:55:33 UMV/(2911:2912): Se cerró la consola
+[INFO] 11:14:40:769 UMV/(1836:1836): Comienza la ejecución de la UMV.
+[INFO] 11:14:40:770 UMV/(1836:1836): El hilo de consola se creó correctamente
+[INFO] 11:15:32:441 UMV/(1836:1837): se concretó la operación1
+[INFO] 11:30:32:384 UMV/(1878:1878): Comienza la ejecución de la UMV.
+[INFO] 11:30:32:384 UMV/(1878:1878): El hilo de consola se creó correctamente
+[INFO] 12:14:37:705 UMV/(1878:1879): Se cerró la consola

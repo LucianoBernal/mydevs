@@ -22,6 +22,7 @@ bool algoritmo = 0; //0 significa FF, lo ponemos por defecto porque es el mas li
 static t_tablaSegmento *crear_nodoSegm(int, int, int, int, void *);
 static void tsegm_destroy(t_tablaSegmento *);
 pthread_mutex_t mutexCantProcActivos, mutexFlagCompactado, mutexAlgoritmo = PTHREAD_MUTEX_INITIALIZER;
+
 static t_limites *crear_nodoLim(void *comienzo, void *final) {
 	t_limites *nuevo = malloc(sizeof(t_limites));
 	nuevo->comienzo = comienzo;
@@ -93,8 +94,7 @@ void agregarProceso(int pid, char tipo) {
 		pthread_mutex_unlock(&mutexCantProcActivos);
 	} else {
 		printf("El numero pid ya esta en uso (?");
-		//TODO Creo que lean ya evito esto desde el plp
-	}
+		}
 }
 
 int buscarPid(int pid) {
