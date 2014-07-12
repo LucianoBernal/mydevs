@@ -1,0 +1,124 @@
+[INFO] 21:03:06:229 Programa/(9934:9934): Comienza la ejecución del Programa.
+[INFO] 21:03:29:235 Programa/(9943:9943): Comienza la ejecución del Programa.
+[INFO] 21:03:29:235 Programa/(9943:9943): Se concateno Script en buffer interno y se cerro archivo
+[INFO] 21:03:29:235 Programa/(9943:9943): Socket creado exitosamente
+[ERROR] 21:03:29:235 Programa/(9943:9943): Fallo conexion al Kernel
+[INFO] 21:03:41:746 Programa/(9945:9945): Comienza la ejecución del Programa.
+[INFO] 21:03:41:746 Programa/(9945:9945): Se concateno Script en buffer interno y se cerro archivo
+[INFO] 21:03:41:746 Programa/(9945:9945): Socket creado exitosamente
+[INFO] 21:03:41:746 Programa/(9945:9945): Conectado al Kernel
+[INFO] 21:03:41:746 Programa/(9945:9945): Iniciando Handshake
+[INFO] 21:03:41:746 Programa/(9945:9945): Termino Handshake
+[INFO] 21:08:44:171 Programa/(10053:10053): Comienza la ejecución del Programa.
+[INFO] 21:09:22:454 Programa/(10104:10104): Comienza la ejecución del Programa.
+[INFO] 21:09:22:454 Programa/(10104:10104): Se concateno Script en buffer interno y se cerro archivo
+[INFO] 21:09:22:455 Programa/(10104:10104): Socket creado exitosamente
+[INFO] 21:09:22:455 Programa/(10104:10104): Conectado al Kernel
+[INFO] 21:09:22:455 Programa/(10104:10104): Iniciando Handshake
+[INFO] 21:09:22:455 Programa/(10104:10104): Termino Handshake
+[INFO] 21:12:23:656 Programa/(10163:10163): Comienza la ejecución del Programa.
+[INFO] 21:12:23:656 Programa/(10163:10163): Se concateno Script en buffer interno y se cerro archivo
+[INFO] 21:12:23:656 Programa/(10163:10163): Socket creado exitosamente
+[INFO] 21:12:23:656 Programa/(10163:10163): Conectado al Kernel
+[INFO] 21:12:23:657 Programa/(10163:10163): Iniciando Handshake
+[INFO] 21:12:23:657 Programa/(10163:10163): Termino Handshake
+[INFO] 21:19:10:955 Programa/(10398:10398): Comienza la ejecución del Programa.
+[INFO] 21:19:10:956 Programa/(10398:10398): Se concateno Script en buffer interno y se cerro archivo
+[INFO] 21:19:10:956 Programa/(10398:10398): Socket creado exitosamente
+[INFO] 21:19:10:956 Programa/(10398:10398): Conectado al Kernel
+[INFO] 21:19:10:956 Programa/(10398:10398): Iniciando Handshake
+[INFO] 21:19:10:956 Programa/(10398:10398): Termino Handshake
+[INFO] 21:20:01:150 Programa/(10436:10436): Comienza la ejecución del Programa.
+[INFO] 21:20:01:150 Programa/(10436:10436): Se concateno Script en buffer interno y se cerro archivo
+[INFO] 21:20:01:151 Programa/(10436:10436): Socket creado exitosamente
+[ERROR] 21:20:01:151 Programa/(10436:10436): Fallo conexion al Kernel
+[ERROR] 21:20:01:151 Programa/(10436:10436): Finalizo Erroneamente la ejecucion del Programa
+[INFO] 21:20:24:594 Programa/(10438:10438): Comienza la ejecución del Programa.
+[INFO] 21:20:24:594 Programa/(10438:10438): Se concateno Script en buffer interno y se cerro archivo
+[INFO] 21:20:24:594 Programa/(10438:10438): Socket creado exitosamente
+[INFO] 21:20:24:595 Programa/(10438:10438): Conectado al Kernel
+[INFO] 21:20:24:595 Programa/(10438:10438): Iniciando Handshake
+[INFO] 21:20:24:595 Programa/(10438:10438): Termino Handshake
+[INFO] 21:22:07:397 Programa/(10491:10491): Comienza la ejecución del Programa.
+[INFO] 21:22:07:397 Programa/(10491:10491): Se concateno Script en buffer interno y se cerro archivo
+[INFO] 21:22:07:397 Programa/(10491:10491): Socket creado exitosamente
+[INFO] 21:22:07:397 Programa/(10491:10491): Conectado al Kernel
+[INFO] 21:22:07:398 Programa/(10491:10491): Iniciando Handshake
+[INFO] 21:22:07:398 Programa/(10491:10491): Termino Handshake
+[INFO] 21:22:42:839 Programa/(10542:10542): Comienza la ejecución del Programa.
+[INFO] 21:22:42:839 Programa/(10542:10542): Se concateno Script en buffer interno y se cerro archivo
+[INFO] 21:22:42:839 Programa/(10542:10542): Socket creado exitosamente
+[INFO] 21:22:42:839 Programa/(10542:10542): Conectado al Kernel
+[INFO] 21:22:42:839 Programa/(10542:10542): Iniciando Handshake
+[INFO] 21:22:42:839 Programa/(10542:10542): Termino Handshake
+[INFO] 21:23:27:794 Programa/(10575:10575): Comienza la ejecución del Programa.
+[INFO] 21:23:27:794 Programa/(10575:10575): Se concateno Script en buffer interno y se cerro archivo
+[INFO] 21:23:27:794 Programa/(10575:10575): Socket creado exitosamente
+[INFO] 21:23:27:795 Programa/(10575:10575): Conectado al Kernel
+[INFO] 21:23:27:795 Programa/(10575:10575): Iniciando Handshake
+[INFO] 21:23:27:795 Programa/(10575:10575): Termino Handshake
+[INFO] 21:23:49:25 Programa/(10618:10618): Comienza la ejecución del Programa.
+[INFO] 21:23:49:25 Programa/(10618:10618): Se concateno Script en buffer interno y se cerro archivo
+[INFO] 21:23:49:25 Programa/(10618:10618): Socket creado exitosamente
+[INFO] 21:23:49:25 Programa/(10618:10618): Conectado al Kernel
+[INFO] 21:23:49:25 Programa/(10618:10618): Iniciando Handshake
+[INFO] 21:23:49:25 Programa/(10618:10618): Termino Handshake
+[INFO] 21:23:51:356 Programa/(10618:10618): Finalizo correctamente la ejecucion del Programa
+[INFO] 21:27:12:144 Programa/(10727:10727): Comienza la ejecución del Programa.
+[INFO] 21:27:12:144 Programa/(10727:10727): Se concateno Script en buffer interno y se cerro archivo
+[INFO] 21:27:12:144 Programa/(10727:10727): Socket creado exitosamente
+[INFO] 21:27:12:145 Programa/(10727:10727): Conectado al Kernel
+[INFO] 21:27:12:145 Programa/(10727:10727): Iniciando Handshake
+[INFO] 21:27:12:145 Programa/(10727:10727): Termino Handshake
+[INFO] 21:27:14:453 Programa/(10727:10727): Finalizo correctamente la ejecucion del Programa
+[INFO] 21:27:58:352 Programa/(10769:10769): Comienza la ejecución del Programa.
+[INFO] 21:27:58:352 Programa/(10769:10769): Se concateno Script en buffer interno y se cerro archivo
+[INFO] 21:27:58:352 Programa/(10769:10769): Socket creado exitosamente
+[INFO] 21:27:58:352 Programa/(10769:10769): Conectado al Kernel
+[INFO] 21:27:58:352 Programa/(10769:10769): Iniciando Handshake
+[INFO] 21:27:58:352 Programa/(10769:10769): Termino Handshake
+[INFO] 21:28:03:709 Programa/(10769:10769): Finalizo correctamente la ejecucion del Programa
+[INFO] 21:28:19:511 Programa/(10799:10799): Comienza la ejecución del Programa.
+[INFO] 21:28:19:511 Programa/(10799:10799): Se concateno Script en buffer interno y se cerro archivo
+[INFO] 21:28:19:511 Programa/(10799:10799): Socket creado exitosamente
+[ERROR] 21:28:19:511 Programa/(10799:10799): Fallo conexion al Kernel
+[ERROR] 21:28:19:511 Programa/(10799:10799): Finalizo Erroneamente la ejecucion del Programa
+[INFO] 21:28:26:785 Programa/(10802:10802): Comienza la ejecución del Programa.
+[INFO] 21:28:26:785 Programa/(10802:10802): Se concateno Script en buffer interno y se cerro archivo
+[INFO] 21:28:26:785 Programa/(10802:10802): Socket creado exitosamente
+[INFO] 21:28:26:785 Programa/(10802:10802): Conectado al Kernel
+[INFO] 21:28:26:785 Programa/(10802:10802): Iniciando Handshake
+[INFO] 21:28:26:785 Programa/(10802:10802): Termino Handshake
+[INFO] 21:28:29:88 Programa/(10802:10802): Finalizo correctamente la ejecucion del Programa
+[INFO] 21:30:33:46 Programa/(10876:10876): Comienza la ejecución del Programa.
+[INFO] 21:30:33:46 Programa/(10876:10876): Se concateno Script en buffer interno y se cerro archivo
+[INFO] 21:30:33:46 Programa/(10876:10876): Socket creado exitosamente
+[INFO] 21:30:33:46 Programa/(10876:10876): Conectado al Kernel
+[INFO] 21:30:33:46 Programa/(10876:10876): Iniciando Handshake
+[INFO] 21:30:33:47 Programa/(10876:10876): Termino Handshake
+[ERROR] 21:30:37:891 Programa/(10876:10876): Fallo Recive
+[INFO] 21:30:37:892 Programa/(10876:10876): Finalizo correctamente la ejecucion del Programa
+[INFO] 21:31:02:361 Programa/(10906:10906): Comienza la ejecución del Programa.
+[INFO] 21:31:02:361 Programa/(10906:10906): Se concateno Script en buffer interno y se cerro archivo
+[INFO] 21:31:02:361 Programa/(10906:10906): Socket creado exitosamente
+[INFO] 21:31:02:361 Programa/(10906:10906): Conectado al Kernel
+[INFO] 21:31:02:361 Programa/(10906:10906): Iniciando Handshake
+[INFO] 21:31:02:362 Programa/(10906:10906): Termino Handshake
+[ERROR] 21:31:10:760 Programa/(10906:10906): Fallo Recive
+[ERROR] 21:31:10:760 Programa/(10906:10906): Finalizo Erroneamente la ejecucion del Programa
+[INFO] 21:34:02:886 Programa/(11000:11000): Comienza la ejecución del Programa.
+[INFO] 21:34:02:886 Programa/(11000:11000): Se concateno Script en buffer interno y se cerro archivo
+[INFO] 21:34:02:886 Programa/(11000:11000): Socket creado exitosamente
+[INFO] 21:34:02:886 Programa/(11000:11000): Conectado al Kernel
+[INFO] 21:34:02:886 Programa/(11000:11000): Iniciando Handshake
+[INFO] 21:34:02:887 Programa/(11000:11000): El programa se ha conectado al Kernel exitosamente 
+
+[INFO] 21:34:47:508 Programa/(11032:11032): Comienza la ejecución del Programa.
+[INFO] 21:34:47:509 Programa/(11032:11032): Se concateno Script en buffer interno y se cerro archivo
+[INFO] 21:34:47:509 Programa/(11032:11032): Socket creado exitosamente
+[INFO] 21:34:47:509 Programa/(11032:11032): Conectado al Kernel...
+[INFO] 21:34:47:509 Programa/(11032:11032): Iniciando Handshake...
+[INFO] 21:34:47:509 Programa/(11032:11032): El programa se ha conectado al Kernel exitosamente 
+
+[ERROR] 21:35:20:499 Programa/(11032:11032): Fallo Recive
+[ERROR] 21:35:20:500 Programa/(11032:11032): Finalizo Erroneamente la ejecucion del Programa

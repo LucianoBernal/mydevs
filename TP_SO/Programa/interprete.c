@@ -5,9 +5,7 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <unistd.h>
-#include "bibSockets.h"
-//Tuve que copiar tambien aca las librerias porque no se como llamarla
-//cuando esta afuera de la carpeta
+
 #define IP "127.0.0.1"
 #define PACKAGESIZE 1024
 #define PUERTO "6660"

@@ -4,17 +4,14 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../bibSockets.c \
 ../interprete.c \
 ../interpreteV2.c 
 
 OBJS += \
-./bibSockets.o \
 ./interprete.o \
 ./interpreteV2.o 
 
 C_DEPS += \
-./bibSockets.d \
 ./interprete.d \
 ./interpreteV2.d 
 

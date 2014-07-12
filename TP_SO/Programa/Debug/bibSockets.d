@@ -1,1 +1,0 @@
-bibSockets.d: ../bibSockets.c

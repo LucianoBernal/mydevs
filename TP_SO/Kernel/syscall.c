@@ -5,6 +5,8 @@
  *      Author: utnso
  */
 
+#include "Kernel.h"
+
 void obtener_valor(char id, int idCpu) {
 	sem_wait(mutexVG);
 	int a = dictionary_get(variables_globales, &id);

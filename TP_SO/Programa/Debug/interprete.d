@@ -1,3 +1,1 @@
-interprete.d: ../interprete.c ../bibSockets.h
-
-../bibSockets.h:
+interprete.d: ../interprete.c

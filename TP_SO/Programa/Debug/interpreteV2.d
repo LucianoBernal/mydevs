@@ -1,3 +1,4 @@
-interpreteV2.d: ../interpreteV2.c ../bibSockets.h
+interpreteV2.d: ../interpreteV2.c \
+ /home/utnso/tp-2014-1c-skynet/Bibliotecas_Comunes/commons/log.h
 
-../bibSockets.h:
+/home/utnso/tp-2014-1c-skynet/Bibliotecas_Comunes/commons/log.h:
