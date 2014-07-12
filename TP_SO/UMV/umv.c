@@ -15,8 +15,8 @@ int main(int argc, char** argv) {
 		return EXIT_FAILURE;
 	}
 
-	//t_config *config = config_create(argv[1]);
- 	t_config *config = config_create("/home/utnso/tp-2014-1c-skynet/TP_SO/UMV/Debug/config");
+	t_config *config = config_create(argv[1]);
+ 	//t_config *config = config_create("/home/utnso/tp-2014-1c-skynet/TP_SO/UMV/Debug/config");
 	//Verifico que estén todos los valores esperados en el config.
 	if (validarConfig(config)) {
 		config_destroy(config);
@@ -35,10 +35,8 @@ int main(int argc, char** argv) {
 	int* sinParametros=NULL;
 	//Creo hilo que atiende a la consola.
 	if (pthread_create(&atencion_consola, NULL, (void *) consola, (void*)sinParametros )) {
-		//ERROR.
 		log_info(logger, "Hubo un error en la creación del hilo de consola");
 	} else {
-		//Se creó hilo correctamente.
 		log_info(logger, "El hilo de consola se creó correctamente");
 	}
 
@@ -51,10 +49,11 @@ int main(int argc, char** argv) {
 //	}
 	pthread_join(atencion_consola,NULL);
 	//pthread_join(atencion_interna,NULL);
-	log_info(logger, "El proceso UMV ha finalizado");
+
 	list_destroy_and_destroy_elements(listaProcesos, (void*)free);
 	config_destroy(config);
 	log_destroy(logger);
+	log_info(logger, "El proceso UMV ha finalizado");
 	return EXIT_SUCCESS;
 }
 

@@ -27,13 +27,12 @@ void analizarYEjecutar(char *comando) {
 
 		printf(
 				"¿Qué operación desea ralizar?-para saber como usarlo enviar 'h'- \n");
-
 		int flag;
+		char* msj;
 		do{
 		flag=0;
 		scanf("%s", &operacion.accion);
-		//printf("%c",operacion.accion);
-		char* msj;
+		//char* msj;
 		switch (operacion.accion) {
 
 		case 'h':
@@ -43,9 +42,6 @@ void analizarYEjecutar(char *comando) {
 			break;
 
 		case 'e':
-			//printf("ingrese pid: ");
-			//scanf("%d", &operacion.proceso);
-
 			printf("\ningrese base: ");
 			scanf("%d", &operacion.base);
 
@@ -58,10 +54,11 @@ void analizarYEjecutar(char *comando) {
 			msj = malloc(operacion.tamano);
 			printf("\n Ingrese bloque de mensaje: \n");
 			scanf("%s", msj);
-
+			log_info(logger,"se concretó la operación1");
 			enviarUnosBytes(operacion.base, operacion.offset, operacion.tamano,
 					msj);
-			log_info(logger,"se concretó la operación");
+
+			log_info(logger,"se concretó la operación2");
 
 			break;
 
@@ -100,8 +97,10 @@ void analizarYEjecutar(char *comando) {
 
 		default:
 			printf("No ingresó ninguna opción válida.");
+			flag=1;
 		}			//Termina Switch para ingreso de parámetros de operacion.
 		}while(flag);
+		free(msj);
 	}			//Termina if de operacion.
 
 	else if (!strncmp("retardo", comando, 7)) {
@@ -117,7 +116,7 @@ void analizarYEjecutar(char *comando) {
 		printf(
 				"Si quiere cambiar a Worst-Fit, ingrese w\n Si quiere cambiar a First-Fit, ingrese f:\n");
 		fflush(stdin); //FIXME
-		scanf("%c", &alg);
+		scanf("%s", &alg);
 		if (algoritmo) {
 			switch (alg) {
 			case 'w':
@@ -125,7 +124,7 @@ void analizarYEjecutar(char *comando) {
 				break;
 			case 'f':
 				algoritmo = 0;
-				printf("Ya se encontraba en modo First-Fit.");
+				printf("Ya se encontraba en modo First-Fit.\n");
 				break;
 			default:
 				printf("error al ingresar algoritmo, es f o w.\n");
@@ -135,7 +134,7 @@ void analizarYEjecutar(char *comando) {
 			switch (alg) {
 			case 'w':
 				algoritmo = 1;
-				printf("Ya se encontraba en modo Worst-Fit.");
+				printf("Ya se encontraba en modo Worst-Fit.\n");
 				break;
 			case 'f':
 				algoritmo = 0;
@@ -150,7 +149,7 @@ void analizarYEjecutar(char *comando) {
 
 	else if (!strncmp("compactacion", comando, 12)) {
 		compactarMemoria();
-		printf("Compactación de memoria finalizad correctamente.");
+		printf("Compactación de memoria finalizad correctamente. \n");
 
 	}	//Termina if de compactación.
 
@@ -170,9 +169,9 @@ void analizarYEjecutar(char *comando) {
 		dumpMemoriaLibreYSegmentos(arch);
 
 		printf("\n Contenido de memoria principal.\n");
-		printf("Ingrese offset: ");
+		printf("\nIngrese offset: ");
 		scanf("%d", &off);
-		printf("Ingrese tamaño: ");
+		printf("\nIngrese tamaño: ");
 		scanf("%d", &tam);
 		dumpMemoriaChata(off, tam, arch);
 
