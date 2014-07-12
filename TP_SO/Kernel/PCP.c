@@ -1,7 +1,7 @@
 #include "PCP.h"
 #include "Kernel.h"
 
-void* pcp_main(void*) {
+void* pcp_main(void* sinParametro) {
 	sem_init(CPUsLibres, 0, 0);
 	sem_init(sPLP, 0, 0);
 	sem_init(sYaInicializoElMT, 0, 0);
@@ -12,8 +12,8 @@ void* pcp_main(void*) {
 	int i = 0;
 	while (idhio[i] != '\0') {
 		int retardo = buscarRetardo(idhio[i]);
-		static t_queue* colaDispositivo = queue_create();
-		static sem_t* semaforo = NULL;
+		t_queue* colaDispositivo = queue_create();
+		sem_t* semaforo = NULL;
 		sem_init(semaforo, 0, 0);
 		t_estructuraDispositivoIO* estructuraDispositivo = malloc(
 				sizeof(t_estructuraDispositivoIO));
@@ -50,16 +50,16 @@ void crearHilosPrincipales() {
 				retMandarAEjecutar);
 		exit(EXIT_FAILURE);
 	}
-	retRecibirCPU = pthread_create(&recCPU, NULL, recibirCPU,
+	retEnviarCPU = pthread_create(&envCPU, NULL, enviarCPU,
 			(void*) sinParametros);
-	if (retRecibirCPU) {
+	if (retEnviarCPU) {
 		fprintf(stderr, "Error - pthread_create() return code: %d\n",
-				retRecibirCPU);
+				retEnviarCPU);
 		exit(EXIT_FAILURE);
 	}
 	pthread_join(multiplexorCPUs, NULL );
 	pthread_join(ejecutar, NULL );
-	pthread_join(recCPU, NULL );
+	pthread_join(envCPU, NULL );
 
 }
 
@@ -95,7 +95,9 @@ void* mandarAEjecutar(void* j) {
 	sem_wait(colaReadyMutex);
 	t_PCB* procesoAEjecutar = queue_pop(colaReady);
 	queue_push(colaExec, procesoAEjecutar);
-	enviarCPU();
+	int * sinParametro=NULL;
+	enviarCPU(sinParametro);
+	free(sinParametro);
 	sem_post(colaReadyMutex);
 	sem_post(colaExecVacia);
 
@@ -144,7 +146,7 @@ void* recibirCPU(void* j) {
 
 }
 
-void enviarCPU() {
+void* enviarCPU(void* sinParametro) {
 	sem_wait(CPUsLibres);
 	int IDCpuLibre = encontrarPrimeraCpuLibreYOcuparla(CPUs);
 	t_PCB* paquete = queue_pop(colaExec);
@@ -247,7 +249,7 @@ void seDesconectoCPU(int idCPU) { //TODO
 }
 
 void seDesconectoCPUSigusr(int idCPU, t_PCB* pcb) {
-	list_remove_by_condition(CPUs, (void*) tieneID());
+	list_remove_by_condition(CPUs, (void*) tieneID);
 	sem_wait(colaReadyMutex);
 	queue_push(colaReady, pcb);
 	sem_post(colaReadyMutex);

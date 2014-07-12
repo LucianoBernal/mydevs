@@ -36,25 +36,30 @@ static int retardo;
 static int tamanio_stack;
 static int multiprogramacion;
 static t_queue* colaReady;
-static t_dictionary* variables_globales;
-static int semaforos[];
-static char* valor_semaforos[];
-static int hio[];
-static char* idhio[];
 static sem_t * colaReadyMutex;
 static sem_t * vacioReady;
 static sem_t* mutexVG;
 static sem_t* colaExitVacio;
 static sem_t* colaExitMutex;
 static t_queue* colaExit;
+static t_dictionary* variables_globales;
+static int valor_semaforos[];
+static char* semaforos[];
+static int hio[];
+static char* idhio[];
+static char** variables_globales_aux;
+static char** valor_semaforos_aux;
+static char** semaforos_aux;
+static char** hio_aux;
+static char** idhio_aux;
 
 void cargarConfig(t_config *);
 int32_t validarConfig(t_config*);
-void obtener_valor(char id, int idCpu);
+/*void obtener_valor(char id, int idCpu);
 void grabar_valor(char id, int valor);
 void wait(char* idSem, int idCpu);
 void signal(char* idSem);
 int buscarValorSemaforo(char* semaforo);
-int buscarPosicion(char* semaforo);
+int buscarPosicion(char* semaforo);*/
 
 #endif /* KERNEL_H_ */

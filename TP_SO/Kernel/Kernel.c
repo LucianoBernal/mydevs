@@ -1,12 +1,11 @@
 /*
- * Kernel.c
+* Kernel.c
  *
  *  Created on: 27/05/2014
  *      Author: utnso
  */
 
 #include "Kernel.h"
-
 
 
 
@@ -108,12 +107,25 @@ int32_t validarConfig(t_config *config) {
 		perror("Falta ID_HIO");
 		return EXIT_FAILURE;
 	}
-	if (!config_has_property(config, "VARIABLES_GLOBALES")) {
+	if (!config_has_property(config, "COMPARTIDAS")) {
 		perror("Falta VARIABLES_GLOBALES");
 		return EXIT_FAILURE;
 	}
+	if (!config_has_property(config, "TAMANIO_STACK")) {
+			perror("Falta TAMANIO_STACK");
+			return EXIT_FAILURE;
+		}
 	return EXIT_SUCCESS;
 }
+
+
+
+//SEMAFOROS=[b, c]
+//VALOR_SEMAFOROS=[1, 0]
+//ID_HIO=[HDD1, LPT1]
+//HIO=[500, 200]
+//COMPARTIDAS=[colas,compartida]
+
 
 void cargarConfig(t_config *config) {
 	puerto_programa = config_get_int_value(config, "PUERTO_PROG");
@@ -122,10 +134,33 @@ void cargarConfig(t_config *config) {
 	retardo = config_get_int_value(config, "RETARDO");
 	multiprogramacion = config_get_int_value(config, "MULTIPROGRAMACION");
 	tamanio_stack=config_get_int_value(config, "TAMANIO_STACK");
-	//FIXME fijate como hicimos con las cosas de config arriba... por eso te tira error.
-	valor_semaforos = config_get_string_value(config, "VALOR_SEMAFOROS");
-	semaforos = config_get_int_value(config, "SEMAFOROS");
-	hio = config_get_int_value(config, "HIO");
-	idhio = config_get_int_value(config, "IDHIO");
-	variables_globales = config_get_int_value(config, "VARIABLES_GLOBALES");
+	//FIXME OJO LO ARREGLE cambiando los tipos de las variables ver en que afecta
+	valor_semaforos_aux=config_get_array_value(config, "VALOR_SEMAFOROS");
+	semaforos_aux = config_get_array_value(config, "SEMAFOROS");
+	hio_aux = config_get_array_value(config, "HIO");
+	idhio_aux = config_get_array_value(config, "IDHIO");
+	//variables_globales = config_get_array_value(config, "VARIABLES_GLOBALES");
+	variables_globales_aux = config_get_array_value(config, "COMPARTIDAS");
+	int i=0;
+	/*while (idhio_aux[i] != NULL ) {
+			t_io* io;
+			io = malloc(sizeof(t_io));
+
+			io->nombre = dispositivos[i];
+			int a = atoi(dispRetardo[i]);
+			io->retardo = a;
+			io->cola = queue_create();
+			sem_init(&io->hayAlgo, 0, 0);
+			sem_init(&io->mutex, 0, 1);
+			dictionary_put(dispositivosIO, io->nombre, io);
+
+			pthread_t threadIO;
+			int hiloIO = pthread_create(&threadIO, NULL, manejoIO, (void*) io); //HILO PLP
+			i++;
+			if (hiloIO) {
+				log_error(logs, "Error en la creacion del hilo PLP");
+				log_destroy(logs);
+
+				exit(EXIT_FAILURE);
+			}*/
 }

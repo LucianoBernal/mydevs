@@ -17,7 +17,8 @@ typedef struct {
 typedef struct {
 	int retardo;
 	sem_t* semaforoCola;
-	t_queue procesosBloqueados;
+	t_queue* procesosBloqueados;
+	//sem_t* mutexCola;
 } t_estructuraDispositivoIO;
 
 typedef struct
@@ -42,8 +43,8 @@ int laSenialDeTerminar = 0;
 static t_queue* colaExec = queue_create();
 pthread_t ejecutar;
 pthread_t multiplexorCPUs;
-pthread_t recCPU;
-int retMandarAEjecutar, retRecibirCPU, retMultiplexorCPUs;
+pthread_t envCPU;
+int retMandarAEjecutar, retEnviarCPU, retMultiplexorCPUs;
 int* sinParametros = NULL;
 static t_dictionary diccionarioDispositivos = dictionary_create();
 t_list* CPUs = list_create();

@@ -21,7 +21,7 @@ typedef struct {
 void* pcp_main(void*);
 void crearHilosPrincipales();
 void* mandarAEjecutar(void*);
-void enviarCPU();
+void* enviarCPU(void*);
 void* bloquearYDevolverAReady(void*);
 int buscarRetardo(char*);
 int encontrarPrimeraCpuLibreYOcuparla(t_list*);
