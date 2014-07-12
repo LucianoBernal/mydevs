@@ -25,8 +25,8 @@ int kernel_main(int argc, char** argv) {
 		perror("El archivo de configuración no es correcto");
 		return EXIT_FAILURE;
 	}
-
 	//Cargo parámetros del config en variables de Kernel.
+	variables_globales=dictionary_create();
 	cargarConfig(config);
 	config_destroy(config);
 	colaReady = queue_create();
@@ -121,8 +121,9 @@ void cargarConfig(t_config *config) {
 	quantum = config_get_int_value(config, "QUANTUM");
 	retardo = config_get_int_value(config, "RETARDO");
 	multiprogramacion = config_get_int_value(config, "MULTIPROGRAMACION");
+	tamanio_stack=config_get_int_value(config, "TAMANIO_STACK");
 	//FIXME fijate como hicimos con las cosas de config arriba... por eso te tira error.
-	valor_semaforos = config_get_int_value(config, "VALOR_SEMAFOROS");
+	valor_semaforos = config_get_string_value(config, "VALOR_SEMAFOROS");
 	semaforos = config_get_int_value(config, "SEMAFOROS");
 	hio = config_get_int_value(config, "HIO");
 	idhio = config_get_int_value(config, "IDHIO");

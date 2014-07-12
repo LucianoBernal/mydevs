@@ -33,6 +33,7 @@ static int puerto_programa;
 static int puerto_CPU;
 static int quantum;
 static int retardo;
+static int tamanio_stack;
 static int multiprogramacion;
 static t_queue* colaReady;
 static t_dictionary* variables_globales;

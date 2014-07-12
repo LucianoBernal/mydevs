@@ -262,7 +262,7 @@ int posicionEnLaLista(t_list* lista, int idCpu) {
 	return i;
 }
 
-int estaLibre(int idCPU) {
+int estaLibre(int idCPU) { //FIXME hay dos funciones que se llaman estaLibre
 	int i = posicionEnLaLista(CPUs, idCPU);
 	t_estructuraCPU* estructura = list_get(CPUs, i);
 	return (estructura->estado == 0);

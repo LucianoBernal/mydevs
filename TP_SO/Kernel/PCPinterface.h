@@ -7,7 +7,17 @@
 
 #ifndef PCPINTERFACE_H_
 #define PCPINTERFACE_H_
+
 #include <stdbool.h>
+#include <commons/collections/list.h>
+#include <biblioteca_comun/definiciones.h>
+
+typedef struct {
+	int idCPU;
+	int estado;
+	int idProceso;
+} t_estructuraCPU;
+
 void* pcp_main(void*);
 void crearHilosPrincipales();
 void* mandarAEjecutar(void*);
@@ -26,7 +36,7 @@ bool tieneID(t_estructuraCPU*);
 void seDesconectoCPU(int);
 void seDesconectoCPUSigusr(int, t_PCB* );
 int posicionEnLaLista(t_list*, int);
-int estaLibre(int);
+//int estaLibre(int); FIXME Bely, hay dos funciones que se llaman estaLibre
 
 
 

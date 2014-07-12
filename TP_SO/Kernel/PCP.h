@@ -26,11 +26,11 @@ typedef struct
 	int tiempo;
 } t_estructuraProcesoBloqueado;
 
-typedef struct {
+/*typedef struct {
 	int idCPU;
 	int estado;
 	int idProceso;
-} t_estructuraCPU;
+} t_estructuraCPU;*/
 
 sem_t * CPUsLibres = NULL;
 sem_t * sPLP = NULL;
