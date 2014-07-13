@@ -158,7 +158,7 @@ void* enviarCPU(void* sinParametro) {
 }
 
 void* bloquearYDevolverAReady(void * param) {
-	t_estructuraDispositivoIO* estructura;
+	t_estructuraDispositivoIO* estructura = malloc(sizeof(t_estructuraDispositivoIO));
 	estructura = (t_estructuraDispositivoIO *) param;
 	sem_wait(estructura->semaforoCola);
 	t_estructuraProcesoBloqueado* estructuraBloqueada = queue_pop(
@@ -217,7 +217,7 @@ void programaSalioPorBloqueo(t_PCB* pcb, int tiempo, char* dispositivo,
 		int idCPU) {
 	t_estructuraDispositivoIO* estructura = dictionary_get(
 			diccionarioDispositivos, dispositivo);
-	t_estructuraProcesoBloqueado* procesoBloqueado;
+	t_estructuraProcesoBloqueado* procesoBloqueado = malloc(sizeof(t_estructuraProcesoBloqueado));
 	procesoBloqueado->pcb = pcb;
 	procesoBloqueado->tiempo = tiempo;
 	queue_push(estructura->procesosBloqueados, procesoBloqueado);
