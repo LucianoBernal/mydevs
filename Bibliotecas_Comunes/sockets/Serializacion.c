@@ -1,10 +1,3 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdarg.h>
-#include <commons/collections/list.h>
-#include <commons/collections/queue.h>
-#include "bibSockets.h"
 #include "Serializacion.h"
 
 

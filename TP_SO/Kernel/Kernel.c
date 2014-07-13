@@ -141,8 +141,8 @@ void cargarConfig(t_config *config) {
 	idhio_aux = config_get_array_value(config, "IDHIO");
 	//variables_globales = config_get_array_value(config, "VARIABLES_GLOBALES");
 	variables_globales_aux = config_get_array_value(config, "COMPARTIDAS");
-	int i=0;
-	/*while (idhio_aux[i] != NULL ) {
+	/*int i=0;
+	while (idhio_aux[i] != NULL ) {
 			t_io* io;
 			io = malloc(sizeof(t_io));
 

@@ -8,8 +8,6 @@
 #include "PLP.h"
 #include "PLPinterface.h"
 
-sem_init(PidSD_Mutex,0,1);
-pidYSockets = dictionary_create();
 
 typedef struct {
 	char* literal;
@@ -28,22 +26,28 @@ typedef enum {
 	SOLICITAR_A_UMV,
 	PEDIR_ETIQUETAS,
 	PEDIR_INSTRUCCION
-};
+}mensajes;
+
 #define TAMANO_CABECERA 7
 int socketUMV; //Agregada por pato, deberias crear el socket en algun momento.
 int tamanoStack; //Deberia leerlo desde config
 
+void* multiplexorScripts(void*); //TODO es para que no rompa. En realidad es un hilo de otro lugar hay que hacer el include
+void* manejoColaExit(void*);
+void* deNewAReady(void*);
 void* plp_main(void* parametro) {
 	colaNew = list_create();
 	randoms = list_create();
+	sem_init(PidSD_Mutex,0,1); // quizas vayan en el del kernel
+	pidYSockets = dictionary_create(); // quizas vayan en el del kernel
 	sem_init(colaNuevosVacio, 0, 0);
 	sem_init(randomMutex, 0, 1);
 	sem_init(numABorrarMutex, 0, 1);
 	sem_init(colaNuevosMutex, 0, 1);
-	pthread_t multiplexorScripts, threadColaNew, threadColaExit;
+	pthread_t thread_multiplexorScripts, threadColaNew, threadColaExit;
 	int iretMultiScripts, iretColaNew, iretColaExit;
 	int* sinParametros = NULL;
-	iretMultiScripts = pthread_create(&multiplexorScripts, NULL,
+	iretMultiScripts = pthread_create(&thread_multiplexorScripts, NULL,
 			multiplexorScripts, (void*) sinParametros);
 	if (iretMultiScripts) {
 		fprintf(stderr, "Error - pthread_create() return code: %d\n",
@@ -63,7 +67,7 @@ void* plp_main(void* parametro) {
 				iretColaExit);
 	}
 
-	pthread_join(multiplexorScripts, NULL );
+	pthread_join(thread_multiplexorScripts, NULL );
 	pthread_join(threadColaNew, NULL );
 	pthread_join(threadColaExit, NULL );
 
@@ -144,17 +148,10 @@ void liberar_numero(int pid) {
 
 }
 
-//int generarProgramID();
-//void asignaciones_desde_metada(t_metadata_program*, t_PCB*);
-int solicitar_Memoria(t_metadata_program*, t_PCB*);
-void escribir_en_Memoria(t_metadata_program*, t_PCB*);
-//void encolar_New(t_PCB*, int);
-void notificar_Memoria_Llena(int);
-//int calcularPeso(t_metadata_program*);
-//void liberar_numero(int pid);
+
 int solicitar_Memoria(t_metadata_program *metadata, t_PCB *pcb,
 		const char* literal) {
-	int *codigoRespuesta = malloc(sizeof(int));
+/*	int *codigoRespuesta = malloc(sizeof(int));
 	char *tamanoRespuesta = malloc(sizeof(char));
 	//Ya lo agregue a definiciones.h, sigue tirando error
 	t_paquete *mensaje = serializar2(strlen(literal), metadata->etiquetas_size,
@@ -177,11 +174,11 @@ int solicitar_Memoria(t_metadata_program *metadata, t_PCB *pcb,
 	} else {
 		printf("No habia espacio en memoria");
 	}
-	return *codigoRespuesta;
+	return *codigoRespuesta;*/
 }
 
 void escribir_en_Memoria(t_metadata_program * metadata, t_PCB *pcb,
-		const char *literal) {
+		const char *literal) {/*
 	int *razon = malloc(sizeof(int));
 	*razon = ESCRIBIR_EN_UMV_OFFSET_CERO;
 	char error = 1;
@@ -217,7 +214,7 @@ void escribir_en_Memoria(t_metadata_program * metadata, t_PCB *pcb,
 	if (error)
 		error = send(socketUMV, (void*) paquete, paquete->tamano, 0);
 	if (!error)
-		printf("Alguno de los sends fallo, noob");
+		printf("Alguno de los sends fallo, noob");*/
 }
 
 void agregar_En_Diccionario(int pid, int sd) {
@@ -226,7 +223,7 @@ void agregar_En_Diccionario(int pid, int sd) {
 	sem_post(PidSD_Mutex);
 
 }
-
+void notificar_Memoria_Llena(int);
 void gestionarProgramaNuevo(const char* literal, int sd) { // UN HILO
 	t_PCB* pcb = malloc(sizeof(t_PCB));
 	t_metadata_program* metadata = metadatada_desde_literal(literal);
@@ -241,13 +238,15 @@ void gestionarProgramaNuevo(const char* literal, int sd) { // UN HILO
 	} else {
 		notificar_Memoria_Llena(sd);
 		close(sd);
-		free(pcb);
+		//free(pcb);
 		liberar_numero(pcb->program_id);
 	}
 	metadata_destruir(metadata); //OJO QUIZAS SOLO SEA EN EL ELSE REVISAR!
+	free(pcb);
 }
-//void encolar_en_Ready(t_PCB*);
-void deNewAReady(int sinParametro) { // OTRO HILO
+
+void encolar_en_Ready(t_PCB*);
+void* deNewAReady(void* sinParametro) { // OTRO HILO
 	while (1) {
 		sem_wait(colaNuevosVacio);
 		sem_wait(grado_Multiprogramacion);
@@ -300,12 +299,11 @@ void notificar_Memoria_Llena(int sd) {
 		}
 		free(message);
 		free(tamano);
-		ilosDeEntradSalida();
-
-	}
+		}
 }
 
-
+void solicitar_Destruccion_Segmentos(t_PCB*);//TODO
+void enviar_Mensaje_Final(int);//TODO
 void* manejoColaExit(void* sinParametros) {
 while (1) {
 	sem_wait(colaExitVacio);

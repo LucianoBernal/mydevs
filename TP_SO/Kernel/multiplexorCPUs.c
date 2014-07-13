@@ -18,6 +18,9 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <sys/time.h> //FD_SET, FD_ISSET, FD_ZERO macros
+#include "PCPinterface.h"
+#include "sockets/Serializacion.h"
+
 
 #define TRUE   1
 #define FALSE  0
@@ -202,7 +205,7 @@ int main(int argc, char *argv[]) {
 							case 'd': //la CPU se desconectó CON SIGUSR//TODO
 								sem_wait(semCPUDesconectadaMutex);
 								idUltimaCPUDesconectada = paquete_CPU.IDCpu;
-								seDesconectoCPUSigusr(paquete_CPU.IDCpu);
+								seDesconectoCPUSigusr(paquete_CPU.IDCpu,paquete_CPU.pcb);
 								sem_post(semCPUDesconectadaMutex);
 								break;
 							}

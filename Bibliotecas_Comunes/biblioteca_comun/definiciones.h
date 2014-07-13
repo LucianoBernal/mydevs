@@ -23,15 +23,4 @@ typedef struct {
 } t_PCB;
 
 
-typedef struct{
-	char *msj;
-	char tamano;//un tamano de 255 PUEDE ser poco
-	char cantVar;//pero es mejor que nada
-}t_paquete;
-typedef struct{
-	int tamano;
-	char *p_var;
-}t_tamYDir;
-
-
 #endif /* DEFINICIONES_H_ */

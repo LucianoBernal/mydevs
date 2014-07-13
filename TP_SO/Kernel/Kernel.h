@@ -16,6 +16,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include <time.h>
+#include <unistd.h>
 #include <parser/metadata_program.h>
 #include <commons/collections/list.h>
 #include <commons/collections/queue.h>
@@ -26,33 +27,34 @@
 #include <netinet/in.h>
 #include <commons/collections/dictionary.h>
 #include <biblioteca_comun/definiciones.h>
+#include <sockets/Serializacion.h>
 
 
 
-static sem_t * grado_Multiprogramacion;
-static int puerto_programa;
-static int puerto_CPU;
-static int quantum;
-static int retardo;
-static int tamanio_stack;
-static int multiprogramacion;
-static t_queue* colaReady;
-static sem_t * colaReadyMutex;
-static sem_t * vacioReady;
-static sem_t* mutexVG;
-static sem_t* colaExitVacio;
-static sem_t* colaExitMutex;
-static t_queue* colaExit;
-static t_dictionary* variables_globales;
+sem_t * grado_Multiprogramacion;
+int puerto_programa;
+int puerto_CPU;
+int quantum;
+int retardo;
+int tamanio_stack;
+int multiprogramacion;
+t_queue* colaReady;
+sem_t * colaReadyMutex;
+sem_t * vacioReady;
+sem_t* mutexVG;
+sem_t* colaExitVacio;
+sem_t* colaExitMutex;
+t_queue* colaExit;
+t_dictionary* variables_globales;
 static int valor_semaforos[];
 static char* semaforos[];
 static int hio[];
 static char* idhio[];
-static char** variables_globales_aux;
-static char** valor_semaforos_aux;
-static char** semaforos_aux;
-static char** hio_aux;
-static char** idhio_aux;
+char** variables_globales_aux;
+char** valor_semaforos_aux;
+char** semaforos_aux;
+char** hio_aux;
+char** idhio_aux;
 
 void cargarConfig(t_config *);
 int32_t validarConfig(t_config*);

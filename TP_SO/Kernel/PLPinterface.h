@@ -9,7 +9,7 @@
 #define PLPinterface_H_
 
 void gestionarProgramaNuevo(const char*, int );
-void deNewAReady();
+void* deNewAReady(void*);
 void* plp_main(void*);
 
 
