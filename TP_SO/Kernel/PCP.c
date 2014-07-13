@@ -17,12 +17,15 @@ void* pcp_main(void* sinParametro) {
 		int retardo = buscarRetardo(idhio[i]);
 		t_queue* colaDispositivo = queue_create();
 		sem_t* semaforo = NULL;
+		sem_t* mutex = NULL;
 		sem_init(semaforo, 0, 0);
+		sem_init(mutex, 0, 1);
 		t_estructuraDispositivoIO* estructuraDispositivo = malloc(
 				sizeof(t_estructuraDispositivoIO));
 		estructuraDispositivo->retardo = retardo;
 		estructuraDispositivo->procesosBloqueados = colaDispositivo;
-		estructuraDispositivo->semaforoCola = semaforo;
+		estructuraDispositivo->colaVacia = semaforo;
+		estructuraDispositivo->mutexCola=mutex;
 		dictionary_put(diccionarioDispositivos, idhio[i],
 				estructuraDispositivo);
 		pthread_t dispositivo;
@@ -77,7 +80,7 @@ void crearHilosPrincipales() {
  t_estructuraDispositivoIO* estructuraDispositivo; //TODO
  estructuraDispositivo->retardo = retardo;
  estructuraDispositivo->procesosBloqueados = colaDispositivo;
- estructuraDispositivo->semaforoCola = semaforo;
+ estructuraDispositivo->colaVacia = semaforo;
  dictionary_put(diccionarioDispositivos, idhio[i],
  estructuraDispositivo);
  pthread_t dispositivo;
@@ -160,9 +163,11 @@ void* enviarCPU(void* sinParametro) {
 void* bloquearYDevolverAReady(void * param) {
 	t_estructuraDispositivoIO* estructura = malloc(sizeof(t_estructuraDispositivoIO));
 	estructura = (t_estructuraDispositivoIO *) param;
-	sem_wait(estructura->semaforoCola);
+	sem_wait(estructura->colaVacia);
+	sem_wait(estructura->mutexCola);
 	t_estructuraProcesoBloqueado* estructuraBloqueada = queue_pop(
 			estructura->procesosBloqueados);
+	sem_post(estructura->mutexCola);
 	delay(estructura->retardo);
 	delay((estructuraBloqueada->tiempo) / 1000);
 	sem_wait(colaReadyMutex);
@@ -220,7 +225,10 @@ void programaSalioPorBloqueo(t_PCB* pcb, int tiempo, char* dispositivo,
 	t_estructuraProcesoBloqueado* procesoBloqueado = malloc(sizeof(t_estructuraProcesoBloqueado));
 	procesoBloqueado->pcb = pcb;
 	procesoBloqueado->tiempo = tiempo;
+	sem_wait(estructura->mutexCola);
 	queue_push(estructura->procesosBloqueados, procesoBloqueado);
+	sem_post(estructura->mutexCola);
+	sem_post(estructura->colaVacia);
 	seLiberoUnaCPU(idCPU);
 }
 
