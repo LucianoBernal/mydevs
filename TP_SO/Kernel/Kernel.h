@@ -28,6 +28,7 @@
 #include <biblioteca_comun/definiciones.h>
 
 
+
 static sem_t * grado_Multiprogramacion;
 static int puerto_programa;
 static int puerto_CPU;
