@@ -36,7 +36,7 @@ bool tieneID(t_estructuraCPU*);
 void seDesconectoCPU(int);
 void seDesconectoCPUSigusr(int, t_PCB* );
 int posicionEnLaLista(t_list*, int);
-//int estaLibre(int); FIXME Bely, hay dos funciones que se llaman estaLibre
+int estaLibreID(int);
 
 
 

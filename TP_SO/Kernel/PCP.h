@@ -40,14 +40,14 @@ sem_t * sBloqueado = NULL;
 sem_t * colaExecVacia = NULL;
 sem_t * semCPUDesconectadaMutex = NULL;
 int laSenialDeTerminar = 0;
-static t_queue* colaExec = queue_create();
+static t_queue* colaExec;
 pthread_t ejecutar;
 pthread_t multiplexorCPUs;
 pthread_t envCPU;
 int retMandarAEjecutar, retEnviarCPU, retMultiplexorCPUs;
 int* sinParametros = NULL;
-static t_dictionary diccionarioDispositivos = dictionary_create();
-t_list* CPUs = list_create();
+static t_dictionary* diccionarioDispositivos;
+t_list* CPUs;
 int idUltimaCPUDesconectada;
 
 #endif /* PCP__H_ */
