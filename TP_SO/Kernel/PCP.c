@@ -324,7 +324,6 @@ void imprimirNodosPCBsBloqueados(t_estructuraProcesoBloqueado* procesoBloqueado)
 }
 
 void mostrarColaDePCBs2(t_queue* cola) {
-	//printf("El estado de la Cola Zarasa es el siguiente:\n"); SE HACE EN EL LLAMADO
 	list_iterate(cola->elements, (void*) (void*) imprimirNodosPCBs2);
 }
 
