@@ -11,12 +11,19 @@
 #include <stdbool.h>
 #include <commons/collections/list.h>
 #include <biblioteca_comun/definiciones.h>
+#include <commons/collections/queue.h>
 
 typedef struct {
 	int idCPU;
 	int estado;
 	int idProceso;
 } t_estructuraCPU;
+
+typedef struct
+{
+	t_PCB* pcb;
+	int tiempo;
+} t_estructuraProcesoBloqueado;
 
 void* pcp_main(void*);
 void crearHilosPrincipales();
@@ -34,11 +41,18 @@ void seLiberoUnaCPU(int);
 void cpu_destroy(t_estructuraCPU*);
 bool tieneID(t_estructuraCPU*);
 void seDesconectoCPU(int);
-void seDesconectoCPUSigusr(int, t_PCB* );
+void seDesconectoCPUSigusr(int, t_PCB*);
 int posicionEnLaLista(t_list*, int);
 int estaLibreID(int);
-
-
+void mostrarColaDeProcesosEnEjecucion();
+void mostrarColaDeProcesosBloqueados();
+void mostrarColaDeProcesosListos();
+void mostrarColaDeProcesosFinalizados();
+int cantidadDispositivos();
+void mostrarColaDePCBsBloqueados(t_queue*);
+void imprimirNodosPCBsBloqueados(t_estructuraProcesoBloqueado*);
+void mostrarColaDePCBs2(t_queue*);
+void imprimirNodosPCBs2(t_PCB*);
 
 
 #endif /* PCPINTERFACE_H_ */

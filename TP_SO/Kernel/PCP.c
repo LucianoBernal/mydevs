@@ -13,7 +13,7 @@ void* pcp_main(void* sinParametro) {
 	sem_init(semCPUDesconectadaMutex, 0, 1);
 	//crearHilosDeEntradSalida
 	int i = 0;
-	while (idhio[i] != '\0') {
+	while (i < cantidadDeDispositivos) {
 		int retardo = buscarRetardo(idhio[i]);
 		t_queue* colaDispositivo = queue_create();
 		sem_t* semaforo = NULL;
@@ -25,7 +25,7 @@ void* pcp_main(void* sinParametro) {
 		estructuraDispositivo->retardo = retardo;
 		estructuraDispositivo->procesosBloqueados = colaDispositivo;
 		estructuraDispositivo->colaVacia = semaforo;
-		estructuraDispositivo->mutexCola=mutex;
+		estructuraDispositivo->mutexCola = mutex;
 		dictionary_put(diccionarioDispositivos, idhio[i],
 				estructuraDispositivo);
 		pthread_t dispositivo;
@@ -100,7 +100,7 @@ void* mandarAEjecutar(void* j) {
 	sem_wait(colaReadyMutex);
 	t_PCB* procesoAEjecutar = queue_pop(colaReady);
 	queue_push(colaExec, procesoAEjecutar);
-	int * sinParametro=NULL;
+	int * sinParametro = NULL;
 	enviarCPU(sinParametro);
 	free(sinParametro);
 	sem_post(colaReadyMutex);
@@ -161,7 +161,8 @@ void* enviarCPU(void* sinParametro) {
 }
 
 void* bloquearYDevolverAReady(void * param) {
-	t_estructuraDispositivoIO* estructura = malloc(sizeof(t_estructuraDispositivoIO));
+	t_estructuraDispositivoIO* estructura = malloc(
+			sizeof(t_estructuraDispositivoIO));
 	estructura = (t_estructuraDispositivoIO *) param;
 	sem_wait(estructura->colaVacia);
 	sem_wait(estructura->mutexCola);
@@ -222,7 +223,8 @@ void programaSalioPorBloqueo(t_PCB* pcb, int tiempo, char* dispositivo,
 		int idCPU) {
 	t_estructuraDispositivoIO* estructura = dictionary_get(
 			diccionarioDispositivos, dispositivo);
-	t_estructuraProcesoBloqueado* procesoBloqueado = malloc(sizeof(t_estructuraProcesoBloqueado));
+	t_estructuraProcesoBloqueado* procesoBloqueado = malloc(
+			sizeof(t_estructuraProcesoBloqueado));
 	procesoBloqueado->pcb = pcb;
 	procesoBloqueado->tiempo = tiempo;
 	sem_wait(estructura->mutexCola);
@@ -282,3 +284,50 @@ int estaLibreID(int idCPU) {
 
 }
 
+void mostrarColaDeProcesosListos() {
+	printf("El estado de la Cola Ready es el siguiente:\n");
+	mostrarColaDePCBs2(colaReady);
+}
+void mostrarColaDeProcesosFinalizados() {
+	printf("El estado de la Cola Exit es el siguiente:\n");
+	mostrarColaDePCBs2( colaExit);
+}
+
+void mostrarColaDeProcesosEnEjecucion() {
+	printf("El estado de la Cola Exec es el siguiente:\n");
+	mostrarColaDePCBs2(colaExec);
+}
+
+void mostrarColaDeProcesosBloqueados() {
+	printf("El estado de la Cola de Bloqueados es el siguiente:\n");
+	int a = 0;
+	while (a< cantidadDeDispositivos){
+		printf("Procesos bloqueados para el dispositivo %s es el siguiente: \n",
+				idhio[a]);
+
+		t_estructuraDispositivoIO* estructura = dictionary_get(
+				diccionarioDispositivos, idhio[a]);
+	 mostrarColaDePCBsBloqueados(estructura->procesosBloqueados);
+	 a++;
+	}
+	//TODO IMPRIMIR LOS DE LOS SEMAFOROS
+}
+
+
+void mostrarColaDePCBsBloqueados(t_queue* procesosBloqueados)
+{
+	list_iterate(procesosBloqueados->elements, (void*) (void*) imprimirNodosPCBsBloqueados);
+}
+
+void imprimirNodosPCBsBloqueados(t_estructuraProcesoBloqueado* procesoBloqueado) {
+	printf("Program id:%i \n", procesoBloqueado->pcb->program_id);
+}
+
+void mostrarColaDePCBs2(t_queue* cola) {
+	//printf("El estado de la Cola Zarasa es el siguiente:\n"); SE HACE EN EL LLAMADO
+	list_iterate(cola->elements, (void*) (void*) imprimirNodosPCBs2);
+}
+
+void imprimirNodosPCBs2(t_PCB* pcb) {
+	printf("Program id:%i \n", pcb->program_id);
+}

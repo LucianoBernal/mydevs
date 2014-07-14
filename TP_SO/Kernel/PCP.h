@@ -21,11 +21,11 @@ typedef struct {
 	sem_t* mutexCola;
 } t_estructuraDispositivoIO;
 
-typedef struct
+/*typedef struct
 {
 	t_PCB* pcb;
 	int tiempo;
-} t_estructuraProcesoBloqueado;
+} t_estructuraProcesoBloqueado;*/
 
 /*typedef struct {
 	int idCPU;
@@ -33,21 +33,21 @@ typedef struct
 	int idProceso;
 } t_estructuraCPU;*/
 
-sem_t * CPUsLibres = NULL;
-sem_t * sPLP = NULL;
-sem_t * sYaInicializoElMT = NULL;
-sem_t * sBloqueado = NULL;
-sem_t * colaExecVacia = NULL;
-sem_t * semCPUDesconectadaMutex = NULL;
-int laSenialDeTerminar = 0;
-t_queue* colaExec;
-pthread_t ejecutar;
-pthread_t multiplexorCPUs;
-pthread_t envCPU;
-int retMandarAEjecutar, retEnviarCPU, retMultiplexorCPUs;
-int* sinParametros = NULL;
-t_dictionary* diccionarioDispositivos;
-t_list* CPUs;
-int idUltimaCPUDesconectada;
+static sem_t * CPUsLibres = NULL;
+static sem_t * sPLP = NULL;
+static sem_t * sYaInicializoElMT = NULL;
+static sem_t * sBloqueado = NULL;
+static sem_t * colaExecVacia = NULL;
+static sem_t * semCPUDesconectadaMutex = NULL;
+//static int laSenialDeTerminar = 0;
+static t_queue* colaExec;
+static pthread_t ejecutar;
+static pthread_t multiplexorCPUs;
+static pthread_t envCPU;
+static int retMandarAEjecutar, retEnviarCPU, retMultiplexorCPUs;
+static int* sinParametros = NULL;
+static t_dictionary* diccionarioDispositivos;
+static t_list* CPUs;
+static int idUltimaCPUDesconectada;
 
 #endif /* PCP__H_ */
