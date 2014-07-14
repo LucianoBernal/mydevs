@@ -96,6 +96,7 @@ void crearHilosPrincipales() {
  }*/
 
 void* mandarAEjecutar(void* j) {
+	while(1){
 	sem_wait(vacioReady);
 	sem_wait(colaReadyMutex);
 	t_PCB* procesoAEjecutar = queue_pop(colaReady);
@@ -105,6 +106,7 @@ void* mandarAEjecutar(void* j) {
 	free(sinParametro);
 	sem_post(colaReadyMutex);
 	sem_post(colaExecVacia);
+	}
 }
 
 //void* recibirCPU(void* j) {
@@ -151,6 +153,7 @@ void* mandarAEjecutar(void* j) {
 //}
 
 void* enviarCPU(void* sinParametro) {
+	while(1){
 	sem_wait(CPUsLibres);
 	int IDCpuLibre = encontrarPrimeraCpuLibreYOcuparla(CPUs);
 	t_PCB* paquete = queue_pop(colaExec);
@@ -158,6 +161,7 @@ void* enviarCPU(void* sinParametro) {
 	printf("%d", paquete->indice_de_Codigo); //lo hago para sacar el warning por variable sin usar, depsués lo saco
 	//TODO serializar(paquete);
 	//TODO ponerle el program id de ese pcb a la cpu en la lista
+	}
 }
 
 void* bloquearYDevolverAReady(void * param) {
