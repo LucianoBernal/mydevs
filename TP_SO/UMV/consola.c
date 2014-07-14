@@ -17,7 +17,7 @@ void* consola(void* sinParametro) {
 
 	} while (strncmp("exit", comando, 4));
 	log_info(logger,"Se cerró la consola");
-	free(comando);
+	//free(comando);
 }
 
 void analizarYEjecutar(char *comando) {
