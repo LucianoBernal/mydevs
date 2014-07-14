@@ -26,6 +26,7 @@
 #include <semaphore.h>
 #include "consola_interfaz.h"
 #include "atencioninterna_interfaz.h"
+#include <sockets/sockets.h>
 
 /*Constantes*/
 

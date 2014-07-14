@@ -6,24 +6,18 @@
 C_SRCS += \
 ../atencionInterna.c \
 ../consola.c \
-../funcionesaux.c \
-../principal.c \
 ../pruebasUMV.c \
 ../umv.c 
 
 OBJS += \
 ./atencionInterna.o \
 ./consola.o \
-./funcionesaux.o \
-./principal.o \
 ./pruebasUMV.o \
 ./umv.o 
 
 C_DEPS += \
 ./atencionInterna.d \
 ./consola.d \
-./funcionesaux.d \
-./principal.d \
 ./pruebasUMV.d \
 ./umv.d 
 
