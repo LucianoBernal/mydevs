@@ -286,7 +286,7 @@ void mostrarColaDePCBs(t_queue* cola) {
 	list_iterate(cola->elements, (void*) (void*) imprimirNodosPCBs);
 }
 
-void notificar_Memoria_Llena(int sd) {
+/*void notificar_Memoria_Llena(int sd) {
 	char* message =
 			"No hay espacio Suficiente en memoria para alojar el programa\r\n";
 	int* tamano = malloc(4);
@@ -297,13 +297,20 @@ void notificar_Memoria_Llena(int sd) {
 		if (send(sd, message, *tamano, 0) != *tamano) {
 			perror("send");
 		}
-		free(message);
-		free(tamano);
 		}
+	free(message);
+	free(tamano);
+}*/
+
+void notificar_Programa(int,char*);
+void notificar_Memoria_Llena(int sd){
+	notificar_Programa(sd,"No hay espacio Suficiente en memoria para alojar el programa\r\n");
+
 }
 
 void solicitar_Destruccion_Segmentos(t_PCB*);//TODO
 void enviar_Mensaje_Final(int);//TODO
+void cerrar_conexion(int);
 void* manejoColaExit(void* sinParametros) {
 while (1) {
 	sem_wait(colaExitVacio);
@@ -312,6 +319,39 @@ while (1) {
 	sem_post(colaExitMutex);
 	solicitar_Destruccion_Segmentos(pcb);
 	enviar_Mensaje_Final(pcb->program_id);
+	cerrar_conexion(pcb->program_id);
+	liberar_numero(pcb->program_id);
 	free(pcb);
 }
+}
+
+int obtener_sd_Programa(int);
+void enviar_Mensaje_Final(int pid){
+	int sd=obtener_sd_Programa(pid);
+	notificar_Programa(sd,"El kernel conluyo con la Ejecucion del Programa\r\n");
+}
+
+int obtener_sd_Programa(int pid){
+	sem_wait(PidSD_Mutex);
+	int* sd=dictionary_get(pidYSockets, (char*) &pid);
+	sem_post(PidSD_Mutex);
+	return *sd;
+}
+
+void notificar_Programa(int sd,char* message) {
+	int* tamano = malloc(4);
+	*tamano = strlen(message);
+	if (send(sd, tamano, 4, 0) == 0) {
+		perror("send");
+	} else {
+		if (send(sd, message, *tamano, 0) != *tamano) {
+			perror("send");
+		}
+		}
+	free(tamano);
+	}
+
+void cerrar_conexion(int pid){
+	int sd = obtener_sd_Programa(pid);
+	close(sd);
 }

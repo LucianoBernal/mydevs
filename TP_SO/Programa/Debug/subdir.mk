@@ -4,16 +4,13 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../interprete.c \
-../interpreteV2.c 
+../interprete.c 
 
 OBJS += \
-./interprete.o \
-./interpreteV2.o 
+./interprete.o 
 
 C_DEPS += \
-./interprete.d \
-./interpreteV2.d 
+./interprete.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
