@@ -11,10 +11,6 @@
 #include "Kernel.h"
 
 
-typedef struct {
-	t_PCB * pcb;
-	int peso;
-} t_new;
 
 sem_t  colaNuevosVacio;
 sem_t  randomMutex;

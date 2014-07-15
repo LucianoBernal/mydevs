@@ -28,14 +28,14 @@
 #include <netinet/in.h>
 #include <commons/collections/dictionary.h>
 #include <biblioteca_comun/definiciones.h>
-#include <sockets/Serializacion.h>
-#include <sockets/sockets.h>
+#include <biblioteca_comun/Serializacion.h>
+#include <biblioteca_comun/bibliotecaSockets.h>
 #include <time.h>
 
 
 sem_t  grado_Multiprogramacion;
 char* ip_UMV;
-int puerto_UMV;
+char* puerto_UMV;
 int puerto_programa;
 int puerto_CPU;
 int quantum;

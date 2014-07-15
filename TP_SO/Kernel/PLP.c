@@ -32,9 +32,7 @@ typedef enum {
 int socketUMV; //Agregada por pato, deberias crear el socket en algun momento.
 int tamanoStack; //Deberia leerlo desde config
 
-void* multiplexorScripts(void*); //TODO es para que no rompa. En realidad es un hilo de otro lugar hay que hacer el include
-void* manejoColaExit(void*);
-void* deNewAReady(void*);
+
 void* plp_main(int* socketUMV) {
 	colaNew = list_create();
 	randoms = list_create();
@@ -93,7 +91,7 @@ int estaRepetido() {
 	return (!(list_all_satisfy(randoms, (void*) esDistintoANumAleatorio)));
 }
 
-int estaRepetido();
+
 int generarProgramID() {
 	srand(time(NULL )); // Semilla
 	sem_wait(&randomMutex);
@@ -108,7 +106,7 @@ int generarProgramID() {
 	return (*numFinal);
 }
 
-static t_new *crear_nodoNew(t_PCB* pcb, int peso) {
+t_new *crear_nodoNew(t_PCB* pcb, int peso) {
 	t_new *nuevo = malloc(sizeof(t_new));
 	nuevo->pcb = pcb;
 	nuevo->peso = peso;
@@ -223,7 +221,7 @@ void agregar_En_Diccionario(int pid, int sd) {
 	sem_post(&PidSD_Mutex);
 
 }
-void notificar_Memoria_Llena(int);
+
 void gestionarProgramaNuevo(const char* literal, int sd) { // UN HILO
 	t_PCB* pcb = malloc(sizeof(t_PCB));
 	t_metadata_program* metadata = metadatada_desde_literal(literal);
@@ -245,7 +243,7 @@ void gestionarProgramaNuevo(const char* literal, int sd) { // UN HILO
 	free(pcb);
 }
 
-void encolar_en_Ready(t_PCB*);
+
 void* deNewAReady(void* sinParametro) { // OTRO HILO
 	while (1) {
 		sem_wait(&colaNuevosVacio);
@@ -302,15 +300,13 @@ void mostrarColaDePCBs(t_queue* cola) {
 	free(tamano);
 }*/
 
-void notificar_Programa(int,char*);
+
 void notificar_Memoria_Llena(int sd){
 	notificar_Programa(sd,"No hay espacio Suficiente en memoria para alojar el programa\r\n");
 
 }
 
-void solicitar_Destruccion_Segmentos(t_PCB*);//TODO
-void enviar_Mensaje_Final(int);//TODO
-void cerrar_conexion(int);
+
 void* manejoColaExit(void* sinParametros) {
 while (1) {
 	sem_wait(&colaExitVacio);
@@ -325,7 +321,7 @@ while (1) {
 }
 }
 
-int obtener_sd_Programa(int);
+
 void enviar_Mensaje_Final(int pid){
 	int sd=obtener_sd_Programa(pid);
 	notificar_Programa(sd,"El kernel conluyo con la Ejecucion del Programa\r\n");
