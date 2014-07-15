@@ -16,16 +16,16 @@ typedef struct {
 	int peso;
 } t_new;
 
-static sem_t * colaNuevosVacio;
-static sem_t * randomMutex;
-static sem_t * numABorrarMutex;
-static sem_t * colaNuevosMutex;
-static t_list* colaNew;
-static t_list* randoms;
-static t_dictionary* pidYSockets;
-static int numAleatorio;
-static int numABorrar;
-static sem_t * PidSD_Mutex;
+sem_t  colaNuevosVacio;
+sem_t  randomMutex;
+sem_t  numABorrarMutex;
+sem_t  colaNuevosMutex;
+t_list* colaNew;
+t_list* randoms;
+t_dictionary* pidYSockets;
+int numAleatorio;
+int numABorrar;
+sem_t  PidSD_Mutex;
 
 
 #endif /* PLPFUNCTIONS_H_ */
