@@ -22,9 +22,13 @@ int kernel_main(int argc, char** argv) {
 		perror("El archivo de configuración no es correcto");
 		return EXIT_FAILURE;
 	}
+
+	logKernel = log_create("logKERNEL", "Kernel", true, LOG_LEVEL_INFO);
+	log_info(logKernel, "Comienza la ejecución del Kernel.");
+
 	//Cargo parámetros del config en variables de Kernel.
-	variables_globales = dictionary_create();
 	cargarConfig(config);
+	variables_globales = dictionary_create();
 	config_destroy(config);
 	colaReady = queue_create();
 	colaExit = queue_create();
@@ -69,6 +73,14 @@ int kernel_main(int argc, char** argv) {
 int32_t validarConfig(t_config *config) {
 	if (!config_has_property(config, "PUERTO_PROG")) {
 		perror("Falta PUERTO_PROG");
+		return EXIT_FAILURE;
+	}
+	if (!config_has_property(config, "IP_UMV")) {
+		perror("Falta IP_UMV");
+		return EXIT_FAILURE;
+	}
+	if (!config_has_property(config, "PUERTO_UMV")) {
+		perror("Falta PUERTO_UMV");
 		return EXIT_FAILURE;
 	}
 	if (!config_has_property(config, "PUERTO_CPU")) {
@@ -122,6 +134,8 @@ int32_t validarConfig(t_config *config) {
 
 void cargarConfig(t_config *config) {
 	puerto_programa = config_get_int_value(config, "PUERTO_PROG");
+	ip_UMV = config_get_string_value(config, "IP_UMV");
+	puerto_UMV = config_get_string_value(config, "PUERTO_UMV");
 	puerto_CPU = config_get_int_value(config, "PUERTO_CPU");
 	quantum = config_get_int_value(config, "QUANTUM");
 	retardo = config_get_int_value(config, "RETARDO");

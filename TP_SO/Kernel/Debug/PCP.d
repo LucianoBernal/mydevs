@@ -12,6 +12,7 @@ PCP.d: ../PCP.c ../PCP.h ../Kernel.h ../PLPinterface.h ../PCPinterface.h \
  /home/utnso/tp-2014-1c-skynet/Bibliotecas_Comunes/commons/error.h \
  /home/utnso/tp-2014-1c-skynet/Bibliotecas_Comunes/commons/config.h \
  /home/utnso/tp-2014-1c-skynet/Bibliotecas_Comunes/commons/collections/dictionary.h \
+ /home/utnso/tp-2014-1c-skynet/Bibliotecas_Comunes/commons/log.h \
  /home/utnso/tp-2014-1c-skynet/Bibliotecas_Comunes/sockets/Serializacion.h \
  /home/utnso/tp-2014-1c-skynet/Bibliotecas_Comunes/sockets/bibSockets.h
 
@@ -48,6 +49,8 @@ PCP.d: ../PCP.c ../PCP.h ../Kernel.h ../PLPinterface.h ../PCPinterface.h \
 /home/utnso/tp-2014-1c-skynet/Bibliotecas_Comunes/commons/config.h:
 
 /home/utnso/tp-2014-1c-skynet/Bibliotecas_Comunes/commons/collections/dictionary.h:
+
+/home/utnso/tp-2014-1c-skynet/Bibliotecas_Comunes/commons/log.h:
 
 /home/utnso/tp-2014-1c-skynet/Bibliotecas_Comunes/sockets/Serializacion.h:
 

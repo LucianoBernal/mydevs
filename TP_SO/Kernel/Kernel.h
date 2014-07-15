@@ -21,6 +21,7 @@
 #include <commons/collections/list.h>
 #include <commons/collections/queue.h>
 #include <commons/config.h>
+#include <commons/log.h>
 #include <semaphore.h>
 #include <pthread.h>
 #include <sys/socket.h>
@@ -32,6 +33,8 @@
 
 
 sem_t * grado_Multiprogramacion;
+char* ip_UMV;
+char* puerto_UMV;
 int puerto_programa;
 int puerto_CPU;
 int quantum;
@@ -57,6 +60,7 @@ char** valor_semaforos_aux;
 char** semaforos_aux;
 char** hio_aux;
 char** idhio_aux;
+t_log *logKernel;
 
 void cargarConfig(t_config *);
 int32_t validarConfig(t_config*);
