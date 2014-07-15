@@ -46,12 +46,13 @@ sem_t* colaExitVacio;
 sem_t* colaExitMutex;
 t_queue* colaExit;
 t_dictionary* variables_globales;
-static int cantidadDeDispositivos; //TODO
-static int cantidadDeSemaforos; //TODO
+static int cantidadDeDispositivos;
+static int cantidadDeSemaforos;
 static int valor_semaforos[];
 static char* semaforos[];
 static int hio[];
 static char* idhio[];
+static t_dictionary* variables_globales;
 char** variables_globales_aux;
 char** valor_semaforos_aux;
 char** semaforos_aux;

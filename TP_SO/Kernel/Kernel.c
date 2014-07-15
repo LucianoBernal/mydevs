@@ -1,13 +1,11 @@
 /*
-* Kernel.c
+ * Kernel.c
  *
  *  Created on: 27/05/2014
  *      Author: utnso
  */
 
 #include "Kernel.h"
-
-
 
 int kernel_main(int argc, char** argv) {
 	//Verifico que se haya recibido por parámetro el archivo config.
@@ -25,33 +23,31 @@ int kernel_main(int argc, char** argv) {
 		return EXIT_FAILURE;
 	}
 	//Cargo parámetros del config en variables de Kernel.
-	variables_globales=dictionary_create();
+	variables_globales = dictionary_create();
 	cargarConfig(config);
 	config_destroy(config);
 	colaReady = queue_create();
-	colaExit= queue_create();
-	sem_init(colaExitMutex, 0,1);
-	sem_init(colaExitVacio,0,0);
+	colaExit = queue_create();
+	sem_init(colaExitMutex, 0, 1);
+	sem_init(colaExitVacio, 0, 0);
 	sem_init(mutexVG, 0, 1);
 	sem_init(grado_Multiprogramacion, 0, multiprogramacion);
 	sem_init(colaReadyMutex, 0, 1);
 	sem_init(vacioReady, 0, 0);
 	/*struct sockaddr_in address;
-	int sd_UMV;
-	if ((sd_UMV = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
-			perror("socket failed");
-			exit(EXIT_FAILURE);
-		}
-	address.sin_family = AF_INET;
-	address.sin_addr.s_addr = INADDR_ANY;
-	address.sin_port = htons(puertoUMV);
-*/
-
-
+	 int sd_UMV;
+	 if ((sd_UMV = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
+	 perror("socket failed");
+	 exit(EXIT_FAILURE);
+	 }
+	 address.sin_family = AF_INET;
+	 address.sin_addr.s_addr = INADDR_ANY;
+	 address.sin_port = htons(puertoUMV);
+	 */
 
 	pthread_t plp, pcp;
 	int iretPLP, iretPCP;
-int* parametrosPCP= NULL;
+	int* parametrosPCP = NULL;
 	iretPCP = pthread_create(&pcp, NULL, pcp_main, (void*) parametrosPCP);
 	if (iretPCP) {
 		fprintf(stderr, "Error - pthread_create() return code: %d\n", iretPCP);
@@ -112,13 +108,11 @@ int32_t validarConfig(t_config *config) {
 		return EXIT_FAILURE;
 	}
 	if (!config_has_property(config, "TAMANIO_STACK")) {
-			perror("Falta TAMANIO_STACK");
-			return EXIT_FAILURE;
-		}
+		perror("Falta TAMANIO_STACK");
+		return EXIT_FAILURE;
+	}
 	return EXIT_SUCCESS;
 }
-
-
 
 //SEMAFOROS=[b, c]
 //VALOR_SEMAFOROS=[1, 0]
@@ -126,41 +120,68 @@ int32_t validarConfig(t_config *config) {
 //HIO=[500, 200]
 //COMPARTIDAS=[colas,compartida]
 
-
 void cargarConfig(t_config *config) {
 	puerto_programa = config_get_int_value(config, "PUERTO_PROG");
 	puerto_CPU = config_get_int_value(config, "PUERTO_CPU");
 	quantum = config_get_int_value(config, "QUANTUM");
 	retardo = config_get_int_value(config, "RETARDO");
 	multiprogramacion = config_get_int_value(config, "MULTIPROGRAMACION");
-	tamanio_stack=config_get_int_value(config, "TAMANIO_STACK");
-	//FIXME OJO LO ARREGLE cambiando los tipos de las variables ver en que afecta
-	valor_semaforos_aux=config_get_array_value(config, "VALOR_SEMAFOROS");
+	tamanio_stack = config_get_int_value(config, "TAMANIO_STACK");
+	valor_semaforos_aux = config_get_array_value(config, "VALOR_SEMAFOROS");
 	semaforos_aux = config_get_array_value(config, "SEMAFOROS");
 	hio_aux = config_get_array_value(config, "HIO");
 	idhio_aux = config_get_array_value(config, "IDHIO");
-	//variables_globales = config_get_array_value(config, "VARIABLES_GLOBALES");
 	variables_globales_aux = config_get_array_value(config, "COMPARTIDAS");
 	/*int i=0;
-	while (idhio_aux[i] != NULL ) {
-			t_io* io;
-			io = malloc(sizeof(t_io));
+	 while (idhio_aux[i] != NULL ) {
+	 t_io* io;
+	 io = malloc(sizeof(t_io));
 
-			io->nombre = dispositivos[i];
-			int a = atoi(dispRetardo[i]);
-			io->retardo = a;
-			io->cola = queue_create();
-			sem_init(&io->hayAlgo, 0, 0);
-			sem_init(&io->mutex, 0, 1);
-			dictionary_put(dispositivosIO, io->nombre, io);
+	 io->nombre = dispositivos[i];
+	 int a = atoi(dispRetardo[i]);
+	 io->retardo = a;
+	 io->cola = queue_create();
+	 sem_init(&io->hayAlgo, 0, 0);
+	 sem_init(&io->mutex, 0, 1);
+	 dictionary_put(dispositivosIO, io->nombre, io);
 
-			pthread_t threadIO;
-			int hiloIO = pthread_create(&threadIO, NULL, manejoIO, (void*) io); //HILO PLP
-			i++;
-			if (hiloIO) {
-				log_error(logs, "Error en la creacion del hilo PLP");
-				log_destroy(logs);
+	 pthread_t threadIO;
+	 int hiloIO = pthread_create(&threadIO, NULL, manejoIO, (void*) io); //HILO PLP
+	 i++;
+	 if (hiloIO) {
+	 log_error(logs, "Error en la creacion del hilo PLP");
+	 log_destroy(logs);
 
-				exit(EXIT_FAILURE);
-			}*/
+	 exit(EXIT_FAILURE);
+	 }*/
+
+//	void cambiarTiposDeIO(){
+//		int i=0;
+//		cantidadDeDispositivos =0;
+//			while (idhio_aux[i] != NULL ) {
+//					idhio[i] = idhio_aux[i];
+//					hio[i] = atoi(hio_aux[i]);
+//					i++;
+//					cantidadDeDispositivos ++;
+//					}
+//	}
+//	void cambiarTiposDeSemaforos(){
+//	int i=0;
+//	cantidadDeSemaforos = 0;
+//		while (semaforos_aux[i] != NULL ) {
+//				semaforos[i] = semaforos_aux[i];
+//				valor_semaforos = atoi(semaforos_aux[i]);
+//				i++;
+//				cantidadDeSemaforos ++;
+//				}
+//}
+//	void cambiarTiposDeVariablesGlobales(){
+//	int i=0;
+//	variables_globales = dictionary_create();
+//		while (variables_globales_aux[i] != NULL ) {
+//				int a = 0;
+//				dictionary_put(variables_globales,variables_globales_aux[i], &a);
+//				i++;
+//				}
+//}
 }
