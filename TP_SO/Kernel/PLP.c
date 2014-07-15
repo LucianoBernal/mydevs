@@ -38,12 +38,12 @@ void* deNewAReady(void*);
 void* plp_main(int* socketUMV) {
 	colaNew = list_create();
 	randoms = list_create();
-	sem_init(PidSD_Mutex,0,1); // quizas vayan en el del kernel
+	sem_init(&PidSD_Mutex,0,1); // quizas vayan en el del kernel
 	pidYSockets = dictionary_create(); // quizas vayan en el del kernel
-	sem_init(colaNuevosVacio, 0, 0);
-	sem_init(randomMutex, 0, 1);
-	sem_init(numABorrarMutex, 0, 1);
-	sem_init(colaNuevosMutex, 0, 1);
+	sem_init(&colaNuevosVacio, 0, 0);
+	sem_init(&randomMutex, 0, 1);
+	sem_init(&numABorrarMutex, 0, 1);
+	sem_init(&colaNuevosMutex, 0, 1);
 	pthread_t thread_multiplexorScripts, threadColaNew, threadColaExit;
 	int iretMultiScripts, iretColaNew, iretColaExit;
 	int* sinParametros = NULL;
@@ -96,7 +96,7 @@ int estaRepetido() {
 int estaRepetido();
 int generarProgramID() {
 	srand(time(NULL )); // Semilla
-	sem_wait(randomMutex);
+	sem_wait(&randomMutex);
 	numAleatorio = rand() % 10000; //Numero Aleatorio entre 0 - 9999
 	while (estaRepetido()) {
 		numAleatorio = rand() % 10000;
@@ -104,7 +104,7 @@ int generarProgramID() {
 	int* numFinal = malloc(4);
 	*numFinal = numAleatorio;
 	list_add(randoms, numFinal);
-	sem_post(randomMutex);
+	sem_post(&randomMutex);
 	return (*numFinal);
 }
 
@@ -121,11 +121,11 @@ bool menor_Peso(t_new *program1, t_new *program2) {
 
 void encolar_New(t_PCB* pcb, int peso) {
 	t_new* nodoNuevo = crear_nodoNew(pcb, peso);
-	sem_wait(colaNuevosMutex);
+	sem_wait(&colaNuevosMutex);
 	list_add(colaNew, nodoNuevo);
 	list_sort(colaNew, (void*) menor_Peso);
-	sem_post(colaNuevosMutex);
-	sem_post(colaNuevosVacio);
+	sem_post(&colaNuevosMutex);
+	sem_post(&colaNuevosVacio);
 
 }
 
@@ -141,10 +141,10 @@ bool esIgualANumABorrar(int* numero) {
 }
 
 void liberar_numero(int pid) {
-	sem_wait(numABorrarMutex);
+	sem_wait(&numABorrarMutex);
 	numABorrar = pid;
 	list_remove_by_condition(randoms, (void*) esIgualANumABorrar);
-	sem_post(numABorrarMutex);
+	sem_post(&numABorrarMutex);
 
 }
 
@@ -218,9 +218,9 @@ void escribir_en_Memoria(t_metadata_program * metadata, t_PCB *pcb,
 }
 
 void agregar_En_Diccionario(int pid, int sd) {
-	sem_wait(PidSD_Mutex);
+	sem_wait(&PidSD_Mutex);
 	dictionary_put(pidYSockets, (char*) &pid, &sd);
-	sem_post(PidSD_Mutex);
+	sem_post(&PidSD_Mutex);
 
 }
 void notificar_Memoria_Llena(int);
@@ -248,12 +248,12 @@ void gestionarProgramaNuevo(const char* literal, int sd) { // UN HILO
 void encolar_en_Ready(t_PCB*);
 void* deNewAReady(void* sinParametro) { // OTRO HILO
 	while (1) {
-		sem_wait(colaNuevosVacio);
-		sem_wait(grado_Multiprogramacion);
+		sem_wait(&colaNuevosVacio);
+		sem_wait(&grado_Multiprogramacion);
 		t_new* elementoSacado;
-		sem_wait(colaNuevosMutex);
+		sem_wait(&colaNuevosMutex);
 		elementoSacado = list_remove(colaNew, 0);
-		sem_post(colaNuevosMutex);
+		sem_post(&colaNuevosMutex);
 		t_PCB* pcb_Ready;
 		pcb_Ready = elementoSacado->pcb;
 		encolar_en_Ready(pcb_Ready);
@@ -262,10 +262,10 @@ void* deNewAReady(void* sinParametro) { // OTRO HILO
 }
 
 void encolar_en_Ready(t_PCB* pcb) {
-	sem_wait(colaReadyMutex);
+	sem_wait(&colaReadyMutex);
 	queue_push(colaReady, pcb);
-	sem_post(colaReadyMutex);
-	sem_post(vacioReady);
+	sem_post(&colaReadyMutex);
+	sem_post(&vacioReady);
 }
 
 void imprimirNodosNew(t_new* nodo) {
@@ -313,10 +313,10 @@ void enviar_Mensaje_Final(int);//TODO
 void cerrar_conexion(int);
 void* manejoColaExit(void* sinParametros) {
 while (1) {
-	sem_wait(colaExitVacio);
-	sem_wait(colaExitMutex);
+	sem_wait(&colaExitVacio);
+	sem_wait(&colaExitMutex);
 	t_PCB* pcb = queue_pop(colaExit);
-	sem_post(colaExitMutex);
+	sem_post(&colaExitMutex);
 	solicitar_Destruccion_Segmentos(pcb);
 	enviar_Mensaje_Final(pcb->program_id);
 	cerrar_conexion(pcb->program_id);
@@ -332,9 +332,9 @@ void enviar_Mensaje_Final(int pid){
 }
 
 int obtener_sd_Programa(int pid){
-	sem_wait(PidSD_Mutex);
+	sem_wait(&PidSD_Mutex);
 	int* sd=dictionary_get(pidYSockets, (char*) &pid);
-	sem_post(PidSD_Mutex);
+	sem_post(&PidSD_Mutex);
 	return *sd;
 }
 
@@ -355,3 +355,4 @@ void cerrar_conexion(int pid){
 	int sd = obtener_sd_Programa(pid);
 	close(sd);
 }
+
