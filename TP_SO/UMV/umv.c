@@ -11,6 +11,7 @@
 int main(int argc, char** argv) {
 
 	//Verifico que se haya recibido por parámetro el archivo config.
+	printf("%s", argv[1]);
 	if (argc <= 1) {
 		perror(
 				"Se debe ingresar la dirección de un archivo de configuración\n");
