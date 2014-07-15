@@ -1,0 +1,20 @@
+[INFO] 13:24:40:709 Kernel/(4741:4741): Comienza la ejecución del Kernel.
+[INFO] 13:25:57:228 Kernel/(4800:4800): Comienza la ejecución del Kernel.
+[INFO] 13:26:16:936 Kernel/(4817:4817): Comienza la ejecución del Kernel.
+[INFO] 13:26:57:811 Kernel/(4856:4856): Comienza la ejecución del Kernel.
+[INFO] 13:33:57:35 Kernel/(5102:5102): Comienza la ejecución del Kernel.
+[INFO] 13:33:57:35 Kernel/(5102:5102): hola
+[INFO] 14:38:10:2 Kernel/(5820:5820): Comienza la ejecución del Kernel.
+[INFO] 14:38:10:2 Kernel/(5820:5820): hola
+[ERROR] 14:38:10:2 Kernel/(5820:5820): Error al conectar socket
+[INFO] 14:47:43:667 Kernel/(6126:6126): Comienza la ejecución del Kernel.
+[INFO] 14:47:43:667 Kernel/(6126:6126): hola
+[ERROR] 14:47:43:667 Kernel/(6126:6126): Error al conectar socket
+[INFO] 14:49:22:757 Kernel/(6171:6171): Comienza la ejecución del Kernel.
+[INFO] 14:49:22:757 Kernel/(6171:6171): hola
+[ERROR] 14:49:22:757 Kernel/(6171:6171): Error al conectar socket
+[INFO] 14:49:55:392 Kernel/(6205:6205): Comienza la ejecución del Kernel.
+[INFO] 14:49:55:392 Kernel/(6205:6205): hola
+[ERROR] 14:49:55:392 Kernel/(6205:6205): Error al conectar socket
+[INFO] 14:50:41:301 Kernel/(6213:6213): Comienza la ejecución del Kernel.
+[INFO] 14:50:41:301 Kernel/(6213:6213): hola

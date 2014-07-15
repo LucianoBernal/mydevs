@@ -7,7 +7,7 @@
 
 #include "Kernel.h"
 #include <string.h>
-
+/*
 typedef struct {
 	int valor;
 	t_queue* procesosBloqueados;
@@ -80,4 +80,4 @@ int programIdDeCpu(int idCPU) {
 	t_estructuraCPU* CPU = list_get(CPUs, posicion);
 	return (CPU->idProceso);
 
-}
+}*/

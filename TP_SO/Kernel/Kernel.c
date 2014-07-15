@@ -7,7 +7,7 @@
 
 #include "Kernel.h"
 
-int kernel_main(int argc, char** argv) {
+int main(int argc, char** argv) {
 	//Verifico que se haya recibido por parámetro el archivo config.
 	if (argc <= 1) {
 		perror(
@@ -26,20 +26,22 @@ int kernel_main(int argc, char** argv) {
 	logKernel = log_create("logKERNEL", "Kernel", true, LOG_LEVEL_INFO);
 	log_info(logKernel, "Comienza la ejecución del Kernel.");
 
-	int socketUMV = conectarCliente(ip_UMV, puerto_UMV, logKernel);
+
 
 	//Cargo parámetros del config en variables de Kernel.
 	cargarConfig(config);
+	log_info(logKernel,"hola");
 	variables_globales = dictionary_create();
 	config_destroy(config);
 	colaReady = queue_create();
 	colaExit = queue_create();
-	sem_init(colaExitMutex, 0, 1);
-	sem_init(colaExitVacio, 0, 0);
-	sem_init(mutexVG, 0, 1);
-	sem_init(grado_Multiprogramacion, 0, multiprogramacion);
-	sem_init(colaReadyMutex, 0, 1);
-	sem_init(vacioReady, 0, 0);
+//	sem_init(colaExitMutex, 0, 1);
+//	sem_init(colaExitVacio, 0, 0);
+//	sem_init(mutexVG, 0, 1);
+//	sem_init(grado_Multiprogramacion, 0, multiprogramacion);
+//	sem_init(colaReadyMutex, 0, 1);
+//	sem_init(vacioReady, 0, 0);
+	int socketUMV = conectarCliente(ip_UMV, puerto_UMV, logKernel);
 	/*struct sockaddr_in address;
 	 int sd_UMV;
 	 if ((sd_UMV = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
@@ -51,27 +53,27 @@ int kernel_main(int argc, char** argv) {
 	 address.sin_port = htons(puertoUMV);
 	 */
 
-	pthread_t plp, pcp;
-	int iretPLP, iretPCP;
-	int* parametrosPCP = NULL;
-	iretPCP = pthread_create(&pcp, NULL, pcp_main, (void*) parametrosPCP);
-	if (iretPCP) {
-		fprintf(stderr, "Error - pthread_create() return code: %d\n", iretPCP);
-		exit(EXIT_FAILURE);
-	}
-	printf("Hilo pcp exitoso");
-	int* parametroPLP = NULL;
-	iretPLP = pthread_create(&plp, NULL, plp_main, (void*) parametroPLP);
-	if (iretPLP) {
-		fprintf(stderr, "Error - pthread_create() return code: %d\n", iretPLP);
-		exit(EXIT_FAILURE);
-	}
-	printf("Hilo plp exitoso");
+//	pthread_t plp, pcp;
+//	int iretPLP, iretPCP;
+//	int* parametrosPCP = NULL;
+//	iretPCP = pthread_create(&pcp, NULL, pcp_main, (void*) parametrosPCP);
+//	if (iretPCP) {
+//		fprintf(stderr, "Error - pthread_create() return code: %d\n", iretPCP);
+//		exit(EXIT_FAILURE);
+//	}
+//	printf("Hilo pcp exitoso");
+//	int* parametroPLP = NULL;
+//	iretPLP = pthread_create(&plp, NULL, plp_main, (void*) parametroPLP);
+//	if (iretPLP) {
+//		fprintf(stderr, "Error - pthread_create() return code: %d\n", iretPLP);
+//		exit(EXIT_FAILURE);
+//	}
+//	printf("Hilo plp exitoso");
 
 	send(socketUMV,"Kernel",7,0);
 
-	pthread_join(pcp, NULL );
-	pthread_join(plp, NULL );
+//	pthread_join(pcp, NULL );
+//	pthread_join(plp, NULL );
 	return EXIT_FAILURE;
 }
 
@@ -149,7 +151,7 @@ void cargarConfig(t_config *config) {
 	valor_semaforos_aux = config_get_array_value(config, "VALOR_SEMAFOROS");
 	semaforos_aux = config_get_array_value(config, "SEMAFOROS");
 	hio_aux = config_get_array_value(config, "HIO");
-	idhio_aux = config_get_array_value(config, "IDHIO");
+	idhio_aux = config_get_array_value(config, "ID_HIO");
 	variables_globales_aux = config_get_array_value(config, "COMPARTIDAS");
 	/*int i=0;
 	 while (idhio_aux[i] != NULL ) {
