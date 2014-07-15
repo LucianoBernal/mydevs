@@ -71,3 +71,13 @@
 [INFO] 09:43:01:465 TEST/(2863:2863): ApruebenmeN pls
 [ERROR] 09:43:01:469 TEST/(2863:2863): El handshake con la UMV salio mal
 [ERROR] 09:43:01:470 TEST/(2863:2863): El handshake con el Kernel salio mal
+[ERROR] 18:26:10:224 TEST/(3577:3577): Error al conectar el socket
+[ERROR] 18:26:10:229 TEST/(3577:3577): Error al conectar el socket
+[INFO] 18:26:10:238 TEST/(3577:3577): ApruebenmeN pls
+[ERROR] 18:26:10:238 TEST/(3577:3577): El handshake con la UMV salio mal
+[ERROR] 18:26:10:238 TEST/(3577:3577): El handshake con el Kernel salio mal
+[ERROR] 18:26:30:747 TEST/(3584:3584): Error al conectar el socket
+[ERROR] 18:26:30:748 TEST/(3584:3584): Error al conectar el socket
+[INFO] 18:26:30:755 TEST/(3584:3584): ApruebenmeN pls
+[ERROR] 18:26:30:755 TEST/(3584:3584): El handshake con la UMV salio mal
+[ERROR] 18:26:30:755 TEST/(3584:3584): El handshake con el Kernel salio mal

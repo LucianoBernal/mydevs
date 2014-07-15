@@ -106,3 +106,16 @@
 [INFO] 15:18:26:398 UMV/(2014:2014): Comienza la ejecución de la UMV.
 [INFO] 15:18:29:487 UMV/(2014:2014): El hilo de consola se creó correctamente
 [INFO] 15:18:36:732 UMV/(2014:2014): El hilo de atención interna se creó correctamente
+[INFO] 18:09:26:602 UMV/(2755:2755): Comienza la ejecución de la UMV.
+[INFO] 18:09:26:614 UMV/(2755:2755): El hilo de consola se creó correctamente
+[INFO] 18:09:26:614 UMV/(2755:2755): El hilo de atención interna se creó correctamente
+[ERROR] 18:09:26:617 UMV/(2755:2761): Hubo un error al obtener la informacion del servidor
+[ERROR] 18:09:26:618 UMV/(2755:2761): Error al aceptar la conexion
+[INFO] 18:12:52:410 UMV/(2937:2937): Comienza la ejecución de la UMV.
+[INFO] 18:12:52:412 UMV/(2937:2937): El hilo de consola se creó correctamente
+[INFO] 18:12:52:414 UMV/(2937:2937): El hilo de atención interna se creó correctamente
+[ERROR] 18:12:52:418 UMV/(2937:2943): Hubo un error al obtener la informacion del servidor
+[ERROR] 18:12:52:419 UMV/(2937:2943): Error al aceptar la conexion
+[INFO] 18:15:00:926 UMV/(3019:3019): Comienza la ejecución de la UMV.
+[INFO] 18:15:00:931 UMV/(3019:3019): El hilo de consola se creó correctamente
+[INFO] 18:15:00:933 UMV/(3019:3019): El hilo de atención interna se creó correctamente

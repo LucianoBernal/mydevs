@@ -8,8 +8,9 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
+#include <unistd.h>
 #include <string.h>
-#include <commons/log.h>
+#include "bibliotecaSockets.h"
 
 #define BACKLOG 10
 
@@ -21,7 +22,7 @@ int crearServidor(char* puerto, t_log* logs){
 	hints.ai_family = AF_UNSPEC;		// No importa si uso IPv4 o IPv6
 	hints.ai_flags = AI_PASSIVE;		// Asigna el address del localhost: 127.0.0.1
 	hints.ai_socktype = SOCK_STREAM;	// Indica que usaremos el protocolo TCP
-	if (!getaddrinfo(NULL, puerto, &hints, &serverInfo)){
+	if (getaddrinfo(NULL, puerto, &hints, &serverInfo)){
 		log_error(logs, "Hubo un error al obtener la informacion del servidor");
 		return -1;
 	}
@@ -57,7 +58,7 @@ int aceptarConexion(int socket, t_log* logs) {
 	return socketCliente;
 }
 
-int conectarCliente (char* ip, char* puerto, int logs) {
+int conectarCliente (char* ip, char* puerto, t_log* logs) {
 	struct addrinfo hints;
 	struct addrinfo *serverInfo;
 
@@ -70,12 +71,12 @@ int conectarCliente (char* ip, char* puerto, int logs) {
 	serverSocket = socket(serverInfo->ai_family, serverInfo->ai_socktype, serverInfo->ai_protocol);
 	if (serverSocket==-1){
 		log_error(logs, "Error al crear el socket");
-		return -1;
+		return 0;
 	}
-	if (!connect(serverSocket, serverInfo->ai_addr, serverInfo->ai_addrlen)){
+	if (connect(serverSocket, serverInfo->ai_addr, serverInfo->ai_addrlen)){
 		log_error(logs, "Error al conectar el socket");
 		close(serverSocket);
-		return -1;
+		return 0;
 	}
 	freeaddrinfo(serverInfo);
 	return serverSocket;
