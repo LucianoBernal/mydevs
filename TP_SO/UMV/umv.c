@@ -91,6 +91,6 @@ void cargarConfig(t_config *config) {
 	tamanoUMV = config_get_int_value(config, "TAMANIO_UMV");
 	retardo = config_get_int_value(config, "RETARDO");
 	algoritmo = config_get_int_value(config, "ALGORITMO");
-	puertoUMV = config_get_int_value(config, "PUERTO");
+	puertoUMV = config_get_string_value(config, "PUERTO");
 }
 

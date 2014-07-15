@@ -18,7 +18,7 @@ typedef enum {
 	MEMORY_OVERLOAD,
 	MOSTRAR_VALOR,
 	MOSTRAR_TEXTO,
-	//CREAR_SEGMENTO,
+	CREAR_SEGMENTO,
 	CREAR_SEGMENTOS_PROGRAMA,
 	DESTRUIR_SEGMENTOS,
 	ESCRIBIR_EN_UMV,
@@ -111,7 +111,6 @@ void atencionKernel(int* socketKernel) {
 
 	switch (*razon) {
 	case CREAR_SEGMENTO:
-
 		desempaquetar2(mensaje, &tamano, 0);
 		crearSegmento(tamano);
 		break;

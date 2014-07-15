@@ -158,7 +158,7 @@ void analizarYEjecutar(char *comando) {
 		int pidPedido;
 		int off;
 		int tam;
-		bool arch;	//TODO: archivo = log ?
+		bool arch=0;	//TODO: archivo = log ?
 
 		printf("Estructuras de memoria.\n");
 		printf(

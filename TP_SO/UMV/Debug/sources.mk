@@ -2,7 +2,16 @@
 # Automatically-generated file. Do not edit!
 ################################################################################
 
-# Add inputs and outputs from these tool invocations to the build variables 
+O_SRCS := 
+C_SRCS := 
+S_UPPER_SRCS := 
+OBJ_SRCS := 
+ASM_SRCS := 
+OBJS := 
+C_DEPS := 
+EXECUTABLES := 
 
-# Each subdirectory must supply rules for building sources it contributes
+# Every subdirectory with source files must be described here
+SUBDIRS := \
+. \
 

@@ -14,9 +14,7 @@
 #include <stdarg.h>
 #include <commons/collections/list.h>
 #include <commons/collections/queue.h>
-#include <biblioteca_comun/definiciones.h>
-#include "bibSockets.h"
-
+#include "definiciones.h"
 
 typedef struct{
 	char *msj;
@@ -27,7 +25,6 @@ typedef struct{
 	int tamano;
 	char *p_var;
 }t_tamYDir;
-
 
 t_tamYDir *crear_nodoVar(void *, int);
 t_paquete *serializar2(t_tamYDir *uno, ...);

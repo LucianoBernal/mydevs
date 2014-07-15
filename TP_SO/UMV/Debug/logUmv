@@ -108,3 +108,8 @@
 [INFO] 15:56:27:788 UMV/(3276:3278): El hilo del Kernel se creó correctamente.
 [INFO] 15:56:27:788 UMV/(3276:3278): Sali del primer while 1
 [INFO] 15:57:12:683 UMV/(3276:3280): entró a atencioKernel.
+[INFO] 17:56:51:760 UMV/(2642:2642): Comienza la ejecución de la UMV.
+[INFO] 17:56:51:761 UMV/(2642:2642): El hilo de consola se creó correctamente
+[INFO] 17:56:51:762 UMV/(2642:2642): El hilo de atención interna se creó correctamente
+[ERROR] 17:56:51:764 UMV/(2642:2644): Hubo un error al obtener la informacion del servidor
+[ERROR] 17:56:51:765 UMV/(2642:2644): Error al aceptar la conexion
