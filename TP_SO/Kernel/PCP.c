@@ -77,7 +77,7 @@ void crearHilosPrincipales() {
  static t_queue* colaDispositivo = queue_create();
  static sem_t* semaforo = NULL;
  sem_init(semaforo, 0, 0);
- t_estructuraDispositivoIO* estructuraDispositivo; //TODO
+ t_estructuraDispositivoIO* estructuraDispositivo;
  estructuraDispositivo->retardo = retardo;
  estructuraDispositivo->procesosBloqueados = colaDispositivo;
  estructuraDispositivo->colaVacia = semaforo;
@@ -158,9 +158,16 @@ void* enviarCPU(void* sinParametro) {
 	int IDCpuLibre = encontrarPrimeraCpuLibreYOcuparla(CPUs);
 	t_PCB* paquete = queue_pop(colaExec);
 	printf("%d", IDCpuLibre);
-	printf("%d", paquete->indice_de_Codigo); //lo hago para sacar el warning por variable sin usar, depsués lo saco
+	printf("%d", paquete->indice_de_Codigo);
+	//lo hago para sacar el warning por variable sin usar,
 	//TODO serializar(paquete);
-	//TODO ponerle el program id de ese pcb a la cpu en la lista
+	int i = posicionEnLaLista(CPUs, IDCpuLibre);
+		t_estructuraCPU* estructura = malloc(sizeof(t_estructuraCPU));
+		estructura->idCPU = IDCpuLibre;
+		estructura->estado = 0;
+		estructura->idProceso = (paquete->program_id);
+		list_replace_and_destroy_element(CPUs, i, estructura, (void*) cpu_destroy);
+	//TODO mandar el paquete serializado a esa id (sd)
 	}
 }
 

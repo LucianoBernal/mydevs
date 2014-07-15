@@ -6,11 +6,20 @@
  */
 
 #include "Kernel.h"
+// valor_semaforos[];
+// semaforos[];
+
+typedef struct{
+	int valor;
+	t_queue* procesosBloqueados;
+} t_estructuraSemaforo;
+
+t_dictionary* semaforos;
 
 void obtener_valor(char id, int idCpu) {
 	sem_wait(mutexVG);
 	int a = dictionary_get(variables_globales, &id);
-	send(idCpu, a, strlen(a), 0);
+	send(idCpu, a, strlen(a), 0); //TODO
 	sem_wait(mutexVG);
 }
 void grabar_valor(char id, int valor) {
@@ -20,8 +29,7 @@ void grabar_valor(char id, int valor) {
 }
 
 void signal(char* idSem) {
-	int pos = buscarPosicion(idSem);
-	semaforos[pos] = semaforos[pos] + 1;
+	t_estructuraSemaforo* semaforo = dictionary_get(semaforos, idSem);
 
 }
 
@@ -53,3 +61,14 @@ int buscarPosicion(char* semaforo) {
 	return i;
 }
 
+void armarDiccionarioDeSemaforos()
+{
+	int i = 0;
+	while (i<cantidadDeSemaforos){
+		t_estructuraSemaforo* semaforo = malloc(sizeof(t_estructuraSemaforo));
+		semaforo->procesosBloqueados= queue_create();
+		semaforo->valor = valor_semaforos[i];
+		dictionary_put(semaforos,semaforos[i],semaforo);
+		i++;
+	}
+}
