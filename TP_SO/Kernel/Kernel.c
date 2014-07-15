@@ -172,8 +172,8 @@ void cargarConfig(t_config *config) {
 //		int i=0;
 //		cantidadDeDispositivos =0;
 //			while (idhio_aux[i] != NULL ) {
-//					idhio[i] = idhio_aux[i];
-//					hio[i] = atoi(hio_aux[i]);
+//					list_add(idDispositivos, idhio_aux[i]);
+//					list_add(retardos, &(atoi(hio_aux[i])));
 //					i++;
 //					cantidadDeDispositivos ++;
 //					}
