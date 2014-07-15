@@ -30,10 +30,10 @@
 #include <biblioteca_comun/definiciones.h>
 #include <sockets/Serializacion.h>
 #include <sockets/sockets.h>
+#include <time.h>
 
 
-
-sem_t * grado_Multiprogramacion;
+sem_t  grado_Multiprogramacion;
 char* ip_UMV;
 int puerto_UMV;
 int puerto_programa;
@@ -43,18 +43,22 @@ int retardo;
 int tamanio_stack;
 int multiprogramacion;
 t_queue* colaReady;
-sem_t * colaReadyMutex;
-sem_t * vacioReady;
-sem_t* mutexVG;
-sem_t* colaExitVacio;
-sem_t* colaExitMutex;
+sem_t  colaReadyMutex;
+sem_t  vacioReady;
+sem_t mutexVG;
+sem_t colaExitVacio;
+sem_t colaExitMutex;
 t_queue* colaExit;
 int cantidadDeDispositivos;
 int cantidadDeSemaforos;
-static int valor_semaforos[];
-static char* semasforos[];
-static int hio[];
-static char* idhio[];
+//static int valor_semaforos[];
+//static char* semasforos[];
+//static int hio[];
+//static char* idhio[];
+t_list* valor_semaforos;
+t_list* semaforos;
+t_list* retardos;
+t_list* idDispositivos;
 t_dictionary* variables_globales;
 char** variables_globales_aux;
 char** valor_semaforos_aux;
