@@ -9,66 +9,73 @@
 // valor_semaforos[];
 // semaforos[];
 
-typedef struct{
+typedef struct {
 	int valor;
 	t_queue* procesosBloqueados;
 } t_estructuraSemaforo;
 
 t_dictionary* semaforos;
 
-void obtener_valor(char id, int idCpu) {
+int obtener_valor(char id, int idCpu) {
 	sem_wait(mutexVG);
 	int a = dictionary_get(variables_globales, &id);
-	send(idCpu, a, strlen(a), 0); //TODO
+	send(idCpu, a, 4, 0); //TODO
 	sem_wait(mutexVG);
+	return a;
 }
-void grabar_valor(char id, int valor) {
+
+int grabar_valor(char id, int valor) {
 	sem_wait(mutexVG);
 	dictionary_put(variables_globales, &id, &valor);
 	sem_wait(mutexVG);
+	return valor;
 }
 
 void signal(char* idSem) {
 	t_estructuraSemaforo* semaforo = dictionary_get(semaforos, idSem);
-
+	semaforo->valor = (semaforo->valor) + 1;
+	if (!queue_is_empty(semaforo->procesosBloqueados)) {
+		int * programaADesbloquear = queue_pop(semaforo->procesosBloqueados);
+		int sd = obtener_sd_Programa(*programaADesbloquear);
+		send(sd, 's', 1, 0);
+	}
 }
 
 void wait(char* idSem, int idCpu) {
-	int a = buscarValorSemaforo(idSem);
-	int pos = buscarPosicion(idSem);
+	t_estructuraSemaforo* semaforo = dictionary_get(semaforos, idSem);
+	int a = semaforo->valor;
 	if (a > 0) {
-		semaforos[pos] = semaforos[pos] - 1;
-		send(idCpu, 's', strlen(), 0); //ya sé que esto está mal xD
+		semaforo->valor = (semaforo->valor) - 1;
+		send(idCpu, 's', 1, 0); //TODO
+	} else {
+		t_estructuraSemaforo* semaforo = dictionary_get(semaforos, idSem);
+		int programID = programIdDeCpu(idCpu);
+		queue_push(semaforo->procesosBloqueados, &programID);
 	}
-	else
-	{
-		//encolar el proceso
-	}
-}
-int buscarValorSemaforo(char* semaforo) {
-	int i = 0;
-	while (valor_semaforos[i] != semaforo) {
-		i++;
-	}
-	return semaforos[i];
 }
 
-int buscarPosicion(char* semaforo) {
-	int i = 0;
-	while (valor_semaforos[i] != semaforo) {
-		i++;
-	}
-	return i;
+int imprimir(){
+
 }
 
-void armarDiccionarioDeSemaforos()
-{
+int imprimirTexto(char* texto, int idCpu) {
+
+}
+
+void armarDiccionarioDeSemaforos() {
 	int i = 0;
-	while (i<cantidadDeSemaforos){
+	while (i < cantidadDeSemaforos) {
 		t_estructuraSemaforo* semaforo = malloc(sizeof(t_estructuraSemaforo));
-		semaforo->procesosBloqueados= queue_create();
+		semaforo->procesosBloqueados = queue_create();
 		semaforo->valor = valor_semaforos[i];
-		dictionary_put(semaforos,semaforos[i],semaforo);
+		dictionary_put(semaforos, semaforos[i], semaforo);
 		i++;
 	}
+}
+
+int programIdDeCpu(int idCPU) {
+	int posicion = posicionEnLaLista(CPUs, idCPU);
+	t_estructuraCPU* CPU = list_get(CPUs, posicion);
+	return (CPU->idProceso);
+
 }
