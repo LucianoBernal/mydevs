@@ -50,7 +50,9 @@ void mostrarColaDeProcesosListos();
 void mostrarColaDeProcesosFinalizados();
 int cantidadDispositivos();
 void mostrarColaDePCBsBloqueados(t_queue*);
+void mostrarColaDePCBsBloqueadosSem(t_queue*);
 void imprimirNodosPCBsBloqueados(t_estructuraProcesoBloqueado*);
+void imprimirNodosPCBsBloqueados(int*);
 void mostrarColaDePCBs2(t_queue*);
 void imprimirNodosPCBs2(t_PCB*);
 

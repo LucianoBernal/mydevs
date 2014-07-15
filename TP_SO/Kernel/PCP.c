@@ -312,6 +312,7 @@ void mostrarColaDeProcesosEnEjecucion() {
 void mostrarColaDeProcesosBloqueados() {
 	printf("El estado de la Cola de Bloqueados es el siguiente:\n");
 	int a = 0;
+	int b = 0;
 	while (a< cantidadDeDispositivos){
 		printf("Procesos bloqueados para el dispositivo %s es el siguiente: \n",
 				idhio[a]);
@@ -321,7 +322,14 @@ void mostrarColaDeProcesosBloqueados() {
 	 mostrarColaDePCBsBloqueados(estructura->procesosBloqueados);
 	 a++;
 	}
-	//TODO IMPRIMIR LOS DE LOS SEMAFOROS
+	while (b<cantidadDeSemaforos){
+		printf("Procesos bloqueados para el semaforo %s es el siguiente: \n",
+						semaforos[b]);
+		t_estructuraSemaforo* semaforo = dictionary_get(semaforos,semaforos[b]);
+		mostrarColaDePCBsBloqueadosSem(semaforo->procesosBloqueados);
+		b++;
+
+	}
 }
 
 
@@ -330,10 +338,17 @@ void mostrarColaDePCBsBloqueados(t_queue* procesosBloqueados)
 	list_iterate(procesosBloqueados->elements, (void*) (void*) imprimirNodosPCBsBloqueados);
 }
 
+void mostrarColaDePCBsBloqueadosSem(t_queue* procesosBloqueados)
+{
+	list_iterate(procesosBloqueados->elements, (void*) (void*) imprimirNodosPCBsBloqueadosSem);
+}
 void imprimirNodosPCBsBloqueados(t_estructuraProcesoBloqueado* procesoBloqueado) {
 	printf("Program id:%i \n", procesoBloqueado->pcb->program_id);
 }
 
+void imprimirNodosPCBsBloqueadosSem(int* idProceso) {
+	printf("Program id:%i \n", *idProceso);
+}
 void mostrarColaDePCBs2(t_queue* cola) {
 	list_iterate(cola->elements, (void*) (void*) imprimirNodosPCBs2);
 }
