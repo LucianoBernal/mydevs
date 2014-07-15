@@ -14,7 +14,10 @@ Kernel.d: ../Kernel.c ../Kernel.h ../PLPinterface.h ../PCPinterface.h \
  /home/utnso/tp-2014-1c-skynet/Bibliotecas_Comunes/commons/collections/dictionary.h \
  /home/utnso/tp-2014-1c-skynet/Bibliotecas_Comunes/commons/log.h \
  /home/utnso/tp-2014-1c-skynet/Bibliotecas_Comunes/sockets/Serializacion.h \
- /home/utnso/tp-2014-1c-skynet/Bibliotecas_Comunes/sockets/bibSockets.h
+ /home/utnso/tp-2014-1c-skynet/Bibliotecas_Comunes/sockets/bibSockets.h \
+ /home/utnso/tp-2014-1c-skynet/Bibliotecas_Comunes/sockets/sockets.h \
+ /home/utnso/tp-2014-1c-skynet/Bibliotecas_Comunes/sockets/../commons/config.h \
+ /home/utnso/tp-2014-1c-skynet/Bibliotecas_Comunes/sockets/../commons/log.h
 
 ../Kernel.h:
 
@@ -53,3 +56,9 @@ Kernel.d: ../Kernel.c ../Kernel.h ../PLPinterface.h ../PCPinterface.h \
 /home/utnso/tp-2014-1c-skynet/Bibliotecas_Comunes/sockets/Serializacion.h:
 
 /home/utnso/tp-2014-1c-skynet/Bibliotecas_Comunes/sockets/bibSockets.h:
+
+/home/utnso/tp-2014-1c-skynet/Bibliotecas_Comunes/sockets/sockets.h:
+
+/home/utnso/tp-2014-1c-skynet/Bibliotecas_Comunes/sockets/../commons/config.h:
+
+/home/utnso/tp-2014-1c-skynet/Bibliotecas_Comunes/sockets/../commons/log.h:

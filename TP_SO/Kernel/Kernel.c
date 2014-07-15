@@ -26,6 +26,8 @@ int kernel_main(int argc, char** argv) {
 	logKernel = log_create("logKERNEL", "Kernel", true, LOG_LEVEL_INFO);
 	log_info(logKernel, "Comienza la ejecución del Kernel.");
 
+	int socketUMV = conectarCliente(ip_UMV, puerto_UMV, logKernel);
+
 	//Cargo parámetros del config en variables de Kernel.
 	cargarConfig(config);
 	variables_globales = dictionary_create();
@@ -65,6 +67,9 @@ int kernel_main(int argc, char** argv) {
 		exit(EXIT_FAILURE);
 	}
 	printf("Hilo plp exitoso");
+
+	send(socketUMV,"Kernel",7,0);
+
 	pthread_join(pcp, NULL );
 	pthread_join(plp, NULL );
 	return EXIT_FAILURE;
@@ -135,7 +140,7 @@ int32_t validarConfig(t_config *config) {
 void cargarConfig(t_config *config) {
 	puerto_programa = config_get_int_value(config, "PUERTO_PROG");
 	ip_UMV = config_get_string_value(config, "IP_UMV");
-	puerto_UMV = config_get_string_value(config, "PUERTO_UMV");
+	puerto_UMV = config_get_int_value(config, "PUERTO_UMV");
 	puerto_CPU = config_get_int_value(config, "PUERTO_CPU");
 	quantum = config_get_int_value(config, "QUANTUM");
 	retardo = config_get_int_value(config, "RETARDO");
