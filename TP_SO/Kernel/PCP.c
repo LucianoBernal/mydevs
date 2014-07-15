@@ -266,7 +266,9 @@ void seDesconectoCPU(int idCPU) { //TODO
 	if (estaLibreID(idCPU)) {
 		list_remove_by_condition(CPUs, (void*) tieneID);
 	} else {
-		// TODO se manda un error a la consola del programa
+		int idPrograma = buscarIDPrograma(idCPU);
+		int sd = obtener_sd_programa(idPrograma);
+		notificar_Programa(sd,"La CPU se desconectó");
 		//queue_push(colaExit, paquete_CPU.pcb); lo comento para que no me tire el error de que no encuenra pquetecpu
 		list_remove_by_condition(CPUs, (void*) tieneID);
 	}
@@ -355,4 +357,11 @@ void mostrarColaDePCBs2(t_queue* cola) {
 
 void imprimirNodosPCBs2(t_PCB* pcb) {
 	printf("Program id:%i \n", pcb->program_id);
+}
+
+int buscarIDPrograma(int idCPU)
+{
+	int posicion = posicionEnLaLista(CPUs, idCPU);
+	t_estructuraCPU* CPU = list_get(CPUs, posicion);
+	return CPU->idProceso;
 }
