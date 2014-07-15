@@ -32,12 +32,12 @@
 
 /*Variables Globales*/
 t_log* logger;
-int tamanio_umv;
+int tamanoUMV;
 int retardo;
 int puertoUMV;
 bool algoritmo;
 void *baseUMV;
-extern t_list *listaProcesos;
+t_list *listaProcesos;
 
 pthread_t atencion_consola;
 pthread_t atencion_interna;

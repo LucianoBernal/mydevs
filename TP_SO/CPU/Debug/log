@@ -47,3 +47,27 @@
 [INFO] 13:54:32:783 TEST/(3727:3727): ApruebenmeN pls
 [ERROR] 13:54:32:783 TEST/(3727:3727): El handshake con la UMV salio mal
 [ERROR] 13:54:32:783 TEST/(3727:3727): El handshake con el Kernel salio mal
+[ERROR] 09:40:45:602 TEST/(2794:2794): Error al conectar socket
+[ERROR] 09:40:45:604 TEST/(2794:2794): No se pudo conectar a la UMV exitosamente
+[ERROR] 09:40:45:604 TEST/(2794:2794): Deberia estar cerrando el CPU
+[ERROR] 09:40:45:605 TEST/(2794:2794): Error al conectar socket
+[ERROR] 09:40:45:605 TEST/(2794:2794): No se pudo conectar al Kernel exitosamente
+[ERROR] 09:40:45:606 TEST/(2794:2794): Deberia estar cerrando el CPU
+[INFO] 09:40:45:606 TEST/(2794:2794): ApruebenmeN pls
+[ERROR] 09:40:45:607 TEST/(2794:2794): El handshake con la UMV salio mal
+[ERROR] 09:40:45:607 TEST/(2794:2794): El handshake con el Kernel salio mal
+[ERROR] 09:41:32:632 TEST/(2810:2810): Error al conectar socket
+[ERROR] 09:41:32:633 TEST/(2810:2810): No se pudo conectar a la UMV exitosamente
+[ERROR] 09:41:32:633 TEST/(2810:2810): Deberia estar cerrando el CPU
+[ERROR] 09:41:32:634 TEST/(2810:2810): Error al conectar socket
+[ERROR] 09:41:32:634 TEST/(2810:2810): No se pudo conectar al Kernel exitosamente
+[ERROR] 09:41:32:635 TEST/(2810:2810): Deberia estar cerrando el CPU
+[INFO] 09:41:32:635 TEST/(2810:2810): ApruebenmeN pls
+[ERROR] 09:41:32:636 TEST/(2810:2810): El handshake con la UMV salio mal
+[ERROR] 09:41:32:636 TEST/(2810:2810): El handshake con el Kernel salio mal
+[ERROR] 09:43:01:463 TEST/(2863:2863): Error al conectar socket
+[ERROR] 09:43:01:464 TEST/(2863:2863): No se pudo conectar al Kernel exitosamente
+[ERROR] 09:43:01:464 TEST/(2863:2863): Deberia estar cerrando el CPU
+[INFO] 09:43:01:465 TEST/(2863:2863): ApruebenmeN pls
+[ERROR] 09:43:01:469 TEST/(2863:2863): El handshake con la UMV salio mal
+[ERROR] 09:43:01:470 TEST/(2863:2863): El handshake con el Kernel salio mal

@@ -17,7 +17,8 @@ void* consola(void* sinParametro) {
 
 	} while (strncmp("exit", comando, 4));
 	log_info(logger,"Se cerró la consola");
-	//free(comando);
+	free(comando);
+	return NULL;
 }
 
 void analizarYEjecutar(char *comando) {
@@ -32,7 +33,7 @@ void analizarYEjecutar(char *comando) {
 		do{
 		flag=0;
 		scanf("%s", &operacion.accion);
-		//char* msj;
+
 		switch (operacion.accion) {
 
 		case 'h':
@@ -55,7 +56,7 @@ void analizarYEjecutar(char *comando) {
 			printf("\n Ingrese bloque de mensaje: \n");
 			scanf("%s", msj);
 			log_info(logger,"se concretó la operación1");
-			enviarUnosBytes(operacion.base, operacion.offset, operacion.tamano,
+			enviarUnosBytesPConsola(operacion.base, operacion.offset, operacion.tamano,
 					msj);
 
 			log_info(logger,"se concretó la operación2");

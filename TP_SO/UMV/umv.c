@@ -37,7 +37,7 @@ int main(int argc, char** argv) {
 //	pthread_mutex_init(&mutexAlgoritmo, NULL);
 
 
-	baseUMV = malloc(tamanio_umv);
+	baseUMV = malloc(tamanoUMV);
 	listaProcesos = list_create();
 	int* sinParametros=NULL;
 	//Creo hilo que atiende a la consola.
@@ -47,17 +47,18 @@ int main(int argc, char** argv) {
 		log_info(logger, "El hilo de consola se creó correctamente");
 	}
 
-//	//Creo hilo que creará hilos que atienden al kernel/cpu's.
-//	if (pthread_create(&atencion_interna, NULL, (void *) atencionInterna,
-//			(void*)sinParametros )) {
-//		log_info(logger, "Hubo un error en la creación del hilo de atención interna");
-//	} else {
-//		log_info(logger, "El hilo de atención interna se creó correctamente");
-//	}
+	//Creo hilo que creará hilos que atienden al kernel/cpu's.
+	if (pthread_create(&atencion_interna, NULL, (void *) atencionInterna,
+			(void*)sinParametros )) {
+		log_info(logger, "Hubo un error en la creación del hilo de atención interna");
+	} else {
+		log_info(logger, "El hilo de atención interna se creó correctamente");
+	}
 	pthread_join(atencion_consola,NULL);
-	//pthread_join(atencion_interna,NULL);
-
+	pthread_join(atencion_interna,NULL);
+	log_debug(logger, "Voy a probar que no rompa antes");
 	list_destroy_and_destroy_elements(listaProcesos, (void*)free);
+	log_debug(logger, "Voy a probar que no rompa despues");
 	config_destroy(config);
 	log_destroy(logger);
 	log_info(logger, "El proceso UMV ha finalizado");
@@ -86,7 +87,7 @@ int32_t validarConfig(t_config *config) {
 }
 
 void cargarConfig(t_config *config) {
-	tamanio_umv = config_get_int_value(config, "TAMANIO_UMV");
+	tamanoUMV = config_get_int_value(config, "TAMANIO_UMV");
 	retardo = config_get_int_value(config, "RETARDO");
 	algoritmo = config_get_int_value(config, "ALGORITMO");
 	puertoUMV = config_get_int_value(config, "PUERTO");

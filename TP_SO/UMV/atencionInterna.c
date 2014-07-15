@@ -9,9 +9,8 @@
 #include <sockets/Serializacion.h>
 
 typedef enum {
-	Kernel=1,
-	CPU=2
-}saludos_internos;
+	Kernel = 1, CPU = 2
+} saludos_internos;
 
 typedef enum {
 	CONFIRMACION,
@@ -30,59 +29,66 @@ typedef enum {
 } codigos_mensajes;
 
 void* atencionInterna(void* sinParametro) {
-	//char* saludoKernel = malloc(7);
-	//char* saludoCpu = malloc(4);
+	char* saludoKernel = malloc(7);
+	char* saludoCpu = malloc(4);
 	//int socketKernel;
 
-	saludos_internos *saludo = malloc(sizeof(saludos_internos));
-	struct addrInfo* addrInfo;
+	//saludos_internos *saludo = malloc(sizeof(saludos_internos));
+	//struct addrInfo* addrInfo;
 	int socket = crearServidor(puertoUMV, logger);
-	int socketKernel = aceptarConexion(socket,logger);
-	t_length *tamK;
-	int recibirMenu (socketKernel, (void*)tamK, logger);
+	int socketKernel = aceptarConexion(socket, logger);
+//	t_length *tamK;
+//	int recibirMenu (socketKernel, (void*)tamK, logger);
 
 	//escucharYCrearSocketCliente(socket, 40, socketKernel, addrInfo);
-	//recv(socketKernel, (void*) saludo, 30, 0);
-	/*if (strncmp(saludoKernel, "Kernel", 6))*/
+	log_debug(logger, "antes del while 1");
+	while (1) {
+		recv(socketKernel, (void*) saludoKernel, 30, 0);
+		if (!strncmp(saludoKernel, "Kernel", 6)) {
 
-	saludo = tamK->menu;//FIXME homogeneizar codigos_mensajes y t_menu y saludos_internos
-	if(*saludo == Kernel){
-		//Creo hilo de atención al kernel.
-		if(pthread_create(&hiloKernel, NULL, (void *) atencionKernel, (void*) socketKernel)){
-			log_error(logger,"El hilo del Kernel no se creó correctamente.");
-		} else{
-			log_info(logger, "El hilo del Kernel se creó correctamente.");
+			//saludo = tamK->menu;//FIXME homogeneizar codigos_mensajes y t_menu y saludos_internos
+			//if(*saludo == Kernel){
+			//Creo hilo de atención al kernel.
+			if (pthread_create(&hiloKernel, NULL, (void *) atencionKernel,
+					(void*) socketKernel)) {
+				log_error(logger,
+						"El hilo del Kernel no se creó correctamente.");
+			} else {
+				log_info(logger, "El hilo del Kernel se creó correctamente.");
+			}
+			break;
+		} else {
+			close(socketKernel);
 		}
-	} else {
-		close(socketKernel);
 	}
 
 	while (1) {
 		//Espero conexión de cpu.
-		int socketCPU = aceptarConexion(socket,logger);//Hace falta hacer listen() otra vez, como en la función de abajo?
+		int socketCPU = aceptarConexion(socket, logger);//Hace falta hacer listen() otra vez, como en la función de abajo?
 		//Si conexión es correcta, entonces:
 		cantCpu++;
 
 		//escucharYCrearSocketCliente(socket, 40, socketCPU, addrInfo);
-		//recv(socketCPU, (void*) saludo, 30, 0);
-		/*if (strncmp(saludoCpu, "CPU", 3))*/
+		recv(socketCPU, (void*) saludoCpu, 30, 0);
+		if (!strncmp(saludoCpu, "CPU", 3)) {
 
-		t_length *tamC;
-		saludo = tamC->menu;//TODO ver bien lo del saludo!!!
-		int recibirMenu (socketCPU,(void*)tamC, logger);
-		if (*saludo==CPU){
+//		t_length *tamC;
+//		saludo = tamC->menu;//TODO ver bien lo del saludo!!!
+			//int recibirMenu (socketCPU,(void*)tamC, logger);
+			//if (*saludo==CPU){
 			//Creo hilo de atención a CPU.
-			if(pthread_create(&hiloCpu, NULL, (void *) atencionCpu, (void*) socketCPU)){
-				log_error(logger,"El hilo de CPU no se creó correctamente.");
-			} else{
+			if (pthread_create(&hiloCpu, NULL, (void *) atencionCpu,
+					(void*) socketCPU)) {
+				log_error(logger, "El hilo de CPU no se creó correctamente.");
+			} else {
 				log_info(logger, "El hilo de CPU se creó correctamente.");
 			}
 
 		} else {
 			close(socketCPU);
 		}
-	}//Cierra while
-}//Cierra atencionInterna
+	}			//Cierra while
+}			//Cierra atencionInterna
 
 void atencionKernel(int* socketKernel) {
 
@@ -95,9 +101,10 @@ void atencionKernel(int* socketKernel) {
 	//int pid;
 	int base, offset, tamano;
 
-	char *header=NULL, *mensaje=NULL;
-	printf( "Se conectó el Kernel y se creó un hilo que atiende su ejecución :D");
-	int *razon=malloc(sizeof(int)), *tamanoMensaje=malloc(4);
+	char *header = NULL, *mensaje = NULL;
+	printf(
+			"Se conectó el Kernel y se creó un hilo que atiende su ejecución :D");
+	int *razon = malloc(sizeof(int)), *tamanoMensaje = malloc(4);
 	recv(*socketKernel, (void*) header, 16, MSG_WAITALL);
 	desempaquetar2(header, razon, tamanoMensaje, 0);
 
@@ -115,7 +122,7 @@ void atencionKernel(int* socketKernel) {
 	case SOLICITAR_A_UMV:
 
 		desempaquetar2(mensaje, &base, &offset, &tamano, 0);
-		solicitarBytes( base, offset, tamano);
+		solicitarBytes(base, offset, tamano);
 		break;
 	}
 

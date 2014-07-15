@@ -108,3 +108,175 @@
 [INFO] 23:32:11:773 UMV/(1748:1748): Comienza la ejecución de la UMV.
 [INFO] 23:32:11:773 UMV/(1748:1748): El hilo de consola se creó correctamente
 [INFO] 23:32:24:349 UMV/(1748:1749): Se cerró la consola
+[INFO] 09:36:40:990 UMV/(2565:2565): Comienza la ejecución de la UMV.
+[INFO] 09:36:40:991 UMV/(2565:2565): El hilo de consola se creó correctamente
+[INFO] 09:37:00:643 UMV/(2567:2567): Comienza la ejecución de la UMV.
+[INFO] 09:37:00:645 UMV/(2567:2567): El hilo de consola se creó correctamente
+[INFO] 09:37:33:220 UMV/(2567:2568): se concretó la operación1
+[INFO] 09:38:12:794 UMV/(2571:2571): Comienza la ejecución de la UMV.
+[INFO] 09:38:12:795 UMV/(2571:2571): El hilo de consola se creó correctamente
+[INFO] 09:41:27:950 UMV/(2807:2807): Comienza la ejecución de la UMV.
+[INFO] 09:41:27:951 UMV/(2807:2807): El hilo de consola se creó correctamente
+[INFO] 09:42:45:304 UMV/(2807:2808): Se cerró la consola
+[INFO] 09:42:53:170 UMV/(2859:2859): Comienza la ejecución de la UMV.
+[INFO] 09:42:53:172 UMV/(2859:2859): El hilo de consola se creó correctamente
+[INFO] 09:42:53:173 UMV/(2859:2859): El hilo de atención interna se creó correctamente
+[INFO] 09:45:37:3 UMV/(2889:2889): Comienza la ejecución de la UMV.
+[INFO] 09:45:38:5 UMV/(2889:2889): El hilo de consola se creó correctamente
+[INFO] 09:45:38:5 UMV/(2889:2889): El hilo de atención interna se creó correctamente
+[INFO] 09:49:00:152 UMV/(3164:3164): Comienza la ejecución de la UMV.
+[INFO] 09:49:00:153 UMV/(3164:3164): El hilo de consola se creó correctamente
+[INFO] 09:49:00:153 UMV/(3164:3164): El hilo de atención interna se creó correctamente
+[INFO] 09:49:14:56 UMV/(3164:3166): El hilo del Kernel se creó correctamente.
+[INFO] 09:50:38:293 UMV/(3255:3255): Comienza la ejecución de la UMV.
+[INFO] 09:50:38:297 UMV/(3255:3255): El hilo de consola se creó correctamente
+[INFO] 09:50:38:300 UMV/(3255:3255): El hilo de atención interna se creó correctamente
+[INFO] 09:51:45:422 UMV/(3255:3257): El hilo de CPU se creó correctamente.
+[INFO] 09:54:57:322 UMV/(3491:3491): Comienza la ejecución de la UMV.
+[INFO] 09:54:57:325 UMV/(3491:3491): El hilo de consola se creó correctamente
+[INFO] 09:54:57:325 UMV/(3491:3491): El hilo de atención interna se creó correctamente
+[INFO] 09:57:09:384 UMV/(3550:3550): Comienza la ejecución de la UMV.
+[INFO] 09:57:09:385 UMV/(3550:3550): El hilo de consola se creó correctamente
+[INFO] 09:57:09:385 UMV/(3550:3550): El hilo de atención interna se creó correctamente
+[INFO] 09:57:28:584 UMV/(3550:3552): El hilo del Kernel se creó correctamente.
+[INFO] 09:57:53:239 UMV/(3560:3560): Comienza la ejecución de la UMV.
+[INFO] 09:57:53:240 UMV/(3560:3560): El hilo de consola se creó correctamente
+[INFO] 09:57:53:240 UMV/(3560:3560): El hilo de atención interna se creó correctamente
+[ERROR] 09:57:53:241 UMV/(3560:3562): Error al bindear el socket.
+[ERROR] 09:57:53:241 UMV/(3560:3562): Error al aceptar conexion entrante
+[INFO] 09:58:05:543 UMV/(3566:3566): Comienza la ejecución de la UMV.
+[INFO] 09:58:05:544 UMV/(3566:3566): El hilo de consola se creó correctamente
+[INFO] 09:58:05:545 UMV/(3566:3566): El hilo de atención interna se creó correctamente
+[ERROR] 09:58:05:546 UMV/(3566:3568): Error al bindear el socket.
+[ERROR] 09:58:05:546 UMV/(3566:3568): Error al aceptar conexion entrante
+[INFO] 09:58:37:759 UMV/(3575:3575): Comienza la ejecución de la UMV.
+[INFO] 09:58:37:760 UMV/(3575:3575): El hilo de consola se creó correctamente
+[INFO] 09:58:37:761 UMV/(3575:3575): El hilo de atención interna se creó correctamente
+[INFO] 10:00:54:493 UMV/(3587:3587): Comienza la ejecución de la UMV.
+[INFO] 10:00:54:536 UMV/(3587:3587): El hilo de consola se creó correctamente
+[INFO] 10:00:54:566 UMV/(3587:3587): El hilo de atención interna se creó correctamente
+[INFO] 10:01:31:133 UMV/(3596:3596): Comienza la ejecución de la UMV.
+[INFO] 10:01:31:176 UMV/(3596:3596): El hilo de consola se creó correctamente
+[INFO] 10:01:31:210 UMV/(3596:3596): El hilo de atención interna se creó correctamente
+[INFO] 10:02:51:149 UMV/(3596:3599): Se cerró la consola
+[INFO] 10:08:48:466 UMV/(3894:3894): Comienza la ejecución de la UMV.
+[INFO] 10:08:48:510 UMV/(3894:3894): El hilo de consola se creó correctamente
+[INFO] 10:08:48:511 UMV/(3894:3894): El hilo de atención interna se creó correctamente
+[INFO] 10:08:55:353 UMV/(3894:3895): Se cerró la consola
+[INFO] 10:09:02:63 UMV/(3901:3901): Comienza la ejecución de la UMV.
+[INFO] 10:09:02:66 UMV/(3901:3901): El hilo de consola se creó correctamente
+[INFO] 10:09:02:67 UMV/(3901:3901): El hilo de atención interna se creó correctamente
+[INFO] 10:09:30:144 UMV/(3901:3902): Se cerró la consola
+[INFO] 10:09:34:184 UMV/(3907:3907): Comienza la ejecución de la UMV.
+[INFO] 10:09:34:185 UMV/(3907:3907): El hilo de consola se creó correctamente
+[INFO] 10:09:34:185 UMV/(3907:3907): El hilo de atención interna se creó correctamente
+[INFO] 10:09:49:466 UMV/(3907:3908): Se cerró la consola
+[INFO] 10:09:52:728 UMV/(3914:3914): Comienza la ejecución de la UMV.
+[INFO] 10:09:52:729 UMV/(3914:3914): El hilo de consola se creó correctamente
+[INFO] 10:09:52:729 UMV/(3914:3914): El hilo de atención interna se creó correctamente
+[ERROR] 10:09:52:730 UMV/(3914:3916): Error al bindear el socket.
+[ERROR] 10:09:52:731 UMV/(3914:3916): Error al aceptar conexion entrante
+[INFO] 10:10:09:335 UMV/(3920:3920): Comienza la ejecución de la UMV.
+[INFO] 10:10:09:336 UMV/(3920:3920): El hilo de consola se creó correctamente
+[INFO] 10:10:09:336 UMV/(3920:3920): El hilo de atención interna se creó correctamente
+[INFO] 10:10:30:167 UMV/(3920:3921): se concretó la operación1
+[INFO] 10:15:24:745 UMV/(4014:4014): Comienza la ejecución de la UMV.
+[INFO] 10:15:24:746 UMV/(4014:4014): El hilo de consola se creó correctamente
+[INFO] 10:15:24:746 UMV/(4014:4014): El hilo de atención interna se creó correctamente
+[INFO] 10:15:46:183 UMV/(4014:4015): se concretó la operación1
+[INFO] 10:24:45:32 UMV/(4418:4418): Comienza la ejecución de la UMV.
+[INFO] 10:24:45:34 UMV/(4418:4418): El hilo de consola se creó correctamente
+[INFO] 10:24:45:35 UMV/(4418:4418): El hilo de atención interna se creó correctamente
+[INFO] 10:24:52:632 UMV/(4418:4419): se concretó la operación1
+[INFO] 10:28:16:381 UMV/(4583:4583): Comienza la ejecución de la UMV.
+[INFO] 10:28:16:382 UMV/(4583:4583): El hilo de consola se creó correctamente
+[INFO] 10:28:16:383 UMV/(4583:4583): El hilo de atención interna se creó correctamente
+[INFO] 10:28:24:723 UMV/(4583:4584): se concretó la operación1
+[INFO] 10:31:15:268 UMV/(4653:4653): Comienza la ejecución de la UMV.
+[INFO] 10:31:15:269 UMV/(4653:4653): El hilo de consola se creó correctamente
+[INFO] 10:31:15:270 UMV/(4653:4653): El hilo de atención interna se creó correctamente
+[INFO] 10:31:23:48 UMV/(4653:4654): se concretó la operación1
+[INFO] 10:33:41:278 UMV/(4725:4725): Comienza la ejecución de la UMV.
+[INFO] 10:33:41:279 UMV/(4725:4725): El hilo de consola se creó correctamente
+[INFO] 10:33:41:280 UMV/(4725:4725): El hilo de atención interna se creó correctamente
+[INFO] 10:33:52:52 UMV/(4725:4726): se concretó la operación1
+[INFO] 10:34:25:835 UMV/(4773:4773): Comienza la ejecución de la UMV.
+[INFO] 10:34:25:836 UMV/(4773:4773): El hilo de consola se creó correctamente
+[INFO] 10:34:25:837 UMV/(4773:4773): El hilo de atención interna se creó correctamente
+[INFO] 10:34:33:51 UMV/(4773:4774): se concretó la operación1
+[INFO] 10:35:59:543 UMV/(4839:4839): Comienza la ejecución de la UMV.
+[INFO] 10:35:59:545 UMV/(4839:4839): El hilo de consola se creó correctamente
+[INFO] 10:35:59:546 UMV/(4839:4839): El hilo de atención interna se creó correctamente
+[INFO] 10:37:13:95 UMV/(4964:4964): Comienza la ejecución de la UMV.
+[INFO] 10:37:13:98 UMV/(4964:4964): El hilo de consola se creó correctamente
+[INFO] 10:37:13:98 UMV/(4964:4964): El hilo de atención interna se creó correctamente
+[INFO] 10:37:21:975 UMV/(4964:4965): se concretó la operación1
+[INFO] 10:37:39:367 UMV/(5027:5027): Comienza la ejecución de la UMV.
+[INFO] 10:37:39:368 UMV/(5027:5027): El hilo de consola se creó correctamente
+[INFO] 10:37:39:369 UMV/(5027:5027): El hilo de atención interna se creó correctamente
+[INFO] 10:39:26:354 UMV/(5044:5044): Comienza la ejecución de la UMV.
+[INFO] 10:39:26:358 UMV/(5044:5044): El hilo de consola se creó correctamente
+[INFO] 10:39:26:358 UMV/(5044:5044): El hilo de atención interna se creó correctamente
+[INFO] 10:40:10:307 UMV/(5055:5055): Comienza la ejecución de la UMV.
+[INFO] 10:40:10:309 UMV/(5055:5055): El hilo de consola se creó correctamente
+[INFO] 10:40:10:310 UMV/(5055:5055): El hilo de atención interna se creó correctamente
+[INFO] 10:43:51:215 UMV/(5153:5153): Comienza la ejecución de la UMV.
+[INFO] 10:43:51:216 UMV/(5153:5153): El hilo de consola se creó correctamente
+[INFO] 10:43:51:217 UMV/(5153:5153): El hilo de atención interna se creó correctamente
+[INFO] 10:44:05:871 UMV/(5153:5154): se concretó la operación1
+[INFO] 10:44:05:871 UMV/(5153:5154): se concretó la operación2
+[INFO] 10:45:13:275 UMV/(5201:5201): Comienza la ejecución de la UMV.
+[INFO] 10:45:13:277 UMV/(5201:5201): El hilo de consola se creó correctamente
+[INFO] 10:45:13:278 UMV/(5201:5201): El hilo de atención interna se creó correctamente
+[INFO] 10:45:26:924 UMV/(5201:5202): se concretó la operación1
+[INFO] 10:45:26:924 UMV/(5201:5202): se concretó la operación2
+[INFO] 10:48:48:135 UMV/(5325:5325): Comienza la ejecución de la UMV.
+[INFO] 10:48:48:137 UMV/(5325:5325): El hilo de consola se creó correctamente
+[INFO] 10:48:48:138 UMV/(5325:5325): El hilo de atención interna se creó correctamente
+[INFO] 10:49:03:655 UMV/(5331:5331): Comienza la ejecución de la UMV.
+[INFO] 10:49:03:656 UMV/(5331:5331): El hilo de consola se creó correctamente
+[INFO] 10:49:03:656 UMV/(5331:5331): El hilo de atención interna se creó correctamente
+[INFO] 10:49:15:896 UMV/(5331:5332): se concretó la operación1
+[INFO] 10:49:15:896 UMV/(5331:5332): se concretó la operación2
+[INFO] 10:52:11:403 UMV/(5410:5410): Comienza la ejecución de la UMV.
+[INFO] 10:52:11:404 UMV/(5410:5410): El hilo de consola se creó correctamente
+[INFO] 10:52:11:405 UMV/(5410:5410): El hilo de atención interna se creó correctamente
+[INFO] 10:52:27:11 UMV/(5410:5411): se concretó la operación1
+[INFO] 10:52:27:11 UMV/(5410:5411): se concretó la operación2
+[INFO] 10:53:34:330 UMV/(5419:5419): Comienza la ejecución de la UMV.
+[INFO] 10:53:34:331 UMV/(5419:5419): El hilo de consola se creó correctamente
+[INFO] 10:53:34:331 UMV/(5419:5419): El hilo de atención interna se creó correctamente
+[INFO] 11:08:30:623 UMV/(5450:5450): Comienza la ejecución de la UMV.
+[INFO] 11:08:30:625 UMV/(5450:5450): El hilo de consola se creó correctamente
+[INFO] 11:08:30:626 UMV/(5450:5450): El hilo de atención interna se creó correctamente
+[INFO] 11:09:03:501 UMV/(5450:5451): Se cerró la consola
+[INFO] 11:09:07:467 UMV/(5462:5462): Comienza la ejecución de la UMV.
+[INFO] 11:09:07:469 UMV/(5462:5462): El hilo de consola se creó correctamente
+[INFO] 11:09:07:469 UMV/(5462:5462): El hilo de atención interna se creó correctamente
+[INFO] 11:09:19:533 UMV/(5462:5464): El hilo del Kernel se creó correctamente.
+[INFO] 11:09:34:914 UMV/(5471:5471): Comienza la ejecución de la UMV.
+[INFO] 11:09:34:916 UMV/(5471:5471): El hilo de consola se creó correctamente
+[INFO] 11:09:34:917 UMV/(5471:5471): El hilo de atención interna se creó correctamente
+[ERROR] 11:09:34:918 UMV/(5471:5473): Error al bindear el socket.
+[ERROR] 11:09:34:919 UMV/(5471:5473): Error al aceptar conexion entrante
+[INFO] 11:10:08:123 UMV/(5481:5481): Comienza la ejecución de la UMV.
+[INFO] 11:10:08:125 UMV/(5481:5481): El hilo de consola se creó correctamente
+[INFO] 11:10:08:125 UMV/(5481:5481): El hilo de atención interna se creó correctamente
+[INFO] 11:10:23:332 UMV/(5481:5483): El hilo del Kernel se creó correctamente.
+[INFO] 11:10:39:260 UMV/(5493:5493): Comienza la ejecución de la UMV.
+[INFO] 11:10:39:261 UMV/(5493:5493): El hilo de consola se creó correctamente
+[INFO] 11:10:39:261 UMV/(5493:5493): El hilo de atención interna se creó correctamente
+[INFO] 11:11:05:181 UMV/(5500:5500): Comienza la ejecución de la UMV.
+[INFO] 11:11:05:182 UMV/(5500:5500): El hilo de consola se creó correctamente
+[INFO] 11:11:05:183 UMV/(5500:5500): El hilo de atención interna se creó correctamente
+[ERROR] 11:11:05:184 UMV/(5500:5502): Error al bindear el socket.
+[ERROR] 11:11:05:185 UMV/(5500:5502): Error al aceptar conexion entrante
+[INFO] 11:11:51:732 UMV/(5565:5565): Comienza la ejecución de la UMV.
+[INFO] 11:11:51:734 UMV/(5565:5565): El hilo de consola se creó correctamente
+[INFO] 11:11:51:735 UMV/(5565:5565): El hilo de atención interna se creó correctamente
+[INFO] 11:12:22:364 UMV/(5573:5573): Comienza la ejecución de la UMV.
+[INFO] 11:12:22:366 UMV/(5573:5573): El hilo de consola se creó correctamente
+[INFO] 11:12:22:366 UMV/(5573:5573): El hilo de atención interna se creó correctamente
+[INFO] 11:17:26:890 UMV/(5609:5609): Comienza la ejecución de la UMV.
+[INFO] 11:17:26:894 UMV/(5609:5609): El hilo de consola se creó correctamente
+[INFO] 11:17:26:895 UMV/(5609:5609): El hilo de atención interna se creó correctamente

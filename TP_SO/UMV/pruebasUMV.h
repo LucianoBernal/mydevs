@@ -12,15 +12,15 @@
 #include "umv.h"
 
 
-extern int cantProcesosActivos;
-extern t_list *listaProcesos; //dinamico>estatico
-//t_tablaProceso vectorProcesos[10];
-extern void *baseUMV;
-extern int tamanoUMV;
-extern int flag_compactado;
-extern int flag; //Esta ni se para que esta.
-extern int k; //Esta esta solo para mostrar unos mensajes.
-extern bool algoritmo; //0 significa FF, lo ponemos por defecto porque es el mas lindo*
+//extern int cantProcesosActivos;
+//extern t_list *listaProcesos; //dinamico>estatico
+////t_tablaProceso vectorProcesos[10];
+//extern void *baseUMV;
+//extern int tamanoUMV;
+//extern int flag_compactado;
+//extern int flag; //Esta ni se para que esta.
+//extern int k; //Esta esta solo para mostrar unos mensajes.
+//extern bool algoritmo; //0 significa FF, lo ponemos por defecto porque es el mas lindo*
 pthread_mutex_t m_Segmentos;
 
 typedef struct {

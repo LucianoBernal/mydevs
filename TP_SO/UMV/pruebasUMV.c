@@ -12,9 +12,9 @@
 
 
 int cantProcesosActivos = 0;
-t_list *listaProcesos; //dinamico>estatico
-void *baseUMV;
-int tamanoUMV;
+extern t_list *listaProcesos; //dinamico>estatico
+extern void *baseUMV;
+extern int tamanoUMV;
 int flag_compactado = 0;
 int flag = 1; //Esta ni se para que esta.
 int k = 0; //Esta esta solo para mostrar unos mensajes.
@@ -392,6 +392,7 @@ void *obtenerDirFisica(int base, int offset, int pid) {
 
 int verificarEspacio(int pid, int base, int offset, int tamano) {
 	if (tamano - 1 < (int) (obtenerPtrASegmento(base, pid)->tamano) - offset) {
+		printf("%d < %d",tamano-1, (obtenerPtrASegmento(base, pid)->tamano) - offset);
 		return 1;
 	} else {
 		if ((int) (obtenerPtrASegmento(base, pid)->tamano) - offset < 0) {
@@ -404,9 +405,20 @@ int verificarEspacio(int pid, int base, int offset, int tamano) {
 }
 
 void enviarUnosBytes(int base, int offset, int tamano, void *mensaje) {
+	printf("inocente printf\n");
 	int pid = procesoActivo();
+	printf("el proceso activo es %d\n", pid);
 	if (verificarEspacio(pid, base, offset, tamano))
+		printf("verifique espacio\n");
 		memcpy(obtenerDirFisica(base, offset, pid), mensaje, tamano);
+}
+
+void enviarUnosBytesPConsola(int base, int offset, int tamano, void *mensaje){
+	agregarProceso(1000, 'c');
+	cambiarProcesoActivo(1000);
+	int basePosta = crearSegmento(100);
+	enviarUnosBytes(basePosta, offset, tamano,
+					mensaje);
 }
 
 int procesoActivo() {
