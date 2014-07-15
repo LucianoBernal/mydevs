@@ -10,7 +10,7 @@
 
 void gestionarProgramaNuevo(const char*, int );
 void* deNewAReady(void*);
-void* plp_main(void*);
+void* plp_main(int*);
 
 
 #endif /* PLP_H_ */

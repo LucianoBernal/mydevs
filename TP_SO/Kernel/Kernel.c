@@ -30,50 +30,42 @@ int main(int argc, char** argv) {
 
 	//Cargo parámetros del config en variables de Kernel.
 	cargarConfig(config);
-	log_info(logKernel,"hola");
 	variables_globales = dictionary_create();
 	config_destroy(config);
 	colaReady = queue_create();
 	colaExit = queue_create();
-//	sem_init(colaExitMutex, 0, 1);
-//	sem_init(colaExitVacio, 0, 0);
-//	sem_init(mutexVG, 0, 1);
-//	sem_init(grado_Multiprogramacion, 0, multiprogramacion);
-//	sem_init(colaReadyMutex, 0, 1);
-//	sem_init(vacioReady, 0, 0);
+	sem_init(&colaExitMutex, 0, 1);
+	sem_init(&colaExitVacio, 0, 0);
+	sem_init(&mutexVG, 0, 1);
+	sem_init(&grado_Multiprogramacion, 0, multiprogramacion);
+	sem_init(&colaReadyMutex, 0, 1);
+	sem_init(&vacioReady, 0, 0);
 	int socketUMV = conectarCliente(ip_UMV, puerto_UMV, logKernel);
-	/*struct sockaddr_in address;
-	 int sd_UMV;
-	 if ((sd_UMV = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
-	 perror("socket failed");
-	 exit(EXIT_FAILURE);
-	 }
-	 address.sin_family = AF_INET;
-	 address.sin_addr.s_addr = INADDR_ANY;
-	 address.sin_port = htons(puertoUMV);
-	 */
+	if(send(socketUMV,"Kernel",7,0)==-1){
+		log_error(logKernel,"Fallo el Handshake con la UMV");
+	}
 
-//	pthread_t plp, pcp;
-//	int iretPLP, iretPCP;
-//	int* parametrosPCP = NULL;
-//	iretPCP = pthread_create(&pcp, NULL, pcp_main, (void*) parametrosPCP);
-//	if (iretPCP) {
-//		fprintf(stderr, "Error - pthread_create() return code: %d\n", iretPCP);
-//		exit(EXIT_FAILURE);
-//	}
-//	printf("Hilo pcp exitoso");
-//	int* parametroPLP = NULL;
-//	iretPLP = pthread_create(&plp, NULL, plp_main, (void*) parametroPLP);
-//	if (iretPLP) {
-//		fprintf(stderr, "Error - pthread_create() return code: %d\n", iretPLP);
-//		exit(EXIT_FAILURE);
-//	}
-//	printf("Hilo plp exitoso");
 
-	send(socketUMV,"Kernel",7,0);
+	pthread_t plp, pcp;
+	int iretPLP, iretPCP;
+	int* parametrosPCP = NULL;
+	iretPCP = pthread_create(&pcp, NULL, pcp_main, (void*) parametrosPCP);
+	if (iretPCP) {
+		fprintf(stderr, "Error - pthread_create() return code: %d\n", iretPCP);
+		exit(EXIT_FAILURE);
+	}
+	printf("Hilo pcp exitoso");
+	iretPLP = pthread_create(&plp, NULL, plp_main, (void*) &socketUMV);
+	if (iretPLP) {
+		fprintf(stderr, "Error - pthread_create() return code: %d\n", iretPLP);
+		exit(EXIT_FAILURE);
+	}
+	printf("Hilo plp exitoso");
 
-//	pthread_join(pcp, NULL );
-//	pthread_join(plp, NULL );
+
+
+	pthread_join(pcp, NULL );
+	pthread_join(plp, NULL );
 	return EXIT_FAILURE;
 }
 

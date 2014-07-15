@@ -7,3 +7,7 @@
 [INFO] 14:41:06:414 Kernel/(5864:5864): hola
 [INFO] 14:44:45:655 Kernel/(5997:5997): Comienza la ejecución del Kernel.
 [INFO] 14:44:46:754 Kernel/(5997:5997): hola
+[INFO] 15:20:56:218 Kernel/(6881:6881): Comienza la ejecución del Kernel.
+[INFO] 15:20:58:498 Kernel/(6881:6881): hola
+[ERROR] 15:21:01:625 Kernel/(6881:6881): Error al conectar socket
+[INFO] 15:22:54:311 Kernel/(7006:7006): Comienza la ejecución del Kernel.
