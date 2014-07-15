@@ -45,7 +45,6 @@ sem_t* mutexVG;
 sem_t* colaExitVacio;
 sem_t* colaExitMutex;
 t_queue* colaExit;
-t_dictionary* variables_globales;
 static int cantidadDeDispositivos;
 static int cantidadDeSemaforos;
 static int valor_semaforos[];

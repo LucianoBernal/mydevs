@@ -6,8 +6,7 @@
  */
 
 #include "Kernel.h"
-// valor_semaforos[];
-// semaforos[];
+#include <string.h>
 
 typedef struct {
 	int valor;
@@ -55,11 +54,14 @@ void wait(char* idSem, int idCpu) {
 }
 
 int imprimir(){
-
+//??
 }
 
 int imprimirTexto(char* texto, int idCpu) {
-
+	int programID = programIdDeCpu(idCpu);
+	int sd = obtener_sd_Programa(programID);
+	notificar_Programa(sd,texto);
+	return strlen(texto);
 }
 
 void armarDiccionarioDeSemaforos() {
