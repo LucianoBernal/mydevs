@@ -52,9 +52,10 @@ int cantidadDispositivos();
 void mostrarColaDePCBsBloqueados(t_queue*);
 void mostrarColaDePCBsBloqueadosSem(t_queue*);
 void imprimirNodosPCBsBloqueados(t_estructuraProcesoBloqueado*);
-void imprimirNodosPCBsBloqueados(int*);
+void imprimirNodosPCBsBloqueadosSem(int*);
 void mostrarColaDePCBs2(t_queue*);
 void imprimirNodosPCBs2(t_PCB*);
+int buscarIDPrograma(int);
 
 
 #endif /* PCPINTERFACE_H_ */

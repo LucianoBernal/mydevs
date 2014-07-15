@@ -267,8 +267,8 @@ void seDesconectoCPU(int idCPU) { //TODO
 		list_remove_by_condition(CPUs, (void*) tieneID);
 	} else {
 		int idPrograma = buscarIDPrograma(idCPU);
-		int sd = obtener_sd_programa(idPrograma);
-		notificar_Programa(sd,"La CPU se desconectó");
+//		int sd = obtener_sd_programa(idPrograma);
+//		notificar_Programa(sd,"La CPU se desconectó");
 		//queue_push(colaExit, paquete_CPU.pcb); lo comento para que no me tire el error de que no encuenra pquetecpu
 		list_remove_by_condition(CPUs, (void*) tieneID);
 	}
@@ -327,8 +327,8 @@ void mostrarColaDeProcesosBloqueados() {
 	while (b<cantidadDeSemaforos){
 		printf("Procesos bloqueados para el semaforo %s es el siguiente: \n",
 						semaforos[b]);
-		t_estructuraSemaforo* semaforo = dictionary_get(semaforos,semaforos[b]);
-		mostrarColaDePCBsBloqueadosSem(semaforo->procesosBloqueados);
+//		t_estructuraSemaforo* semaforo = dictionary_get(semaforos,semaforos[b]);
+//		mostrarColaDePCBsBloqueadosSem(semaforo->procesosBloqueados);
 		b++;
 
 	}
