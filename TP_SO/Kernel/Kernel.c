@@ -182,8 +182,8 @@ void cargarConfig(t_config *config) {
 //	int i=0;
 //	cantidadDeSemaforos = 0;
 //		while (semaforos_aux[i] != NULL ) {
-//				semaforos[i] = semaforos_aux[i];
-//				valor_semaforos[i] = atoi(semaforos_aux[i]);
+//				list_add(semaforos,semaforos_aux[i]);
+//				lit_add(valor_semaforos, &(atoi(semaforos_aux[i])));
 //				i++;
 //				cantidadDeSemaforos ++;
 //				}
