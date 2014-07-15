@@ -9,7 +9,7 @@
 #define PLP_H_
 
 #include "Kernel.h"
-
+#include "multiplexorScripts_interfaz.h"
 
 
 sem_t  colaNuevosVacio;

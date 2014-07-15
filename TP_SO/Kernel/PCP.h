@@ -2,6 +2,7 @@
 #define PCP__H_
 
 #include "Kernel.h"
+#include "multiplexorCPUs_interfaz.h"
 
 typedef struct {
 	t_PCB* pcb;

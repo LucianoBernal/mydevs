@@ -1,5 +1,5 @@
 #include "PCP.h"
-#include "Kernel.h"
+#include "PCPinterface.h"
 
 void* pcp_main(void* sinParametro) {
 	colaExec = queue_create();
@@ -48,8 +48,8 @@ void* pcp_main(void* sinParametro) {
 }
 
 void crearHilosPrincipales() {
-	//retMultiplexorCPUs = pthread_create(&multiplexorCPUs, NULL, multiplexorCPUs,
-	//		(void*) sinParametros);
+	retMultiplexorCPUs = pthread_create(&multiplexorCPUs, NULL, atencionCPUs,
+			(void*) sinParametros);
 	if (retMultiplexorCPUs) {
 		fprintf(stderr, "Error - pthread_create() return code: %d\n",
 				retMultiplexorCPUs);

@@ -43,7 +43,7 @@ void mostrarListaNew();
 void imprimirNodosPCBs(t_PCB*);
 void mostrarColaDePCBs(t_queue*);
 void notificar_Programa(int,char*);
-void solicitar_Destruccion_Segmentos(t_PCB*);
+void solicitar_Destruccion_Segmentos(int);
 void enviar_Mensaje_Final(int);
 void cerrar_conexion(int);
 void* manejoColaExit(void* );

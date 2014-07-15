@@ -46,7 +46,7 @@ void* plp_main(int* socketUMV) {
 	int iretMultiScripts, iretColaNew, iretColaExit;
 	int* sinParametros = NULL;
 	iretMultiScripts = pthread_create(&thread_multiplexorScripts, NULL,
-			multiplexorScripts, (void*) sinParametros);
+			atencionScripts, (void*) sinParametros);
 	if (iretMultiScripts) {
 		fprintf(stderr, "Error - pthread_create() return code: %d\n",
 				iretMultiScripts);
@@ -313,12 +313,16 @@ while (1) {
 	sem_wait(&colaExitMutex);
 	t_PCB* pcb = queue_pop(colaExit);
 	sem_post(&colaExitMutex);
-	solicitar_Destruccion_Segmentos(pcb);
+	solicitar_Destruccion_Segmentos(pcb->program_id);
 	enviar_Mensaje_Final(pcb->program_id);
 	cerrar_conexion(pcb->program_id);
 	liberar_numero(pcb->program_id);
 	free(pcb);
 }
+}
+
+void solicitar_Destruccion_Segmentos(int pid){
+
 }
 
 
