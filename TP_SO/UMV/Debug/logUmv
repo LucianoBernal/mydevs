@@ -113,3 +113,28 @@
 [INFO] 17:56:51:762 UMV/(2642:2642): El hilo de atención interna se creó correctamente
 [ERROR] 17:56:51:764 UMV/(2642:2644): Hubo un error al obtener la informacion del servidor
 [ERROR] 17:56:51:765 UMV/(2642:2644): Error al aceptar la conexion
+[INFO] 18:16:16:180 UMV/(3119:3119): Comienza la ejecución de la UMV.
+[INFO] 18:16:16:185 UMV/(3119:3119): El hilo de consola se creó correctamente
+[INFO] 18:16:16:186 UMV/(3119:3119): El hilo de atención interna se creó correctamente
+[ERROR] 18:16:16:186 UMV/(3119:3121): Hubo un error al bindear el socket
+[ERROR] 18:16:16:187 UMV/(3119:3121): Error al aceptar la conexion
+[INFO] 18:19:04:320 UMV/(3223:3223): Comienza la ejecución de la UMV.
+[INFO] 18:19:04:320 UMV/(3223:3223): El hilo de consola se creó correctamente
+[INFO] 18:19:04:320 UMV/(3223:3223): El hilo de atención interna se creó correctamente
+[ERROR] 18:19:04:326 UMV/(3223:3225): Hubo un error al bindear el socket
+[ERROR] 18:19:04:326 UMV/(3223:3225): Error al aceptar la conexion
+[INFO] 18:19:25:462 UMV/(3245:3245): Comienza la ejecución de la UMV.
+[INFO] 18:19:25:463 UMV/(3245:3245): El hilo de consola se creó correctamente
+[INFO] 18:19:25:463 UMV/(3245:3245): El hilo de atención interna se creó correctamente
+[INFO] 18:26:17:716 UMV/(3580:3580): Comienza la ejecución de la UMV.
+[INFO] 18:26:17:720 UMV/(3580:3580): El hilo de consola se creó correctamente
+[INFO] 18:26:17:721 UMV/(3580:3580): El hilo de atención interna se creó correctamente
+[INFO] 18:28:38:323 UMV/(3661:3661): Comienza la ejecución de la UMV.
+[INFO] 18:28:38:326 UMV/(3661:3661): El hilo de consola se creó correctamente
+[INFO] 18:28:38:326 UMV/(3661:3661): El hilo de atención interna se creó correctamente
+[INFO] 18:35:41:411 UMV/(3892:3892): Comienza la ejecución de la UMV.
+[INFO] 18:35:41:413 UMV/(3892:3892): El hilo de consola se creó correctamente
+[INFO] 18:35:41:414 UMV/(3892:3892): El hilo de atención interna se creó correctamente
+[INFO] 18:38:20:490 UMV/(3958:3958): Comienza la ejecución de la UMV.
+[INFO] 18:38:20:491 UMV/(3958:3958): El hilo de consola se creó correctamente
+[INFO] 18:38:20:491 UMV/(3958:3958): El hilo de atención interna se creó correctamente

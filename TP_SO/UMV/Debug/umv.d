@@ -6,7 +6,7 @@ umv.d: ../umv.c ../umv.h \
  /home/utnso/tp-2014-1c-skynet/Bibliotecas_Comunes/commons/log.h \
  /home/utnso/tp-2014-1c-skynet/Bibliotecas_Comunes/commons/collections/list.h \
  ../consola_interfaz.h ../atencioninterna_interfaz.h \
- /home/utnso/tp-2014-1c-skynet/Bibliotecas_Comunes/sockets/bibliotecaSockets.h
+ /home/utnso/tp-2014-1c-skynet/Bibliotecas_Comunes/biblioteca_comun/bibliotecaSockets.h
 
 ../umv.h:
 
@@ -26,4 +26,4 @@ umv.d: ../umv.c ../umv.h \
 
 ../atencioninterna_interfaz.h:
 
-/home/utnso/tp-2014-1c-skynet/Bibliotecas_Comunes/sockets/bibliotecaSockets.h:
+/home/utnso/tp-2014-1c-skynet/Bibliotecas_Comunes/biblioteca_comun/bibliotecaSockets.h:

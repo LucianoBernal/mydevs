@@ -6,7 +6,7 @@
  */
 #include "atencionInterna.h"
 #include "atencioninterna_interfaz.h"
-#include <sockets/Serializacion.h>
+#include <biblioteca_comun/Serializacion.h>
 
 typedef enum {
 	Kernel = 1, CPU = 2
