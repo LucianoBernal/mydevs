@@ -69,8 +69,9 @@ void armarDiccionarioDeSemaforos() {
 	while (i < cantidadDeSemaforos) {
 		t_estructuraSemaforo* semaforo = malloc(sizeof(t_estructuraSemaforo));
 		semaforo->procesosBloqueados = queue_create();
-		semaforo->valor = valor_semaforos[i];
-		dictionary_put(semaforos, semaforos[i], semaforo);
+		int* valor = list_get(semaforos,i);
+		semaforo->valor = *valor;
+		dictionary_put(semaforos, valor, semaforo);
 		i++;
 	}
 }
