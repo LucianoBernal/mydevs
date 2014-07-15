@@ -1,1 +1,0 @@
-comenzandoConSelect.d: ../comenzandoConSelect.c

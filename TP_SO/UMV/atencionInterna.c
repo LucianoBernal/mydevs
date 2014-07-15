@@ -50,7 +50,7 @@ void* atencionInterna(void* sinParametro) {
 			//if(*saludo == Kernel){
 			//Creo hilo de atención al kernel.
 			if (pthread_create(&hiloKernel, NULL, (void *) atencionKernel,
-					(void*) socketKernel)) {
+					(void*) &socketKernel)) {
 				log_error(logger,
 						"El hilo del Kernel no se creó correctamente.");
 			} else {
@@ -61,7 +61,7 @@ void* atencionInterna(void* sinParametro) {
 			close(socketKernel);
 		}
 	}
-
+	log_info(logger, "Sali del primer while 1");
 	while (1) {
 		//Espero conexión de cpu.
 		int socketCPU = aceptarConexion(socket, logger);//Hace falta hacer listen() otra vez, como en la función de abajo?
@@ -78,7 +78,7 @@ void* atencionInterna(void* sinParametro) {
 			//if (*saludo==CPU){
 			//Creo hilo de atención a CPU.
 			if (pthread_create(&hiloCpu, NULL, (void *) atencionCpu,
-					(void*) socketCPU)) {
+					(void*) &socketCPU)) {
 				log_error(logger, "El hilo de CPU no se creó correctamente.");
 			} else {
 				log_info(logger, "El hilo de CPU se creó correctamente.");
@@ -101,12 +101,11 @@ void atencionKernel(int* socketKernel) {
 	//int pid;
 	int base, offset, tamano;
 
-	char *header = NULL, *mensaje = NULL;
-	printf(
-			"Se conectó el Kernel y se creó un hilo que atiende su ejecución :D");
+	char *header = malloc(16), *mensaje = malloc(30);
 	int *razon = malloc(sizeof(int)), *tamanoMensaje = malloc(4);
-	recv(*socketKernel, (void*) header, 16, MSG_WAITALL);
-	desempaquetar2(header, razon, tamanoMensaje, 0);
+	recv(*socketKernel, (void*) header, 16, 0);
+	//desempaquetar2(header, razon, tamanoMensaje, 0);
+	log_info(logger, "entró a atencioKernel.");
 
 	recv(*socketKernel, (void*) mensaje, *tamanoMensaje, MSG_WAITALL);
 
@@ -128,6 +127,7 @@ void atencionKernel(int* socketKernel) {
 
 }
 void atencionCpu() {
-	printf("Se conectó una CPU y se creó un hilo que la atiende :D :D");
+	log_info(logger, "entro a atencionCpu");
+	//printf("Se conectó una CPU y se creó un hilo que la atiende :D :D");
 }
 

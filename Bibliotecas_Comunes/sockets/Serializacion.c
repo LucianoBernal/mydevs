@@ -22,6 +22,24 @@ int mainNO(){
 	return 0;
 }
 //	Ahora reciben la cantidad de parametros que se les antoje (?
+t_paquete *serializarPCB(t_PCB *pcb) {
+	return serializar2(crear_nodoVar(&pcb->cursor_Stack, 4),
+			crear_nodoVar(&pcb->indice_de_Codigo, 4),
+			crear_nodoVar(&pcb->indice_de_Etiquetas, 4),
+			crear_nodoVar(&pcb->program_Counter, 4),
+			crear_nodoVar(&pcb->program_id, 4),
+			crear_nodoVar(&pcb->segmento_Codigo, 4),
+			crear_nodoVar(&pcb->segmento_Stack, 4),
+			crear_nodoVar(&pcb->tamanio_Contexto_Actual, 4),
+			crear_nodoVar(&pcb->tamanio_Indice_de_Etiquetas, 4), 0);
+}
+
+void desempaquetarPCB(t_PCB* pcb, char* pcbserializado) {
+	desempaquetar2(pcbserializado, &pcb->cursor_Stack, &pcb->indice_de_Codigo,
+			&pcb->indice_de_Etiquetas, &pcb->program_Counter, &pcb->program_id,
+			&pcb->segmento_Codigo, &pcb->segmento_Stack,
+			&pcb->tamanio_Contexto_Actual, &pcb->tamanio_Indice_de_Etiquetas, 0);
+}
 
 t_paquete *serializar2(t_tamYDir *uno, ...){
 	va_list(p);

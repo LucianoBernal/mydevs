@@ -14,6 +14,7 @@
 #include <stdarg.h>
 #include <commons/collections/list.h>
 #include <commons/collections/queue.h>
+#include <biblioteca_comun/definiciones.h>
 #include "bibSockets.h"
 
 
