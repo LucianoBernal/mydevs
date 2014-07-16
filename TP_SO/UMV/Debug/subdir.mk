@@ -4,19 +4,22 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../EsqueletoCPU.c \
-../funcionesParser.c \
-../primerIntentoCPU.c 
+../atencionInterna.c \
+../consola.c \
+../pruebasUMV.c \
+../umv.c 
 
 OBJS += \
-./EsqueletoCPU.o \
-./funcionesParser.o \
-./primerIntentoCPU.o 
+./atencionInterna.o \
+./consola.o \
+./pruebasUMV.o \
+./umv.o 
 
 C_DEPS += \
-./EsqueletoCPU.d \
-./funcionesParser.d \
-./primerIntentoCPU.d 
+./atencionInterna.d \
+./consola.d \
+./pruebasUMV.d \
+./umv.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

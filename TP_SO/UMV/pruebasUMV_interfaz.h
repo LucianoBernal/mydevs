@@ -9,7 +9,7 @@
 #define PRUEBASUMV_INTERFAZ_H_
 
 typedef struct {
-	int pidOwner, identificador, inicioLogico, tamano;
+	int pidOwner, inicioLogico, tamano;
 	void* memPpal;
 } t_tablaSegmento;
 

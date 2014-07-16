@@ -10,7 +10,6 @@
 #include "pruebasUMV.h"
 #include "pruebasUMV_interfaz.h"
 
-
 int cantProcesosActivos = 0;
 extern t_list *listaProcesos; //dinamico>estatico
 extern void *baseUMV;
@@ -19,7 +18,7 @@ int flag_compactado = 0;
 int flag = 1; //Esta ni se para que esta.
 int k = 0; //Esta esta solo para mostrar unos mensajes.
 bool algoritmo = 0; //0 significa FF, lo ponemos por defecto porque es el mas lindo*
-static t_tablaSegmento *crear_nodoSegm(int, int, int, int, void *);
+static t_tablaSegmento *crear_nodoSegm(int, int, int, void *);
 static void tsegm_destroy(t_tablaSegmento *);
 pthread_mutex_t mutexCantProcActivos, mutexFlagCompactado, mutexAlgoritmo = PTHREAD_MUTEX_INITIALIZER;
 
@@ -65,11 +64,10 @@ static t_tablaProceso *crear_nodoProc(int pid, int activo, char tipo) {
 	return nuevo;
 }
 
-static t_tablaSegmento *crear_nodoSegm(int pidOwner, int identificador,
+static t_tablaSegmento *crear_nodoSegm(int pidOwner,
 		int inicioLogico, int tamano, void *memPpal) {
 	t_tablaSegmento *nuevo = malloc(sizeof(t_tablaSegmento));
 	nuevo->pidOwner = pidOwner;
-	nuevo->identificador = identificador;
 	nuevo->inicioLogico = inicioLogico;
 	nuevo->tamano = tamano;
 	nuevo->memPpal = memPpal;
@@ -108,11 +106,14 @@ int buscarPid(int pid) {
 }
 
 int crearSegmento(int tamano) {
-	t_tablaSegmento *nuevoSegmento = crear_nodoSegm(procesoActivo(), 073,
-			obtenerInicioLogico(procesoActivo(), tamano), tamano,
+	t_tablaSegmento *nuevoSegmento = crear_nodoSegm(procesoActivo(), obtenerInicioLogico(procesoActivo(), tamano), tamano,
 			obtenerInicioReal(tamano));
 	t_tablaProceso *proceso = list_get(listaProcesos,
 			buscarPid(procesoActivo()));
+	if (nuevoSegmento->memPpal==5){
+		free(nuevoSegmento);
+		return -1;
+	}
 	if (proceso->tabla == NULL )
 		proceso->tabla = list_create();
 	list_add(proceso->tabla, nuevoSegmento);
@@ -181,8 +182,10 @@ int obtenerInicioLogico(int pid, int tamano) {
 		inicioLogico = rand() % SIZE_SEGMENT;
 		error++;
 	}
-	if (error > 20)
+	if (error > 20){
 		printf("Hay un tema con las bases logicas");
+		return -1;
+	}
 	return inicioLogico;
 }
 void compactarMemoria() {
@@ -224,7 +227,7 @@ void *obtenerInicioReal(int tamano) {
 		} else {
 			printf("Memory overload, u win \n");
 			//list_destroy_and_destroy_elements(lista_mascapita, (void*)free);
-			return baseUMV; //Solo pongo esto para que me deje compilar, deberiamos crear un error.
+			return 5; //Solo pongo esto para que me deje compilar, deberiamos crear un error.
 		}
 		pthread_mutex_unlock(&mutexFlagCompactado);
 	} else {
@@ -440,7 +443,7 @@ void cambiarProcesoActivo(int pid) {
 }
 
 char *solicitarBytes(int base, int offset, int tamano) {
-	char *aux = malloc(50);
+	char *aux = malloc(tamano+1);
 	int pid = procesoActivo();
 	if (verificarEspacio(pid, base, offset, tamano)) {
 		memcpy(aux, obtenerDirFisica(base, offset, pid), tamano);
