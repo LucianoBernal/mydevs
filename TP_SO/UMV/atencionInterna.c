@@ -8,9 +8,9 @@
 #include "atencioninterna_interfaz.h"
 #include <biblioteca_comun/Serializacion.h>
 pthread_mutex_t mutexOperacion = PTHREAD_MUTEX_INITIALIZER;
-typedef enum {
-	Kernel = 1, CPU = 2
-} saludos_internos;
+//typedef enum {
+//	Kernel = 1, CPU = 2
+//} saludos_internos;
 
 typedef enum {
 	BASES_LOGICAS,
@@ -33,19 +33,14 @@ typedef enum {
 void* atencionInterna(void* sinParametro) {
 	char* saludoKernel = malloc(7);
 	char* saludoCpu = malloc(4);
-	//int socketKernel;
 
-	//saludos_internos *saludo = malloc(sizeof(saludos_internos));
-	//struct addrInfo* addrInfo;
 	int socket = crearServidor(puertoUMV, logger);
 	int socketKernel = aceptarConexion(socket, logger);
-//	t_length *tamK;
-//	int recibirMenu (socketKernel, (void*)tamK, logger);
 
-	//escucharYCrearSocketCliente(socket, 40, socketKernel, addrInfo);
-	log_debug(logger, "antes del while 1");
 	while (1) {
+
 		recv(socketKernel, (void*) saludoKernel, 30, 0);
+
 		if (!strncmp(saludoKernel, "Kernel", 6)) {
 			send(socketKernel, "UMV",4,0);
 			//Creo hilo de atención al kernel.
@@ -60,16 +55,15 @@ void* atencionInterna(void* sinParametro) {
 		} else {
 			close(socketKernel);
 		}
-	}
-	log_info(logger, "Sali del primer while 1");
+	} //Cierra while de Kernel
+
 	while (1) {
-		//Espero conexión de cpu.
-		int socketCPU = aceptarConexion(socket, logger);//Hace falta hacer listen() otra vez, como en la función de abajo?
-		//Si conexión es correcta, entonces:
+
+		int socketCPU = aceptarConexion(socket, logger);
 		cantCpu++;
 
-		//escucharYCrearSocketCliente(socket, 40, socketCPU, addrInfo);
 		recv(socketCPU, (void*) saludoCpu, 30, 0);
+
 		if (!strncmp(saludoCpu, "CPU", 3)) {
 			send(socketCPU, "UMV", 4, 0);
 			//Creo hilo de atención a CPU.
@@ -83,16 +77,10 @@ void* atencionInterna(void* sinParametro) {
 		} else {
 			close(socketCPU);
 		}
-	}			//Cierra while
+	}			//Cierra while de CPU
 }			//Cierra atencionInterna
 
 void atencionKernel(int* socketKernel) {
-
-//	typedef struct {
-//		char *msj;
-//		int tamano;
-//		char cantVar;
-//	} t_paquete;
 
 	int procesoActivo = 0, parametro[3], basesLogicas[3];
 
@@ -101,7 +89,7 @@ void atencionKernel(int* socketKernel) {
 	recv(*socketKernel, (void*) header, 16, 0);
 	desempaquetar2(header, razon, tamanoMensaje, 0);
 	char *mensaje = malloc(*tamanoMensaje);
-	log_info(logger, "entró a atencioKernel.");
+	log_info(logger, "Entró a atencioKernel.");
 
 	recv(*socketKernel, (void*) mensaje, *tamanoMensaje, MSG_WAITALL);
 
