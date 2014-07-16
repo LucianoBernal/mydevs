@@ -6,10 +6,16 @@
  */
 #include "consola.h"
 #include "consola_interfaz.h"
-
-void* consola(void* sinParametro) {
+void crearProcesoArtificial(){
+	listaProcesos = list_create();
+	agregarProceso(10000, 'c');
+	cambiarProcesoActivo(10000);
+}
+void* consola(void* baseUMV) {
 	const int COMANDO_SIZE = 30;
 	char* comando = malloc(COMANDO_SIZE);
+	informarBaseUMV();
+	crearProcesoArtificial();
 	do {
 		printf("Ingrese comando: \n");
 		scanf("%s",comando);
@@ -22,14 +28,13 @@ void* consola(void* sinParametro) {
 }
 
 void analizarYEjecutar(char *comando) {
-	int basePosta;
+
 	if (!strncmp("operacion", comando, 9)) {
 		t_operacion operacion;
 
 		printf(
 				"¿Qué operación desea ralizar?-para saber como usarlo enviar 'h'- \n");
 		int flag;
-		char* msj;
 		do{
 		flag=0;
 		scanf("%s", &operacion.accion);
@@ -52,40 +57,39 @@ void analizarYEjecutar(char *comando) {
 			printf("\ningrese tamaño: ");
 			scanf("%d", &operacion.tamano);
 
-			msj = malloc(operacion.tamano);
+			char* msj = malloc(operacion.tamano);
 			printf("\n Ingrese bloque de mensaje: \n");
 			scanf("%s", msj);
-			log_info(logger,"se concretó la operación1");
-			basePosta = enviarUnosBytesPConsola(operacion.base, operacion.offset, operacion.tamano,
-					msj);
-			printf("la base posta es: %d\n", basePosta);
-			log_info(logger,"se concretó la operación2");
-
+			enviarUnosBytes(operacion.base, operacion.offset, operacion.tamano, msj);
+			free(msj);
 			break;
 
 		case 's':
-			/*
+
 			printf("\ningrese base: ");
 			scanf("%d", &operacion.base);
-			*/
+
 			printf("\ningrese offset: ");
 			scanf("%d", &operacion.offset);
 
 			printf("\ningrese tamaño: ");
 			scanf("%d", &operacion.tamano);
-
-			msj = malloc(operacion.tamano);
-			msj = solicitarBytes(basePosta, operacion.offset,
+			int i;
+			char *respuesta = solicitarBytes(operacion.base, operacion.offset,
 					operacion.tamano);
-			printf("%s", msj);
-
+			for (i=0;i<operacion.tamano;i++){
+				//para darme cuenta si no imprime o imprime un /0 TODO borrar!!
+				printf("%c", respuesta[i]==0?'0':respuesta[i]);
+			}
+			printf("\n");
+			free(respuesta);
 			break;
 
 		case 'c':
 			printf("\ningrese tamaño: ");
 			scanf("%d", &operacion.tamano);
 
-			crearSegmento(operacion.tamano);
+			printf("La base logica del segmento creado es: %d\n", crearSegmento(operacion.tamano));
 
 			break;
 
@@ -102,7 +106,6 @@ void analizarYEjecutar(char *comando) {
 			flag=1;
 		}			//Termina Switch para ingreso de parámetros de operacion.
 		}while(flag);
-		free(msj);
 	}			//Termina if de operacion.
 
 	else if (!strncmp("retardo", comando, 7)) {

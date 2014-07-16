@@ -39,8 +39,9 @@ int main(int argc, char** argv) {
 
 
 	baseUMV = malloc(tamanoUMV);
+	informarBaseUMV();
 	listaProcesos = list_create();
-	int* sinParametros=NULL;
+	int* sinParametros=baseUMV;
 	//Creo hilo que atiende a la consola.
 	if (pthread_create(&atencion_consola, NULL, (void *) consola, (void*)sinParametros )) {
 		log_info(logger, "Hubo un error en la creación del hilo de consola");

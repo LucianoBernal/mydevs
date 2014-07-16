@@ -28,8 +28,11 @@ static t_limites *crear_nodoLim(void *comienzo, void *final) {
 	nuevo->final = final;
 	return nuevo;
 }
-
-int main0() {
+void informarBaseUMV(){
+	printf("%d\n", tamanoUMV);
+	printf("%x\n", (u_int)baseUMV);
+}
+int main33() {
 	tamanoUMV=1000;
 	crearEstructurasGlobales();
 	agregarProceso(1001, 'c');
@@ -110,8 +113,8 @@ int crearSegmento(int tamano) {
 			obtenerInicioReal(tamano));
 	t_tablaProceso *proceso = list_get(listaProcesos,
 			buscarPid(procesoActivo()));
-	if (nuevoSegmento->memPpal==5){
-		free(nuevoSegmento);
+	if (nuevoSegmento->memPpal==(void*)5){
+		//free(nuevoSegmento);
 		return -1;
 	}
 	if (proceso->tabla == NULL )
@@ -227,7 +230,7 @@ void *obtenerInicioReal(int tamano) {
 		} else {
 			printf("Memory overload, u win \n");
 			//list_destroy_and_destroy_elements(lista_mascapita, (void*)free);
-			return 5; //Solo pongo esto para que me deje compilar, deberiamos crear un error.
+			return (void *)5; //Solo pongo esto para que me deje compilar, deberiamos crear un error.
 		}
 		pthread_mutex_unlock(&mutexFlagCompactado);
 	} else {
@@ -448,7 +451,7 @@ char *solicitarBytes(int base, int offset, int tamano) {
 	int pid = procesoActivo();
 	if (verificarEspacio(pid, base, offset, tamano)) {
 		memcpy(aux, obtenerDirFisica(base, offset, pid), tamano);
-		*(aux + tamano + 1) = 0;
+		//*(aux + tamano) = 0;
 		return aux;
 	}
 	return "";
