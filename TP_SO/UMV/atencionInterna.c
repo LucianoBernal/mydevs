@@ -7,12 +7,13 @@
 #include "atencionInterna.h"
 #include "atencioninterna_interfaz.h"
 #include <biblioteca_comun/Serializacion.h>
-
+pthread_mutex_t mutexOperacion = PTHREAD_MUTEX_INITIALIZER;
 typedef enum {
 	Kernel = 1, CPU = 2
 } saludos_internos;
 
 typedef enum {
+	BASES_LOGICAS,
 	CONFIRMACION,
 	SEGMENTATION_FAULT,
 	MEMORY_OVERLOAD,
@@ -22,8 +23,8 @@ typedef enum {
 	CREAR_SEGMENTOS_PROGRAMA,
 	DESTRUIR_SEGMENTOS,
 	ESCRIBIR_EN_UMV,
-	ESCRIBIR_EN_UMV_OFFSET_CERO,
 	SOLICITAR_A_UMV,
+	RESPUESTA_A_SOLICITAR_BUFFER,
 	PEDIR_ETIQUETAS,
 	PEDIR_INSTRUCCION
 } codigos_mensajes;
@@ -99,10 +100,11 @@ void atencionKernel(int* socketKernel) {
 	} t_paquete;
 
 	//int pid;
-	int base, offset, tamano;
+	int procesoActivo = 0, base, offset, flagError = 0, tamano, parametro[3],
+			basesLogicas[3];
 
 	char *header = malloc(16), *mensaje = malloc(30);
-	int *razon = malloc(sizeof(int)), *tamanoMensaje = malloc(4);
+	int resultado, *razon = malloc(sizeof(int)), *tamanoMensaje = malloc(4);
 	recv(*socketKernel, (void*) header, 16, 0);
 	//desempaquetar2(header, razon, tamanoMensaje, 0);
 	log_info(logger, "entró a atencioKernel.");
@@ -110,18 +112,63 @@ void atencionKernel(int* socketKernel) {
 	recv(*socketKernel, (void*) mensaje, *tamanoMensaje, MSG_WAITALL);
 
 	switch (*razon) {
-	case CREAR_SEGMENTO:
-		desempaquetar2(mensaje, &tamano, 0);
-		crearSegmento(tamano);
+	case CREAR_SEGMENTOS_PROGRAMA:
+		pthread_mutex_lock(&mutexOperacion);
+		desempaquetar2(mensaje, &parametro[0], &parametro[1], &parametro[2],
+				&parametro[3], 0);
+		cambiarProcesoActivo(procesoActivo);
+		int i;
+		for (i = 0; i < 4; i++) {
+			resultado = crearSegmento(parametro[i]);
+			if (resultado == -1) {
+				*razon = MEMORY_OVERLOAD;
+				flagError = MEMORY_OVERLOAD;
+				*tamanoMensaje = 0;
+				destruirTodosLosSegmentos();
+				break;
+			}
+			*razon = BASES_LOGICAS;
+			*tamanoMensaje = 32;
+			basesLogicas[i] = resultado;
+		}
+		pthread_mutex_unlock(&mutexOperacion);
+		send(*socketKernel,
+				serializar2(crear_nodoVar(razon, 4),
+						crear_nodoVar(tamanoMensaje, 4), 0)->msj, 16, 0);
+		if (*tamanoMensaje) {
+			send(*socketKernel,
+					serializar2(crear_nodoVar(&basesLogicas[0], 4),
+							crear_nodoVar(&basesLogicas[1], 4),
+							crear_nodoVar(&basesLogicas[2], 4),
+							crear_nodoVar(&basesLogicas[3], 4), 0)->msj, 32, 0);
+		}
 		break;
 	case DESTRUIR_SEGMENTOS:
+		pthread_mutex_lock(&mutexOperacion);
+		cambiarProcesoActivo(procesoActivo);
 		destruirTodosLosSegmentos();
+		pthread_mutex_unlock(&mutexOperacion);
 		break;
 	case SOLICITAR_A_UMV:
-
-		desempaquetar2(mensaje, &base, &offset, &tamano, 0);
-		solicitarBytes(base, offset, tamano);
+		pthread_mutex_lock(&mutexOperacion);
+		desempaquetar2(mensaje, &parametro[0], &parametro[1], &parametro[2], 0);
+		char *respuesta=solicitarBytes(parametro[0], parametro[1], parametro[2]);
+		pthread_mutex_unlock(&mutexOperacion);
+		if (!strcmp(respuesta, "")){
+			*razon = SEGMENTATION_FAULT;
+			*tamanoMensaje = 0;
+			send(*socketKernel, serializar2(crear_nodoVar(razon,4), crear_nodoVar(tamanoMensaje,4), 0)->msj, 16, 0);
+			break;
+		}
+		*razon = RESPUESTA_A_SOLICITAR_BUFFER;
+		*tamanoMensaje = parametro[2];
+		t_paquete* paquete=malloc(sizeof(t_paquete)), *header=malloc(sizeof(t_paquete));
+		paquete = serializar2(crear_nodoVar(respuesta, *tamanoMensaje), 0);
+		header = serializar2(crear_nodoVar(razon, 4), crear_nodoVar(paquete->tamano, 4), 0);
+		send(*socketKernel, header->msj, 16, 0);
+		send(*socketKernel, paquete->msj , paquete->tamano, 0);
 		break;
+
 	}
 
 }
