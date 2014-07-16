@@ -38,7 +38,7 @@ void vincularPrimitivas() {
 	funciones_kernel.AnSISOP_wait = wait;
 
 }
-int socketUMV, socketKernel;
+extern int socketUMV, socketKernel;
 int programCounter;
 t_puntero stackBase;
 t_puntero desplazamiento;
