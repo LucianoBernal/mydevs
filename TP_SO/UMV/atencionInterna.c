@@ -25,6 +25,7 @@ typedef enum {
 	ESCRIBIR_EN_UMV,
 	SOLICITAR_A_UMV,
 	RESPUESTA_A_SOLICITAR_BUFFER,
+	CAMBIAR_PROCESO_ACTIVO,
 	PEDIR_ETIQUETAS,
 	PEDIR_INSTRUCCION
 } codigos_mensajes;
@@ -93,25 +94,24 @@ void* atencionInterna(void* sinParametro) {
 
 void atencionKernel(int* socketKernel) {
 
-	typedef struct {
-		char *msj;
-		int tamano;
-		char cantVar;
-	} t_paquete;
+//	typedef struct {
+//		char *msj;
+//		int tamano;
+//		char cantVar;
+//	} t_paquete;
 
-	//int pid;
-	int procesoActivo = 0, base, offset, flagError = 0, tamano, parametro[3],
-			basesLogicas[3];
+	int procesoActivo = 0, parametro[3], basesLogicas[3];
 
 	char *header = malloc(16), *mensaje = malloc(30);
 	int resultado, *razon = malloc(sizeof(int)), *tamanoMensaje = malloc(4);
 	recv(*socketKernel, (void*) header, 16, 0);
-	//desempaquetar2(header, razon, tamanoMensaje, 0);
+	desempaquetar2(header, razon, tamanoMensaje, 0);
 	log_info(logger, "entró a atencioKernel.");
 
 	recv(*socketKernel, (void*) mensaje, *tamanoMensaje, MSG_WAITALL);
 
 	switch (*razon) {
+
 	case CREAR_SEGMENTOS_PROGRAMA:
 		pthread_mutex_lock(&mutexOperacion);
 		desempaquetar2(mensaje, &parametro[0], &parametro[1], &parametro[2],
@@ -122,7 +122,6 @@ void atencionKernel(int* socketKernel) {
 			resultado = crearSegmento(parametro[i]);
 			if (resultado == -1) {
 				*razon = MEMORY_OVERLOAD;
-				flagError = MEMORY_OVERLOAD;
 				*tamanoMensaje = 0;
 				destruirTodosLosSegmentos();
 				break;
@@ -132,48 +131,104 @@ void atencionKernel(int* socketKernel) {
 			basesLogicas[i] = resultado;
 		}
 		pthread_mutex_unlock(&mutexOperacion);
+		t_paquete * aSerializarHeader = (t_paquete *)serializar2(crear_nodoVar(razon, 4), crear_nodoVar(tamanoMensaje, 4), 0);
+		t_paquete * aSerializarPaquete = (t_paquete *)serializar2(crear_nodoVar(&basesLogicas[0], 4),crear_nodoVar(&basesLogicas[1], 4),
+				crear_nodoVar(&basesLogicas[2], 4),crear_nodoVar(&basesLogicas[3], 4), 0);
 		send(*socketKernel,
-				serializar2(crear_nodoVar(razon, 4),
-						crear_nodoVar(tamanoMensaje, 4), 0)->msj, 16, 0);
+				aSerializarHeader->msj, 16, 0);
 		if (*tamanoMensaje) {
-			send(*socketKernel,
-					serializar2(crear_nodoVar(&basesLogicas[0], 4),
-							crear_nodoVar(&basesLogicas[1], 4),
-							crear_nodoVar(&basesLogicas[2], 4),
-							crear_nodoVar(&basesLogicas[3], 4), 0)->msj, 32, 0);
+			send(*socketKernel,aSerializarPaquete->msj, 32, 0);
 		}
+		free(aSerializarHeader);
+		free(aSerializarPaquete);
 		break;
+
 	case DESTRUIR_SEGMENTOS:
 		pthread_mutex_lock(&mutexOperacion);
 		cambiarProcesoActivo(procesoActivo);
 		destruirTodosLosSegmentos();
 		pthread_mutex_unlock(&mutexOperacion);
 		break;
-	case SOLICITAR_A_UMV:
+
+	case ESCRIBIR_EN_UMV:
 		pthread_mutex_lock(&mutexOperacion);
-		desempaquetar2(mensaje, &parametro[0], &parametro[1], &parametro[2], 0);
-		char *respuesta=solicitarBytes(parametro[0], parametro[1], parametro[2]);
+		cambiarProcesoActivo(procesoActivo);
+		desempaquetar2(mensaje, &parametro[0], &parametro[1], &parametro[2],0);
+		char *buffer = malloc(parametro[2]);
+		desempaquetar2(mensaje, &parametro[0], &parametro[1], &parametro[2], &buffer, 0);
+		enviarUnosBytes(parametro[0], parametro[1], parametro[2], buffer);
 		pthread_mutex_unlock(&mutexOperacion);
-		if (!strcmp(respuesta, "")){
-			*razon = SEGMENTATION_FAULT;
-			*tamanoMensaje = 0;
-			send(*socketKernel, serializar2(crear_nodoVar(razon,4), crear_nodoVar(tamanoMensaje,4), 0)->msj, 16, 0);
-			break;
-		}
-		*razon = RESPUESTA_A_SOLICITAR_BUFFER;
-		*tamanoMensaje = parametro[2];
-		t_paquete* paquete=malloc(sizeof(t_paquete)), *header=malloc(sizeof(t_paquete));
-		paquete = serializar2(crear_nodoVar(respuesta, *tamanoMensaje), 0);
-		header = serializar2(crear_nodoVar(razon, 4), crear_nodoVar(paquete->tamano, 4), 0);
-		send(*socketKernel, header->msj, 16, 0);
-		send(*socketKernel, paquete->msj , paquete->tamano, 0);
+		free(buffer);
 		break;
 
+	case CAMBIAR_PROCESO_ACTIVO:
+		pthread_mutex_lock(&mutexOperacion);
+		desempaquetar2(mensaje,&parametro[0],0);
+		procesoActivo = parametro[0];
+		pthread_mutex_unlock(&mutexOperacion);
+		break;
 	}
+	free(header);
+	free(mensaje);
+	free(tamanoMensaje);
+	free(razon);
 
 }
-void atencionCpu() {
+void atencionCpu(int *socketCPU) {
 	log_info(logger, "entro a atencionCpu");
-	//printf("Se conectó una CPU y se creó un hilo que la atiende :D :D");
+
+	int procesoActivo = 0, parametro[3];
+
+	char *mensaje = malloc(30);
+	int *tamanoMensaje = malloc(4);
+	char *header = malloc(16);
+	int * razon = malloc(sizeof(int));
+	recv(*socketCPU, (void*) header, 16, 0);
+	desempaquetar2(mensaje, razon, tamanoMensaje, 0);
+	recv(*socketCPU, (void*) mensaje,*tamanoMensaje, MSG_WAITALL);
+	switch(*razon){
+
+		case SOLICITAR_A_UMV:
+			pthread_mutex_lock(&mutexOperacion);
+			cambiarProcesoActivo(procesoActivo);
+			desempaquetar2(mensaje, &parametro[0], &parametro[1], &parametro[2], 0);
+			char *respuesta=solicitarBytes(parametro[0], parametro[1], parametro[2]);
+			pthread_mutex_unlock(&mutexOperacion);
+			if (!strcmp(respuesta, "")){
+				*razon = SEGMENTATION_FAULT;
+				*tamanoMensaje = 0;
+				t_paquete *varALiberar=(t_paquete *) serializar2(crear_nodoVar(razon,4), crear_nodoVar(tamanoMensaje,4), 0);
+				send(*socketCPU, varALiberar->msj, 16, 0);
+				free(varALiberar);
+				break;
+			}
+			*razon = RESPUESTA_A_SOLICITAR_BUFFER;
+			*tamanoMensaje = parametro[2];
+			t_paquete *paquete = (t_paquete *)serializar2(crear_nodoVar(respuesta, *tamanoMensaje), 0);
+			t_paquete *header = (t_paquete *)serializar2(crear_nodoVar(razon, 4), crear_nodoVar(&paquete->tamano, 4), 0);
+			send(*socketCPU, header->msj, 16, 0);
+			send(*socketCPU, paquete->msj , paquete->tamano, 0);
+			free(paquete);
+			free(header);
+			free(respuesta);
+			break;
+
+		case ESCRIBIR_EN_UMV:
+			pthread_mutex_lock(&mutexOperacion);
+			cambiarProcesoActivo(procesoActivo);
+			desempaquetar2(mensaje, &parametro[0], &parametro[1], &parametro[2],0);
+			char *buffer = malloc(parametro[2]);
+			desempaquetar2(mensaje, &parametro[0], &parametro[1], &parametro[2], &buffer, 0);
+			enviarUnosBytes(parametro[0], parametro[1], parametro[2], buffer);
+			pthread_mutex_unlock(&mutexOperacion);
+			free(buffer);
+			break;
+
+	}
+	free(header);
+	free(mensaje);
+	free(tamanoMensaje);
+	free(razon);
+
 }
 

@@ -408,7 +408,6 @@ int verificarEspacio(int pid, int base, int offset, int tamano) {
 }
 
 void enviarUnosBytes(int base, int offset, int tamano, void *mensaje) {
-	printf("inocente printf\n");
 	int pid = procesoActivo();
 	printf("el proceso activo es %d\n", pid);
 	if (verificarEspacio(pid, base, offset, tamano))
