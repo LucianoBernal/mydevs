@@ -45,17 +45,21 @@ int main(int arc, char **argv) {
 	send(socketUMV, saludo, 4, 0);
 	log_error(log, "Primera cosa");
 	recv(socketUMV, respuesta, 8, MSG_WAITALL);
+	/*
 	desempaquetar2(respuesta, &todoOk, 0);
 	log_error(log, "Segunda cosa");
-	todoOk ?
-			log_info(log, "El handshake con la UMV salio bien") :
-			log_error(log, "El handshake con la UMV salio mal");
-	send(socketKernel, saludo, 16, 0);
-	recv(socketKernel, respuesta, 8, MSG_WAITALL);
-	desempaquetar2(respuesta, &todoOk, 0);
-	todoOk ?
-			log_info(log, "El handshake con el Kernel salio bien") :
-			log_error(log, "El handshake con el Kernel salio mal");
+	*/
+	printf("%s", respuesta);
+
+//	todoOk ?
+//			log_info(log, "El handshake con la UMV salio bien") :
+//			log_error(log, "El handshake con la UMV salio mal");
+//	send(socketKernel, saludo, 16, 0);
+//	recv(socketKernel, respuesta, 8, MSG_WAITALL);
+//	desempaquetar2(respuesta, &todoOk, 0);
+//	todoOk ?
+//			log_info(log, "El handshake con el Kernel salio bien") :
+//			log_error(log, "El handshake con el Kernel salio mal");
 	//Inicio handshake
 /*
 	struct addrinfo *addrInfo;

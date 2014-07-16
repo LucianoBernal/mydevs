@@ -71,11 +71,7 @@ void* atencionInterna(void* sinParametro) {
 		//escucharYCrearSocketCliente(socket, 40, socketCPU, addrInfo);
 		recv(socketCPU, (void*) saludoCpu, 30, 0);
 		if (!strncmp(saludoCpu, "CPU", 3)) {
-
-//		t_length *tamC;
-//		saludo = tamC->menu;//TODO ver bien lo del saludo!!!
-			//int recibirMenu (socketCPU,(void*)tamC, logger);
-			//if (*saludo==CPU){
+			send(socketCPU, "UMV", 4, 0);
 			//Creo hilo de atención a CPU.
 			if (pthread_create(&hiloCpu, NULL, (void *) atencionCpu,
 					(void*) &socketCPU)) {
@@ -100,10 +96,11 @@ void atencionKernel(int* socketKernel) {
 
 	int procesoActivo = 0, parametro[3], basesLogicas[3];
 
-	char *header = malloc(16), *mensaje = malloc(30);
+	char *header = malloc(16);
 	int resultado, *razon = malloc(sizeof(int)), *tamanoMensaje = malloc(4);
 	recv(*socketKernel, (void*) header, 16, 0);
 	desempaquetar2(header, razon, tamanoMensaje, 0);
+	char *mensaje = malloc(*tamanoMensaje);
 	log_info(logger, "entró a atencioKernel.");
 
 	recv(*socketKernel, (void*) mensaje, *tamanoMensaje, MSG_WAITALL);
@@ -177,12 +174,12 @@ void atencionCpu(int *socketCPU) {
 
 	int procesoActivo = 0, parametro[3];
 
-	char *mensaje = malloc(30);
 	int *tamanoMensaje = malloc(4);
 	char *header = malloc(16);
 	int * razon = malloc(sizeof(int));
 	recv(*socketCPU, (void*) header, 16, 0);
-	desempaquetar2(mensaje, razon, tamanoMensaje, 0);
+	desempaquetar2(header, razon, tamanoMensaje, 0);
+	char *mensaje= malloc(*tamanoMensaje);
 	recv(*socketCPU, (void*) mensaje,*tamanoMensaje, MSG_WAITALL);
 	switch(*razon){
 

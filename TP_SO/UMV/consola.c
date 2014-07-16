@@ -22,7 +22,7 @@ void* consola(void* sinParametro) {
 }
 
 void analizarYEjecutar(char *comando) {
-
+	int basePosta;
 	if (!strncmp("operacion", comando, 9)) {
 		t_operacion operacion;
 
@@ -56,17 +56,18 @@ void analizarYEjecutar(char *comando) {
 			printf("\n Ingrese bloque de mensaje: \n");
 			scanf("%s", msj);
 			log_info(logger,"se concretó la operación1");
-			enviarUnosBytesPConsola(operacion.base, operacion.offset, operacion.tamano,
+			basePosta = enviarUnosBytesPConsola(operacion.base, operacion.offset, operacion.tamano,
 					msj);
-
+			printf("la base posta es: %d\n", basePosta);
 			log_info(logger,"se concretó la operación2");
 
 			break;
 
 		case 's':
+			/*
 			printf("\ningrese base: ");
 			scanf("%d", &operacion.base);
-
+			*/
 			printf("\ningrese offset: ");
 			scanf("%d", &operacion.offset);
 
@@ -74,7 +75,7 @@ void analizarYEjecutar(char *comando) {
 			scanf("%d", &operacion.tamano);
 
 			msj = malloc(operacion.tamano);
-			msj = solicitarBytes(operacion.base, operacion.offset,
+			msj = solicitarBytes(basePosta, operacion.offset,
 					operacion.tamano);
 			printf("%s", msj);
 

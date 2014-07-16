@@ -1,0 +1,33 @@
+[ERROR] 01:30:45:899 CPU/(7254:7254): Error al conectar el socket
+[ERROR] 01:30:45:899 CPU/(7254:7254): No se pudo conectar al Kernel exitosamente
+[ERROR] 01:30:45:900 CPU/(7254:7254): Deberia estar cerrando el CPU
+[INFO] 01:30:45:900 CPU/(7254:7254): ApruebenmeN pls
+[ERROR] 01:30:45:905 CPU/(7254:7254): Primera cosa
+[ERROR] 01:30:45:906 CPU/(7254:7254): Segunda cosa
+[ERROR] 01:30:45:906 CPU/(7254:7254): El handshake con la UMV salio mal
+[ERROR] 01:30:45:914 CPU/(7254:7254): El handshake con el Kernel salio mal
+[ERROR] 01:33:00:100 CPU/(7325:7325): Error al conectar el socket
+[ERROR] 01:33:00:101 CPU/(7325:7325): No se pudo conectar al Kernel exitosamente
+[ERROR] 01:33:00:101 CPU/(7325:7325): Deberia estar cerrando el CPU
+[INFO] 01:33:00:102 CPU/(7325:7325): ApruebenmeN pls
+[ERROR] 01:33:00:103 CPU/(7325:7325): Primera cosa
+[ERROR] 01:35:52:460 CPU/(7325:7325): Segunda cosa
+[ERROR] 01:35:52:460 CPU/(7325:7325): El handshake con la UMV salio mal
+[ERROR] 01:35:52:461 CPU/(7325:7325): El handshake con el Kernel salio mal
+[ERROR] 01:36:46:594 CPU/(7443:7443): Error al conectar el socket
+[ERROR] 01:36:46:595 CPU/(7443:7443): No se pudo conectar a la UMV exitosamente
+[ERROR] 01:36:46:595 CPU/(7443:7443): Deberia estar cerrando el CPU
+[INFO] 01:36:46:596 CPU/(7443:7443): ApruebenmeN pls
+[ERROR] 01:36:46:597 CPU/(7443:7443): Primera cosa
+[ERROR] 01:36:46:597 CPU/(7443:7443): Segunda cosa
+[ERROR] 01:36:46:598 CPU/(7443:7443): El handshake con la UMV salio mal
+[ERROR] 01:38:26:556 CPU/(7484:7484): Error al conectar el socket
+[ERROR] 01:38:26:557 CPU/(7484:7484): No se pudo conectar al Kernel exitosamente
+[ERROR] 01:38:26:557 CPU/(7484:7484): Deberia estar cerrando el CPU
+[INFO] 01:38:26:558 CPU/(7484:7484): ApruebenmeN pls
+[ERROR] 01:38:26:560 CPU/(7484:7484): Primera cosa
+[ERROR] 01:39:11:174 CPU/(7552:7552): Error al conectar el socket
+[ERROR] 01:39:11:175 CPU/(7552:7552): No se pudo conectar al Kernel exitosamente
+[ERROR] 01:39:11:175 CPU/(7552:7552): Deberia estar cerrando el CPU
+[INFO] 01:39:11:176 CPU/(7552:7552): ApruebenmeN pls
+[ERROR] 01:39:11:177 CPU/(7552:7552): Primera cosa

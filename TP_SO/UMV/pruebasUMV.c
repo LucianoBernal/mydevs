@@ -396,6 +396,7 @@ void *obtenerDirFisica(int base, int offset, int pid) {
 int verificarEspacio(int pid, int base, int offset, int tamano) {
 	if (tamano - 1 < (int) (obtenerPtrASegmento(base, pid)->tamano) - offset) {
 		printf("%d < %d",tamano-1, (obtenerPtrASegmento(base, pid)->tamano) - offset);
+		printf("\nEntonces hay espacio\n");
 		return 1;
 	} else {
 		if ((int) (obtenerPtrASegmento(base, pid)->tamano) - offset < 0) {
@@ -411,16 +412,17 @@ void enviarUnosBytes(int base, int offset, int tamano, void *mensaje) {
 	int pid = procesoActivo();
 	printf("el proceso activo es %d\n", pid);
 	if (verificarEspacio(pid, base, offset, tamano))
-		printf("verifique espacio\n");
+		printf("verifiqué espacio\n");
 		memcpy(obtenerDirFisica(base, offset, pid), mensaje, tamano);
 }
 
-void enviarUnosBytesPConsola(int base, int offset, int tamano, void *mensaje){
+int enviarUnosBytesPConsola(int base, int offset, int tamano, void *mensaje){
 	agregarProceso(1000, 'c');
 	cambiarProcesoActivo(1000);
 	int basePosta = crearSegmento(100);
 	enviarUnosBytes(basePosta, offset, tamano,
 					mensaje);
+	return basePosta;
 }
 
 int procesoActivo() {
@@ -450,6 +452,9 @@ char *solicitarBytes(int base, int offset, int tamano) {
 		return aux;
 	}
 	return "";
+}
+char *solicitarBytesPConsola(int base, int offset, int tamano){
+	return solicitarBytes(base, offset, tamano);
 }
 
 void dumpMemoriaLibreYSegmentos(bool archivo) {
