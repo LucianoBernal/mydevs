@@ -36,6 +36,7 @@ int tamanoStack; //Deberia leerlo desde config
 void* plp_main(int* socketUMV) {
 	colaNew = list_create();
 	randoms = list_create();
+	sem_init(&mutexProcesoActivo,0,1);
 	sem_init(&PidSD_Mutex,0,1); // quizas vayan en el del kernel
 	pidYSockets = dictionary_create(); // quizas vayan en el del kernel
 	sem_init(&colaNuevosVacio, 0, 0);
@@ -228,12 +229,16 @@ void gestionarProgramaNuevo(const char* literal, int sd) { // UN HILO
 	pcb->program_id = generarProgramID();
 	asignaciones_desde_metada(metadata, pcb);
 	int peso = calcularPeso(metadata);
+	sem_wait(&mutexProcesoActivo);
+	cambiar_Proceso_Activo(pcb->program_id);
 	if (solicitar_Memoria(metadata, pcb, literal)
 			!= 0 /*ergo se pudo reservar memoria */) { //HABLAR CON PROJECTS LEADERS DE UMV
 		escribir_en_Memoria(metadata, pcb, literal);
+		sem_post(&mutexProcesoActivo);
 		encolar_New(pcb, peso);
 		agregar_En_Diccionario(pcb->program_id, sd);
 	} else {
+		sem_post(&mutexProcesoActivo);
 		notificar_Memoria_Llena(sd);
 		close(sd);
 		//free(pcb);
@@ -313,7 +318,10 @@ while (1) {
 	sem_wait(&colaExitMutex);
 	t_PCB* pcb = queue_pop(colaExit);
 	sem_post(&colaExitMutex);
+	sem_wait(&mutexProcesoActivo);
+	cambiar_Proceso_Activo(pcb->program_id);
 	solicitar_Destruccion_Segmentos(pcb->program_id);
+	sem_post(&mutexProcesoActivo);
 	enviar_Mensaje_Final(pcb->program_id);
 	cerrar_conexion(pcb->program_id);
 	liberar_numero(pcb->program_id);
@@ -325,6 +333,9 @@ void solicitar_Destruccion_Segmentos(int pid){
 
 }
 
+void cambiar_Proceso_Activo(int pid){
+
+}
 
 void enviar_Mensaje_Final(int pid){
 	int sd=obtener_sd_Programa(pid);
