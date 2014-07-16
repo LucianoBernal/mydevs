@@ -24,7 +24,8 @@
 #define PORT 8888
 
 
-void* atencionScripts(void* sinParametro) {
+//void* atencionScripts(void* sinParametro) {
+int main() {
 	int opt = TRUE;
 	int master_socket, addrlen, new_socket, client_socket[30], max_clients = 30,
 			activity, i, valread, sd;

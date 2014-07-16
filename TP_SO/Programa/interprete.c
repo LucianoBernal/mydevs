@@ -7,18 +7,37 @@
 #include <unistd.h>
 #include <commons/log.h>
 #include <arpa/inet.h>
+#include <commons/config.h>
+#include <biblioteca_comun/bibliotecaSockets.h>
 
 
-#define IP "127.0.0.1"
+
 #define PACKAGESIZE 1024
-#define PUERTO "8888"
 
+
+char* puerto_Kernel;
+char* ip_Kernel;
+
+int validarConfig(t_config*);
+void cargarConfig(t_config*);
 int programa(t_log*, FILE*);
 int main(int argc, char **argv) {
+	if (argc <= 2) {
+			perror(
+					"Se debe ingresar la dirección de un archivo de configuración\n");
+			return EXIT_FAILURE;
+		}
+	t_config *config = config_create(argv[2]);
+	if (validarConfig(config)) {
+			config_destroy(config);
+			perror("El archivo de configuración no es correcto");
+			return EXIT_FAILURE;
+		}
 	t_log* logger;
 	int fin;
 	logger = log_create("logProcesoPrograma", "Programa", true, LOG_LEVEL_INFO);
 	log_info(logger, "Comienza la ejecución del Programa.");
+	cargarConfig(config);
 	FILE *archivo;
 	archivo = fopen(argv[1], "r");
 	if (NULL == archivo) {
@@ -39,7 +58,6 @@ int main(int argc, char **argv) {
 int obtenerTamanoArchivo(FILE*);
 int programa(t_log* logger, FILE* archivo) {
 	int sock;
-	struct sockaddr_in server;
 	char lineaLiteral[PACKAGESIZE];
 	int valread;
 	char handshake[21] = "Soy un nuevo Programa";
@@ -57,41 +75,28 @@ int programa(t_log* logger, FILE* archivo) {
 	log_info(logger,
 			"Se concateno Script en buffer interno y se cerro archivo");
 	//Create socket
-	sock = socket(AF_INET, SOCK_STREAM, 0);
-	if (sock == -1) {
-		log_error(logger, "No se pudo Crear el Socket");
-		return 1;
-	}
-	log_info(logger, "Socket creado exitosamente");
-
-	server.sin_addr.s_addr = inet_addr("127.0.0.1");
-	server.sin_family = AF_INET;
-	server.sin_port = htons(8888);
-
-	//Connect to remote server
-	if (connect(sock, (struct sockaddr *) &server, sizeof(server)) < 0) {
-		log_error(logger, "Fallo conexion al Kernel");
+	if (!(sock=conectarCliente(ip_Kernel,puerto_Kernel,logger))){
 		return 1;
 	}
 	log_info(logger, "Conectado al Kernel...");
 	log_info(logger, "Iniciando Handshake...");
-	if (send(sock, handshake, 21, 0) == 0) {
+	if (send(sock, handshake, 21, 0) == -1) {
 		log_error(logger, "Fallo Send Handshake");
 		return 1;
 	}
-	if ((valread = read(sock, server_reply, PACKAGESIZE)) == 0) {
+	if ((valread = recv(sock, server_reply, PACKAGESIZE,0)) == -1) {
 		log_error(logger, "Fallo Recive Handshake");
 		return 1;
 	}
 	server_reply[valread] = '\0';
 	log_info(logger, server_reply);
 	//mandar literal
-	if (send(sock, tamano, 4, 0) == 0) {
+	if (send(sock, tamano, 4, 0) == -1) {
 		log_error(logger, "Fallo Send Literal");
 		return 1;
 	}
 
-	if (send(sock, literal, *tamano, 0) == 0) {
+	if (send(sock, literal, *tamano, 0) == -1) {
 		log_error(logger, "Fallo Send Literal");
 		return 1;
 	}
@@ -124,4 +129,21 @@ int obtenerTamanoArchivo(FILE* archivoAbierto) {
 	int tamano = ftell(archivoAbierto);
 	fseek(archivoAbierto, 0L, SEEK_SET);
 	return tamano;
+}
+
+void cargarConfig(t_config *config) {
+	puerto_Kernel = config_get_string_value(config, "PUERTO_KERNEL");
+	ip_Kernel = config_get_string_value(config, "IP_KERNEL");
+}
+
+int validarConfig(t_config* config){
+	if (!config_has_property(config, "PUERTO_KERNEL")) {
+			perror("Falta PUERTO_KERNEL");
+			return EXIT_FAILURE;
+		}
+		if (!config_has_property(config, "IP_KERNEL")) {
+			perror("Falta IP_KERNEL");
+			return EXIT_FAILURE;
+		}
+		return EXIT_SUCCESS;
 }

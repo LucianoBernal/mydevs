@@ -31,7 +31,6 @@ int main(int argc, char** argv) {
 	//Cargo parámetros del config en variables de Kernel.
 	cargarConfig(config);
 	variables_globales = dictionary_create();
-	config_destroy(config);
 	colaReady = queue_create();
 	colaExit = queue_create();
 	sem_init(&colaExitMutex, 0, 1);
@@ -66,6 +65,7 @@ int main(int argc, char** argv) {
 
 	pthread_join(pcp, NULL );
 	pthread_join(plp, NULL );
+	config_destroy(config);
 	return EXIT_FAILURE;
 }
 
