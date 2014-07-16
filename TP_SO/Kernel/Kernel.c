@@ -41,9 +41,19 @@ int main(int argc, char** argv) {
 	sem_init(&vacioReady, 0, 0);
 	int socketUMV = conectarCliente(ip_UMV, puerto_UMV, logKernel);
 	if(send(socketUMV,"Kernel",7,0)==-1){
-		log_error(logKernel,"Fallo el Handshake con la UMV");
+		log_error(logKernel,"Fallo el Send del handshake");
+		return EXIT_FAILURE;
 	}
-
+	char* buffer=malloc(4);
+	if(recv(socketUMV,buffer,30,0)==-1){
+		log_error(logKernel,"Fallo el Recive del handshake");
+		return EXIT_FAILURE;
+	};
+	if (strncmp(buffer, "UMV", 3)){
+		log_error(logKernel,"Fallo el Handshake con la UMV");
+		return EXIT_FAILURE;
+	}
+	free(buffer);
 
 	pthread_t plp, pcp;
 	int iretPLP, iretPCP;

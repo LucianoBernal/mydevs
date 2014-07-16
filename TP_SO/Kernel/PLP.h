@@ -11,7 +11,7 @@
 #include "Kernel.h"
 #include "multiplexorScripts_interfaz.h"
 
-
+sem_t mutexProcesoActivo;
 sem_t  colaNuevosVacio;
 sem_t  randomMutex;
 sem_t  numABorrarMutex;
