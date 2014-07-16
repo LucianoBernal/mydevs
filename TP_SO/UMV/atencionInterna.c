@@ -47,9 +47,7 @@ void* atencionInterna(void* sinParametro) {
 	while (1) {
 		recv(socketKernel, (void*) saludoKernel, 30, 0);
 		if (!strncmp(saludoKernel, "Kernel", 6)) {
-
-			//saludo = tamK->menu;//FIXME homogeneizar codigos_mensajes y t_menu y saludos_internos
-			//if(*saludo == Kernel){
+			send(socketKernel, "UMV",4,0);
 			//Creo hilo de atención al kernel.
 			if (pthread_create(&hiloKernel, NULL, (void *) atencionKernel,
 					(void*) &socketKernel)) {
@@ -225,7 +223,7 @@ void atencionCpu(int *socketCPU) {
 			break;
 
 	}
-	free(header);
+	//free(header);
 	free(mensaje);
 	free(tamanoMensaje);
 	free(razon);
