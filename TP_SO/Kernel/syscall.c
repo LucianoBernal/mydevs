@@ -7,12 +7,11 @@
 
 #include "Kernel.h"
 #include <string.h>
-#include <semaphore.h>
 
 typedef struct {
 	int valor;
 	t_queue* procesosBloqueados;
-	t_sem mutexCola;
+	sem_t mutexCola;
 } t_estructuraSemaforo;
 
 t_dictionary* semaforos;
