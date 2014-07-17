@@ -34,6 +34,12 @@ typedef enum {
 	SALIDA_POR_SEMAFORO,
 	SIG_INT,
 	SIGURS_1,
+	WAIT,
+	SIGNAL,
+	IMPRIMIR,
+	IMPRIMIR_TEXTO,
+	GRABAR_VALOR,
+	OBTENER_VALOR
 
 } codigos_mensajes;
 int parametro[3];
@@ -203,10 +209,16 @@ void* atencionCPUs(void* sinParametro) {
 
 				//Echo back the message that came in
 				else {
+					char *header = malloc(16);
+					int resultado, *razon = malloc(sizeof(int)), *tamanoMensaje = malloc(4);
+					recv(*sd, (void*) header, 16, 0);
+					desempaquetar2(header, razon, tamanoMensaje, 0);
+					char *mensaje = malloc(*tamanoMensaje), semaforo;
+					recv(*sd,(void*) mensaje, *tamanoMensaje, MSG_WAITALL);
 					t_PCB* pcb;
 					int tiempo;
 					char* dispositivoIO;
-					switch (paquete_CPU->razon) {
+					switch (*razon) {
 					case SALIDA_POR_QUANTUM: //El Programa salio del CPU por quantum
 						desempaquetar2(mensaje, &pcb, 0);
 						programaSalioPorQuantum(pcb, sd);
@@ -220,16 +232,28 @@ void* atencionCPUs(void* sinParametro) {
 								0);
 						programaSalioPorBloqueo(pcb, tiempo, dispositivoIO, sd);
 						break;
-					case 'd': //la CPU se desconectó CON SIGUSR
+					case SIGURS_1: //la CPU se desconectó CON SIGUSR
 						desempaquetar2(mensaje, &pcb, 0);
 						sem_wait(semCPUDesconectadaMutex);
 						idUltimaCPUDesconectada = sd;
 						seDesconectoCPUSigusr(sd, pcb);
 						sem_post(semCPUDesconectadaMutex);
 						break;
+					case WAIT:
+						break;
+					case SIGNAL:
+						break;
+					case IMPRIMIR:
+						break;
+					case IMPRIMIR_TEXTO:
+						break;
+					case GRABAR_VALOR:
+						break;
+					case OBTENER_VALOR:
+						break;
 					}
 
-					//TODO aca va el switch para saber porque volvio(pero no preguntas por
+					// aca va el switch para saber porque volvio(pero no preguntas por
 					//desconexion, eso ya se sabe de antes. MMM igual ojo, quizas si
 					//porque quizas convenga que el que el que haga el close se el kernel
 				}
