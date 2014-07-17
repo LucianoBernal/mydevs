@@ -246,7 +246,7 @@ void* atencionCPUs(void* sinParametro) {
 						break;
 					case SIGNAL:
 						desempaquetar2(mensaje, &semaforo, 0);
-						sc_signal(semaforo);
+						sc_signal(semaforo,sc);
 						break;
 					case IMPRIMIR:
 						//TODO
