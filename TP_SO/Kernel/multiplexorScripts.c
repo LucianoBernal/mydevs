@@ -18,6 +18,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <sys/time.h> //FD_SET, FD_ISSET, FD_ZERO macros
+#include "PLPinterface.h"
 
 #define TRUE   1
 #define FALSE  0
@@ -152,15 +153,14 @@ void* atencionScripts(void* sinParametro) {
 				if (client_socket[i] == 0) {
 					client_socket[i] = new_socket;
 					printf("Adding to list of sockets as %d\n", i);
-
 					break;
 				}
 			}
 			recv(new_socket, tamano, 4, MSG_WAITALL);
 			char* literal = malloc(*tamano);
 			recv(new_socket, literal, *tamano, MSG_WAITALL);
-			//gestionarProgramaNuevo(literal,new_socket,*tamano);
-            puts(literal);
+			gestionarProgramaNuevo(literal,new_socket,*tamano);
+
 
 		}
 }

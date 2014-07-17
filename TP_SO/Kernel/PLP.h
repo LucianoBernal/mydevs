@@ -11,6 +11,7 @@
 #include "Kernel.h"
 #include "multiplexorScripts_interfaz.h"
 
+extern int socketUMV;
 sem_t mutexProcesoActivo;
 sem_t  colaNuevosVacio;
 sem_t  randomMutex;

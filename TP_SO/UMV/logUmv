@@ -155,3 +155,8 @@
 [INFO] 23:17:50:992 UMV/(2328:2328): Comienza la ejecución de la UMV.
 [INFO] 23:17:50:993 UMV/(2328:2328): El hilo de consola se creó correctamente
 [INFO] 23:17:50:994 UMV/(2328:2328): El hilo de atención interna se creó correctamente
+[INFO] 19:23:04:653 UMV/(13601:13601): Comienza la ejecución de la UMV.
+[INFO] 19:23:07:18 UMV/(13601:13601): El hilo de consola se creó correctamente
+[INFO] 19:23:10:434 UMV/(13601:13601): El hilo de atención interna se creó correctamente
+[INFO] 19:24:21:323 UMV/(13601:13631): El hilo del Kernel se creó correctamente.
+[INFO] 19:24:28:686 UMV/(13601:13658): Entró a atencioKernel.

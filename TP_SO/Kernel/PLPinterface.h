@@ -17,8 +17,8 @@ typedef struct {
 	int peso;
 } t_new;
 
-
-void gestionarProgramaNuevo(const char*, int ,int);
+void crear_Nuevo_Proceso( int );
+void gestionarProgramaNuevo(char*, int ,int);
 void* deNewAReady(void*);
 void* plp_main(void*);
 void* manejoColaExit(void*);
@@ -33,8 +33,8 @@ void encolar_New(t_PCB* , int );
 int calcularPeso(t_metadata_program* );
 bool esIgualANumABorrar(int* );
 void liberar_numero(int );
-int crearSegmentos_Memoria(t_metadata_program *, t_PCB *,const char* ,int);
-void escribir_en_Memoria(t_metadata_program *, t_PCB *,	const char *,int);
+int crearSegmentos_Memoria(t_metadata_program *, t_PCB *, char* ,int);
+void escribir_en_Memoria(t_metadata_program *, t_PCB *,	 char *,int);
 void agregar_En_Diccionario(int , int );
 void notificar_Memoria_Llena(int);
 void encolar_en_Ready(t_PCB*);

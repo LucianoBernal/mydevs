@@ -7,28 +7,14 @@
 #include "atencionInterna.h"
 #include "atencioninterna_interfaz.h"
 #include <biblioteca_comun/Serializacion.h>
+#include <biblioteca_comun/definiciones.h>
+
 pthread_mutex_t mutexOperacion = PTHREAD_MUTEX_INITIALIZER;
 //typedef enum {
 //	Kernel = 1, CPU = 2
 //} saludos_internos;
 
-typedef enum {
-	BASES_LOGICAS,
-	CONFIRMACION,
-	SEGMENTATION_FAULT,
-	MEMORY_OVERLOAD,
-	MOSTRAR_VALOR,
-	MOSTRAR_TEXTO,
-	CREAR_SEGMENTO,
-	CREAR_SEGMENTOS_PROGRAMA,
-	DESTRUIR_SEGMENTOS,
-	ESCRIBIR_EN_UMV,
-	SOLICITAR_A_UMV,
-	RESPUESTA_A_SOLICITAR_BUFFER,
-	CAMBIAR_PROCESO_ACTIVO,
-	PEDIR_ETIQUETAS,
-	PEDIR_INSTRUCCION
-} codigos_mensajes;
+
 
 void* atencionInterna(void* sinParametro) {
 	char* saludoKernel = malloc(7);
@@ -81,21 +67,32 @@ void* atencionInterna(void* sinParametro) {
 }			//Cierra atencionInterna
 
 void atencionKernel(int* socketKernel) {
-
-	int procesoActivo = 0, parametro[3], basesLogicas[3];
-
 	char *header = malloc(16);
-	int resultado, *razon = malloc(sizeof(int)), *tamanoMensaje = malloc(4);
-	recv(*socketKernel, (void*) header, 16, 0);
-	desempaquetar2(header, razon, tamanoMensaje, 0);
-	char *mensaje = malloc(*tamanoMensaje);
+
+	int i, *razon=malloc(4);
+	int resultado, *tamanoMensaje = malloc(4);
+	int procesoActivo = 0, parametro[3], basesLogicas[3];
 	log_info(logger, "Entró a atencioKernel.");
 
-	recv(*socketKernel, (void*) mensaje, *tamanoMensaje, MSG_WAITALL);
+	while (1){
 
+	//*tamanoMensaje=10;
+
+	recv(*socketKernel, (void*) header, 16, MSG_WAITALL);
+	for(i=0; i<16;i++){
+		printf("%c\n", header[i]==0?'0':header[i]);
+	}
+	printf("razon:%d\n",*razon);
+	printf("tam mensaje:%d\n",*tamanoMensaje);
+	desempaquetar2(header, (int*)razon, tamanoMensaje, 0);
+	printf("razon:%d\n",*razon);
+	printf("tam mensaje:%d\n",*tamanoMensaje);
+	char *mensaje = malloc(*tamanoMensaje);
+	recv(*socketKernel, (void*) mensaje, *tamanoMensaje, MSG_WAITALL);
 	switch (*razon) {
 
 	case CREAR_SEGMENTOS_PROGRAMA:
+		printf("recibi crear segmentos programa");
 		pthread_mutex_lock(&mutexOperacion);
 		desempaquetar2(mensaje, &parametro[0], &parametro[1], &parametro[2],
 				&parametro[3], 0);
@@ -114,7 +111,7 @@ void atencionKernel(int* socketKernel) {
 			basesLogicas[i] = resultado;
 		}
 		pthread_mutex_unlock(&mutexOperacion);
-		t_paquete * aSerializarHeader = (t_paquete *)serializar2(crear_nodoVar(razon, 4), crear_nodoVar(tamanoMensaje, 4), 0);
+		t_paquete * aSerializarHeader = (t_paquete *)serializar2(crear_nodoVar(&razon, sizeof(razon)), crear_nodoVar(tamanoMensaje, 4), 0);
 		t_paquete * aSerializarPaquete = (t_paquete *)serializar2(crear_nodoVar(&basesLogicas[0], 4),crear_nodoVar(&basesLogicas[1], 4),
 				crear_nodoVar(&basesLogicas[2], 4),crear_nodoVar(&basesLogicas[3], 4), 0);
 		send(*socketKernel,
@@ -134,6 +131,7 @@ void atencionKernel(int* socketKernel) {
 		break;
 
 	case ESCRIBIR_EN_UMV:
+		printf("recibi escribir en umv");
 		pthread_mutex_lock(&mutexOperacion);
 		cambiarProcesoActivo(procesoActivo);
 		desempaquetar2(mensaje, &parametro[0], &parametro[1], &parametro[2],0);
@@ -145,17 +143,43 @@ void atencionKernel(int* socketKernel) {
 		break;
 
 	case CAMBIAR_PROCESO_ACTIVO:
+		printf("recibi cambiar proceso activo");
 		pthread_mutex_lock(&mutexOperacion);
-		desempaquetar2(mensaje,&parametro[0],0);
-		procesoActivo = parametro[0];
+		int *pid2=malloc(sizeof(int));
+		desempaquetar2(mensaje,pid2,0);
+		procesoActivo = *pid2;
+		printf("\nel valor del pid es: %d\n", *pid2);
+		cambiarProcesoActivo(*pid2);
+		pthread_mutex_unlock(&mutexOperacion);
+		puts("termine de cambiar proceso activo");
+		free(pid2);
+		break;
+	case CREAR_PROCESO_NUEVO:
+		puts("recibi crear proceso nuevo");
+		pthread_mutex_lock(&mutexOperacion);
+		int *pid=malloc(sizeof(int));
+		printf("el pid que recibi es:%d\n", *pid);
+		desempaquetar2(mensaje,pid,0);
+		printf("el pid que recibi es:%d\n", *pid);
+//		int * pid=malloc(sizeof(int));
+//		*pid=parametro[0];
+//		list_add(listaProcesos, pid);
+		if (listaProcesos==NULL){
+			printf("lista procesos era null");
+			listaProcesos=list_create();
+		}
+ 		agregarProceso(*pid, 'c');
+ 		puts("no mori aca");
+//		procesoActivo = parametro[0];
+//		cambiarProcesoActivo(parametro[0]);
 		pthread_mutex_unlock(&mutexOperacion);
 		break;
 	}
-	free(header);
-	free(mensaje);
-	free(tamanoMensaje);
-	free(razon);
 
+	free(mensaje);
+	}
+	free(header);
+	free(tamanoMensaje);
 }
 void atencionCpu(int *socketCPU) {
 	log_info(logger, "entro a atencionCpu");

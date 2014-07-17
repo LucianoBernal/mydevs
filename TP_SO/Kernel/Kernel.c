@@ -39,7 +39,7 @@ int main(int argc, char** argv) {
 	sem_init(&grado_Multiprogramacion, 0, multiprogramacion);
 	sem_init(&colaReadyMutex, 0, 1);
 	sem_init(&vacioReady, 0, 0);
-	int socketUMV = conectarCliente(ip_UMV, puerto_UMV, logKernel);
+	socketUMV = conectarCliente(ip_UMV, puerto_UMV, logKernel);
 	if(send(socketUMV,"Kernel",7,0)==-1){
 		log_error(logKernel,"Fallo el Send del handshake");
 		return EXIT_FAILURE;
@@ -57,12 +57,12 @@ int main(int argc, char** argv) {
 
 	pthread_t plp, pcp;
 	int iretPLP, iretPCP;
-	int* parametrosPCP = NULL;
-	iretPCP = pthread_create(&pcp, NULL, pcp_main, (void*) parametrosPCP);
-	if (iretPCP) {
-		fprintf(stderr, "Error - pthread_create() return code: %d\n", iretPCP);
-		exit(EXIT_FAILURE);
-	}
+//	int* parametrosPCP = NULL;
+//	iretPCP = pthread_create(&pcp, NULL, pcp_main, (void*) parametrosPCP);
+//	if (iretPCP) {
+//		fprintf(stderr, "Error - pthread_create() return code: %d\n", iretPCP);
+//		exit(EXIT_FAILURE);
+//	}
 	printf("Hilo pcp exitoso");
 	int* parametrosPLP = NULL;
 	iretPLP = pthread_create(&plp, NULL, plp_main, (void*) parametrosPLP);
@@ -74,7 +74,7 @@ int main(int argc, char** argv) {
 
 
 
-	pthread_join(pcp, NULL );
+//	pthread_join(pcp, NULL );
 	pthread_join(plp, NULL );
 	config_destroy(config);
 	return EXIT_FAILURE;

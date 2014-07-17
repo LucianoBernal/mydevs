@@ -120,6 +120,7 @@ int crearSegmento(int tamano) {
 	if (proceso->tabla == NULL )
 		proceso->tabla = list_create();
 	list_add(proceso->tabla, nuevoSegmento);
+	puts("Se creo un segmento \n");
 	return nuevoSegmento->inicioLogico;
 }
 

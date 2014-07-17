@@ -51,13 +51,13 @@ void* pcp_main(void* sinParametro) {
 }
 
 void crearHilosPrincipales() {
-	retMultiplexorCPUs = pthread_create(&multiplexorCPUs, NULL, atencionCPUs,
-			(void*) sinParametros);
-	if (retMultiplexorCPUs) {
-		fprintf(stderr, "Error - pthread_create() return code: %d\n",
-				retMultiplexorCPUs);
-		exit(EXIT_FAILURE);
-	}
+//	retMultiplexorCPUs = pthread_create(&multiplexorCPUs, NULL, atencionCPUs,
+//			(void*) sinParametros);
+//	if (retMultiplexorCPUs) {
+//		fprintf(stderr, "Error - pthread_create() return code: %d\n",
+//				retMultiplexorCPUs);
+//		exit(EXIT_FAILURE);
+//	}
 	retMandarAEjecutar = pthread_create(&ejecutar, NULL, mandarAEjecutar,
 			(void*) sinParametros);
 	if (retMandarAEjecutar) {
@@ -214,7 +214,7 @@ void seDesconectoCPU(int idCPU) { //TODO
 		sem_post(&CPUsMutex);
 	} else {
 		int idPrograma = buscarIDPrograma(idCPU);
-		int sd = obtener_sd_programa(idPrograma);
+		int sd = obtener_sd_Programa(idPrograma);
 		notificar_Programa(sd,"La CPU se desconectó, programa abortado");
 		sem_wait(&colaExitMutex);
 		//queue_push(colaExit, paquete_CPU.pcb); lo comento para que no me tire el error de que no encuenra pquetecpu
