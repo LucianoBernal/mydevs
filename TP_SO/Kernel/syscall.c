@@ -34,24 +34,24 @@ void sc_signal(char* idSem, int idCPU) {
 		sem_wait(&(semaforo->mutexCola));
 		t_PCB* pcbADesbloquear = queue_pop(semaforo->procesosBloqueados);
 		sem_post(&(semaforo->mutexCola));
-		seLiberoUnaCPU(idCPU);
 		sem_wait(&colaReadyMutex);
 		queue_push(colaReady, pcbADesbloquear);
 		sem_post(&colaReadyMutex);
 	}
 }
 
-void sc_wait(char* idSem, t_PCB* pcb, int idCpu) {
+void sc_wait(char* idSem, t_PCB* pcb, int idCPU) {
 	sem_wait(&diccionarioSemaforosMutex);
 	t_estructuraSemaforo* semaforo = dictionary_get(diccionarioSemaforos,
 			idSem);
 	int a = semaforo->valor;
 	if (a > 0) {
 		semaforo->valor = (semaforo->valor) - 1;
-		send(idCpu, 's', 1, 0); //TODO
+		send(idCPU, 's', 1, 0); //TODO
 	} else {
 		t_estructuraSemaforo* semaforo = dictionary_get(diccionarioSemaforos,
 				idSem);
+		seLiberoUnaCPU(idCPU);
 		sem_wait(&(semaforo->mutexCola));
 		queue_push(semaforo->procesosBloqueados, pcb);
 		sem_post(&(semaforo->mutexCola));

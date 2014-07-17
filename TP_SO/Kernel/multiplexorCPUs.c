@@ -20,7 +20,8 @@
 #include <sys/time.h> //FD_SET, FD_ISSET, FD_ZERO macros
 #include "PCPinterface.h"
 #include <biblioteca_comun/Serializacion.h>
-
+#include "syscall.h"
+#include "PCP.h"
 
 #define TRUE   1
 #define FALSE  0
@@ -199,10 +200,10 @@ void* atencionCPUs(void* sinParametro) {
 					//Close the socket and mark as 0 in list for reuse
 					close(sd);
 					client_socket[i] = 0;
-					sem_wait(semCPUDesconectadaMutex);
+					sem_wait(&semCPUDesconectadaMutex);
 					idUltimaCPUDesconectada = sd;
-					seDesconectoCpu(sd);
-					sem_post(semCPUDesconectadaMutex);
+					seDesconectoCPU(sd);
+					sem_post(&semCPUDesconectadaMutex);
 
 					//TODO Aca va lo que haces despues que una CPU se te desconecto,
 					//como ser sacarla de tu lista de CPUs
@@ -211,15 +212,19 @@ void* atencionCPUs(void* sinParametro) {
 				//Echo back the message that came in
 				else {
 					char *header = malloc(16);
-					int resultado, *razon = malloc(sizeof(int)), *tamanoMensaje = malloc(4);
+					int resultado;
+					int *razon = malloc(sizeof(int));
+					int *tamanoMensaje = malloc(4);
 					recv(*sd, (void*) header, 16, 0);
 					desempaquetar2(header, razon, tamanoMensaje, 0);
-					char *mensaje = malloc(*tamanoMensaje), semaforo;
-					recv(*sd,(void*) mensaje, *tamanoMensaje, MSG_WAITALL);
+					char *mensaje = malloc(*tamanoMensaje);
+					recv(*sd, (void*) mensaje, *tamanoMensaje, MSG_WAITALL);
 					t_PCB* pcb;
 					int tiempo, valor;
 					char* dispositivoIO;
 					char* texto;
+					char* semaforo;
+					char id; //TODO
 					switch (*razon) {
 					case SALIDA_POR_QUANTUM: //El Programa salio del CPU por quantum
 						desempaquetar2(mensaje, &pcb, 0);
@@ -236,10 +241,10 @@ void* atencionCPUs(void* sinParametro) {
 						break;
 					case SIGURS_1: //la CPU se desconectó CON SIGUSR
 						desempaquetar2(mensaje, &pcb, 0);
-						sem_wait(semCPUDesconectadaMutex);
+						sem_wait(&semCPUDesconectadaMutex);
 						idUltimaCPUDesconectada = sd;
 						seDesconectoCPUSigusr(sd, pcb);
-						sem_post(semCPUDesconectadaMutex);
+						sem_post(&semCPUDesconectadaMutex);
 						break;
 					case WAIT:
 						desempaquetar2(mensaje, &pcb, &semaforo, 0);
@@ -247,7 +252,7 @@ void* atencionCPUs(void* sinParametro) {
 						break;
 					case SIGNAL:
 						desempaquetar2(mensaje, &semaforo, 0);
-						sc_signal(semaforo,sd);
+						sc_signal(semaforo, sd);
 						break;
 					case IMPRIMIR:
 						//TODO
@@ -257,7 +262,7 @@ void* atencionCPUs(void* sinParametro) {
 						sc_imprimirTexto(texto, sd);
 						break;
 					case GRABAR_VALOR:
-						desempaquetar2(mensaje, &valor,&id, 0);
+						desempaquetar2(mensaje, &valor, &id, 0);
 						sc_grabar_valor(id, valor);
 						break;
 					case OBTENER_VALOR:
