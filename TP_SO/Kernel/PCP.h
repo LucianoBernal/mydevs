@@ -31,19 +31,21 @@ typedef struct {
  int idProceso;
  } t_estructuraCPU;*/
 
-static sem_t CPUsLibres;
-static sem_t sPLP;
-static sem_t sBloqueado ;
-static sem_t colaExecVacia ;
-static sem_t semCPUDesconectadaMutex ;
-static t_queue* colaExec;
-static pthread_t ejecutar;
-static pthread_t multiplexorCPUs;
-static pthread_t envCPU;
-static int retMandarAEjecutar, retEnviarCPU, retMultiplexorCPUs;
-static int* sinParametros = NULL;
-static t_dictionary* diccionarioDispositivos;
-static t_list* CPUs;
-static int idUltimaCPUDesconectada;
+sem_t CPUsLibres;
+//static sem_t sPLP;
+sem_t sBloqueado;
+sem_t colaExecVacia;
+sem_t semCPUDesconectadaMutex;
+sem_t CPUsMutex; //TODO
+sem_t colaExecMutex; //TODO
+t_queue* colaExec;
+pthread_t ejecutar;
+pthread_t multiplexorCPUs;
+pthread_t envCPU;
+int retMandarAEjecutar, retEnviarCPU, retMultiplexorCPUs;
+int* sinParametros;
+t_dictionary* diccionarioDispositivos;
+t_list* CPUs;
+int idUltimaCPUDesconectada;
 
 #endif /* PCP__H_ */

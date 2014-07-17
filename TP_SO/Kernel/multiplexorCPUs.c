@@ -21,13 +21,31 @@
 #include "PCPinterface.h"
 #include <biblioteca_comun/Serializacion.h>
 
-
 #define TRUE   1
 #define FALSE  0
 #define PORT 8888
 
+typedef enum {
+	CONFIRMACION,
+	NUEVO_PROGRAMA,
+	SALIDA_POR_QUANTUM,
+	SALIDA_POR_BLOQUEO,
+	SALIDA_NORMAL,
+	SALIDA_POR_SEMAFORO,
+	SIG_INT,
+	SIGURS_1,
+	WAIT,
+	SIGNAL,
+	IMPRIMIR,
+	IMPRIMIR_TEXTO,
+	GRABAR_VALOR,
+	OBTENER_VALOR
+
+} codigos_mensajes;
+int parametro[3];
+
 void* atencionCPUs(void* sinParametro) {
-	/*int opt = TRUE;
+	int opt = TRUE;
 	int master_socket, addrlen, new_socket, client_socket[30], max_clients = 30,
 			activity, i, valread, sd;
 	int max_sd;
@@ -127,41 +145,40 @@ void* atencionCPUs(void* sinParametro) {
 					new_socket, inet_ntoa(address.sin_addr),
 					ntohs(address.sin_port));
 
-			if ((valread =recv(new_socket, buffer,17, 0)) < 0) {
+			if ((valread = recv(new_socket, buffer, 17, 0)) < 0) {
 				perror("recive");
 				close(new_socket);
 			}
-			if (strncmp(buffer, handshake,17)!=0) {
+			if (strncmp(buffer, handshake, 17) != 0) {
 				printf(
 						"Host disconnected No es una CPU Valida ,socket fd is %d , ip is : %s , port : %d \n",
 						new_socket, inet_ntoa(address.sin_addr),
 						ntohs(address.sin_port));
-						close(new_socket);
-			}
-			else{
-			//send new connection greeting message
-			if (send(new_socket, message, strlen(message), 0)
-					!= strlen(message)) {
-				perror("send");
-			}
-
-			puts("Welcome message sent successfully");
-
-			//add new socket to array of sockets
-			for (i = 0; i < max_clients; i++) {
-				//if position is empty
-				if (client_socket[i] == 0) {
-					client_socket[i] = new_socket;
-					printf("Adding to list of sockets as %d\n", i);
-
-					break;
+				close(new_socket);
+			} else {
+				//send new connection greeting message
+				if (send(new_socket, message, strlen(message), 0)
+						!= strlen(message)) {
+					perror("send");
 				}
+
+				puts("Welcome message sent successfully");
+
+				//add new socket to array of sockets
+				for (i = 0; i < max_clients; i++) {
+					//if position is empty
+					if (client_socket[i] == 0) {
+						client_socket[i] = new_socket;
+						printf("Adding to list of sockets as %d\n", i);
+
+						break;
+					}
+				}
+
+				nuevaCPU(sd); //TODO es una nueva CPU
+
 			}
-
-			nuevaCPU(sd); //TODO es una nueva CPU
-
 		}
-}
 
 		//else its some IO operation on some other socket :)
 		for (i = 0; i < max_clients; i++) {
@@ -169,56 +186,80 @@ void* atencionCPUs(void* sinParametro) {
 
 			if (FD_ISSET( sd , &readfds)) {
 				//Check if it was for closing , and also read the incoming message
-				if ((valread = read(sd, buffer, 1024)) == 0) {//FIXME
+				if ((valread = read(sd, buffer, 1024)) == 0) { //FIXME
 					//Somebody disconnected , get his details and print
 					getpeername(sd, (struct sockaddr*) &address,
 							(socklen_t*) &addrlen);
-					printf("Host disconnected: socket fd is %d , ip %s , port %d \n",sd,
-							inet_ntoa(address.sin_addr),
+					printf(
+							"Host disconnected: socket fd is %d , ip %s , port %d \n",
+							sd, inet_ntoa(address.sin_addr),
 							ntohs(address.sin_port));
 
 					//Close the socket and mark as 0 in list for reuse
 					close(sd);
 					client_socket[i] = 0;
+					sem_wait(semCPUDesconectadaMutex);
+					idUltimaCPUDesconectada = sd;
 					seDesconectoCpu(sd);
+					sem_post(semCPUDesconectadaMutex);
+
 					//TODO Aca va lo que haces despues que una CPU se te desconecto,
 					//como ser sacarla de tu lista de CPUs
 				}
 
 				//Echo back the message that came in
 				else {
-					serializameCPU(buffer, &paquete_CPU);
-					switch (paquete_CPU->razon) {
-							case 'n': //La instancia de CPU es nueva
-								nuevaCPU(paquete_CPU.IDCpu);
-								break;
-							case 'q': //El Programa salio del CPU por quantum
-								programaSalioPorQuantum(paquete_CPU.pcb, paquete_CPU.IDCpu);
-								break;
-							case 't': //El Programa termino normalmente
-								moverAColaExit(paquete_CPU.pcb, paquete_CPU.IDCpu);
-								break;
-							case 'b': //El Programa salio por bloqueo
-								programaSalioPorBloqueo(paquete_CPU.pcb, paquete_CPU.tiempo,
-										paquete_CPU.dispositivoIO, paquete_CPU.IDCpu);
-								break;
-							case 'd': //la CPU se desconectó CON SIGUSR//TODO
-								sem_wait(semCPUDesconectadaMutex);
-								idUltimaCPUDesconectada = paquete_CPU.IDCpu;
-								seDesconectoCPUSigusr(paquete_CPU.IDCpu,paquete_CPU.pcb);
-								sem_post(semCPUDesconectadaMutex);
-								break;
-							}
+					char *header = malloc(16);
+					int resultado, *razon = malloc(sizeof(int)), *tamanoMensaje = malloc(4);
+					recv(*sd, (void*) header, 16, 0);
+					desempaquetar2(header, razon, tamanoMensaje, 0);
+					char *mensaje = malloc(*tamanoMensaje), semaforo;
+					recv(*sd,(void*) mensaje, *tamanoMensaje, MSG_WAITALL);
+					t_PCB* pcb;
+					int tiempo;
+					char* dispositivoIO;
+					switch (*razon) {
+					case SALIDA_POR_QUANTUM: //El Programa salio del CPU por quantum
+						desempaquetar2(mensaje, &pcb, 0);
+						programaSalioPorQuantum(pcb, sd);
+						break;
+					case SALIDA_NORMAL: //El Programa termino normalmente
+						desempaquetar2(mensaje, &pcb, 0);
+						moverAColaExit(pcb, sd);
+						break;
+					case SALIDA_POR_BLOQUEO: //El Programa salio por bloqueo
+						desempaquetar2(mensaje, &pcb, &tiempo, &dispositivoIO,
+								0);
+						programaSalioPorBloqueo(pcb, tiempo, dispositivoIO, sd);
+						break;
+					case SIGURS_1: //la CPU se desconectó CON SIGUSR
+						desempaquetar2(mensaje, &pcb, 0);
+						sem_wait(semCPUDesconectadaMutex);
+						idUltimaCPUDesconectada = sd;
+						seDesconectoCPUSigusr(sd, pcb);
+						sem_post(semCPUDesconectadaMutex);
+						break;
+					case WAIT:
+						break;
+					case SIGNAL:
+						break;
+					case IMPRIMIR:
+						break;
+					case IMPRIMIR_TEXTO:
+						break;
+					case GRABAR_VALOR:
+						break;
+					case OBTENER_VALOR:
+						break;
+					}
 
-					//TODO aca va el switch para saber porque volvio(pero no preguntas por
+					// aca va el switch para saber porque volvio(pero no preguntas por
 					//desconexion, eso ya se sabe de antes. MMM igual ojo, quizas si
 					//porque quizas convenga que el que el que haga el close se el kernel
 				}
 			}
 		}
 	}
-*/
 	return 0;
 }
-
 
