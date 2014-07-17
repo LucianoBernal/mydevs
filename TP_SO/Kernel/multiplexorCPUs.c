@@ -216,8 +216,9 @@ void* atencionCPUs(void* sinParametro) {
 					char *mensaje = malloc(*tamanoMensaje), semaforo;
 					recv(*sd,(void*) mensaje, *tamanoMensaje, MSG_WAITALL);
 					t_PCB* pcb;
-					int tiempo;
+					int tiempo, valor;
 					char* dispositivoIO;
+					char* texto;
 					switch (*razon) {
 					case SALIDA_POR_QUANTUM: //El Programa salio del CPU por quantum
 						desempaquetar2(mensaje, &pcb, 0);
@@ -240,16 +241,27 @@ void* atencionCPUs(void* sinParametro) {
 						sem_post(semCPUDesconectadaMutex);
 						break;
 					case WAIT:
+						desempaquetar2(mensaje, &semaforo, 0);
+						sc_wait(semaforo, sd);
 						break;
 					case SIGNAL:
+						desempaquetar2(mensaje, &semaforo, 0);
+						sc_signal(semaforo);
 						break;
 					case IMPRIMIR:
+						//TODO
 						break;
 					case IMPRIMIR_TEXTO:
+						desempaquetar2(mensaje, &texto, 0);
+						sc_imprimirTexto(texto, sd);
 						break;
 					case GRABAR_VALOR:
+						desempaquetar2(mensaje, &valor,&id, 0);
+						sc_grabar_valor(id, valor);
 						break;
 					case OBTENER_VALOR:
+						desempaquetar2(mensaje, &id, 0);
+						sc_obtener_valor(id, sd);
 						break;
 					}
 
