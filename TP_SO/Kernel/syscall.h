@@ -1,10 +1,3 @@
-/*
- * syscalls.h
- *
- *  Created on: 17/07/2014
- *      Author: utnso
- */
-
 #ifndef SYSCALLS_H_
 #define SYSCALLS_H_
 

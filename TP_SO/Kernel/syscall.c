@@ -1,10 +1,3 @@
-/*
- * syscall.c
- *
- *  Created on: 11/07/2014
- *      Author: utnso
- */
-
 #include "Kernel.h"
 #include <string.h>
 
