@@ -40,10 +40,11 @@ void sc_wait(char* idSem, t_PCB* pcb, int idCPU) {
 	int a = semaforo->valor;
 	if (a > 0) {
 		semaforo->valor = (semaforo->valor) - 1;
-		send(idCPU, 's', 1, 0); //TODO
+		send(idCPU, 's', 1, 0); //TODO (puede seguir)
 	} else {
 		t_estructuraSemaforo* semaforo = dictionary_get(diccionarioSemaforos,
 				idSem);
+		send(idCPU, 'n', 1, 0); //TODO (se libera)
 		seLiberoUnaCPU(idCPU);
 		sem_wait(&(semaforo->mutexCola));
 		queue_push(semaforo->procesosBloqueados, pcb);
