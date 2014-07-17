@@ -228,7 +228,7 @@ void seDesconectoCPU(int idCPU) { //TODO
 void seDesconectoCPUSigusr(int idCPU, t_PCB* pcb) {
 	sem_wait(&CPUsMutex);
 	list_remove_by_condition(CPUs, (void*) tieneID);
-	sem_wait(&CPUsMutex);
+	sem_post(&CPUsMutex);
 	sem_wait(&colaReadyMutex);
 	queue_push(colaReady, pcb);
 	sem_post(&colaReadyMutex);
