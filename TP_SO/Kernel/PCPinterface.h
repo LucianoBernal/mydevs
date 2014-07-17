@@ -13,17 +13,7 @@
 #include <biblioteca_comun/definiciones.h>
 #include <commons/collections/queue.h>
 
-typedef struct {
-	int idCPU;
-	int estado;
-	int idProceso;
-} t_estructuraCPU;
 
-typedef struct
-{
-	t_PCB* pcb;
-	int tiempo;
-} t_estructuraProcesoBloqueado;
 
 void* pcp_main(void*);
 void crearHilosPrincipales();

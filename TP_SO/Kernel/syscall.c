@@ -8,14 +8,6 @@
 #include "Kernel.h"
 #include <string.h>
 
-typedef struct {
-	int valor;
-	t_queue* procesosBloqueados;
-	sem_t mutexCola;
-} t_estructuraSemaforo;
-
-t_dictionary* diccionarioSemaforos;
-sem_t diccionarioSemaforosMutex;
 
 int sc_obtener_valor(char id, int idCpu) {
 	sem_wait(mutexVG);
@@ -70,6 +62,7 @@ void sc_wait(char* idSem, int idCpu) {
 
 int sc_imprimir() {
 	//TODO ?
+	return 0;
 
 }
 

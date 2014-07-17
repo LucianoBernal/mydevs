@@ -19,25 +19,33 @@ typedef struct {
 	sem_t mutexCola;
 } t_estructuraDispositivoIO;
 
-/*typedef struct
+typedef struct {
+	int valor;
+	t_queue* procesosBloqueados;
+	sem_t mutexCola;
+} t_estructuraSemaforo;
+
+typedef struct
  {
  t_PCB* pcb;
  int tiempo;
- } t_estructuraProcesoBloqueado;*/
+ } t_estructuraProcesoBloqueado;
 
-/*typedef struct {
+typedef struct {
  int idCPU;
  int estado;
  int idProceso;
- } t_estructuraCPU;*/
+ } t_estructuraCPU;
 
+t_dictionary* diccionarioSemaforos;
+sem_t diccionarioSemaforosMutex;
 sem_t CPUsLibres;
-//static sem_t sPLP;
 sem_t sBloqueado;
 sem_t colaExecVacia;
 sem_t semCPUDesconectadaMutex;
-sem_t CPUsMutex; //TODO
-sem_t colaExecMutex; //TODO
+sem_t CPUsMutex;
+sem_t colaExecMutex;
+sem_t semaforosMutex; //TODO
 t_queue* colaExec;
 pthread_t ejecutar;
 pthread_t multiplexorCPUs;
