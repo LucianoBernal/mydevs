@@ -69,7 +69,8 @@ void sc_wait(char* idSem, int idCpu) {
 }
 
 int sc_imprimir() {
-	//??
+	//TODO ?
+
 }
 
 int sc_imprimirTexto(char* texto, int idCpu) {
@@ -85,7 +86,9 @@ void armarDiccionarioDeSemaforos() {
 	sem_init(&diccionarioSemaforosMutex, 0, 1);
 	while (i < cantidadDeSemaforos) {
 		t_estructuraSemaforo* semaforo = malloc(sizeof(t_estructuraSemaforo));
+		sem_wait(&semaforosMutex);
 		int* valor = list_get(semaforos, i);
+		sem_post(&semaforosMutex);
 		sem_t mutex;
 		t_queue* cola = queue_create();
 		sem_init(&mutex, 0, 1);
