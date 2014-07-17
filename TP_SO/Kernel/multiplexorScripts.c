@@ -159,7 +159,7 @@ void* atencionScripts(void* sinParametro) {
 			recv(new_socket, tamano, 4, MSG_WAITALL);
 			char* literal = malloc(*tamano);
 			recv(new_socket, literal, *tamano, MSG_WAITALL);
-			//gestionarProgramaNuevo(literal,new_socket);
+			//gestionarProgramaNuevo(literal,new_socket,*tamano);
             puts(literal);
 
 		}

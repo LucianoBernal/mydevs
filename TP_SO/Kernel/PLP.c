@@ -8,7 +8,6 @@
 #include "PLP.h"
 #include "PLPinterface.h"
 
-
 typedef struct {
 	char* literal;
 	int sd;
@@ -17,7 +16,7 @@ typedef struct {
 typedef enum {
 	SEGMENTATION_FAULT,
 	MEMORY_OVERLOAD,
-//	CREAR_SEGMENTO,
+	CREAR_SEGMENTO,
 	CREAR_SEGMENTOS_PROGRAMA,
 	DESTRUIR_SEGMENTOS,
 	ESCRIBIR_EN_UMV,
@@ -25,19 +24,19 @@ typedef enum {
 	ENVIAR_PCB,
 	SOLICITAR_A_UMV,
 	PEDIR_ETIQUETAS,
-	PEDIR_INSTRUCCION
-}mensajes;
+	PEDIR_INSTRUCCION,
+	CAMBIAR_PROCESO_ACTIVO
+} mensajes;
 
-#define TAMANO_CABECERA 7
+#define TAMANO_CABECERA 16
 int socketUMV; //Agregada por pato, deberias crear el socket en algun momento.
 int tamanoStack; //Deberia leerlo desde config
 
-
-void* plp_main(int* socketUMV) {
+void* plp_main(void* sinParametro) {
 	colaNew = list_create();
 	randoms = list_create();
-	sem_init(&mutexProcesoActivo,0,1);
-	sem_init(&PidSD_Mutex,0,1); // quizas vayan en el del kernel
+	sem_init(&mutexProcesoActivo, 0, 1);
+	sem_init(&PidSD_Mutex, 0, 1); // quizas vayan en el del kernel
 	pidYSockets = dictionary_create(); // quizas vayan en el del kernel
 	sem_init(&colaNuevosVacio, 0, 0);
 	sem_init(&randomMutex, 0, 1);
@@ -91,7 +90,6 @@ bool esDistintoANumAleatorio(int* numero) {
 int estaRepetido() {
 	return (!(list_all_satisfy(randoms, (void*) esDistintoANumAleatorio)));
 }
-
 
 int generarProgramID() {
 	srand(time(NULL )); // Semilla
@@ -147,74 +145,169 @@ void liberar_numero(int pid) {
 
 }
 
-
-int solicitar_Memoria(t_metadata_program *metadata, t_PCB *pcb,
-		const char* literal) {
-/*	int *codigoRespuesta = malloc(sizeof(int));
-	char *tamanoRespuesta = malloc(sizeof(char));
-	//Ya lo agregue a definiciones.h, sigue tirando error
-	t_paquete *mensaje = serializar2(strlen(literal), metadata->etiquetas_size,
-			tamanoStack, metadata->instrucciones_size);
+int crearSegmentos_Memoria(t_metadata_program *metadata, t_PCB *pcb,
+		const char* literal, int tamanioScript) {
+	int fin;
 	int *razon = malloc(sizeof(int));
-	*razon = CREAR_SEGMENTOS_PROGRAMA;
-	t_paquete *header = serializar2(crear_nodoVar(&mensaje->tamano, 1),
-			crear_nodoVar(razon, sizeof(int)), 0);
-	send(socketUMV, (void*) header, TAMANO_CABECERA, 0);
-	send(socketUMV, (void*) mensaje, mensaje->tamano, 0);
-	char *hRespuesta = malloc(TAMANO_CABECERA);
-	recv(socketUMV, (void*) hRespuesta, TAMANO_CABECERA, MSG_WAITALL);
-	desempaquetar2(hRespuesta, tamanoRespuesta, codigoRespuesta, 0);
-	if (codigoRespuesta) {
-		char *msjRespuesta = malloc(tamanoRespuesta);
-		recv(socketUMV, (void*) msjRespuesta, tamanoRespuesta, MSG_WAITALL);
-		desempaquetar2(msjRespuesta, pcb->segmento_Codigo,
-				pcb->indice_de_Etiquetas, pcb->segmento_Stack,
-				pcb->indice_de_Codigo, 0);
+	*razon = CREAR_SEGMENTO;
+	int *tamanoMensaje = malloc(sizeof(int));
+	*tamanoMensaje = 16;
+	t_paquete * aSerializarHeader = (t_paquete *) serializar2(
+			crear_nodoVar(razon, 4), crear_nodoVar(tamanoMensaje, 4), 0);
+	t_paquete * aSerializarPaquete = (t_paquete *) serializar2(
+			crear_nodoVar(&tamanioScript, 4),
+			crear_nodoVar(&metadata->instrucciones_size, 4),
+			crear_nodoVar(&metadata->etiquetas_size, 4),
+			crear_nodoVar(&tamanio_stack, 4), 0);
+	send(socketUMV, aSerializarHeader->msj, 16, 0);
+	send(socketUMV, aSerializarPaquete->msj, *tamanoMensaje, 0);
+	free(aSerializarHeader);
+	free(aSerializarPaquete);
+	char *header = malloc(16);
+	recv(socketUMV, (void*) header, 16, 0);
+	desempaquetar2(header, razon, tamanoMensaje, 0);
+	if (*tamanoMensaje) {
+		char* message = malloc(*tamanoMensaje);
+		recv(socketUMV, (void*) message, *tamanoMensaje, MSG_WAITALL);
+		int indice_Codigo, segmentoStack, segmentoCodigo, indice_Funciones;
+		desempaquetar2(message, &segmentoCodigo, &indice_Codigo,
+				&indice_Funciones, &segmentoStack, 0);
+		pcb->segmento_Codigo = segmentoCodigo;
+		pcb->indice_de_Codigo = indice_Codigo;
+		pcb->indice_de_Etiquetas = indice_Funciones;
+		pcb->segmento_Stack = segmentoStack;
+		//log_info(logKernel,"Los segmentos del programa fueron Creados exitosamente en la UMV");
+		free(message);
+		fin = 0;
 	} else {
-		printf("No habia espacio en memoria");
+		fin = -1;//Memory_Overload
 	}
-	return *codigoRespuesta;*/
+	free(header);
+	free(tamanoMensaje);
+	free(razon);
+	return fin;
 }
+/*int *codigoRespuesta = malloc(sizeof(int));
+ char *tamanoRespuesta = malloc(sizeof(char));
+ t_paquete *mensaje = serializar2(strlen(literal), metadata->etiquetas_size,
+ tamanoStack, metadata->instrucciones_size);
+ int *razon = malloc(sizeof(int));
+ *razon = CREAR_SEGMENTOS_PROGRAMA;
+ t_paquete *header = serializar2(crear_nodoVar(&mensaje->tamano, 1),
+ crear_nodoVar(razon, sizeof(int)), 0);
+ send(socketUMV, (void*) header, TAMANO_CABECERA, 0);
+ send(socketUMV, (void*) mensaje, mensaje->tamano, 0);
+ char *hRespuesta = malloc(TAMANO_CABECERA);
+ recv(socketUMV, (void*) hRespuesta, TAMANO_CABECERA, MSG_WAITALL);
+ desempaquetar2(hRespuesta, tamanoRespuesta, codigoRespuesta, 0);
+ if (codigoRespuesta) {
+ char *msjRespuesta = malloc(tamanoRespuesta);
+ recv(socketUMV, (void*) msjRespuesta, tamanoRespuesta, MSG_WAITALL);
+ desempaquetar2(msjRespuesta, pcb->segmento_Codigo,
+ pcb->indice_de_Etiquetas, pcb->segmento_Stack,
+ pcb->indice_de_Codigo, 0);
+ } else {
+ printf("No habia espacio en memoria");
+ }
+ return *codigoRespuesta;
+ }*/
 
 void escribir_en_Memoria(t_metadata_program * metadata, t_PCB *pcb,
-		const char *literal) {/*
+		const char *literal,int tamanoLiteral) {
+	int *base=malloc(sizeof(int)),*offset=malloc(sizeof(int));
+	*offset=0;
+	base=NULL;
 	int *razon = malloc(sizeof(int));
-	*razon = ESCRIBIR_EN_UMV_OFFSET_CERO;
-	char error = 1;
-	//Segmento codigo
-	t_paquete *paquete = serializar2(crear_nodoVar(&(pcb->program_id), 4),
-			crear_nodoVar((pcb->segmento_Codigo), 4),
-			crear_nodoVar(literal, strlen(literal)), 0);
-	t_paquete *header = serializar2(crear_nodoVar(&(paquete->tamano), 4),
-			crear_nodoVar(razon, sizeof(int)), 0);
-	if (error)
-		error = send(socketUMV, (void*) header, TAMANO_CABECERA, 0);
-	if (error)
-		error = send(socketUMV, (void*) paquete, paquete->tamano, 0);
-	//indice etiquetas
-	t_paquete *paquete = serializar2(crear_nodoVar(&(pcb->program_id), 4),
-			crear_nodoVar((pcb->indice_de_Etiquetas), 4),
-			crear_nodoVar(metadata->etiquetas, metadata->etiquetas_size), 0);
-	t_paquete *header = serializar2(crear_nodoVar(&(paquete->tamano), 4),
-			crear_nodoVar(razon, sizeof(int)), 0);
-	if (error)
-		error = send(socketUMV, (void*) header, TAMANO_CABECERA, 0);
-	if (error)
-		error = send(socketUMV, (void*) paquete, paquete->tamano, 0);
-	//indice codigo
-	t_paquete *paquete = serializar2(crear_nodoVar(&(pcb->program_id), 4),
-			crear_nodoVar((pcb->indice_de_Codigo), 4),
-			crear_nodoVar(metadata->instrucciones_serializado,
-					metadata->instrucciones_size), 0);
-	t_paquete *header = serializar2(crear_nodoVar(&(paquete->tamano), 4),
-			crear_nodoVar(razon, sizeof(int)), 0);
-	if (error)
-		error = send(socketUMV, (void*) header, TAMANO_CABECERA, 0);
-	if (error)
-		error = send(socketUMV, (void*) paquete, paquete->tamano, 0);
-	if (!error)
-		printf("Alguno de los sends fallo, noob");*/
+	*razon = ESCRIBIR_EN_UMV;
+	int *tamanoMensaje = malloc(sizeof(int));
+	//Escribo Literal en Memoria
+	*tamanoMensaje = tamanoLiteral+12;
+	*base=pcb->segmento_Codigo;
+		t_paquete * aSerializarHeader = (t_paquete *) serializar2(
+				crear_nodoVar(razon, 4), crear_nodoVar(tamanoMensaje, 4), 0);
+		t_paquete * aSerializarPaquete = (t_paquete *) serializar2(
+				crear_nodoVar(base, 4),
+				crear_nodoVar(offset,4),
+				crear_nodoVar(&tamanoLiteral,4),
+				crear_nodoVar((char*)literal,tamanoLiteral),0);
+	send(socketUMV, aSerializarHeader->msj, 16, 0);
+	send(socketUMV, aSerializarPaquete->msj, *tamanoMensaje, 0);
+
+	//Escribo Indice de Codigo
+
+	*tamanoMensaje = metadata->instrucciones_size+12;
+		*base=pcb->indice_de_Codigo;
+			aSerializarHeader = (t_paquete *) serializar2(
+					crear_nodoVar(razon, 4), crear_nodoVar(tamanoMensaje, 4), 0);
+			aSerializarPaquete = (t_paquete *) serializar2(
+					crear_nodoVar(base, 4),
+					crear_nodoVar(offset,4),
+					crear_nodoVar(&metadata->instrucciones_size,4),
+					crear_nodoVar(metadata->instrucciones_serializado,metadata->instrucciones_size),0);
+		send(socketUMV, aSerializarHeader->msj, 16, 0);
+		send(socketUMV, aSerializarPaquete->msj, *tamanoMensaje, 0);
+
+	//Escribo Indice de Etiquetas y Funciones
+		*tamanoMensaje = metadata->etiquetas_size+12;
+				*base=pcb->indice_de_Etiquetas;
+					aSerializarHeader = (t_paquete *) serializar2(
+							crear_nodoVar(razon, 4), crear_nodoVar(tamanoMensaje, 4), 0);
+					aSerializarPaquete = (t_paquete *) serializar2(
+							crear_nodoVar(base, 4),
+							crear_nodoVar(offset,4),
+							crear_nodoVar(&metadata->etiquetas_size,4),
+							crear_nodoVar(metadata->etiquetas,metadata->etiquetas_size),0);
+				send(socketUMV, aSerializarHeader->msj, 16, 0);
+				send(socketUMV, aSerializarPaquete->msj, *tamanoMensaje, 0);
+
+	//Libero
+	free(base);
+	free(offset);
+	free(razon);
+	free(tamanoMensaje);
+	free(aSerializarHeader);
+	free(aSerializarPaquete);
+
 }
+	/*
+}
+ int *razon = malloc(sizeof(int));
+ *razon = ESCRIBIR_EN_UMV_OFFSET_CERO;
+ char error = 1;
+ //Segmento codigo
+ t_paquete *paquete = serializar2(crear_nodoVar(&(pcb->program_id), 4),
+ crear_nodoVar((pcb->segmento_Codigo), 4),
+ crear_nodoVar(literal, strlen(literal)), 0);
+ t_paquete *header = serializar2(crear_nodoVar(&(paquete->tamano), 4),
+ crear_nodoVar(razon, sizeof(int)), 0);
+ if (error)
+ error = send(socketUMV, (void*) header, TAMANO_CABECERA, 0);
+ if (error)
+ error = send(socketUMV, (void*) paquete, paquete->tamano, 0);
+ //indice etiquetas
+ t_paquete *paquete = serializar2(crear_nodoVar(&(pcb->program_id), 4),
+ crear_nodoVar((pcb->indice_de_Etiquetas), 4),
+ crear_nodoVar(metadata->etiquetas, metadata->etiquetas_size), 0);
+ t_paquete *header = serializar2(crear_nodoVar(&(paquete->tamano), 4),
+ crear_nodoVar(razon, sizeof(int)), 0);
+ if (error)
+ error = send(socketUMV, (void*) header, TAMANO_CABECERA, 0);
+ if (error)
+ error = send(socketUMV, (void*) paquete, paquete->tamano, 0);
+ //indice codigo
+ t_paquete *paquete = serializar2(crear_nodoVar(&(pcb->program_id), 4),
+ crear_nodoVar((pcb->indice_de_Codigo), 4),
+ crear_nodoVar(metadata->instrucciones_serializado,
+ metadata->instrucciones_size), 0);
+ t_paquete *header = serializar2(crear_nodoVar(&(paquete->tamano), 4),
+ crear_nodoVar(razon, sizeof(int)), 0);
+ if (error)
+ error = send(socketUMV, (void*) header, TAMANO_CABECERA, 0);
+ if (error)
+ error = send(socketUMV, (void*) paquete, paquete->tamano, 0);
+ if (!error)
+ printf("Alguno de los sends fallo, noob");
+}*/
 
 void agregar_En_Diccionario(int pid, int sd) {
 	sem_wait(&PidSD_Mutex);
@@ -223,7 +316,7 @@ void agregar_En_Diccionario(int pid, int sd) {
 
 }
 
-void gestionarProgramaNuevo(const char* literal, int sd) { // UN HILO
+void gestionarProgramaNuevo(const char* literal, int sd, int tamanioLiteral) {
 	t_PCB* pcb = malloc(sizeof(t_PCB));
 	t_metadata_program* metadata = metadatada_desde_literal(literal);
 	pcb->program_id = generarProgramID();
@@ -231,9 +324,8 @@ void gestionarProgramaNuevo(const char* literal, int sd) { // UN HILO
 	int peso = calcularPeso(metadata);
 	sem_wait(&mutexProcesoActivo);
 	cambiar_Proceso_Activo(pcb->program_id);
-	if (solicitar_Memoria(metadata, pcb, literal)
-			!= 0 /*ergo se pudo reservar memoria */) { //HABLAR CON PROJECTS LEADERS DE UMV
-		escribir_en_Memoria(metadata, pcb, literal);
+	if (crearSegmentos_Memoria(metadata, pcb, literal, tamanioLiteral) == 0) {
+		escribir_en_Memoria(metadata, pcb, literal,tamanioLiteral);
 		sem_post(&mutexProcesoActivo);
 		encolar_New(pcb, peso);
 		agregar_En_Diccionario(pcb->program_id, sd);
@@ -247,7 +339,6 @@ void gestionarProgramaNuevo(const char* literal, int sd) { // UN HILO
 	metadata_destruir(metadata); //OJO QUIZAS SOLO SEA EN EL ELSE REVISAR!
 	free(pcb);
 }
-
 
 void* deNewAReady(void* sinParametro) { // OTRO HILO
 	while (1) {
@@ -290,66 +381,94 @@ void mostrarColaDePCBs(t_queue* cola) {
 }
 
 /*void notificar_Memoria_Llena(int sd) {
-	char* message =
-			"No hay espacio Suficiente en memoria para alojar el programa\r\n";
-	int* tamano = malloc(4);
-	*tamano = strlen(message);
-	if (send(sd, tamano, 4, 0) == 0) {
-		perror("send");
-	} else {
-		if (send(sd, message, *tamano, 0) != *tamano) {
-			perror("send");
-		}
-		}
-	free(message);
-	free(tamano);
-}*/
+ char* message =
+ "No hay espacio Suficiente en memoria para alojar el programa\r\n";
+ int* tamano = malloc(4);
+ *tamano = strlen(message);
+ if (send(sd, tamano, 4, 0) == 0) {
+ perror("send");
+ } else {
+ if (send(sd, message, *tamano, 0) != *tamano) {
+ perror("send");
+ }
+ }
+ free(message);
+ free(tamano);
+ }*/
 
-
-void notificar_Memoria_Llena(int sd){
-	notificar_Programa(sd,"No hay espacio Suficiente en memoria para alojar el programa\r\n");
+void notificar_Memoria_Llena(int sd) {
+	notificar_Programa(sd,
+			"No hay espacio Suficiente en memoria para alojar el programa\r\n");
 
 }
-
 
 void* manejoColaExit(void* sinParametros) {
-while (1) {
-	sem_wait(&colaExitVacio);
-	sem_wait(&colaExitMutex);
-	t_PCB* pcb = queue_pop(colaExit);
-	sem_post(&colaExitMutex);
-	sem_wait(&mutexProcesoActivo);
-	cambiar_Proceso_Activo(pcb->program_id);
-	solicitar_Destruccion_Segmentos(pcb->program_id);
-	sem_post(&mutexProcesoActivo);
-	enviar_Mensaje_Final(pcb->program_id);
-	cerrar_conexion(pcb->program_id);
-	liberar_numero(pcb->program_id);
-	free(pcb);
-}
-}
-
-void solicitar_Destruccion_Segmentos(int pid){
-
+	while (1) {
+		sem_wait(&colaExitVacio);
+		sem_wait(&colaExitMutex);
+		t_PCB* pcb = queue_pop(colaExit);
+		sem_post(&colaExitMutex);
+		sem_wait(&mutexProcesoActivo);
+		cambiar_Proceso_Activo(pcb->program_id);
+		solicitar_Destruccion_Segmentos();
+		sem_post(&mutexProcesoActivo);
+		enviar_Mensaje_Final(pcb->program_id);
+		cerrar_conexion(pcb->program_id);
+		liberar_numero(pcb->program_id);
+		free(pcb);
+	}
 }
 
-void cambiar_Proceso_Activo(int pid){
+void solicitar_Destruccion_Segmentos() {
+	int *razon = malloc(sizeof(int));
+	*razon = DESTRUIR_SEGMENTOS;
+	int *tamanoMensaje = malloc(sizeof(int));
+	*tamanoMensaje = 4;
+	t_paquete * aSerializarHeader = (t_paquete *) serializar2(
+			crear_nodoVar(razon, 4), crear_nodoVar(tamanoMensaje, 4), 0);
+	send(socketUMV, aSerializarHeader->msj, 16, 0);
+	send(socketUMV, (void*) tamanoMensaje, *tamanoMensaje, 0); //ES BASURA ES PARA QUE ANDE NOMAS
+	free(razon);
+	free(tamanoMensaje);
+	free(aSerializarHeader);
+}
+
+void cambiar_Proceso_Activo(int progid) {
+	int *razon = malloc(sizeof(int));
+	*razon = CAMBIAR_PROCESO_ACTIVO;
+	int *tamanoMensaje = malloc(sizeof(int));
+	*tamanoMensaje = 4;
+	int *pid = malloc(sizeof(int));
+	*pid = progid;
+	t_paquete * aSerializarHeader = (t_paquete *) serializar2(
+			crear_nodoVar(razon, 4), crear_nodoVar(tamanoMensaje, 4), 0);
+	send(socketUMV, aSerializarHeader->msj, 16, 0);
+	t_paquete * aSerializarPaquete = (t_paquete *) serializar2(
+			crear_nodoVar(&pid, 4), 0);
+	send(socketUMV, aSerializarHeader->msj, 16, 0);
+	send(socketUMV, aSerializarPaquete->msj, *tamanoMensaje, 0);
+	free(aSerializarHeader);
+	free(aSerializarPaquete);
+	free(razon);
+	free(tamanoMensaje);
+	free(pid);
 
 }
 
-void enviar_Mensaje_Final(int pid){
-	int sd=obtener_sd_Programa(pid);
-	notificar_Programa(sd,"El kernel conluyo con la Ejecucion del Programa\r\n");
+void enviar_Mensaje_Final(int pid) {
+	int sd = obtener_sd_Programa(pid);
+	notificar_Programa(sd,
+			"El kernel conluyo con la Ejecucion del Programa\r\n");
 }
 
-int obtener_sd_Programa(int pid){
+int obtener_sd_Programa(int pid) {
 	sem_wait(&PidSD_Mutex);
-	int* sd=dictionary_get(pidYSockets, (char*) &pid);
+	int* sd = dictionary_get(pidYSockets, (char*) &pid);
 	sem_post(&PidSD_Mutex);
 	return *sd;
 }
 
-void notificar_Programa(int sd,char* message) {
+void notificar_Programa(int sd, char* message) {
 	int* tamano = malloc(4);
 	*tamano = strlen(message);
 	if (send(sd, tamano, 4, 0) == 0) {
@@ -358,11 +477,11 @@ void notificar_Programa(int sd,char* message) {
 		if (send(sd, message, *tamano, 0) != *tamano) {
 			perror("send");
 		}
-		}
-	free(tamano);
 	}
+	free(tamano);
+}
 
-void cerrar_conexion(int pid){
+void cerrar_conexion(int pid) {
 	int sd = obtener_sd_Programa(pid);
 	close(sd);
 }

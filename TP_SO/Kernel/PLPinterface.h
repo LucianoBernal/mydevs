@@ -18,9 +18,9 @@ typedef struct {
 } t_new;
 
 
-void gestionarProgramaNuevo(const char*, int );
+void gestionarProgramaNuevo(const char*, int ,int);
 void* deNewAReady(void*);
-void* plp_main(int*);
+void* plp_main(void*);
 void* manejoColaExit(void*);
 void* deNewAReady(void*);
 void asignaciones_desde_metada(t_metadata_program*, t_PCB*);
@@ -33,8 +33,8 @@ void encolar_New(t_PCB* , int );
 int calcularPeso(t_metadata_program* );
 bool esIgualANumABorrar(int* );
 void liberar_numero(int );
-int solicitar_Memoria(t_metadata_program *, t_PCB *,const char* );
-void escribir_en_Memoria(t_metadata_program *, t_PCB *,	const char *);
+int crearSegmentos_Memoria(t_metadata_program *, t_PCB *,const char* ,int);
+void escribir_en_Memoria(t_metadata_program *, t_PCB *,	const char *,int);
 void agregar_En_Diccionario(int , int );
 void notificar_Memoria_Llena(int);
 void encolar_en_Ready(t_PCB*);
@@ -43,7 +43,7 @@ void mostrarListaNew();
 void imprimirNodosPCBs(t_PCB*);
 void mostrarColaDePCBs(t_queue*);
 void notificar_Programa(int,char*);
-void solicitar_Destruccion_Segmentos(int);
+void solicitar_Destruccion_Segmentos();
 void enviar_Mensaje_Final(int);
 void cerrar_conexion(int);
 void* manejoColaExit(void* );
