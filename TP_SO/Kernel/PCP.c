@@ -254,11 +254,15 @@ int estaLibreID(int idCPU) {
 
 void mostrarColaDeProcesosListos() {
 	printf("El estado de la Cola Ready es el siguiente:\n");
+	sem_wait(&colaReadyMutex);
 	mostrarColaDePCBs2(colaReady);
+	sem_post(&colaReadyMutex);
 }
 void mostrarColaDeProcesosFinalizados() {
 	printf("El estado de la Cola Exit es el siguiente:\n");
+	sem_wait(&colaExitMutex);
 	mostrarColaDePCBs2(colaExit);
+	sem_post(&colaExitMutex);
 }
 
 void mostrarColaDeProcesosEnEjecucion() {
@@ -279,7 +283,9 @@ void mostrarColaDeProcesosBloqueados() {
 
 		t_estructuraDispositivoIO* estructura = dictionary_get(
 				diccionarioDispositivos, id);
+		sem_wait(&(estructura->mutexCola));
 		mostrarColaDePCBsBloqueados(estructura->procesosBloqueados);
+		sem_post(&(estructura->mutexCola));
 		a++;
 	}
 	while (b < cantidadDeSemaforos) {
@@ -287,7 +293,9 @@ void mostrarColaDeProcesosBloqueados() {
 		printf("Procesos bloqueados para el semaforo %s es el siguiente: \n",
 				sem);
 		//t_estructuraSemaforo* semaforo = dictionary_get(semaforos,sem);
+		//sem_wait(&(semaforo->mutexCola));
 		//mostrarColaDePCBsBloqueadosSem(semaforo->procesosBloqueados); //TODO no me toma t_estructuraSemaforo (esta en syscalls)
+		///sem_post(&(semaforo->mutexCola));
 		b++;
 
 	}
