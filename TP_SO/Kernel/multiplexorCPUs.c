@@ -241,12 +241,12 @@ void* atencionCPUs(void* sinParametro) {
 						sem_post(semCPUDesconectadaMutex);
 						break;
 					case WAIT:
-						desempaquetar2(mensaje, &semaforo, 0);
-						sc_wait(semaforo, sd);
+						desempaquetar2(mensaje, &pcb, &semaforo, 0);
+						sc_wait(semaforo, pcb, sd);
 						break;
 					case SIGNAL:
 						desempaquetar2(mensaje, &semaforo, 0);
-						sc_signal(semaforo,sc);
+						sc_signal(semaforo,sd);
 						break;
 					case IMPRIMIR:
 						//TODO
