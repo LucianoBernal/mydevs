@@ -86,8 +86,10 @@ void armarDiccionarioDeSemaforos() {
 }
 
 int programIdDeCpu(int idCPU) {
+	sem_wait(CPUsMutex);
 	int posicion = posicionEnLaLista(CPUs, idCPU);
 	t_estructuraCPU* CPU = list_get(CPUs, posicion);
+	sem_post(CPUsMutex);
 	return (CPU->idProceso);
 
 }
