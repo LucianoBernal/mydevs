@@ -2,6 +2,7 @@
 #include "PCPinterface.h"
 
 void* pcp_main(void* sinParametro) {
+	sinParametros = NULL;
 	colaExec = queue_create();
 	valor_semaforos = list_create();
 	semaforos = list_create();
@@ -10,10 +11,12 @@ void* pcp_main(void* sinParametro) {
 	diccionarioDispositivos = dictionary_create();
 	CPUs = list_create();
 	sem_init(&CPUsLibres, 0, 0);
-	sem_init(&sPLP, 0, 0);
 	sem_init(&sBloqueado, 0, 0);
 	sem_init(&colaExecVacia, 0, 0);
 	sem_init(&semCPUDesconectadaMutex, 0, 1);
+	sem_init(&CPUsMutex, 0, 1);
+	sem_init(&colaExecMutex, 0, 0);
+
 	//crearHilosDeEntradSalida
 	int i = 0;
 	while (i < cantidadDeDispositivos) {
@@ -30,7 +33,7 @@ void* pcp_main(void* sinParametro) {
 		estructuraDispositivo->procesosBloqueados = colaDispositivo;
 		estructuraDispositivo->colaVacia = semaforo;
 		estructuraDispositivo->mutexCola = mutex;
-		char * idDispositivo = list_get(idDispositivos,i);
+		char * idDispositivo = list_get(idDispositivos, i);
 		dictionary_put(diccionarioDispositivos, idDispositivo,
 				estructuraDispositivo);
 		pthread_t dispositivo;
@@ -76,35 +79,44 @@ void crearHilosPrincipales() {
 }
 
 void* mandarAEjecutar(void* j) {
-	while(1){
-	sem_wait(&vacioReady);
-	sem_wait(&colaReadyMutex);
-	t_PCB* procesoAEjecutar = queue_pop(colaReady);
-	queue_push(colaExec, procesoAEjecutar);
-	int * sinParametro = NULL;
-	enviarCPU(sinParametro);
-	free(sinParametro);
-	sem_post(&colaReadyMutex);
-	sem_post(&colaExecVacia);
+	while (1) {
+		sem_wait(&vacioReady);
+		sem_wait(&colaReadyMutex);
+		t_PCB* procesoAEjecutar = queue_pop(colaReady);
+		sem_wait(&colaExecMutex);
+		queue_push(colaExec, procesoAEjecutar);
+		sem_post(&colaExecMutex);
+		int * sinParametro = NULL;
+		enviarCPU(sinParametro);
+		free(sinParametro);
+		sem_post(&colaReadyMutex);
+		sem_post(&colaExecVacia);
 	}
 }
 
 void* enviarCPU(void* sinParametro) {
-	while(1){
-	sem_wait(&CPUsLibres);
-	int IDCpuLibre = encontrarPrimeraCpuLibreYOcuparla(CPUs);
-	t_PCB* paquete = queue_pop(colaExec);
-	printf("%d", IDCpuLibre);
-	printf("%d", paquete->indice_de_Codigo);
-	//lo hago para sacar el warning por variable sin usar,
-	//TODO serializar(paquete);
-	int i = posicionEnLaLista(CPUs, IDCpuLibre);
+	while (1) {
+		sem_wait(&CPUsLibres);
+		sem_wait(&CPUsMutex);
+		int IDCpuLibre = encontrarPrimeraCpuLibreYOcuparla(CPUs);
+		sem_post(&CPUsMutex);
+		sem_wait(&colaExecMutex);
+		t_PCB* paquete = queue_pop(colaExec);
+		sem_post(&colaExecMutex);
+		printf("%d", IDCpuLibre);
+		printf("%d", paquete->indice_de_Codigo);
+		//lo hago para sacar el warning por variable sin usar,
+		//TODO serializar(paquete);
+		int i = posicionEnLaLista(CPUs, IDCpuLibre);
 		t_estructuraCPU* estructura = malloc(sizeof(t_estructuraCPU));
 		estructura->idCPU = IDCpuLibre;
 		estructura->estado = 0;
 		estructura->idProceso = (paquete->program_id);
-		list_replace_and_destroy_element(CPUs, i, estructura, (void*) cpu_destroy);
-	//TODO mandar el paquete serializado a esa id (sd)
+		sem_wait(&CPUsMutex);
+		list_replace_and_destroy_element(CPUs, i, estructura,
+				(void*) cpu_destroy);
+		sem_post(&CPUsMutex);
+		//TODO mandar el paquete serializado a esa id (sd)
 	}
 }
 
@@ -122,9 +134,8 @@ void* bloquearYDevolverAReady(void * param) {
 	sem_wait(&colaReadyMutex);
 	queue_push(colaReady, estructuraBloqueada->pcb);
 	sem_post(&colaReadyMutex);
-	return NULL;
+	return NULL ;
 }
-
 
 int encontrarPrimeraCpuLibreYOcuparla(t_list* lista) {
 	t_estructuraCPU* estructura = list_find(lista, (void*) estaLibre);
@@ -141,7 +152,9 @@ void nuevaCPU(int idCPU) {
 	estructura->idCPU = idCPU;
 	estructura->estado = 0;
 	estructura->idProceso = -1;
+	sem_wait(&CPUsMutex);
 	list_add(CPUs, estructura);
+	sem_post(&CPUsMutex);
 	sem_post(&CPUsLibres);
 }
 
@@ -181,7 +194,9 @@ void seLiberoUnaCPU(int idCPU) {
 	estructura->idCPU = idCPU;
 	estructura->estado = 0;
 	estructura->idProceso = -1;
+	sem_wait(&CPUsMutex);
 	list_replace_and_destroy_element(CPUs, i, estructura, (void*) cpu_destroy);
+	sem_post(&CPUsMutex);
 	sem_post(&CPUsLibres);
 }
 
@@ -194,18 +209,26 @@ bool tieneID(t_estructuraCPU* estructura) {
 
 void seDesconectoCPU(int idCPU) { //TODO
 	if (estaLibreID(idCPU)) {
+		sem_wait(&CPUsMutex);
 		list_remove_by_condition(CPUs, (void*) tieneID);
+		sem_post(&CPUsMutex);
 	} else {
-//		int idPrograma = buscarIDPrograma(idCPU);
-//		int sd = obtener_sd_programa(idPrograma);
-//		notificar_Programa(sd,"La CPU se desconectó");
+		int idPrograma = buscarIDPrograma(idCPU);
+		int sd = obtener_sd_programa(idPrograma);
+		notificar_Programa(sd,"La CPU se desconectó, programa abortado");
+		sem_wait(&colaExitMutex);
 		//queue_push(colaExit, paquete_CPU.pcb); lo comento para que no me tire el error de que no encuenra pquetecpu
+		sem_post(&colaExitMutex);
+		sem_wait(&CPUsMutex);
 		list_remove_by_condition(CPUs, (void*) tieneID);
+		sem_wait(&CPUsMutex);
 	}
 }
 
 void seDesconectoCPUSigusr(int idCPU, t_PCB* pcb) {
+	sem_wait(&CPUsMutex);
 	list_remove_by_condition(CPUs, (void*) tieneID);
+	sem_wait(&CPUsMutex);
 	sem_wait(&colaReadyMutex);
 	queue_push(colaReady, pcb);
 	sem_post(&colaReadyMutex);
@@ -221,8 +244,10 @@ int posicionEnLaLista(t_list* lista, int idCpu) {
 }
 
 int estaLibreID(int idCPU) {
+	sem_wait(&CPUsMutex);
 	int i = posicionEnLaLista(CPUs, idCPU);
 	t_estructuraCPU* estructura = list_get(CPUs, i);
+	sem_wait(&CPUsMutex);
 	return (estructura->estado == 0);
 
 }
@@ -233,48 +258,49 @@ void mostrarColaDeProcesosListos() {
 }
 void mostrarColaDeProcesosFinalizados() {
 	printf("El estado de la Cola Exit es el siguiente:\n");
-	mostrarColaDePCBs2( colaExit);
+	mostrarColaDePCBs2(colaExit);
 }
 
 void mostrarColaDeProcesosEnEjecucion() {
 	printf("El estado de la Cola Exec es el siguiente:\n");
+	sem_wait(&colaExecMutex);
 	mostrarColaDePCBs2(colaExec);
+	sem_post(&colaExecMutex);
 }
 
 void mostrarColaDeProcesosBloqueados() {
 	printf("El estado de la Cola de Bloqueados es el siguiente:\n");
 	int a = 0;
 	int b = 0;
-	while (a< cantidadDeDispositivos){
-		char* id= list_get(idDispositivos,a);
+	while (a < cantidadDeDispositivos) {
+		char* id = list_get(idDispositivos, a);
 		printf("Procesos bloqueados para el dispositivo %s es el siguiente: \n",
 				id);
 
 		t_estructuraDispositivoIO* estructura = dictionary_get(
 				diccionarioDispositivos, id);
-	 mostrarColaDePCBsBloqueados(estructura->procesosBloqueados);
-	 a++;
+		mostrarColaDePCBsBloqueados(estructura->procesosBloqueados);
+		a++;
 	}
-	while (b<cantidadDeSemaforos){
-		char* sem= list_get(semaforos,b);
+	while (b < cantidadDeSemaforos) {
+		char* sem = list_get(semaforos, b);
 		printf("Procesos bloqueados para el semaforo %s es el siguiente: \n",
-						sem);
-//	t_estructuraSemaforo* semaforo = dictionary_get(semaforos,sem);
-//	mostrarColaDePCBsBloqueadosSem(semaforo->procesosBloqueados); //TODO no me toma t_estructuraSemaforo
+				sem);
+		//t_estructuraSemaforo* semaforo = dictionary_get(semaforos,sem);
+		//mostrarColaDePCBsBloqueadosSem(semaforo->procesosBloqueados); //TODO no me toma t_estructuraSemaforo (esta en syscalls)
 		b++;
 
 	}
 }
 
-
-void mostrarColaDePCBsBloqueados(t_queue* procesosBloqueados)
-{
-	list_iterate(procesosBloqueados->elements, (void*) (void*) imprimirNodosPCBsBloqueados);
+void mostrarColaDePCBsBloqueados(t_queue* procesosBloqueados) {
+	list_iterate(procesosBloqueados->elements,
+			(void*) (void*) imprimirNodosPCBsBloqueados);
 }
 
-void mostrarColaDePCBsBloqueadosSem(t_queue* procesosBloqueados)
-{
-	list_iterate(procesosBloqueados->elements, (void*) (void*) imprimirNodosPCBsBloqueadosSem);
+void mostrarColaDePCBsBloqueadosSem(t_queue* procesosBloqueados) {
+	list_iterate(procesosBloqueados->elements,
+			(void*) (void*) imprimirNodosPCBsBloqueadosSem);
 }
 void imprimirNodosPCBsBloqueados(t_estructuraProcesoBloqueado* procesoBloqueado) {
 	printf("Program id:%i \n", procesoBloqueado->pcb->program_id);
@@ -291,9 +317,10 @@ void imprimirNodosPCBs2(t_PCB* pcb) {
 	printf("Program id:%i \n", pcb->program_id);
 }
 
-int buscarIDPrograma(int idCPU)
-{
+int buscarIDPrograma(int idCPU) {
+	sem_wait(&CPUsMutex);
 	int posicion = posicionEnLaLista(CPUs, idCPU);
 	t_estructuraCPU* CPU = list_get(CPUs, posicion);
+	sem_wait(&CPUsMutex);
 	return CPU->idProceso;
 }
