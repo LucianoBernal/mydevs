@@ -14,7 +14,7 @@ typedef struct {
 	sem_t mutexCola;
 } t_estructuraSemaforo;
 
-t_dictionary* semaforos;
+t_dictionary* diccionarioSemaforos;
 
 int sc_obtener_valor(char id, int idCpu) {
 	sem_wait(mutexVG);
@@ -32,7 +32,7 @@ int sc_grabar_valor(char id, int valor) {
 }
 
 void sc_signal(char* idSem) {
-	t_estructuraSemaforo* semaforo = dictionary_get(semaforos, idSem);
+	t_estructuraSemaforo* semaforo = dictionary_get(diccionarioSemaforos, idSem);
 	semaforo->valor = (semaforo->valor) + 1;
 	if (!queue_is_empty(semaforo->procesosBloqueados)) {
 		sem_wait(&(semaforo->mutexCola));
@@ -44,13 +44,13 @@ void sc_signal(char* idSem) {
 }
 
 void sc_wait(char* idSem, int idCpu) {
-	t_estructuraSemaforo* semaforo = dictionary_get(semaforos, idSem);
+	t_estructuraSemaforo* semaforo = dictionary_get(diccionarioSemaforos, idSem);
 	int a = semaforo->valor;
 	if (a > 0) {
 		semaforo->valor = (semaforo->valor) - 1;
 		send(idCpu, 's', 1, 0); //TODO
 	} else {
-		t_estructuraSemaforo* semaforo = dictionary_get(semaforos, idSem);
+		t_estructuraSemaforo* semaforo = dictionary_get(diccionarioSemaforos, idSem);
 		int programID = programIdDeCpu(idCpu);
 		sem_wait(&(semaforo->mutexCola));
 		queue_push(semaforo->procesosBloqueados, &programID);
@@ -71,6 +71,7 @@ int sc_imprimirTexto(char* texto, int idCpu) {
 
 void armarDiccionarioDeSemaforos() {
 	int i = 0;
+	semaforos = dictionary_create();
 	while (i < cantidadDeSemaforos) {
 		t_estructuraSemaforo* semaforo = malloc(sizeof(t_estructuraSemaforo));
 		int* valor = list_get(semaforos, i);
@@ -80,7 +81,7 @@ void armarDiccionarioDeSemaforos() {
 		semaforo->mutexCola=mutex;
 		semaforo->procesosBloqueados = cola;
 		semaforo->valor = *valor;
-		dictionary_put(semaforos, valor, semaforo);
+		dictionary_put(diccionarioSemaforos, valor, semaforo);
 		i++;
 	}
 }
