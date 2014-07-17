@@ -39,7 +39,6 @@ int main(int argc, char** argv) {
 
 
 	baseUMV = malloc(tamanoUMV);
-	informarBaseUMV();
 	listaProcesos = list_create();
 	int* sinParametros=baseUMV;
 	//Creo hilo que atiende a la consola.

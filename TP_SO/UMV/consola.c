@@ -6,7 +6,7 @@
  */
 #include "consola.h"
 #include "consola_interfaz.h"
-void crearProcesoArtificial(){
+void crearProcesoArtificial() {
 	listaProcesos = list_create();
 	agregarProceso(10000, 'c');
 	cambiarProcesoActivo(10000);
@@ -18,13 +18,13 @@ void* consola(void* baseUMV) {
 	crearProcesoArtificial();
 	do {
 		printf("Ingrese comando: \n");
-		scanf("%s",comando);
+		scanf("%s", comando);
 		analizarYEjecutar(comando);
 
 	} while (strncmp("exit", comando, 4));
-	log_info(logger,"Se cerró la consola");
+	log_info(logger, "Se cerró la consola");
 	free(comando);
-	return NULL;
+	return NULL ;
 }
 
 void analizarYEjecutar(char *comando) {
@@ -35,77 +35,83 @@ void analizarYEjecutar(char *comando) {
 		printf(
 				"¿Qué operación desea ralizar?-para saber como usarlo enviar 'h'- \n");
 		int flag;
-		do{
-		flag=0;
-		scanf("%s", &operacion.accion);
+		do {
+			flag = 0;
+			scanf("%s", &operacion.accion);
 
-		switch (operacion.accion) {
+			switch (operacion.accion) {
 
-		case 'h':
-			printf(
-					"para escribir bytes en memoria, ingrese 'e' \n para solicitar bytes en memoria, ingrese 's' \n para crear un segmento, ingrese 'c' \n para destruir un segmento, ingrese 'd' \n");
-			flag=1;
-			break;
+			case 'h':
+				printf(
+						"para escribir bytes en memoria, ingrese 'e' \n para solicitar bytes en memoria, ingrese 's' \n para crear un segmento, ingrese 'c' \n para destruir un segmento, ingrese 'd' \n");
+				flag = 1;
+				break;
 
-		case 'e':
-			printf("\ningrese base: ");
-			scanf("%d", &operacion.base);
+			case 'e':
+				printf("\ningrese base: ");
+				scanf("%d", &operacion.base);
 
-			printf("\ningrese offset: ");
-			scanf("%d", &operacion.offset);
+				printf("\ningrese offset: ");
+				scanf("%d", &operacion.offset);
 
-			printf("\ningrese tamaño: ");
-			scanf("%d", &operacion.tamano);
+				printf("\ningrese tamaño: ");
+				scanf("%d", &operacion.tamano);
 
-			char* msj = malloc(operacion.tamano);
-			printf("\n Ingrese bloque de mensaje: \n");
-			scanf("%s", msj);
-			enviarUnosBytes(operacion.base, operacion.offset, operacion.tamano, msj);
-			free(msj);
-			break;
+				char* msj = malloc(operacion.tamano);
+				printf("\n Ingrese bloque de mensaje: \n");
+				scanf("%s", msj);
+				enviarUnosBytes(operacion.base, operacion.offset,
+						operacion.tamano, msj);
+				free(msj);
+				break;
 
-		case 's':
+			case 's':
 
-			printf("\ningrese base: ");
-			scanf("%d", &operacion.base);
+				printf("\ningrese base: ");
+				scanf("%d", &operacion.base);
 
-			printf("\ningrese offset: ");
-			scanf("%d", &operacion.offset);
+				printf("\ningrese offset: ");
+				scanf("%d", &operacion.offset);
 
-			printf("\ningrese tamaño: ");
-			scanf("%d", &operacion.tamano);
-			int i;
-			char *respuesta = solicitarBytes(operacion.base, operacion.offset,
-					operacion.tamano);
-			for (i=0;i<operacion.tamano;i++){
-				//para darme cuenta si no imprime o imprime un /0 TODO borrar!!
-				printf("%c", respuesta[i]==0?'0':respuesta[i]);
-			}
-			printf("\n");
-			free(respuesta);
-			break;
+				printf("\ningrese tamaño: ");
+				scanf("%d", &operacion.tamano);
+				int i;
+				//char *respuesta=malloc(operacion.tamano);
+				char *respuesta = solicitarBytes(operacion.base,
+						operacion.offset, operacion.tamano);
+				//printf("\n%d\n", strlen(respuesta));
+				if (strcmp(respuesta, "")) {
+					for (i = 0; i < operacion.tamano; i++) {
+						//para darme cuenta si no imprime o imprime un /0 TODO borrar!!
+						printf("%c", respuesta[i] == 0 ? '0' : respuesta[i]);
+					}
+					free(respuesta);
+				}
+				printf("\n");
+				break;
 
-		case 'c':
-			printf("\ningrese tamaño: ");
-			scanf("%d", &operacion.tamano);
+			case 'c':
+				printf("\ningrese tamaño: ");
+				scanf("%d", &operacion.tamano);
 
-			printf("La base logica del segmento creado es: %d\n", crearSegmento(operacion.tamano));
+				printf("La base logica del segmento creado es: %d\n",
+						crearSegmento(operacion.tamano));
 
-			break;
+				break;
 
-		case 'd':
-			printf("\ningrese base: ");
-			scanf("%d", &operacion.base);
+			case 'd':
+				printf("\ningrese base: ");
+				scanf("%d", &operacion.base);
 
-			destruirSegmento(operacion.base);
+				destruirSegmento(operacion.base);
 
-			break;
+				break;
 
-		default:
-			printf("No ingresó ninguna opción válida.");
-			flag=1;
-		}			//Termina Switch para ingreso de parámetros de operacion.
-		}while(flag);
+			default:
+				printf("No ingresó ninguna opción válida.");
+				flag = 1;
+			}		//Termina Switch para ingreso de parámetros de operacion.
+		} while (flag);
 	}			//Termina if de operacion.
 
 	else if (!strncmp("retardo", comando, 7)) {
@@ -162,7 +168,7 @@ void analizarYEjecutar(char *comando) {
 		int pidPedido;
 		int off;
 		int tam;
-		bool arch=0;	//TODO: archivo = log ?
+		bool arch = 0;	//TODO: archivo = log ?
 
 		printf("Estructuras de memoria.\n");
 		printf(

@@ -5,8 +5,6 @@
  *      Author: utnso
  */
 //La idea es que vallamos probando las funciones auxiliares
-
-
 #include "pruebasUMV.h"
 #include "pruebasUMV_interfaz.h"
 
@@ -20,7 +18,8 @@ int k = 0; //Esta esta solo para mostrar unos mensajes.
 bool algoritmo = 0; //0 significa FF, lo ponemos por defecto porque es el mas lindo*
 static t_tablaSegmento *crear_nodoSegm(int, int, int, void *);
 static void tsegm_destroy(t_tablaSegmento *);
-pthread_mutex_t mutexCantProcActivos, mutexFlagCompactado, mutexAlgoritmo = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t mutexCantProcActivos, mutexFlagCompactado, mutexAlgoritmo =
+		PTHREAD_MUTEX_INITIALIZER;
 
 static t_limites *crear_nodoLim(void *comienzo, void *final) {
 	t_limites *nuevo = malloc(sizeof(t_limites));
@@ -28,12 +27,12 @@ static t_limites *crear_nodoLim(void *comienzo, void *final) {
 	nuevo->final = final;
 	return nuevo;
 }
-void informarBaseUMV(){
+void informarBaseUMV() {
 	printf("%d\n", tamanoUMV);
-	printf("%x\n", (u_int)baseUMV);
+	printf("%x\n", (u_int) baseUMV);
 }
 int main33() {
-	tamanoUMV=1000;
+	tamanoUMV = 1000;
 	crearEstructurasGlobales();
 	agregarProceso(1001, 'c');
 	cambiarProcesoActivo(1001);
@@ -67,8 +66,8 @@ static t_tablaProceso *crear_nodoProc(int pid, int activo, char tipo) {
 	return nuevo;
 }
 
-static t_tablaSegmento *crear_nodoSegm(int pidOwner,
-		int inicioLogico, int tamano, void *memPpal) {
+static t_tablaSegmento *crear_nodoSegm(int pidOwner, int inicioLogico,
+		int tamano, void *memPpal) {
 	t_tablaSegmento *nuevo = malloc(sizeof(t_tablaSegmento));
 	nuevo->pidOwner = pidOwner;
 	nuevo->inicioLogico = inicioLogico;
@@ -95,7 +94,7 @@ void agregarProceso(int pid, char tipo) {
 		pthread_mutex_unlock(&mutexCantProcActivos);
 	} else {
 		printf("El numero pid ya esta en uso (?");
-		}
+	}
 }
 
 int buscarPid(int pid) {
@@ -109,11 +108,12 @@ int buscarPid(int pid) {
 }
 
 int crearSegmento(int tamano) {
-	t_tablaSegmento *nuevoSegmento = crear_nodoSegm(procesoActivo(), obtenerInicioLogico(procesoActivo(), tamano), tamano,
+	t_tablaSegmento *nuevoSegmento = crear_nodoSegm(procesoActivo(),
+			obtenerInicioLogico(procesoActivo(), tamano), tamano,
 			obtenerInicioReal(tamano));
 	t_tablaProceso *proceso = list_get(listaProcesos,
 			buscarPid(procesoActivo()));
-	if (nuevoSegmento->memPpal==(void*)5){
+	if (nuevoSegmento->memPpal == (void*) 5) {
 		//free(nuevoSegmento);
 		return -1;
 	}
@@ -185,7 +185,7 @@ int obtenerInicioLogico(int pid, int tamano) {
 		inicioLogico = rand() % SIZE_SEGMENT;
 		error++;
 	}
-	if (error > 20){
+	if (error > 20) {
 		printf("Hay un tema con las bases logicas");
 		return -1;
 	}
@@ -230,11 +230,11 @@ void *obtenerInicioReal(int tamano) {
 		} else {
 			printf("Memory overload, u win \n");
 			//list_destroy_and_destroy_elements(lista_mascapita, (void*)free);
-			return (void *)5; //Solo pongo esto para que me deje compilar, deberiamos crear un error.
+			return (void *) 5; //Solo pongo esto para que me deje compilar, deberiamos crear un error.
 		}
 		pthread_mutex_unlock(&mutexFlagCompactado);
 	} else {
-		if (list_is_empty(lista_mascapita)){
+		if (list_is_empty(lista_mascapita)) {
 			//list_destroy_and_destroy_elements(lista_mascapita, (void*)free);
 			return baseUMV;
 		}
@@ -362,7 +362,7 @@ void destruirSegmento(int base) {
 					buscarPid(procesoActivo())))->tabla,
 			(void*) _coincide_base_logica);
 	if (NULL == aux) {
-		printf("Quisiste borrar algo que no hay papa\n");
+		printf("La base logica ingresada no coincide con ninguna existente\n");
 	}
 	free(aux);	//No hay problema con hacer free(NULL)
 }
@@ -385,10 +385,15 @@ t_tablaSegmento *obtenerPtrASegmento(int base, int pid) {
 	bool _coincide_base_logica(t_tablaSegmento *self) {
 		return self->inicioLogico == base;
 	}
-	return (t_tablaSegmento *) list_head(
-			list_filter(
-					((t_tablaProceso *) list_get(listaProcesos, buscarPid(pid)))->tabla,
-					(void*) _coincide_base_logica));
+	t_tablaSegmento *aux =
+			(t_tablaSegmento *) list_head(
+					list_filter(
+							((t_tablaProceso *) list_get(listaProcesos,
+									buscarPid(pid)))->tabla,
+							(void*) _coincide_base_logica));
+	if (aux == NULL )
+		printf("La base logica ingresada no existe en el sistema\n");
+	return aux;
 }//El list_head a.k.a list_get(lista, 0) sacaria el primer elemento, no deberia ser necesario pero
 //por el momento todos tendrian la misma base logica (073) entonces lo necesito.
 
@@ -397,15 +402,11 @@ void *obtenerDirFisica(int base, int offset, int pid) {
 }
 
 int verificarEspacio(int pid, int base, int offset, int tamano) {
-	if (tamano - 1 < (int) (obtenerPtrASegmento(base, pid)->tamano) - offset) {
-		printf("%d < %d",tamano-1, (obtenerPtrASegmento(base, pid)->tamano) - offset);
-		printf("\nEntonces hay espacio\n");
-		return 1;
-	} else {
-		if ((int) (obtenerPtrASegmento(base, pid)->tamano) - offset < 0) {
-			printf("Segmentation fault (?\n");//Me dio un offset que te saca del segmento
+	if (obtenerPtrASegmento(base, pid) != NULL ) {
+		if (tamano < (int) (obtenerPtrASegmento(base, pid)->tamano) - offset) {
+			return 1;
 		} else {
-			printf("El mensaje es demasiado largo para el segmento\n");
+			printf("Segmentation fault");
 		}
 	}
 	return 0;
@@ -413,18 +414,15 @@ int verificarEspacio(int pid, int base, int offset, int tamano) {
 
 void enviarUnosBytes(int base, int offset, int tamano, void *mensaje) {
 	int pid = procesoActivo();
-	printf("el proceso activo es %d\n", pid);
 	if (verificarEspacio(pid, base, offset, tamano))
-		printf("verifiqué espacio\n");
 		memcpy(obtenerDirFisica(base, offset, pid), mensaje, tamano);
 }
 
-int enviarUnosBytesPConsola(int base, int offset, int tamano, void *mensaje){
+int enviarUnosBytesPConsola(int base, int offset, int tamano, void *mensaje) {
 	agregarProceso(1000, 'c');
 	cambiarProcesoActivo(1000);
 	int basePosta = crearSegmento(100);
-	enviarUnosBytes(basePosta, offset, tamano,
-					mensaje);
+	enviarUnosBytes(basePosta, offset, tamano, mensaje);
 	return basePosta;
 }
 
@@ -447,7 +445,7 @@ void cambiarProcesoActivo(int pid) {
 }
 
 char *solicitarBytes(int base, int offset, int tamano) {
-	char *aux = malloc(tamano+1);
+	char *aux = malloc(tamano + 1);
 	int pid = procesoActivo();
 	if (verificarEspacio(pid, base, offset, tamano)) {
 		memcpy(aux, obtenerDirFisica(base, offset, pid), tamano);
@@ -456,7 +454,7 @@ char *solicitarBytes(int base, int offset, int tamano) {
 	}
 	return "";
 }
-char *solicitarBytesPConsola(int base, int offset, int tamano){
+char *solicitarBytesPConsola(int base, int offset, int tamano) {
 	return solicitarBytes(base, offset, tamano);
 }
 
@@ -503,8 +501,7 @@ void dumpMemoriaChata(int offset, int tamano, bool archivo) {
 	//TODO: guardar en archivo
 }
 
-
-void aplicarRetardo(int ret){
-usleep(ret);
+void aplicarRetardo(int ret) {
+	usleep(ret);
 }
 
