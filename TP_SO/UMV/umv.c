@@ -19,7 +19,7 @@ int main(int argc, char** argv) {
 	}
 
 	t_config *config = config_create(argv[1]);
- 	//t_config *config = config_create("/home/utnso/tp-2014-1c-skynet/TP_SO/UMV/Debug/config");
+
 	//Verifico que estén todos los valores esperados en el config.
 	if (validarConfig(config)) {
 		config_destroy(config);
@@ -62,8 +62,8 @@ int main(int argc, char** argv) {
 	list_destroy_and_destroy_elements(listaProcesos, (void*)free);
 	log_debug(logger, "Voy a probar que no rompa despues");
 	config_destroy(config);
-	log_destroy(logger);
 	log_info(logger, "El proceso UMV ha finalizado");
+	log_destroy(logger);
 	return EXIT_SUCCESS;
 }
 
