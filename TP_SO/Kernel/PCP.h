@@ -25,17 +25,17 @@ typedef struct {
 	sem_t mutexCola;
 } t_estructuraSemaforo;
 
-typedef struct
- {
- t_PCB* pcb;
- int tiempo;
- } t_estructuraProcesoBloqueado;
-
-typedef struct {
- int idCPU;
- int estado;
- int idProceso;
- } t_estructuraCPU;
+//typedef struct
+// {
+// t_PCB* pcb;
+// int tiempo;
+// } t_estructuraProcesoBloqueado;
+//
+//typedef struct {
+// int idCPU;
+// int estado;
+// int idProceso;
+// } t_estructuraCPU;
 
 t_dictionary* diccionarioSemaforos;
 sem_t diccionarioSemaforosMutex;
