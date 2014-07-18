@@ -58,6 +58,7 @@ void mostrarColaDePCBs2(t_queue*);
 void imprimirNodosPCBs2(t_PCB*);
 int buscarIDPrograma(int);
 void cambiar_Proceso_Activo(int);
+int posicionEnLaListaExec(t_list*, int);
 
 
 #endif /* PCPINTERFACE_H_ */
