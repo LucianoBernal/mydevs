@@ -7,15 +7,15 @@
 
 int sc_obtener_valor(char* id, int idCpu) {
 	sem_wait(&mutexVG);
-	int* a = dictionary_get(variables_globales, &id);
-	send(idCpu, *a, 4, 0);
+	int* a = dictionary_get(variables_globales, id);
+	send(idCpu, a, 4, 0);
 	sem_wait(&mutexVG);
 	return *a;
 }
 
-int sc_grabar_valor(char id, int valor) {
+int sc_grabar_valor(char* id, int valor) {
 	sem_wait(&mutexVG);
-	dictionary_put(variables_globales, &id, &valor);
+	dictionary_put(variables_globales, id, &valor);
 	sem_wait(&mutexVG);
 	return valor;
 }

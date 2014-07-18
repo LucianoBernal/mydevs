@@ -255,14 +255,14 @@ void seDesconectoCPUSigusr(int idCPU, t_PCB* pcb) {
 
 int posicionEnLaLista(t_list* lista, int idCpu) {
 	int i = 0;
-	while ((*(t_estructuraCPU*) list_get(lista, i))->idCPU != idCpu) {
+	while ((*(t_estructuraCPU*) list_get(lista, i)).idCPU != idCpu) {
 		i++;
 	}
 	return i;
 }
 int posicionEnLaListaExec(t_list* lista, int pid) {
 	int i = 0;
-	while ((*(t_PCB*) list_get(lista, i))->program_id != pid) {
+	while ((*(t_PCB*) list_get(lista, i)).program_id != pid) {
 		i++;
 	}
 	return i;

@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <parser/metadata_program.h>
+#include <parser/parser/metadata_program.h>
 #include <commons/collections/list.h>
 #include <pthread.h>
 #include <string.h>   //strlen
@@ -25,7 +25,7 @@
 
 #define TRUE   1
 #define FALSE  0
-#define PORT 7001
+#define PORT 7004
 
 typedef enum {
 //	CONFIRMACION,
@@ -44,7 +44,6 @@ typedef enum {
 	OBTENER_VALOR
 
 } codigos_mensajes;
-int parametro[3];
 
 void* atencionCPUs(void* sinParametro) {
 	int opt = TRUE;
@@ -60,8 +59,9 @@ void* atencionCPUs(void* sinParametro) {
 	fd_set readfds;
 
 	//a message
-	char *message = "La CPU se ha conectado al Kernel exitosamente \r\n";
-	char handshake[17] = "Soy una nueva CPU";
+	char *message = "Kernel";
+	char handshake[4] = "CPU";
+
 
 	//initialise all client_socket[] to 0 so not checked
 	for (i = 0; i < max_clients; i++) {
@@ -143,25 +143,34 @@ void* atencionCPUs(void* sinParametro) {
 
 			//inform user of socket number - used in send and receive commands
 			printf(
-					"New connection , socket fd is %d , ip is : %s , port : %d \n",
+					"New connectionHOLA , socket fd is %d , ip is : %s , port : %d \n",
 					new_socket, inet_ntoa(address.sin_addr),
 					ntohs(address.sin_port));
-
-			if ((valread = recv(new_socket, buffer, 17, 0)) < 0) {
+			char*cpu=malloc(4);
+			if ((valread = recv(new_socket, cpu/*buffer*/, 4, 0)) < 0) {
 				perror("recive");
+				puts("nonononnonono");
 				close(new_socket);
 			}
-			if (strncmp(buffer, handshake, 17) != 0) {
+			puts("asd");
+			printf("\n");
+			if (strncmp(cpu/*buffer*/, handshake, 4) != 0) {
 				printf(
 						"Host disconnected No es una CPU Valida ,socket fd is %d , ip is : %s , port : %d \n",
 						new_socket, inet_ntoa(address.sin_addr),
 						ntohs(address.sin_port));
 				close(new_socket);
 			} else {
+				puts("el handsahke salio bien");
 				//send new connection greeting message
-				if (send(new_socket, message, strlen(message), 0)
-						!= strlen(message)) {
-					perror("send");
+				t_paquete *paqueteACPU = serializar2(crear_nodoVar(message,7),crear_nodoVar(&quantum,4),crear_nodoVar(&retardo,4),0);
+				int* tamanioPaquete = malloc(4);
+				*tamanioPaquete=paqueteACPU->tamano;
+				if (send(new_socket, tamanioPaquete, 4, 0)){
+					perror("No se envió el tamaño del paquete correctamente");
+				}
+				if (send(new_socket, paqueteACPU->msj, *tamanioPaquete, 0)==-1) {
+					perror("No se envió el paquete correctamente");
 				}
 
 				puts("Welcome message sent successfully");
@@ -224,7 +233,7 @@ void* atencionCPUs(void* sinParametro) {
 					char* dispositivoIO;
 					char* texto;
 					char* semaforo;
-					char* id; //TODO
+					char* id;
 					switch (*razon) {
 					case SALIDA_POR_QUANTUM: //El Programa salio del CPU por quantum
 						desempaquetar2(mensaje, &pcb, 0);

@@ -254,7 +254,7 @@ t_valor_variable asignarValorCompartida(t_nombre_compartida variable,
 void irAlLabel(t_nombre_etiqueta etiqueta) {
 	//Segun yo a las 12, al comienzo del programa en el cpu, debemos traer el segmento de etiquetas hacia el.
 	//etiquetas es una global en la que copiamos enterito el indice de etiquetas
-	programCounter=metadata_buscar_etiqueta(etiqueta, etiquetas, pcb->tamanio_Indice_de_Etiquetas);
+	//programCounter=metadata_buscar_etiqueta(etiqueta, etiquetas, pcb->tamanio_Indice_de_Etiquetas);
 }
 
 void llamarSinRetorno(t_nombre_etiqueta etiqueta) {
