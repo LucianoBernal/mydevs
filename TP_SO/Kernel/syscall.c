@@ -2,6 +2,7 @@
 #include <string.h>
 #include "PCP.h"
 #include "syscall.h"
+#include <biblioteca_comun/Serializacion.h>
 
 
 int sc_obtener_valor(char id, int idCpu) {
@@ -36,17 +37,22 @@ void sc_signal(char* idSem, int idCPU) {
 }
 
 void sc_wait(char* idSem, t_PCB* pcb, int idCPU) {
+	int * estado_semaforo;//=malloc(sizeof(int));
 	sem_wait(&diccionarioSemaforosMutex);
 	t_estructuraSemaforo* semaforo = dictionary_get(diccionarioSemaforos,
 			idSem);
 	int a = semaforo->valor;
 	if (a > 0) {
 		semaforo->valor = (semaforo->valor) - 1;
-		//send(idCPU, 's', 1, 0); //TODO (puede seguir)
+		*estado_semaforo=1;
+		//serializar2(estado_semaforo,0);
+		send(idCPU, estado_semaforo, 4, 0); //(puede seguir)
 	} else {
 		t_estructuraSemaforo* semaforo = dictionary_get(diccionarioSemaforos,
 				idSem);
-		//send(idCPU, 'n', 1, 0); //TODO (se libera)
+		*estado_semaforo=0;
+		//serializar2(estado_semaforo,0);
+		send(idCPU, estado_semaforo, 4, 0); //(se libera)
 		seLiberoUnaCPU(idCPU);
 		sem_wait(&(semaforo->mutexCola));
 		queue_push(semaforo->procesosBloqueados, pcb);

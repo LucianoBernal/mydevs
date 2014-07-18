@@ -25,7 +25,7 @@
 
 #define TRUE   1
 #define FALSE  0
-#define PORT 8888
+#define PORT 7001
 
 typedef enum {
 //	CONFIRMACION,
@@ -220,7 +220,7 @@ void* atencionCPUs(void* sinParametro) {
 					char *mensaje = malloc(*tamanoMensaje);
 					recv(sd, (void*) mensaje, *tamanoMensaje, MSG_WAITALL);
 					t_PCB* pcb;
-					int tiempo, valor;
+					int tiempo, valor, tamano;
 					char* dispositivoIO;
 					char* texto;
 					char* semaforo;
@@ -247,7 +247,7 @@ void* atencionCPUs(void* sinParametro) {
 						sem_post(&semCPUDesconectadaMutex);
 						break;
 					case WAIT:
-						desempaquetar2(mensaje, &pcb, &semaforo, 0);
+						desempaquetar2(mensaje, &tamano, &semaforo,&pcb, 0);
 						sc_wait(semaforo, pcb, sd);
 						break;
 					case SIGNAL:

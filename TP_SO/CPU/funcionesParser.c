@@ -15,6 +15,7 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <unistd.h>
+#include "EsqueletoCPU.h"
 
 #define TAMANO_CABECERA 16
 
@@ -53,7 +54,7 @@ typedef enum {
 	MEMORY_OVERLOAD,
 	MOSTRAR_VALOR,
 	MOSTRAR_TEXTO,
-	ENTRADA_SALIDA,
+	SALIDA_POR_BLOQUEO,
 	OBTENER_VALOR_COMPARTIDA,
 	ASIGNAR_VALOR_COMPARTIDA,
 	CREAR_SEGMENTO,
@@ -63,7 +64,7 @@ typedef enum {
 	ESCRIBIR_EN_UMV_OFFSET_CERO,
 	ENVIAR_PCB,
 	SOLICITAR_A_UMV,
-	ESPERAR_SEMAFORO,
+	WAIT,
 	HABILITAR_SEMAFORO,
 	BLOQUEATE,
 	PEDIR_ETIQUETAS,
@@ -304,17 +305,17 @@ void imprimirTexto(char* texto) {
 }
 void entradaSalida(t_nombre_dispositivo dispositivo, int tiempo) {
 	int *razon=malloc(sizeof(int));
-	*razon=ENTRADA_SALIDA;
+	*razon=SALIDA_POR_BLOQUEO;
 	t_paquete *paquete=serializar2(crear_nodoVar(dispositivo, strlen(dispositivo)), crear_nodoVar(&tiempo, 4), 0);
 	t_paquete *header=serializar2(crear_nodoVar(&(paquete->tamano), 4), crear_nodoVar(razon, 4), 0);
 	send(socketKernel, header->msj, TAMANO_CABECERA, 0);
 	send(socketKernel, paquete->msj, paquete->tamano, 0);
-	//lo mismo que arriba
+	log_info(log,"Se desalojó un programa de esta CPU");
 }
 void wait(t_nombre_semaforo identificador_semaforo) {
 	//PASO
-	int razon=ESPERAR_SEMAFORO, tamano;
-	t_paquete *paquete=serializar2(crear_nodoVar(identificador_semaforo, strlen(identificador_semaforo)), 0);
+	int razon=WAIT, tamano;
+	t_paquete *paquete=serializar2(crear_nodoVar(identificador_semaforo, strlen(identificador_semaforo)), crear_nodoVar(&pcb,sizeof(pcb)), 0);
 	t_paquete *header=serializar2(crear_nodoVar(&(paquete->tamano), 4) , crear_nodoVar(&razon, 4), 0);
 	send(socketKernel, (void*)header->msj, TAMANO_CABECERA, 0);
 	send(socketKernel, (void*)paquete->msj, paquete->tamano, 0);
@@ -322,10 +323,8 @@ void wait(t_nombre_semaforo identificador_semaforo) {
 	//lo que haga falta
 	recv(socketKernel, (void*)cabecera, TAMANO_CABECERA, MSG_WAITALL);
 	desempaquetar2(cabecera, &tamano, &razon, 0);
-	if (razon==BLOQUEATE){
-		//sacarDeCpu(1);//1 significaria por bloqueo
-	} else{
-		//Creo que nada
+	if (!razon){
+		log_info(log,"Se desalojó un programa de esta CPU");
 	}
 }
 void signal(t_nombre_semaforo identificador_semaforo) {
