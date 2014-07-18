@@ -104,22 +104,19 @@ void* enviarCPU(void* sinParametro) {
 		int IDCpuLibre = encontrarPrimeraCpuLibreYOcuparla(CPUs);
 		sem_post(&CPUsMutex);
 		sem_wait(&colaExecMutex);
-		t_PCB* paquete = queue_pop(colaExec);
+		t_PCB* pcbAEjecutar = queue_pop(colaExec);
 		sem_post(&colaExecMutex);
-		printf("%d", IDCpuLibre);
-		printf("%d", paquete->indice_de_Codigo);
-		//lo hago para sacar el warning por variable sin usar,
-		//TODO serializar(paquete);
+		t_paquete* paquete = serializarPCB(pcbAEjecutar);
 		int i = posicionEnLaLista(CPUs, IDCpuLibre);
 		t_estructuraCPU* estructura = malloc(sizeof(t_estructuraCPU));
 		estructura->idCPU = IDCpuLibre;
 		estructura->estado = 0;
-		estructura->idProceso = (paquete->program_id);
+		estructura->idProceso = (pcbAEjecutar->program_id);
 		sem_wait(&CPUsMutex);
 		list_replace_and_destroy_element(CPUs, i, estructura,
 				(void*) cpu_destroy);
 		sem_post(&CPUsMutex);
-		//TODO mandar el paquete serializado a esa id (sd)
+		send(IDCpuLibre, &paquete, sizeof(paquete), 0 );
 	}
 }
 
