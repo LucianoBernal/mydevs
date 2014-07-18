@@ -100,6 +100,7 @@ int programa(t_log* logger, FILE* archivo) {
 		log_error(logger, "Fallo Send Literal");
 		return 1;
 	}
+	puts(literal);
 	free(literal);
 	int fin=0;
 	while (1) {
