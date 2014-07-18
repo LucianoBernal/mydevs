@@ -19,20 +19,22 @@
 #include <netinet/in.h>
 #include <sys/time.h> //FD_SET, FD_ISSET, FD_ZERO macros
 #include "PLPinterface.h"
+#include <biblioteca_comun/bibliotecaSockets.h>
+#include "multiplexorScripts_interfaz.h"
+
 
 #define TRUE   1
 #define FALSE  0
-#define PORT 8888
 
 
 void* atencionScripts(void* sinParametro) {
 //int main() {
-	int opt = TRUE;
 	int master_socket, addrlen, new_socket, client_socket[30], max_clients = 30,
 			activity, i, valread, sd;
 	int max_sd;
 	struct sockaddr_in address;
 	int* tamano = malloc(4);
+	char* literal=malloc(1025);
 
 	char buffer[1025];  //data buffer of 1K
 
@@ -48,40 +50,8 @@ void* atencionScripts(void* sinParametro) {
 		client_socket[i] = 0;
 	}
 
-	//create a master socket
-	if ((master_socket = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
-		perror("socket failed");
-		exit(EXIT_FAILURE);
-	}
+	master_socket=crearServidor(puerto_programa,logKernel);
 
-	//set master socket to allow multiple connections , this is just a good habit, it will work without this
-	if (setsockopt(master_socket, SOL_SOCKET, SO_REUSEADDR, (char *) &opt,
-			sizeof(opt)) < 0) {
-		perror("setsockopt");
-		exit(EXIT_FAILURE);
-	}
-
-	//type of socket created
-	address.sin_family = AF_INET;
-	address.sin_addr.s_addr = INADDR_ANY;
-	address.sin_port = htons(PORT);
-
-	//bind the socket to localhost port 8888
-	if (bind(master_socket, (struct sockaddr *) &address, sizeof(address))
-			< 0) {
-		perror("bind failed");
-		exit(EXIT_FAILURE);
-	}
-	printf("Listener on port %d \n", PORT);
-
-	//try to specify maximum of 10 pending connections for the master socket
-	if (listen(master_socket, 10) < 0) {
-		perror("listen");
-		exit(EXIT_FAILURE);
-	}
-
-	//accept the incoming connection
-	addrlen = sizeof(address);
 	puts("Waiting for connections ...");
 
 	while (TRUE) {
@@ -157,7 +127,7 @@ void* atencionScripts(void* sinParametro) {
 				}
 			}
 			recv(new_socket, tamano, 4, MSG_WAITALL);
-			char* literal = malloc(*tamano);
+			literal[*tamano] =0;
 			recv(new_socket, literal, *tamano, MSG_WAITALL);
 			gestionarProgramaNuevo(literal,new_socket,*tamano);
 

@@ -354,7 +354,7 @@ void gestionarProgramaNuevo(char* literal, int sd, int tamanioLiteral) {
 	crear_Nuevo_Proceso(pcb->program_id);
 	cambiar_Proceso_Activo(pcb->program_id);
 	if (crearSegmentos_Memoria(metadata, pcb, literal, tamanioLiteral) == 0) {
-		escribir_en_Memoria(metadata, pcb, literal, tamanioLiteral);
+		//escribir_en_Memoria(metadata, pcb, literal, tamanioLiteral);
 		/*sem_post(&mutexProcesoActivo);
 		encolar_New(pcb, peso);
 		agregar_En_Diccionario(pcb->program_id, sd);

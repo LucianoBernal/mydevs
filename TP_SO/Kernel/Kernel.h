@@ -36,7 +36,7 @@ int socketUMV;
 sem_t  grado_Multiprogramacion;
 char* ip_UMV;
 char* puerto_UMV;
-int puerto_programa;
+char* puerto_programa;
 int puerto_CPU;
 int quantum;
 int retardo;
