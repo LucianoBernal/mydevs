@@ -69,7 +69,7 @@ void* atencionInterna(void* sinParametro) {
 void atencionKernel(int* socketKernel) {
 	char *header = malloc(16);
 	int j=0;
-	int i, *razon=malloc(4);
+	int *razon=malloc(4);
 	int *tamanoMensaje = malloc(4);
 	int procesoActivo = 0, parametro[3], basesLogicas[3];
 	log_info(logger, "Entró a atencioKernel.");
@@ -80,9 +80,6 @@ void atencionKernel(int* socketKernel) {
 	//*tamanoMensaje=10;
 
 	recv(*socketKernel, (void*) header, 16, MSG_WAITALL);
-	for(i=0; i<16;i++){
-		printf("%c\n", header[i]==0?'0':header[i]);
-	}
 	printf("razon:%d\n",*razon);
 	printf("tam mensaje:%d\n",*tamanoMensaje);
 	desempaquetar2(header, (int*)razon, tamanoMensaje, 0);
@@ -108,14 +105,14 @@ void atencionKernel(int* socketKernel) {
 //				destruirTodosLosSegmentos();
 //				break;
 //			}
-//			*razon = BASES_LOGICAS;
-//			*tamanoMensaje = 32;
+			*razon = BASES_LOGICAS;
+			*tamanoMensaje = 32;
 //			basesLogicas[i] = resultado;
 //		}
-		crearSegmento(*tamano1);
-		crearSegmento(*tamano2);
-		crearSegmento(*tamano3);
-		crearSegmento(*tamano4);
+		basesLogicas[0]=crearSegmento(*tamano1);
+		basesLogicas[1]=crearSegmento(*tamano2);
+		basesLogicas[2]=crearSegmento(*tamano3);
+		basesLogicas[3]=crearSegmento(*tamano4);
 		pthread_mutex_unlock(&mutexOperacion);
 		t_paquete * aSerializarHeader = (t_paquete *)serializar2(crear_nodoVar(&razon, sizeof(razon)), crear_nodoVar(tamanoMensaje, 4), 0);
 		t_paquete * aSerializarPaquete = (t_paquete *)serializar2(crear_nodoVar(&basesLogicas[0], 4),crear_nodoVar(&basesLogicas[1], 4),
@@ -140,9 +137,9 @@ void atencionKernel(int* socketKernel) {
 		printf("recibi escribir en umv");
 		pthread_mutex_lock(&mutexOperacion);
 		cambiarProcesoActivo(procesoActivo);
-		desempaquetar2(mensaje, &parametro[0], &parametro[1], &parametro[2],0);
-		char *buffer = malloc(parametro[2]);
-		desempaquetar2(mensaje, &parametro[0], &parametro[1], &parametro[2], &buffer, 0);
+
+		char *buffer = malloc(*tamanoMensaje);
+		desempaquetar2(mensaje, &parametro[0], &parametro[1], &parametro[2], buffer, 0);
 		enviarUnosBytes(parametro[0], parametro[1], parametro[2], buffer);
 		pthread_mutex_unlock(&mutexOperacion);
 		free(buffer);

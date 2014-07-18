@@ -13,3 +13,27 @@
 [INFO] 15:22:54:311 Kernel/(7006:7006): Comienza la ejecución del Kernel.
 [INFO] 20:52:13:331 Kernel/(18022:18022): Comienza la ejecución del Kernel.
 [INFO] 20:53:13:189 Kernel/(18147:18147): Comienza la ejecución del Kernel.
+[INFO] 01:34:29:288 Kernel/(3938:3938): Comienza la ejecución del Kernel.
+[INFO] 01:35:45:457 Kernel/(4022:4022): Comienza la ejecución del Kernel.
+[INFO] 01:37:10:371 Kernel/(4135:4135): Comienza la ejecución del Kernel.
+[INFO] 01:41:30:826 Kernel/(4556:4556): Comienza la ejecución del Kernel.
+[INFO] 01:42:42:289 Kernel/(4656:4656): Comienza la ejecución del Kernel.
+[ERROR] 01:42:42:294 Kernel/(4656:4656): Fallo el Handshake con la UMV
+[INFO] 01:43:16:606 Kernel/(4700:4700): Comienza la ejecución del Kernel.
+[INFO] 01:45:20:700 Kernel/(4700:4757): Los segmentos del programa fueron Creados exitosamente en la UMV
+[INFO] 01:51:15:2 Kernel/(5119:5119): Comienza la ejecución del Kernel.
+[INFO] 01:51:55:920 Kernel/(5119:5167): Los segmentos del programa fueron Creados exitosamente en la UMV
+[INFO] 02:18:40:595 Kernel/(7305:7305): Comienza la ejecución del Kernel.
+[INFO] 02:19:10:440 Kernel/(7305:7353): Los segmentos del programa fueron Creados exitosamente en la UMV
+[INFO] 02:41:24:405 Kernel/(8867:8867): Comienza la ejecución del Kernel.
+[INFO] 02:42:30:304 Kernel/(8867:8917): Los segmentos del programa fueron Creados exitosamente en la UMV
+[INFO] 02:42:55:263 Kernel/(9314:9314): Comienza la ejecución del Kernel.
+[INFO] 02:44:06:237 Kernel/(9314:9363): Los segmentos del programa fueron Creados exitosamente en la UMV
+[INFO] 02:44:27:10 Kernel/(9503:9503): Comienza la ejecución del Kernel.
+[INFO] 02:45:35:8 Kernel/(9503:9552): Los segmentos del programa fueron Creados exitosamente en la UMV
+[INFO] 02:45:48:838 Kernel/(9695:9695): Comienza la ejecución del Kernel.
+[INFO] 02:46:18:811 Kernel/(9789:9789): Comienza la ejecución del Kernel.
+[INFO] 02:47:20:109 Kernel/(9960:9960): Comienza la ejecución del Kernel.
+[INFO] 02:48:28:76 Kernel/(9960:10009): Los segmentos del programa fueron Creados exitosamente en la UMV
+[INFO] 02:48:41:541 Kernel/(10158:10158): Comienza la ejecución del Kernel.
+[INFO] 02:50:14:137 Kernel/(10158:10208): Los segmentos del programa fueron Creados exitosamente en la UMV

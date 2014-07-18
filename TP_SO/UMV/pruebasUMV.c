@@ -120,7 +120,7 @@ int crearSegmento(int tamano) {
 	if (proceso->tabla == NULL )
 		proceso->tabla = list_create();
 	list_add(proceso->tabla, nuevoSegmento);
-	puts("Se creo un segmento \n");
+	printf("Se creo un segmento de base %d\n", nuevoSegmento->inicioLogico);
 	return nuevoSegmento->inicioLogico;
 }
 
@@ -404,7 +404,7 @@ void *obtenerDirFisica(int base, int offset, int pid) {
 
 int verificarEspacio(int pid, int base, int offset, int tamano) {
 	if (obtenerPtrASegmento(base, pid) != NULL ) {
-		if (tamano < (int) (obtenerPtrASegmento(base, pid)->tamano) - offset) {
+		if (tamano <= (int) (obtenerPtrASegmento(base, pid)->tamano) - offset) {
 			return 1;
 		} else {
 			printf("Segmentation fault");

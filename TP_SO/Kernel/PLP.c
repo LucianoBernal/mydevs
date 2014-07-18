@@ -14,9 +14,8 @@ typedef struct {
 	int sd;
 } t_gestionarPrograma;
 
-
 #define TAMANO_CABECERA 16
-int tamanoStack=20; //Deberia leerlo desde config
+int tamanoStack = 20; //Deberia leerlo desde config
 
 void* plp_main(void* sinParametro) {
 	colaNew = list_create();
@@ -138,16 +137,18 @@ int crearSegmentos_Memoria(t_metadata_program *metadata, t_PCB *pcb,
 	razon = CREAR_SEGMENTOS_PROGRAMA;
 	printf("razon de CREAR SEGMENTOS es%d\n", razon);
 	int *tamanoMensaje = malloc(sizeof(int));
-	int *razon2=malloc(sizeof(int)), *tamano2=malloc(4);
+	int *razon2 = malloc(sizeof(int)), *tamano2 = malloc(4);
 	*tamanoMensaje = 32;
-	printf("%d %d %d %d", tamanioScript, metadata->instrucciones_size, metadata->etiquetas_size, tamanio_stack);
+	printf("%d %d %d %d", tamanioScript, metadata->instrucciones_size,
+			metadata->etiquetas_size, tamanio_stack);
 	t_paquete * aSerializarPaquete = (t_paquete *) serializar2(
 			crear_nodoVar(&tamanioScript, 4),
 			crear_nodoVar(&metadata->instrucciones_size, 4),
 			crear_nodoVar(&metadata->etiquetas_size, 4),
 			crear_nodoVar(&tamanio_stack, 4), 0);
 	t_paquete * aSerializarHeader = (t_paquete *) serializar2(
-			crear_nodoVar(&razon, 4), crear_nodoVar(&(aSerializarPaquete->tamano), 4), 0);
+			crear_nodoVar(&razon, 4),
+			crear_nodoVar(&(aSerializarPaquete->tamano), 4), 0);
 	desempaquetar2(aSerializarHeader->msj, razon2, tamano2, 0);
 	printf("razon es%d %d\n", razon, *razon2);
 	printf("tamano mensaje vale%d %d\n", aSerializarPaquete->tamano, *tamano2);
@@ -160,7 +161,7 @@ int crearSegmentos_Memoria(t_metadata_program *metadata, t_PCB *pcb,
 	free(aSerializarPaquete);
 	char *header = malloc(16);
 	recv(socketUMV, (void*) header, 16, 0);
-	desempaquetar2(header, &razon, &tamanoMensaje, 0);
+	desempaquetar2(header, &razon, tamanoMensaje, 0);
 	if (*tamanoMensaje) {
 		char* message = malloc(*tamanoMensaje);
 		recv(socketUMV, (void*) message, *tamanoMensaje, MSG_WAITALL);
@@ -171,11 +172,16 @@ int crearSegmentos_Memoria(t_metadata_program *metadata, t_PCB *pcb,
 		pcb->indice_de_Codigo = indice_Codigo;
 		pcb->indice_de_Etiquetas = indice_Funciones;
 		pcb->segmento_Stack = segmentoStack;
-		//log_info(logKernel,"Los segmentos del programa fueron Creados exitosamente en la UMV");
+		log_info(logKernel,
+				"Los segmentos del programa fueron Creados exitosamente en la UMV");
+		printf(
+				"segmento de codigo %d\n indice de codigo %d \n indice etiquetas %d \n segmento stack %d \n",
+				pcb->segmento_Codigo, pcb->indice_de_Codigo,
+				pcb->indice_de_Etiquetas, pcb->segmento_Stack);
 		free(message);
 		fin = 0;
 	} else {
-		fin = -1;//Memory_Overload
+		fin = -1; //Memory_Overload
 	}
 	free(header);
 	free(tamanoMensaje);
@@ -207,52 +213,53 @@ int crearSegmentos_Memoria(t_metadata_program *metadata, t_PCB *pcb,
  }*/
 
 void escribir_en_Memoria(t_metadata_program * metadata, t_PCB *pcb,
-		char *literal,int tamanoLiteral) {
-	int *base=malloc(sizeof(int)),*offset=malloc(sizeof(int));
-	*offset=0;
-	base=NULL;
+		char *literal, int tamanoLiteral) {
+	int *base = malloc(sizeof(int)), *offset = malloc(sizeof(int));
+	*offset = 0;
 	codigos_Mensajes razon;
 	razon = ESCRIBIR_EN_UMV;
 	int *tamanoMensaje = malloc(sizeof(int));
 	//Escribo Literal en Memoria
-	*tamanoMensaje = tamanoLiteral+12;
-	*base=pcb->segmento_Codigo;
-		t_paquete * aSerializarHeader = (t_paquete *) serializar2(
-				crear_nodoVar(&razon, sizeof(razon)), crear_nodoVar(tamanoMensaje, 4), 0);
-		t_paquete * aSerializarPaquete = (t_paquete *) serializar2(
-				crear_nodoVar(base, 4),
-				crear_nodoVar(offset,4),
-				crear_nodoVar(&tamanoLiteral,4),
-				crear_nodoVar((char*)literal,tamanoLiteral),0);
+	*tamanoMensaje = tamanoLiteral + 28;
+	*base = pcb->segmento_Codigo;
+	t_paquete * aSerializarPaquete = (t_paquete *) serializar2(
+			crear_nodoVar(base, 4), crear_nodoVar(offset, 4),
+			crear_nodoVar(&tamanoLiteral, 4),
+			crear_nodoVar((char*) literal, tamanoLiteral), 0);
+	t_paquete * aSerializarHeader = (t_paquete *) serializar2(
+			crear_nodoVar(&razon, sizeof(razon)),
+			crear_nodoVar(tamanoMensaje, 4), 0);
+	printf("tamaño mensaje%d\n", aSerializarPaquete->tamano);
 	send(socketUMV, aSerializarHeader->msj, 16, 0);
 	send(socketUMV, aSerializarPaquete->msj, *tamanoMensaje, 0);
 
 	//Escribo Indice de Codigo
 
-	*tamanoMensaje = metadata->instrucciones_size+12;
-		*base=pcb->indice_de_Codigo;
-			aSerializarHeader = (t_paquete *) serializar2(
-					crear_nodoVar(&razon, sizeof(razon)), crear_nodoVar(tamanoMensaje, 4), 0);
-			aSerializarPaquete = (t_paquete *) serializar2(
-					crear_nodoVar(base, 4),
-					crear_nodoVar(offset,4),
-					crear_nodoVar(&metadata->instrucciones_size,4),
-					crear_nodoVar(metadata->instrucciones_serializado,metadata->instrucciones_size),0);
-		send(socketUMV, aSerializarHeader->msj, 16, 0);
-		send(socketUMV, aSerializarPaquete->msj, *tamanoMensaje, 0);
+	*tamanoMensaje = metadata->instrucciones_size + 28;
+	*base = pcb->indice_de_Codigo;
+	aSerializarPaquete = (t_paquete *) serializar2(crear_nodoVar(base, 4),
+			crear_nodoVar(offset, 4),
+			crear_nodoVar(&metadata->instrucciones_size, 4),
+			crear_nodoVar(metadata->instrucciones_serializado,
+					metadata->instrucciones_size), 0);
+	aSerializarHeader = (t_paquete *) serializar2(
+			crear_nodoVar(&razon, sizeof(razon)),
+			crear_nodoVar(tamanoMensaje, 4), 0);
+	send(socketUMV, aSerializarHeader->msj, 16, 0);
+	send(socketUMV, aSerializarPaquete->msj, *tamanoMensaje, 0);
 
 	//Escribo Indice de Etiquetas y Funciones
-		*tamanoMensaje = metadata->etiquetas_size+12;
-				*base=pcb->indice_de_Etiquetas;
-					aSerializarHeader = (t_paquete *) serializar2(
-							crear_nodoVar(&razon, sizeof(razon)), crear_nodoVar(tamanoMensaje, 4), 0);
-					aSerializarPaquete = (t_paquete *) serializar2(
-							crear_nodoVar(base, 4),
-							crear_nodoVar(offset,4),
-							crear_nodoVar(&metadata->etiquetas_size,4),
-							crear_nodoVar(metadata->etiquetas,metadata->etiquetas_size),0);
-				send(socketUMV, aSerializarHeader->msj, 16, 0);
-				send(socketUMV, aSerializarPaquete->msj, *tamanoMensaje, 0);
+	*tamanoMensaje = metadata->etiquetas_size + 28;
+	*base = pcb->indice_de_Etiquetas;
+	aSerializarPaquete = (t_paquete *) serializar2(crear_nodoVar(base, 4),
+			crear_nodoVar(offset, 4),
+			crear_nodoVar(&metadata->etiquetas_size, 4),
+			crear_nodoVar(&metadata->etiquetas, metadata->etiquetas_size), 0);
+	aSerializarHeader = (t_paquete *) serializar2(
+			crear_nodoVar(&razon, sizeof(razon)),
+			crear_nodoVar(tamanoMensaje, 4), 0);
+	send(socketUMV, aSerializarHeader->msj, 16, 0);
+	send(socketUMV, aSerializarPaquete->msj, *tamanoMensaje, 0);
 
 	//Libero
 	free(base);
@@ -262,8 +269,8 @@ void escribir_en_Memoria(t_metadata_program * metadata, t_PCB *pcb,
 	free(aSerializarPaquete);
 
 }
-	/*
-}
+/*
+ }
  int *razon = malloc(sizeof(int));
  *razon = ESCRIBIR_EN_UMV_OFFSET_CERO;
  char error = 1;
@@ -300,7 +307,7 @@ void escribir_en_Memoria(t_metadata_program * metadata, t_PCB *pcb,
  error = send(socketUMV, (void*) paquete, paquete->tamano, 0);
  if (!error)
  printf("Alguno de los sends fallo, noob");
-}*/
+ }*/
 
 void agregar_En_Diccionario(int pid, int sd) {
 	sem_wait(&PidSD_Mutex);
@@ -309,34 +316,35 @@ void agregar_En_Diccionario(int pid, int sd) {
 
 }
 
-void crear_Nuevo_Proceso( int progid){
+void crear_Nuevo_Proceso(int progid) {
 	codigos_Mensajes razon;
 	razon = CREAR_PROCESO_NUEVO;
 	printf("razon proceso nuevo asd%d\n", razon);
-		int *tamanoMensaje = malloc(sizeof(int));
-		*tamanoMensaje = 8;
-		int *pid = malloc(sizeof(int));
-		*pid = progid;
-		t_paquete * aSerializarHeader = (t_paquete *) serializar2(
-				crear_nodoVar(&razon, sizeof(razon)), crear_nodoVar(tamanoMensaje, 4), 0);
-		t_paquete * aSerializarPaquete = (t_paquete *) serializar2(
-				crear_nodoVar(pid, 4), 0);
-		printf("pid:%d \n", *pid);
-		//puts("hola");
-		send(socketUMV, aSerializarHeader->msj, 16, 0);
-		send(socketUMV, aSerializarPaquete->msj, *tamanoMensaje, 0);
-		free(aSerializarHeader);
-		free(aSerializarPaquete);
-		free(tamanoMensaje);
-		free(pid);
-		//puts("terminaronLosFrees");
+	int *tamanoMensaje = malloc(sizeof(int));
+	*tamanoMensaje = 8;
+	int *pid = malloc(sizeof(int));
+	*pid = progid;
+	t_paquete * aSerializarHeader = (t_paquete *) serializar2(
+			crear_nodoVar(&razon, sizeof(razon)),
+			crear_nodoVar(tamanoMensaje, 4), 0);
+	t_paquete * aSerializarPaquete = (t_paquete *) serializar2(
+			crear_nodoVar(pid, 4), 0);
+	printf("pid:%d \n", *pid);
+	//puts("hola");
+	send(socketUMV, aSerializarHeader->msj, 16, 0);
+	send(socketUMV, aSerializarPaquete->msj, *tamanoMensaje, 0);
+	free(aSerializarHeader);
+	free(aSerializarPaquete);
+	free(tamanoMensaje);
+	free(pid);
+	//puts("terminaronLosFrees");
 
 }
 
 void gestionarProgramaNuevo(char* literal, int sd, int tamanioLiteral) {
 	t_PCB* pcb = malloc(sizeof(t_PCB));
-	t_metadata_program* metadata=malloc(sizeof(t_metadata_program));
-	metadata= metadata_desde_literal(literal);
+	t_metadata_program* metadata = malloc(sizeof(t_metadata_program));
+	metadata = metadata_desde_literal(literal);
 	pcb->program_id = generarProgramID();
 	asignaciones_desde_metada(metadata, pcb);
 	//int peso = calcularPeso(metadata);
@@ -348,11 +356,11 @@ void gestionarProgramaNuevo(char* literal, int sd, int tamanioLiteral) {
 //	crear_Nuevo_Proceso(pcb->program_id);
 //	crear_Nuevo_Proceso(pcb->program_id);
 	crear_Nuevo_Proceso(pcb->program_id);
-    cambiar_Proceso_Activo(pcb->program_id);
+	cambiar_Proceso_Activo(pcb->program_id);
 	if (crearSegmentos_Memoria(metadata, pcb, literal, tamanioLiteral) == 0) {
-		escribir_en_Memoria(metadata, pcb, literal,tamanioLiteral);
+		escribir_en_Memoria(metadata, pcb, literal, tamanioLiteral);
 		sem_post(&mutexProcesoActivo);
-	//	encolar_New(pcb, peso);
+		//	encolar_New(pcb, peso);
 		agregar_En_Diccionario(pcb->program_id, sd);
 	} else {
 		sem_post(&mutexProcesoActivo);
@@ -361,7 +369,7 @@ void gestionarProgramaNuevo(char* literal, int sd, int tamanioLiteral) {
 		//free(pcb);
 		liberar_numero(pcb->program_id);
 	}
-	metadata_destruir(metadata); //OJO QUIZAS SOLO SEA EN EL ELSE REVISAR!
+	//metadata_destruir(metadata); //OJO QUIZAS SOLO SEA EN EL ELSE REVISAR!
 	free(pcb);
 }
 
@@ -378,7 +386,7 @@ void* deNewAReady(void* sinParametro) { // OTRO HILO
 		encolar_en_Ready(pcb_Ready);
 		free(elementoSacado);
 	}
-	return NULL;
+	return NULL ;
 }
 
 void encolar_en_Ready(t_PCB* pcb) {
@@ -443,7 +451,7 @@ void* manejoColaExit(void* sinParametros) {
 		liberar_numero(pcb->program_id);
 		free(pcb);
 	}
-	return NULL;
+	return NULL ;
 }
 
 void solicitar_Destruccion_Segmentos() {
