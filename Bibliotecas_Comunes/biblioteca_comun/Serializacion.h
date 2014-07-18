@@ -29,6 +29,7 @@ typedef struct{
 t_tamYDir *crear_nodoVar(void *, int);
 t_paquete *serializar2(t_tamYDir *uno, ...);
 void desempaquetar2(char *, void *, ...);
+t_paquete *serializarPCB(t_PCB*);
 
 
 #endif /* SERIALIZACION_H_ */
