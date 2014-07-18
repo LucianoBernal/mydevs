@@ -68,14 +68,15 @@ void* atencionInterna(void* sinParametro) {
 
 void atencionKernel(int* socketKernel) {
 	char *header = malloc(16);
-
+	int j=0;
 	int i, *razon=malloc(4);
-	int resultado, *tamanoMensaje = malloc(4);
+	int *tamanoMensaje = malloc(4);
 	int procesoActivo = 0, parametro[3], basesLogicas[3];
 	log_info(logger, "Entró a atencioKernel.");
-
+	int *pid=malloc(sizeof(int));
 	while (1){
 
+	j++;
 	//*tamanoMensaje=10;
 
 	recv(*socketKernel, (void*) header, 16, MSG_WAITALL);
@@ -87,29 +88,34 @@ void atencionKernel(int* socketKernel) {
 	desempaquetar2(header, (int*)razon, tamanoMensaje, 0);
 	printf("razon:%d\n",*razon);
 	printf("tam mensaje:%d\n",*tamanoMensaje);
-	char *mensaje = malloc(*tamanoMensaje);
+	char *mensaje=malloc(*tamanoMensaje);
+	printf("%d", j);
 	recv(*socketKernel, (void*) mensaje, *tamanoMensaje, MSG_WAITALL);
+
 	switch (*razon) {
 
 	case CREAR_SEGMENTOS_PROGRAMA:
-		printf("recibi crear segmentos programa");
+		puts("recibi crear segmentos programa");
 		pthread_mutex_lock(&mutexOperacion);
-		desempaquetar2(mensaje, &parametro[0], &parametro[1], &parametro[2],
-				&parametro[3], 0);
-		cambiarProcesoActivo(procesoActivo);
-		int i;
-		for (i = 0; i < 4; i++) {
-			resultado = crearSegmento(parametro[i]);
-			if (resultado == -1) {
-				*razon = MEMORY_OVERLOAD;
-				*tamanoMensaje = 0;
-				destruirTodosLosSegmentos();
-				break;
-			}
-			*razon = BASES_LOGICAS;
-			*tamanoMensaje = 32;
-			basesLogicas[i] = resultado;
-		}
+		int *tamano1=malloc(sizeof(int)), *tamano2=malloc(sizeof(int)), *tamano3=malloc(sizeof(int)), *tamano4=malloc(sizeof(int));
+		desempaquetar2(mensaje, tamano1, tamano2, tamano3, tamano4, 0);
+//		int i;
+//		for (i = 0; i < 4; i++) {
+//			resultado = crearSegmento(parametro[i]);
+//			if (resultado == -1) {
+//				*razon = MEMORY_OVERLOAD;
+//				*tamanoMensaje = 0;
+//				destruirTodosLosSegmentos();
+//				break;
+//			}
+//			*razon = BASES_LOGICAS;
+//			*tamanoMensaje = 32;
+//			basesLogicas[i] = resultado;
+//		}
+		crearSegmento(*tamano1);
+		crearSegmento(*tamano2);
+		crearSegmento(*tamano3);
+		crearSegmento(*tamano4);
 		pthread_mutex_unlock(&mutexOperacion);
 		t_paquete * aSerializarHeader = (t_paquete *)serializar2(crear_nodoVar(&razon, sizeof(razon)), crear_nodoVar(tamanoMensaje, 4), 0);
 		t_paquete * aSerializarPaquete = (t_paquete *)serializar2(crear_nodoVar(&basesLogicas[0], 4),crear_nodoVar(&basesLogicas[1], 4),
@@ -157,7 +163,6 @@ void atencionKernel(int* socketKernel) {
 	case CREAR_PROCESO_NUEVO:
 		puts("recibi crear proceso nuevo");
 		pthread_mutex_lock(&mutexOperacion);
-		int *pid=malloc(sizeof(int));
 		printf("el pid que recibi es:%d\n", *pid);
 		desempaquetar2(mensaje,pid,0);
 		printf("el pid que recibi es:%d\n", *pid);

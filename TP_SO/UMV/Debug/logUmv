@@ -1,0 +1,70 @@
+[INFO] 21:14:56:390 UMV/(2197:2197): Comienza la ejecución de la UMV.
+[INFO] 21:14:56:390 UMV/(2197:2197): El hilo de consola se creó correctamente
+[INFO] 21:14:56:390 UMV/(2197:2197): El hilo de atención interna se creó correctamente
+[INFO] 21:15:00:763 UMV/(2197:2199): El hilo del Kernel se creó correctamente.
+[INFO] 21:15:00:763 UMV/(2197:2201): Entró a atencioKernel.
+[INFO] 21:17:33:79 UMV/(2411:2411): Comienza la ejecución de la UMV.
+[INFO] 21:17:33:79 UMV/(2411:2411): El hilo de consola se creó correctamente
+[INFO] 21:17:33:79 UMV/(2411:2411): El hilo de atención interna se creó correctamente
+[ERROR] 21:17:33:79 UMV/(2411:2413): Hubo un error al bindear el socket
+[ERROR] 21:17:33:79 UMV/(2411:2413): Error al aceptar la conexion
+[INFO] 21:18:20:194 UMV/(2431:2431): Comienza la ejecución de la UMV.
+[INFO] 21:18:20:194 UMV/(2431:2431): El hilo de consola se creó correctamente
+[INFO] 21:18:20:194 UMV/(2431:2431): El hilo de atención interna se creó correctamente
+[INFO] 21:21:16:946 UMV/(2431:2433): El hilo del Kernel se creó correctamente.
+[INFO] 21:21:16:946 UMV/(2431:3257): Entró a atencioKernel.
+[INFO] 21:21:46:794 UMV/(3344:3344): Comienza la ejecución de la UMV.
+[INFO] 21:21:46:794 UMV/(3344:3344): El hilo de consola se creó correctamente
+[INFO] 21:21:46:794 UMV/(3344:3344): El hilo de atención interna se creó correctamente
+[ERROR] 21:21:46:794 UMV/(3344:3346): Hubo un error al bindear el socket
+[ERROR] 21:21:46:794 UMV/(3344:3346): Error al aceptar la conexion
+[INFO] 21:22:01:514 UMV/(3350:3350): Comienza la ejecución de la UMV.
+[INFO] 21:22:01:514 UMV/(3350:3350): El hilo de consola se creó correctamente
+[INFO] 21:22:01:514 UMV/(3350:3350): El hilo de atención interna se creó correctamente
+[INFO] 21:22:03:729 UMV/(3350:3352): El hilo del Kernel se creó correctamente.
+[INFO] 21:22:03:729 UMV/(3350:3354): Entró a atencioKernel.
+[INFO] 21:23:25:858 UMV/(3450:3450): Comienza la ejecución de la UMV.
+[INFO] 21:23:25:858 UMV/(3450:3450): El hilo de consola se creó correctamente
+[INFO] 21:23:25:858 UMV/(3450:3450): El hilo de atención interna se creó correctamente
+[INFO] 21:23:28:128 UMV/(3450:3452): El hilo del Kernel se creó correctamente.
+[INFO] 21:23:28:128 UMV/(3450:3454): Entró a atencioKernel.
+[INFO] 21:25:07:969 UMV/(3582:3582): Comienza la ejecución de la UMV.
+[INFO] 21:25:07:969 UMV/(3582:3582): El hilo de consola se creó correctamente
+[INFO] 21:25:07:970 UMV/(3582:3582): El hilo de atención interna se creó correctamente
+[INFO] 21:25:11:30 UMV/(3582:3584): El hilo del Kernel se creó correctamente.
+[INFO] 21:25:11:30 UMV/(3582:3586): Entró a atencioKernel.
+[INFO] 21:27:23:984 UMV/(3626:3626): Comienza la ejecución de la UMV.
+[INFO] 21:27:23:984 UMV/(3626:3626): El hilo de consola se creó correctamente
+[INFO] 21:27:23:984 UMV/(3626:3626): El hilo de atención interna se creó correctamente
+[INFO] 21:27:26:350 UMV/(3626:3628): El hilo del Kernel se creó correctamente.
+[INFO] 21:27:26:350 UMV/(3626:3630): Entró a atencioKernel.
+[INFO] 21:29:34:793 UMV/(3728:3728): Comienza la ejecución de la UMV.
+[INFO] 21:29:34:793 UMV/(3728:3728): El hilo de consola se creó correctamente
+[INFO] 21:29:34:793 UMV/(3728:3728): El hilo de atención interna se creó correctamente
+[INFO] 21:29:36:800 UMV/(3728:3730): El hilo del Kernel se creó correctamente.
+[INFO] 21:29:36:800 UMV/(3728:3732): Entró a atencioKernel.
+[INFO] 21:31:11:728 UMV/(3801:3801): Comienza la ejecución de la UMV.
+[INFO] 21:31:11:728 UMV/(3801:3801): El hilo de consola se creó correctamente
+[INFO] 21:31:11:728 UMV/(3801:3801): El hilo de atención interna se creó correctamente
+[INFO] 21:31:14:198 UMV/(3801:3803): El hilo del Kernel se creó correctamente.
+[INFO] 21:31:14:198 UMV/(3801:3805): Entró a atencioKernel.
+[INFO] 21:32:19:293 UMV/(3882:3882): Comienza la ejecución de la UMV.
+[INFO] 21:32:19:293 UMV/(3882:3882): El hilo de consola se creó correctamente
+[INFO] 21:32:19:293 UMV/(3882:3882): El hilo de atención interna se creó correctamente
+[INFO] 21:32:21:291 UMV/(3882:3884): El hilo del Kernel se creó correctamente.
+[INFO] 21:32:21:292 UMV/(3882:3886): Entró a atencioKernel.
+[INFO] 21:32:48:66 UMV/(3946:3946): Comienza la ejecución de la UMV.
+[INFO] 21:32:48:66 UMV/(3946:3946): El hilo de consola se creó correctamente
+[INFO] 21:32:48:66 UMV/(3946:3946): El hilo de atención interna se creó correctamente
+[ERROR] 21:32:48:67 UMV/(3946:3948): Hubo un error al bindear el socket
+[ERROR] 21:32:48:67 UMV/(3946:3948): Error al aceptar la conexion
+[INFO] 21:33:14:313 UMV/(3966:3966): Comienza la ejecución de la UMV.
+[INFO] 21:33:14:313 UMV/(3966:3966): El hilo de consola se creó correctamente
+[INFO] 21:33:14:313 UMV/(3966:3966): El hilo de atención interna se creó correctamente
+[INFO] 21:33:16:39 UMV/(3966:3968): El hilo del Kernel se creó correctamente.
+[INFO] 21:33:16:40 UMV/(3966:3970): Entró a atencioKernel.
+[INFO] 21:37:06:907 UMV/(4162:4162): Comienza la ejecución de la UMV.
+[INFO] 21:37:06:907 UMV/(4162:4162): El hilo de consola se creó correctamente
+[INFO] 21:37:06:907 UMV/(4162:4162): El hilo de atención interna se creó correctamente
+[INFO] 21:37:09:497 UMV/(4162:4164): El hilo del Kernel se creó correctamente.
+[INFO] 21:37:09:497 UMV/(4162:4166): Entró a atencioKernel.

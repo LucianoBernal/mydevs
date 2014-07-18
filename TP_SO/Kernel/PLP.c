@@ -339,15 +339,21 @@ void gestionarProgramaNuevo(char* literal, int sd, int tamanioLiteral) {
 	metadata= metadata_desde_literal(literal);
 	pcb->program_id = generarProgramID();
 	asignaciones_desde_metada(metadata, pcb);
-	int peso = calcularPeso(metadata);
+	//int peso = calcularPeso(metadata);
+	printf("\nEl codigo cambia pato, no seas paranoico\n");
 	sem_wait(&mutexProcesoActivo);
+//	crear_Nuevo_Proceso(pcb->program_id);
+//	crear_Nuevo_Proceso(pcb->program_id);
+//	crear_Nuevo_Proceso(pcb->program_id);
+//	crear_Nuevo_Proceso(pcb->program_id);
+//	crear_Nuevo_Proceso(pcb->program_id);
 	crear_Nuevo_Proceso(pcb->program_id);
-	cambiar_Proceso_Activo(pcb->program_id);
+    cambiar_Proceso_Activo(pcb->program_id);
 	if (crearSegmentos_Memoria(metadata, pcb, literal, tamanioLiteral) == 0) {
 		escribir_en_Memoria(metadata, pcb, literal,tamanioLiteral);
 		sem_post(&mutexProcesoActivo);
 	//	encolar_New(pcb, peso);
-	//	agregar_En_Diccionario(pcb->program_id, sd);
+		agregar_En_Diccionario(pcb->program_id, sd);
 	} else {
 		sem_post(&mutexProcesoActivo);
 		notificar_Memoria_Llena(sd);
@@ -372,6 +378,7 @@ void* deNewAReady(void* sinParametro) { // OTRO HILO
 		encolar_en_Ready(pcb_Ready);
 		free(elementoSacado);
 	}
+	return NULL;
 }
 
 void encolar_en_Ready(t_PCB* pcb) {
@@ -436,6 +443,7 @@ void* manejoColaExit(void* sinParametros) {
 		liberar_numero(pcb->program_id);
 		free(pcb);
 	}
+	return NULL;
 }
 
 void solicitar_Destruccion_Segmentos() {
@@ -460,7 +468,6 @@ void cambiar_Proceso_Activo(int progid) {
 	*pid = progid;
 	t_paquete * aSerializarHeader = (t_paquete *) serializar2(
 			crear_nodoVar(&razon, 4), crear_nodoVar(tamanoMensaje, 4), 0);
-	send(socketUMV, aSerializarHeader->msj, 16, 0);
 	t_paquete * aSerializarPaquete = (t_paquete *) serializar2(
 			crear_nodoVar(pid, 4), 0);
 	send(socketUMV, aSerializarHeader->msj, 16, 0);
@@ -501,5 +508,6 @@ void notificar_Programa(int sd, char* message) {
 void cerrar_conexion(int pid) {
 	int sd = obtener_sd_Programa(pid);
 	close(sd);
+
 }
 

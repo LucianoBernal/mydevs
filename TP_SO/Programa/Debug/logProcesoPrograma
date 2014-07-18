@@ -1,0 +1,88 @@
+[INFO] 21:15:46:298 Programa/(2276:2276): Comienza la ejecución del Programa.
+[INFO] 21:15:46:324 Programa/(2276:2276): Se concateno Script en buffer interno y se cerro archivo
+[INFO] 21:15:46:325 Programa/(2276:2276): Conectado al Kernel...
+[INFO] 21:15:46:325 Programa/(2276:2276): Iniciando Handshake...
+[INFO] 21:15:46:325 Programa/(2276:2276): El programa se ha conectado al Kernel exitosamente 
+
+[ERROR] 21:15:46:364 Programa/(2276:2276): Fallo Recive
+[ERROR] 21:15:46:364 Programa/(2276:2276): Finalizo Erroneamente la ejecucion del Programa
+[INFO] 21:21:20:71 Programa/(3262:3262): Comienza la ejecución del Programa.
+[INFO] 21:21:20:71 Programa/(3262:3262): Se concateno Script en buffer interno y se cerro archivo
+[INFO] 21:21:20:71 Programa/(3262:3262): Conectado al Kernel...
+[INFO] 21:21:20:71 Programa/(3262:3262): Iniciando Handshake...
+[INFO] 21:21:20:72 Programa/(3262:3262): El programa se ha conectado al Kernel exitosamente 
+
+[ERROR] 21:21:20:419 Programa/(3262:3262): Fallo Recive
+[ERROR] 21:21:20:419 Programa/(3262:3262): Finalizo Erroneamente la ejecucion del Programa
+[INFO] 21:22:06:125 Programa/(3358:3358): Comienza la ejecución del Programa.
+[INFO] 21:22:06:125 Programa/(3358:3358): Se concateno Script en buffer interno y se cerro archivo
+[INFO] 21:22:06:125 Programa/(3358:3358): Conectado al Kernel...
+[INFO] 21:22:06:125 Programa/(3358:3358): Iniciando Handshake...
+[INFO] 21:22:06:125 Programa/(3358:3358): El programa se ha conectado al Kernel exitosamente 
+
+[ERROR] 21:22:06:406 Programa/(3358:3358): Fallo Recive
+[ERROR] 21:22:06:406 Programa/(3358:3358): Finalizo Erroneamente la ejecucion del Programa
+[INFO] 21:23:30:46 Programa/(3458:3458): Comienza la ejecución del Programa.
+[INFO] 21:23:30:47 Programa/(3458:3458): Se concateno Script en buffer interno y se cerro archivo
+[INFO] 21:23:30:47 Programa/(3458:3458): Conectado al Kernel...
+[INFO] 21:23:30:47 Programa/(3458:3458): Iniciando Handshake...
+[INFO] 21:23:30:47 Programa/(3458:3458): El programa se ha conectado al Kernel exitosamente 
+
+[ERROR] 21:23:30:341 Programa/(3458:3458): Fallo Recive
+[ERROR] 21:23:30:341 Programa/(3458:3458): Finalizo Erroneamente la ejecucion del Programa
+[INFO] 21:25:13:540 Programa/(3590:3590): Comienza la ejecución del Programa.
+[INFO] 21:25:13:540 Programa/(3590:3590): Se concateno Script en buffer interno y se cerro archivo
+[INFO] 21:25:13:541 Programa/(3590:3590): Conectado al Kernel...
+[INFO] 21:25:13:541 Programa/(3590:3590): Iniciando Handshake...
+[INFO] 21:25:13:541 Programa/(3590:3590): El programa se ha conectado al Kernel exitosamente 
+
+[ERROR] 21:25:13:833 Programa/(3590:3590): Fallo Recive
+[ERROR] 21:25:13:833 Programa/(3590:3590): Finalizo Erroneamente la ejecucion del Programa
+[INFO] 21:27:28:524 Programa/(3634:3634): Comienza la ejecución del Programa.
+[INFO] 21:27:28:524 Programa/(3634:3634): Se concateno Script en buffer interno y se cerro archivo
+[INFO] 21:27:28:524 Programa/(3634:3634): Conectado al Kernel...
+[INFO] 21:27:28:524 Programa/(3634:3634): Iniciando Handshake...
+[INFO] 21:27:28:524 Programa/(3634:3634): El programa se ha conectado al Kernel exitosamente 
+
+[ERROR] 21:27:28:810 Programa/(3634:3634): Fallo Recive
+[ERROR] 21:27:28:810 Programa/(3634:3634): Finalizo Erroneamente la ejecucion del Programa
+[INFO] 21:29:39:14 Programa/(3737:3737): Comienza la ejecución del Programa.
+[INFO] 21:29:39:14 Programa/(3737:3737): Se concateno Script en buffer interno y se cerro archivo
+[INFO] 21:29:39:14 Programa/(3737:3737): Conectado al Kernel...
+[INFO] 21:29:39:14 Programa/(3737:3737): Iniciando Handshake...
+[INFO] 21:29:39:14 Programa/(3737:3737): El programa se ha conectado al Kernel exitosamente 
+
+[ERROR] 21:29:39:301 Programa/(3737:3737): Fallo Recive
+[ERROR] 21:29:39:301 Programa/(3737:3737): Finalizo Erroneamente la ejecucion del Programa
+[INFO] 21:31:17:19 Programa/(3809:3809): Comienza la ejecución del Programa.
+[INFO] 21:31:17:19 Programa/(3809:3809): Se concateno Script en buffer interno y se cerro archivo
+[INFO] 21:31:17:20 Programa/(3809:3809): Conectado al Kernel...
+[INFO] 21:31:17:20 Programa/(3809:3809): Iniciando Handshake...
+[INFO] 21:31:17:20 Programa/(3809:3809): El programa se ha conectado al Kernel exitosamente 
+
+[ERROR] 21:31:17:301 Programa/(3809:3809): Fallo Recive
+[ERROR] 21:31:17:301 Programa/(3809:3809): Finalizo Erroneamente la ejecucion del Programa
+[INFO] 21:32:23:152 Programa/(3890:3890): Comienza la ejecución del Programa.
+[INFO] 21:32:23:152 Programa/(3890:3890): Se concateno Script en buffer interno y se cerro archivo
+[INFO] 21:32:23:152 Programa/(3890:3890): Conectado al Kernel...
+[INFO] 21:32:23:152 Programa/(3890:3890): Iniciando Handshake...
+[INFO] 21:32:23:152 Programa/(3890:3890): El programa se ha conectado al Kernel exitosamente 
+
+[ERROR] 21:32:23:441 Programa/(3890:3890): Fallo Recive
+[ERROR] 21:32:23:441 Programa/(3890:3890): Finalizo Erroneamente la ejecucion del Programa
+[INFO] 21:33:17:855 Programa/(3974:3974): Comienza la ejecución del Programa.
+[INFO] 21:33:17:855 Programa/(3974:3974): Se concateno Script en buffer interno y se cerro archivo
+[INFO] 21:33:17:855 Programa/(3974:3974): Conectado al Kernel...
+[INFO] 21:33:17:855 Programa/(3974:3974): Iniciando Handshake...
+[INFO] 21:33:17:855 Programa/(3974:3974): El programa se ha conectado al Kernel exitosamente 
+
+[ERROR] 21:33:18:139 Programa/(3974:3974): Fallo Recive
+[ERROR] 21:33:18:139 Programa/(3974:3974): Finalizo Erroneamente la ejecucion del Programa
+[INFO] 21:37:11:935 Programa/(4170:4170): Comienza la ejecución del Programa.
+[INFO] 21:37:11:935 Programa/(4170:4170): Se concateno Script en buffer interno y se cerro archivo
+[INFO] 21:37:11:971 Programa/(4170:4170): Conectado al Kernel...
+[INFO] 21:37:11:971 Programa/(4170:4170): Iniciando Handshake...
+[INFO] 21:37:11:971 Programa/(4170:4170): El programa se ha conectado al Kernel exitosamente 
+
+[ERROR] 21:37:12:156 Programa/(4170:4170): Fallo Recive
+[ERROR] 21:37:12:156 Programa/(4170:4170): Finalizo Erroneamente la ejecucion del Programa
