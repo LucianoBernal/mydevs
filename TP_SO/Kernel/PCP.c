@@ -3,7 +3,8 @@
 
 void* pcp_main(void* sinParametro) {
 	sinParametros = NULL;
-	colaExec = queue_create();
+	colaExec = list_create();
+	colaIntermedia = queue_create();
 	valor_semaforos = list_create();
 	semaforos = list_create();
 	retardos = list_create();
@@ -11,6 +12,8 @@ void* pcp_main(void* sinParametro) {
 	diccionarioDispositivos = dictionary_create();
 	sem_init(&diccionarioDispositivosMutex, 0,1);
 	CPUs = list_create();
+	sem_init(&colaIntermediaVacia, 0, 0);
+	sem_init(&colaIntermediaMutex, 0, 1);
 	sem_init(&CPUsLibres, 0, 0);
 	sem_init(&sBloqueado, 0, 0);
 	sem_init(&colaExecVacia, 0, 0);
@@ -86,25 +89,26 @@ void* mandarAEjecutar(void* j) {
 		sem_wait(&vacioReady);
 		sem_wait(&colaReadyMutex);
 		t_PCB* procesoAEjecutar = queue_pop(colaReady);
-		sem_wait(&colaExecMutex);
-		queue_push(colaExec, procesoAEjecutar);
-		sem_post(&colaExecMutex);
-		int * sinParametro = NULL;
-		enviarCPU(sinParametro);
-		free(sinParametro);
+		sem_wait(&colaIntermediaMutex);
+		queue_push(colaIntermedia, procesoAEjecutar);
+		sem_post(&colaIntermediaMutex);
 		sem_post(&colaReadyMutex);
-		sem_post(&colaExecVacia);
+		sem_post(&colaIntermediaVacia);
 	}
 }
 
 void* enviarCPU(void* sinParametro) {
 	while (1) {
+		sem_wait(&colaIntermediaVacia);
 		sem_wait(&CPUsLibres);
 		sem_wait(&CPUsMutex);
 		int IDCpuLibre = encontrarPrimeraCpuLibreYOcuparla(CPUs);
 		sem_post(&CPUsMutex);
+		sem_wait(&colaIntermediaMutex);
+		t_PCB* pcbAEjecutar = queue_pop(colaIntermedia);
+		sem_post(&colaIntermediaMutex);
 		sem_wait(&colaExecMutex);
-		t_PCB* pcbAEjecutar = queue_pop(colaExec);
+		list_add(colaExec, pcbAEjecutar);
 		sem_post(&colaExecMutex);
 		t_paquete* paquete = serializarPCB(pcbAEjecutar);
 		int i = posicionEnLaLista(CPUs, IDCpuLibre);
@@ -175,6 +179,7 @@ void moverAColaExit(t_PCB* pcb, int idCPU) {
 
 void programaSalioPorBloqueo(t_PCB* pcb, int tiempo, char* dispositivo,
 		int idCPU) {
+
 		sem_wait(&diccionarioDispositivosMutex);
 	t_estructuraDispositivoIO* estructura = dictionary_get(
 			diccionarioDispositivos, dispositivo);
@@ -269,7 +274,7 @@ void mostrarColaDeProcesosFinalizados() {
 void mostrarColaDeProcesosEnEjecucion() {
 	printf("El estado de la Cola Exec es el siguiente:\n");
 	sem_wait(&colaExecMutex);
-	mostrarColaDePCBs(colaExec);
+	list_iterate(colaExec, (void*) (void*) imprimirNodosPCBs);
 	sem_post(&colaExecMutex);
 }
 
