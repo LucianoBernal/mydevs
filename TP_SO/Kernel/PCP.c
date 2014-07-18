@@ -9,6 +9,7 @@ void* pcp_main(void* sinParametro) {
 	retardos = list_create();
 	idDispositivos = list_create();
 	diccionarioDispositivos = dictionary_create();
+	sem_init(&diccionarioDispositivosMutex, 0,1);
 	CPUs = list_create();
 	sem_init(&CPUsLibres, 0, 0);
 	sem_init(&sBloqueado, 0, 0);
@@ -34,8 +35,10 @@ void* pcp_main(void* sinParametro) {
 		estructuraDispositivo->colaVacia = semaforo;
 		estructuraDispositivo->mutexCola = mutex;
 		char * idDispositivo = list_get(idDispositivos, i);
+		sem_wait(&diccionarioDispositivosMutex);
 		dictionary_put(diccionarioDispositivos, idDispositivo,
 				estructuraDispositivo);
+		sem_post(&diccionarioDispositivosMutex);
 		pthread_t dispositivo;
 		int retIO = pthread_create(&dispositivo, NULL, bloquearYDevolverAReady,
 				(void*) &estructuraDispositivo);
@@ -51,13 +54,13 @@ void* pcp_main(void* sinParametro) {
 }
 
 void crearHilosPrincipales() {
-//	retMultiplexorCPUs = pthread_create(&multiplexorCPUs, NULL, atencionCPUs,
-//			(void*) sinParametros);
-//	if (retMultiplexorCPUs) {
-//		fprintf(stderr, "Error - pthread_create() return code: %d\n",
-//				retMultiplexorCPUs);
-//		exit(EXIT_FAILURE);
-//	}
+	retMultiplexorCPUs = pthread_create(&multiplexorCPUs, NULL, atencionCPUs,
+			(void*) sinParametros);
+	if (retMultiplexorCPUs) {
+		fprintf(stderr, "Error - pthread_create() return code: %d\n",
+				retMultiplexorCPUs);
+		exit(EXIT_FAILURE);
+	}
 	retMandarAEjecutar = pthread_create(&ejecutar, NULL, mandarAEjecutar,
 			(void*) sinParametros);
 	if (retMandarAEjecutar) {
@@ -175,8 +178,10 @@ void moverAColaExit(t_PCB* pcb, int idCPU) {
 
 void programaSalioPorBloqueo(t_PCB* pcb, int tiempo, char* dispositivo,
 		int idCPU) {
+		sem_wait(&diccionarioDispositivosMutex);
 	t_estructuraDispositivoIO* estructura = dictionary_get(
 			diccionarioDispositivos, dispositivo);
+			sem_post(&diccionarioDispositivosMutex);
 	t_estructuraProcesoBloqueado* procesoBloqueado = malloc(
 			sizeof(t_estructuraProcesoBloqueado));
 	procesoBloqueado->pcb = pcb;
@@ -232,7 +237,6 @@ void seDesconectoCPUSigusr(int idCPU, t_PCB* pcb) {
 	sem_wait(&colaReadyMutex);
 	queue_push(colaReady, pcb);
 	sem_post(&colaReadyMutex);
-
 }
 
 int posicionEnLaLista(t_list* lista, int idCpu) {
@@ -255,20 +259,20 @@ int estaLibreID(int idCPU) {
 void mostrarColaDeProcesosListos() {
 	printf("El estado de la Cola Ready es el siguiente:\n");
 	sem_wait(&colaReadyMutex);
-	mostrarColaDePCBs2(colaReady);
+	mostrarColaDePCBs(colaReady);
 	sem_post(&colaReadyMutex);
 }
 void mostrarColaDeProcesosFinalizados() {
 	printf("El estado de la Cola Exit es el siguiente:\n");
 	sem_wait(&colaExitMutex);
-	mostrarColaDePCBs2(colaExit);
+	mostrarColaDePCBs(colaExit);
 	sem_post(&colaExitMutex);
 }
 
 void mostrarColaDeProcesosEnEjecucion() {
 	printf("El estado de la Cola Exec es el siguiente:\n");
 	sem_wait(&colaExecMutex);
-	mostrarColaDePCBs2(colaExec);
+	mostrarColaDePCBs(colaExec);
 	sem_post(&colaExecMutex);
 }
 
@@ -276,6 +280,7 @@ void mostrarColaDeProcesosBloqueados() {
 	printf("El estado de la Cola de Bloqueados es el siguiente:\n");
 	int a = 0;
 	int b = 0;
+	sem_wait(&diccionarioDispositivosMutex);
 	while (a < cantidadDeDispositivos) {
 		char* id = list_get(idDispositivos, a);
 		printf("Procesos bloqueados para el dispositivo %s es el siguiente: \n",
@@ -284,21 +289,24 @@ void mostrarColaDeProcesosBloqueados() {
 		t_estructuraDispositivoIO* estructura = dictionary_get(
 				diccionarioDispositivos, id);
 		sem_wait(&(estructura->mutexCola));
-		mostrarColaDePCBsBloqueados(estructura->procesosBloqueados);
+		mostrarColaDePCBs(estructura->procesosBloqueados);
 		sem_post(&(estructura->mutexCola));
 		a++;
 	}
+	sem_post(&diccionarioDispositivosMutex);
+	sem_wait(&diccionarioSemaforosMutex);
 	while (b < cantidadDeSemaforos) {
 		char* sem = list_get(semaforos, b);
 		printf("Procesos bloqueados para el semaforo %s es el siguiente: \n",
 				sem);
-		//t_estructuraSemaforo* semaforo = dictionary_get(semaforos,sem);
-		//sem_wait(&(semaforo->mutexCola));
-		//mostrarColaDePCBsBloqueadosSem(semaforo->procesosBloqueados); //TODO no me toma t_estructuraSemaforo (esta en syscalls)
-		///sem_post(&(semaforo->mutexCola));
+		t_estructuraSemaforo* semaforo = dictionary_get(diccionarioSemaforos,sem);
+		sem_wait(&(semaforo->mutexCola));
+		mostrarColaDePCBsBloqueados(semaforo->procesosBloqueados);
+		sem_post(&(semaforo->mutexCola));
 		b++;
 
 	}
+	sem_wait(&diccionarioSemaforosMutex);
 }
 
 void mostrarColaDePCBsBloqueados(t_queue* procesosBloqueados) {
@@ -306,24 +314,11 @@ void mostrarColaDePCBsBloqueados(t_queue* procesosBloqueados) {
 			(void*) (void*) imprimirNodosPCBsBloqueados);
 }
 
-void mostrarColaDePCBsBloqueadosSem(t_queue* procesosBloqueados) {
-	list_iterate(procesosBloqueados->elements,
-			(void*) (void*) imprimirNodosPCBsBloqueadosSem);
-}
+
 void imprimirNodosPCBsBloqueados(t_estructuraProcesoBloqueado* procesoBloqueado) {
 	printf("Program id:%i \n", procesoBloqueado->pcb->program_id);
 }
 
-void imprimirNodosPCBsBloqueadosSem(int* idProceso) {
-	printf("Program id:%i \n", *idProceso);
-}
-void mostrarColaDePCBs2(t_queue* cola) {
-	list_iterate(cola->elements, (void*) (void*) imprimirNodosPCBs2);
-}
-
-void imprimirNodosPCBs2(t_PCB* pcb) {
-	printf("Program id:%i \n", pcb->program_id);
-}
 
 int buscarIDPrograma(int idCPU) {
 	sem_wait(&CPUsMutex);
@@ -332,3 +327,4 @@ int buscarIDPrograma(int idCPU) {
 	sem_wait(&CPUsMutex);
 	return CPU->idProceso;
 }
+

@@ -38,6 +38,7 @@ typedef struct {
 // } t_estructuraCPU;
 
 t_dictionary* diccionarioSemaforos;
+sem_t diccionarioDispositivosMutex;
 sem_t diccionarioSemaforosMutex;
 sem_t CPUsLibres;
 sem_t sBloqueado;
