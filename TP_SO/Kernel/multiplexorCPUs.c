@@ -224,7 +224,7 @@ void* atencionCPUs(void* sinParametro) {
 					char* dispositivoIO;
 					char* texto;
 					char* semaforo;
-					char id; //TODO
+					char* id; //TODO
 					switch (*razon) {
 					case SALIDA_POR_QUANTUM: //El Programa salio del CPU por quantum
 						desempaquetar2(mensaje, &pcb, 0);
@@ -262,7 +262,7 @@ void* atencionCPUs(void* sinParametro) {
 						sc_imprimirTexto(texto, sd);
 						break;
 					case GRABAR_VALOR:
-						desempaquetar2(mensaje, &valor, &id, 0);
+						desempaquetar2(mensaje, &id, &valor, 0);
 						sc_grabar_valor(id, valor);
 						break;
 					case OBTENER_VALOR:

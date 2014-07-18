@@ -5,8 +5,8 @@
  *      Author: utnso
  */
 //#include <biblioteca_comun/definiciones.h>
-#include <parser/parser.h>
-#include <parser/metadata_program.h>
+#include <parser/parser/parser.h>
+#include <parser/parser/metadata_program.h>
 #include "funcionesParser.h"
 #include <stdio.h>
 #include <string.h>
@@ -55,8 +55,8 @@ typedef enum {
 	MOSTRAR_VALOR,
 	MOSTRAR_TEXTO,
 	SALIDA_POR_BLOQUEO,
-	OBTENER_VALOR_COMPARTIDA,
-	ASIGNAR_VALOR_COMPARTIDA,
+	OBTENER_VALOR,
+	GRABAR_VALOR,
 	CREAR_SEGMENTO,
 	CREAR_SEGMENTOS_PROGRAMA,
 	DESTRUIR_SEGMENTOS,
@@ -65,7 +65,7 @@ typedef enum {
 	ENVIAR_PCB,
 	SOLICITAR_A_UMV,
 	WAIT,
-	HABILITAR_SEMAFORO,
+	SIGNAL,
 	BLOQUEATE,
 	PEDIR_ETIQUETAS,
 	PEDIR_INSTRUCCION
@@ -221,7 +221,7 @@ void asignar(t_puntero direccion_variable, t_valor_variable valor) {
 }
 
 t_valor_variable obtenerValorCompartida(t_nombre_compartida variable) {
-	int razon=OBTENER_VALOR_COMPARTIDA;
+	int razon=OBTENER_VALOR;
 	t_paquete *paquete=serializar2(crear_nodoVar(variable, strlen(variable)), 0);
 	t_paquete *header=serializar2(crear_nodoVar(&(paquete->tamano), 4), crear_nodoVar(&razon, 4), 0);
 	send(socketKernel, header->msj, TAMANO_CABECERA, 0);
@@ -242,7 +242,7 @@ t_valor_variable obtenerValorCompartida(t_nombre_compartida variable) {
 t_valor_variable asignarValorCompartida(t_nombre_compartida variable,
 		t_valor_variable valor) {
 	int *razon=malloc(sizeof(int));
-	*razon=ASIGNAR_VALOR_COMPARTIDA;
+	*razon=GRABAR_VALOR;
 	t_paquete *paquete=serializar2(crear_nodoVar(&variable, sizeof(t_nombre_compartida)), crear_nodoVar(&valor, sizeof(t_valor_variable)), 0);
 	t_paquete *header=serializar2(crear_nodoVar(&(paquete->tamano), 4), crear_nodoVar(razon, 4), 0);
 	send(socketKernel, header->msj, TAMANO_CABECERA, 0);
@@ -306,7 +306,7 @@ void imprimirTexto(char* texto) {
 void entradaSalida(t_nombre_dispositivo dispositivo, int tiempo) {
 	int *razon=malloc(sizeof(int));
 	*razon=SALIDA_POR_BLOQUEO;
-	t_paquete *paquete=serializar2(crear_nodoVar(dispositivo, strlen(dispositivo)), crear_nodoVar(&tiempo, 4), 0);
+	t_paquete *paquete=serializar2(crear_nodoVar(&pcb,sizeof(pcb)), crear_nodoVar(&tiempo, 4),crear_nodoVar(dispositivo, strlen(dispositivo)), 0);
 	t_paquete *header=serializar2(crear_nodoVar(&(paquete->tamano), 4), crear_nodoVar(razon, 4), 0);
 	send(socketKernel, header->msj, TAMANO_CABECERA, 0);
 	send(socketKernel, paquete->msj, paquete->tamano, 0);
@@ -328,7 +328,7 @@ void wait(t_nombre_semaforo identificador_semaforo) {
 	}
 }
 void signal(t_nombre_semaforo identificador_semaforo) {
-	int razon=HABILITAR_SEMAFORO;
+	int razon=SIGNAL;
 	t_paquete *paquete=serializar2(crear_nodoVar(identificador_semaforo, strlen(identificador_semaforo)), 0);
 	t_paquete *header=serializar2(crear_nodoVar(&(paquete->tamano), 4), crear_nodoVar(&razon, 4), 0);
 	send(socketKernel, (void*)header->msj, TAMANO_CABECERA, 0);

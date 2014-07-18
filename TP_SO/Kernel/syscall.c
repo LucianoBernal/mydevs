@@ -8,7 +8,7 @@
 int sc_obtener_valor(char id, int idCpu) {
 	sem_wait(&mutexVG);
 	int* a = dictionary_get(variables_globales, &id);
-	//send(idCpu, *a, 4, 0); //TODO
+	send(idCpu, *a, 4, 0); //TODO
 	sem_wait(&mutexVG);
 	return *a;
 }
