@@ -32,7 +32,7 @@ void* mandarAEjecutar(void*);
 void* enviarCPU(void*);
 void* bloquearYDevolverAReady(void*);
 int buscarRetardo(char*);
-int encontrarPrimeraCpuLibreYOcuparla(t_list*);
+int encontrarPrimeraCpuLibre(t_list*);
 bool estaLibre(t_estructuraCPU*);
 void nuevaCPU(int);
 void programaSalioPorQuantum(t_PCB*, int);

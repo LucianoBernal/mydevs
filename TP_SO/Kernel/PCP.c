@@ -102,7 +102,7 @@ void* enviarCPU(void* sinParametro) {
 		sem_wait(&colaIntermediaVacia);
 		sem_wait(&CPUsLibres);
 		sem_wait(&CPUsMutex);
-		int IDCpuLibre = encontrarPrimeraCpuLibreYOcuparla(CPUs);
+		int IDCpuLibre = encontrarPrimeraCpuLibre(CPUs);
 		sem_post(&CPUsMutex);
 		sem_wait(&colaIntermediaMutex);
 		t_PCB* pcbAEjecutar = queue_pop(colaIntermedia);
@@ -114,7 +114,7 @@ void* enviarCPU(void* sinParametro) {
 		int i = posicionEnLaLista(CPUs, IDCpuLibre);
 		t_estructuraCPU* estructura = malloc(sizeof(t_estructuraCPU));
 		estructura->idCPU = IDCpuLibre;
-		estructura->estado = 0;
+		estructura->estado = 1;
 		estructura->idProceso = (pcbAEjecutar->program_id);
 		sem_wait(&CPUsMutex);
 		list_replace_and_destroy_element(CPUs, i, estructura,
@@ -141,9 +141,8 @@ void* bloquearYDevolverAReady(void * param) {
 	return NULL ;
 }
 
-int encontrarPrimeraCpuLibreYOcuparla(t_list* lista) {
+int encontrarPrimeraCpuLibre(t_list* lista) {
 	t_estructuraCPU* estructura = list_find(lista, (void*) estaLibre);
-	estructura->estado = 1;
 	return (estructura->idCPU);
 }
 
