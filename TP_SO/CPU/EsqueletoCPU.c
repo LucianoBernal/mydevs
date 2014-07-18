@@ -10,6 +10,7 @@
 #include <biblioteca_comun/Serializacion.h>
 #include <commons/log.h>
 #include <commons/config.h>
+#include "EsqueletoCPU.h"
 
 #define HANDSHAKE_SIZE 16
 char *IP_UMV, *IP_KERNEL;
@@ -29,7 +30,7 @@ int main(int arc, char **argv) {
     t_log* log = log_create("logCPU", "CPU",true, LOG_LEVEL_INFO);
 	t_config *config=config_create(argv[1]);
 	obtenerDatosConfig(config);
-	int socketUMV, socketKernel;
+
 	if (!(socketUMV = conectarCliente(IP_UMV, PUERTO_UMV, log))){
 		log_error(log, "No se pudo conectar a la UMV exitosamente");
 		cerrarCPU(log);
