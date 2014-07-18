@@ -46,7 +46,7 @@ sem_t colaExecVacia;
 sem_t semCPUDesconectadaMutex;
 sem_t CPUsMutex;
 sem_t colaExecMutex;
-sem_t semaforosMutex; //TODO
+//sem_t semaforosMutex; //TODO
 t_queue* colaExec;
 pthread_t ejecutar;
 pthread_t multiplexorCPUs;
