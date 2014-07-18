@@ -89,10 +89,10 @@ void* mandarAEjecutar(void* j) {
 		sem_wait(&vacioReady);
 		sem_wait(&colaReadyMutex);
 		t_PCB* procesoAEjecutar = queue_pop(colaReady);
+		sem_post(&colaReadyMutex);
 		sem_wait(&colaIntermediaMutex);
 		queue_push(colaIntermedia, procesoAEjecutar);
 		sem_post(&colaIntermediaMutex);
-		sem_post(&colaReadyMutex);
 		sem_post(&colaIntermediaVacia);
 	}
 }
