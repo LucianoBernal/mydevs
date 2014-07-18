@@ -326,7 +326,6 @@ void mostrarColaDeProcesosBloqueados() {
 		mostrarColaDePCBsBloqueados(semaforo->procesosBloqueados);
 		sem_post(&(semaforo->mutexCola));
 		b++;
-
 	}
 	sem_wait(&diccionarioSemaforosMutex);
 }
