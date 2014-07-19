@@ -146,7 +146,7 @@ void cargarConfig(t_config *config) {
 	puerto_programa = config_get_string_value(config, "PUERTO_PROG");
 	ip_UMV = config_get_string_value(config, "IP_UMV");
 	puerto_UMV = config_get_string_value(config, "PUERTO_UMV");
-	puerto_CPU = config_get_int_value(config, "PUERTO_CPU");
+	puerto_CPU = config_get_string_value(config, "PUERTO_CPU");
 	quantum = config_get_int_value(config, "QUANTUM");
 	retardo = config_get_int_value(config, "RETARDO");
 	multiprogramacion = config_get_int_value(config, "MULTIPROGRAMACION");
