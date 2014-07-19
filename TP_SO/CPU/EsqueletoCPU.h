@@ -17,11 +17,7 @@ t_log* log;
 t_dictionary* diccionarioDeVariables;
 int proceso_terminado;
 int proceso_bloqueado;
-//void procesarPCB(t_PCB*);
 int quantumDeKernel;
 int retardo;
-//void ejecutar_linea(t_PCB*);
-//void regenerar_diccionario();
-//
-//void manejar_seniales(int );
+
 #endif /* ESQUELETOCPU_H_ */
