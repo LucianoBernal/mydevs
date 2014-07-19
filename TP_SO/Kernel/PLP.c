@@ -132,184 +132,53 @@ void liberar_numero(int pid) {
 
 int crearSegmentos_Memoria(t_metadata_program *metadata, t_PCB *pcb,
 		char* literal, int tamanioScript) {
-	int fin;
-	codigos_Mensajes razon;
-	razon = CREAR_SEGMENTOS_PROGRAMA;
-	printf("razon de CREAR SEGMENTOS es%d\n", razon);
-	int *tamanoMensaje = malloc(sizeof(int));
-	int *razon2 = malloc(sizeof(int)), *tamano2 = malloc(4);
-	*tamanoMensaje = 32;
+	int razon;
+	printf("razon de CREAR SEGMENTOS es%d\n", CREAR_SEGMENTOS_PROGRAMA);
 	printf("%d %d %d %d", tamanioScript, metadata->instrucciones_size,
 			metadata->etiquetas_size, tamanio_stack);
-	t_paquete * aSerializarPaquete = (t_paquete *) serializar2(
-			crear_nodoVar(&tamanioScript, 4),
-			crear_nodoVar(&metadata->instrucciones_size, 4),
-			crear_nodoVar(&metadata->etiquetas_size, 4),
-			crear_nodoVar(&tamanio_stack, 4), 0);
-	t_paquete * aSerializarHeader = (t_paquete *) serializar2(
-			crear_nodoVar(&razon, 4),
-			crear_nodoVar(tamanoMensaje, 4), 0);
-	desempaquetar2(aSerializarHeader->msj, razon2, tamano2, 0);
-	printf("razon es%d %d\n", razon, *razon2);
-	printf("tamano mensaje vale%d %d\n", aSerializarPaquete->tamano, *tamano2);
-//	for(i=0; i<16;i++){
-//		putchar(aSerializarHeader->msj[i]==0?'0':aSerializarHeader->msj[i]);
-//	}
-	send(socketUMV, aSerializarHeader->msj, 16, 0);
-	send(socketUMV, aSerializarPaquete->msj, *tamanoMensaje, 0);
-	free(aSerializarHeader);
-	free(aSerializarPaquete);
-	char *header = malloc(16);
-	recv(socketUMV, (void*) header, 16, 0);
-	desempaquetar2(header, &razon, tamanoMensaje, 0);
-	if (*tamanoMensaje) {
-		char* message = malloc(*tamanoMensaje);
-		recv(socketUMV, (void*) message, *tamanoMensaje, MSG_WAITALL);
-		int indice_Codigo, segmentoStack, segmentoCodigo, indice_Funciones;
-		desempaquetar2(message, &segmentoCodigo, &indice_Codigo,
-				&indice_Funciones, &segmentoStack, 0);
-		pcb->segmento_Codigo = segmentoCodigo;
-		pcb->indice_de_Codigo = indice_Codigo;
-		pcb->indice_de_Etiquetas = indice_Funciones;
-		pcb->segmento_Stack = segmentoStack;
-		log_info(logKernel,
-				"Los segmentos del programa fueron Creados exitosamente en la UMV");
+	enviarConRazon(socketUMV, logKernel, CREAR_SEGMENTOS_PROGRAMA,
+			serializar2(crear_nodoVar(&tamanioScript, 4),
+					crear_nodoVar(&metadata->instrucciones_size, 4),
+					crear_nodoVar(&metadata->etiquetas_size, 4),
+					crear_nodoVar(&tamanio_stack, 4), 0));
+	char *mensaje = recibirConRazon(socketUMV, &razon, logKernel);
+	if (razon == BASES_LOGICAS) {
+		desempaquetar2(mensaje, &pcb->segmento_Codigo, &pcb->indice_de_Codigo,
+				&pcb->indice_de_Etiquetas, &pcb->segmento_Stack, 0);
 		printf(
-				"segmento de codigo %d\n indice de codigo %d \n indice etiquetas %d \n segmento stack %d \n",
+				"\nsegmento de codigo %d\n indice de codigo %d \n indice etiquetas %d \n segmento stack %d \n",
 				pcb->segmento_Codigo, pcb->indice_de_Codigo,
 				pcb->indice_de_Etiquetas, pcb->segmento_Stack);
-		free(message);
-		fin = 0;
+		free(mensaje);
+		return 1;
 	} else {
-		fin = -1; //Memory_Overload
+		printf("memory_Overload\n");
+		return 0;
 	}
-	free(header);
-	free(tamanoMensaje);
-	return fin;
 }
-/*int *codigoRespuesta = malloc(sizeof(int));
- char *tamanoRespuesta = malloc(sizeof(char));
- t_paquete *mensaje = serializar2(strlen(literal), metadata->etiquetas_size,
- tamanoStack, metadata->instrucciones_size);
- int *razon = malloc(sizeof(int));
- *razon = CREAR_SEGMENTOS_PROGRAMA;
- t_paquete *header = serializar2(crear_nodoVar(&mensaje->tamano, 1),
- crear_nodoVar(razon, sizeof(int)), 0);
- send(socketUMV, (void*) header, TAMANO_CABECERA, 0);
- send(socketUMV, (void*) mensaje, mensaje->tamano, 0);
- char *hRespuesta = malloc(TAMANO_CABECERA);
- recv(socketUMV, (void*) hRespuesta, TAMANO_CABECERA, MSG_WAITALL);
- desempaquetar2(hRespuesta, tamanoRespuesta, codigoRespuesta, 0);
- if (codigoRespuesta) {
- char *msjRespuesta = malloc(tamanoRespuesta);
- recv(socketUMV, (void*) msjRespuesta, tamanoRespuesta, MSG_WAITALL);
- desempaquetar2(msjRespuesta, pcb->segmento_Codigo,
- pcb->indice_de_Etiquetas, pcb->segmento_Stack,
- pcb->indice_de_Codigo, 0);
- } else {
- printf("No habia espacio en memoria");
- }
- return *codigoRespuesta;
- }*/
 
 void escribir_en_Memoria(t_metadata_program * metadata, t_PCB *pcb,
 		char *literal, int tamanoLiteral) {
-	int *base = malloc(sizeof(int)), *offset = malloc(sizeof(int));
+	int *offset = malloc(sizeof(int));
 	*offset = 0;
-	codigos_Mensajes razon;
-	razon = ESCRIBIR_EN_UMV;
-	int *tamanoMensaje = malloc(sizeof(int));
-	//Escribo Literal en Memoria
-	*tamanoMensaje = tamanoLiteral + 28;
-	*base = pcb->segmento_Codigo;
-	t_paquete * aSerializarPaquete = (t_paquete *) serializar2(
-			crear_nodoVar(base, 4), crear_nodoVar(offset, 4),
-			crear_nodoVar(&tamanoLiteral, 4),
-			crear_nodoVar((char*) literal, tamanoLiteral), 0);
-	t_paquete * aSerializarHeader = (t_paquete *) serializar2(
-			crear_nodoVar(&razon, 4),
-			crear_nodoVar(&aSerializarPaquete->tamano, 4), 0);
-	//printf("%d == %d != %d", aSerializarPaquete->tamano, *tamanoMensaje,
-	//		&aSerializarPaquete->tamano);
-	printf("tamaño mensaje%d\n", aSerializarPaquete->tamano);
-	send(socketUMV, aSerializarHeader->msj, 16, 0);
-	send(socketUMV, aSerializarPaquete->msj, *tamanoMensaje, 0);
-
-	//Escribo Indice de Codigo
-
-//	*tamanoMensaje = metadata->instrucciones_size + 28;
-//	*base = pcb->indice_de_Codigo;
-//	aSerializarPaquete = (t_paquete *) serializar2(crear_nodoVar(base, 4),
-//			crear_nodoVar(offset, 4),
-//			crear_nodoVar(&metadata->instrucciones_size, 4),
-//			crear_nodoVar(metadata->instrucciones_serializado,
-//					metadata->instrucciones_size), 0);
-//	aSerializarHeader = (t_paquete *) serializar2(
-//			crear_nodoVar(&razon, sizeof(razon)),
-//			crear_nodoVar(tamanoMensaje, 4), 0);
-//	send(socketUMV, aSerializarHeader->msj, 16, 0);
-//	send(socketUMV, aSerializarPaquete->msj, *tamanoMensaje, 0);
-
-	//Escribo Indice de Etiquetas y Funciones
-//	*tamanoMensaje = metadata->etiquetas_size + 28;
-//	*base = pcb->indice_de_Etiquetas;
-//	aSerializarPaquete = (t_paquete *) serializar2(crear_nodoVar(base, 4),
-//			crear_nodoVar(offset, 4),
-//			crear_nodoVar(&metadata->etiquetas_size, 4),
-//			crear_nodoVar(&metadata->etiquetas, metadata->etiquetas_size), 0);
-//	aSerializarHeader = (t_paquete *) serializar2(
-//			crear_nodoVar(&razon, sizeof(razon)),
-//			crear_nodoVar(tamanoMensaje, 4), 0);
-//	send(socketUMV, aSerializarHeader->msj, 16, 0);
-//	send(socketUMV, aSerializarPaquete->msj, *tamanoMensaje, 0);
-
-	//Libero
-//	free(base);
-//	free(offset);
-//	free(tamanoMensaje);
-//	free(aSerializarHeader);
-//	free(aSerializarPaquete);
-
+	printf("Estoy en escribir memoria\n");
+	enviarConRazon(socketUMV, logKernel, ESCRIBIR_EN_UMV,
+			serializar2(crear_nodoVar(&pcb->segmento_Codigo, 4),
+					crear_nodoVar(offset, 4), crear_nodoVar(&tamanoLiteral, 4),
+					crear_nodoVar((char*) literal, tamanoLiteral), 0));
+	enviarConRazon(socketUMV, logKernel, ESCRIBIR_EN_UMV,
+			serializar2(crear_nodoVar(&pcb->indice_de_Codigo, 4),
+					crear_nodoVar(offset, 4),
+					crear_nodoVar(&metadata->instrucciones_size, 4),
+					crear_nodoVar(metadata->instrucciones_serializado,
+							metadata->instrucciones_size), 0));
+	enviarConRazon(socketUMV, logKernel, ESCRIBIR_EN_UMV,
+			serializar2(crear_nodoVar(&pcb->indice_de_Etiquetas, 4),
+					crear_nodoVar(offset, 4),
+					crear_nodoVar(&metadata->etiquetas_size, 4),
+					crear_nodoVar(&metadata->etiquetas,
+							metadata->etiquetas_size), 0));
 }
-/*
- }
- int *razon = malloc(sizeof(int));
- *razon = ESCRIBIR_EN_UMV_OFFSET_CERO;
- char error = 1;
- //Segmento codigo
- t_paquete *paquete = serializar2(crear_nodoVar(&(pcb->program_id), 4),
- crear_nodoVar((pcb->segmento_Codigo), 4),
- crear_nodoVar(literal, strlen(literal)), 0);
- t_paquete *header = serializar2(crear_nodoVar(&(paquete->tamano), 4),
- crear_nodoVar(razon, sizeof(int)), 0);
- if (error)
- error = send(socketUMV, (void*) header, TAMANO_CABECERA, 0);
- if (error)
- error = send(socketUMV, (void*) paquete, paquete->tamano, 0);
- //indice etiquetas
- t_paquete *paquete = serializar2(crear_nodoVar(&(pcb->program_id), 4),
- crear_nodoVar((pcb->indice_de_Etiquetas), 4),
- crear_nodoVar(metadata->etiquetas, metadata->etiquetas_size), 0);
- t_paquete *header = serializar2(crear_nodoVar(&(paquete->tamano), 4),
- crear_nodoVar(razon, sizeof(int)), 0);
- if (error)
- error = send(socketUMV, (void*) header, TAMANO_CABECERA, 0);
- if (error)
- error = send(socketUMV, (void*) paquete, paquete->tamano, 0);
- //indice codigo
- t_paquete *paquete = serializar2(crear_nodoVar(&(pcb->program_id), 4),
- crear_nodoVar((pcb->indice_de_Codigo), 4),
- crear_nodoVar(metadata->instrucciones_serializado,
- metadata->instrucciones_size), 0);
- t_paquete *header = serializar2(crear_nodoVar(&(paquete->tamano), 4),
- crear_nodoVar(razon, sizeof(int)), 0);
- if (error)
- error = send(socketUMV, (void*) header, TAMANO_CABECERA, 0);
- if (error)
- error = send(socketUMV, (void*) paquete, paquete->tamano, 0);
- if (!error)
- printf("Alguno de los sends fallo, noob");
- }*/
 
 void agregar_En_Diccionario(int pid, int sd) {
 	sem_wait(&PidSD_Mutex);
@@ -319,28 +188,10 @@ void agregar_En_Diccionario(int pid, int sd) {
 }
 
 void crear_Nuevo_Proceso(int progid) {
-	codigos_Mensajes razon;
-	razon = CREAR_PROCESO_NUEVO;
-	printf("razon proceso nuevo asd%d\n", razon);
-	int *tamanoMensaje = malloc(sizeof(int));
-	*tamanoMensaje = 8;
-	int *pid = malloc(sizeof(int));
-	*pid = progid;
-	t_paquete * aSerializarHeader = (t_paquete *) serializar2(
-			crear_nodoVar(&razon, sizeof(razon)),
-			crear_nodoVar(tamanoMensaje, 4), 0);
-	t_paquete * aSerializarPaquete = (t_paquete *) serializar2(
-			crear_nodoVar(pid, 4), 0);
-	printf("pid:%d \n", *pid);
-	//puts("hola");
-	send(socketUMV, aSerializarHeader->msj, 16, 0);
-	send(socketUMV, aSerializarPaquete->msj, *tamanoMensaje, 0);
-	free(aSerializarHeader);
-	free(aSerializarPaquete);
-	free(tamanoMensaje);
-	free(pid);
-	//puts("terminaronLosFrees");
-
+	printf("estoy en crear proceso nuevo\n");
+	enviarConRazon(socketUMV, logKernel, CREAR_PROCESO_NUEVO,
+			serializar2(crear_nodoVar(&progid, 4), 0));
+	printf("pid:%d \n", progid);	//Prendanme una vela pls
 }
 
 void gestionarProgramaNuevo(char* literal, int sd, int tamanioLiteral) {
@@ -354,17 +205,17 @@ void gestionarProgramaNuevo(char* literal, int sd, int tamanioLiteral) {
 	//sem_wait(&mutexProcesoActivo);
 	crear_Nuevo_Proceso(pcb->program_id);
 	cambiar_Proceso_Activo(pcb->program_id);
-	if (crearSegmentos_Memoria(metadata, pcb, literal, tamanioLiteral) == 0) {
-	//escribir_en_Memoria(metadata, pcb, literal, tamanioLiteral);
-	/*sem_post(&mutexProcesoActivo);
-	 encolar_New(pcb, peso);
-	 agregar_En_Diccionario(pcb->program_id, sd);
-	 } else {
-	 sem_post(&mutexProcesoActivo);
-	 notificar_Memoria_Llena(sd);
-	 close(sd);
-	 //free(pcb);
-	 liberar_numero(pcb->program_id);*/
+	if (crearSegmentos_Memoria(metadata, pcb, literal, tamanioLiteral)) {
+		escribir_en_Memoria(metadata, pcb, literal, tamanioLiteral);
+//	/*sem_post(&mutexProcesoActivo);
+//	 encolar_New(pcb, peso);
+//	 agregar_En_Diccionario(pcb->program_id, sd);
+//	 } else {
+//	 sem_post(&mutexProcesoActivo);
+//	 notificar_Memoria_Llena(sd);
+//	 close(sd);
+//	 //free(pcb);
+//	 liberar_numero(pcb->program_id);*/
 	}
 	metadata_destruir(metadata); //OJO QUIZAS SOLO SEA EN EL ELSE REVISAR!
 	printf("PESO:%d\n", peso);
@@ -467,23 +318,8 @@ void solicitar_Destruccion_Segmentos() {
 }
 
 void cambiar_Proceso_Activo(int progid) {
-	codigos_Mensajes razon;
-	razon = CAMBIAR_PROCESO_ACTIVO;
-	int *tamanoMensaje = malloc(sizeof(int));
-	*tamanoMensaje = 8;
-	int *pid = malloc(sizeof(int));
-	*pid = progid;
-	t_paquete * aSerializarHeader = (t_paquete *) serializar2(
-			crear_nodoVar(&razon, 4), crear_nodoVar(tamanoMensaje, 4), 0);
-	t_paquete * aSerializarPaquete = (t_paquete *) serializar2(
-			crear_nodoVar(pid, 4), 0);
-	send(socketUMV, aSerializarHeader->msj, 16, 0);
-	send(socketUMV, aSerializarPaquete->msj, *tamanoMensaje, 0);
-	free(aSerializarHeader);
-	free(aSerializarPaquete);
-	free(tamanoMensaje);
-	free(pid);
-
+	enviarConRazon(socketUMV, logKernel, CAMBIAR_PROCESO_ACTIVO,
+			serializar2(crear_nodoVar(&progid, 4), 0));
 }
 
 void enviar_Mensaje_Final(int pid) {

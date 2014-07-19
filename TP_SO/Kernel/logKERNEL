@@ -37,3 +37,18 @@
 [INFO] 02:48:28:76 Kernel/(9960:10009): Los segmentos del programa fueron Creados exitosamente en la UMV
 [INFO] 02:48:41:541 Kernel/(10158:10158): Comienza la ejecución del Kernel.
 [INFO] 02:50:14:137 Kernel/(10158:10208): Los segmentos del programa fueron Creados exitosamente en la UMV
+[INFO] 17:20:39:134 Kernel/(9438:9438): Comienza la ejecución del Kernel.
+[INFO] 17:21:45:535 Kernel/(9562:9562): Comienza la ejecución del Kernel.
+[INFO] 17:22:29:989 Kernel/(9654:9654): Comienza la ejecución del Kernel.
+[INFO] 17:23:11:143 Kernel/(9783:9783): Comienza la ejecución del Kernel.
+[INFO] 17:24:12:56 Kernel/(9868:9868): Comienza la ejecución del Kernel.
+[ERROR] 17:24:16:752 Kernel/(9868:9890): Hubo un error al bindear el socket
+[INFO] 17:25:31:952 Kernel/(10002:10002): Comienza la ejecución del Kernel.
+[INFO] 17:29:14:784 Kernel/(10124:10124): Comienza la ejecución del Kernel.
+[INFO] 17:29:57:310 Kernel/(10231:10231): Comienza la ejecución del Kernel.
+[ERROR] 17:30:02:976 Kernel/(10231:10254): Hubo un error al bindear el socket
+[INFO] 17:31:09:178 Kernel/(10324:10324): Comienza la ejecución del Kernel.
+[INFO] 17:33:02:477 Kernel/(10441:10441): Comienza la ejecución del Kernel.
+[ERROR] 17:33:16:79 Kernel/(10441:10485): Hubo un error al bindear el socket
+[INFO] 17:34:08:905 Kernel/(10555:10555): Comienza la ejecución del Kernel.
+[INFO] 17:36:44:271 Kernel/(11057:11057): Comienza la ejecución del Kernel.

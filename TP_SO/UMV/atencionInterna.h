@@ -17,7 +17,7 @@
 int32_t cantCpu;
 pthread_t hiloKernel;
 pthread_t hiloCpu;
-
+extern t_log*logger;
 
 
 #endif /* ATENCIONINTERNA_H_ */

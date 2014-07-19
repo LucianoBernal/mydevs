@@ -12,6 +12,7 @@
 #include "multiplexorScripts_interfaz.h"
 
 extern int socketUMV;
+extern t_log *logKernel;
 sem_t mutexProcesoActivo;
 sem_t  colaNuevosVacio;
 sem_t  randomMutex;

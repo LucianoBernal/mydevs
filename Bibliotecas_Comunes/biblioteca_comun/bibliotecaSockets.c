@@ -14,6 +14,51 @@
 
 #define BACKLOG 10
 
+int enviarConRazon(int socket, t_log* logs, int razon, t_paquete *pack){
+	if (pack==NULL){
+		pack=malloc(sizeof(t_paquete));
+		pack->tamano=0;
+	}
+	int tamano=pack->tamano; //Esta linea les puede sonar a boludo pero es super necesaria
+	t_paquete *header=serializar2(crear_nodoVar(&razon, 4), crear_nodoVar(&tamano, 4), 0);
+	if(send(socket, header->msj, header->tamano, 0)==-1){
+		log_error(logs, "La cabecera no se pudo enviar correctamente");
+		return 0;
+	}
+	if (pack->tamano){
+		if (send(socket, pack->msj, pack->tamano, 0)==-1){
+			log_error(logs, "El mensaje no se pudo enviar correctamente");
+			return 0;
+		}
+	}
+	free(header->msj);
+	free(header);
+	free(pack->msj);
+	free(pack);
+	return 1;
+}
+
+char *recibirConRazon(int socket, int *p_razon, t_log *logs){
+	char *header=malloc(16);
+	if (recv(socket, header, 16, MSG_WAITALL)==-1){
+		log_error(logs, "Hubo un error al recibir la cabecera");
+		return NULL;
+	}
+	int tamano;
+	desempaquetar2(header, p_razon, &tamano, 0);
+	free(header);
+	if (tamano){
+		char *msj=malloc(tamano);
+		if(recv(socket, msj, tamano, MSG_WAITALL)==-1){
+			log_error(logs, "Hubo un error al recibir el mensaje");
+			return NULL;
+		}
+		return msj;
+	}else{
+		return NULL;
+	}
+}
+
 int crearServidor(char* puerto, t_log* logs){
 	struct addrinfo hints;
 	struct addrinfo *serverInfo;
