@@ -148,7 +148,7 @@ int crearSegmentos_Memoria(t_metadata_program *metadata, t_PCB *pcb,
 			crear_nodoVar(&tamanio_stack, 4), 0);
 	t_paquete * aSerializarHeader = (t_paquete *) serializar2(
 			crear_nodoVar(&razon, 4),
-			crear_nodoVar(&(aSerializarPaquete->tamano), 4), 0);
+			crear_nodoVar(tamanoMensaje, 4), 0);
 	desempaquetar2(aSerializarHeader->msj, razon2, tamano2, 0);
 	printf("razon es%d %d\n", razon, *razon2);
 	printf("tamano mensaje vale%d %d\n", aSerializarPaquete->tamano, *tamano2);
@@ -229,8 +229,8 @@ void escribir_en_Memoria(t_metadata_program * metadata, t_PCB *pcb,
 	t_paquete * aSerializarHeader = (t_paquete *) serializar2(
 			crear_nodoVar(&razon, 4),
 			crear_nodoVar(&aSerializarPaquete->tamano, 4), 0);
-	printf("%d == %d != %d", aSerializarPaquete->tamano, *tamanoMensaje,
-			&aSerializarPaquete->tamano);
+	//printf("%d == %d != %d", aSerializarPaquete->tamano, *tamanoMensaje,
+	//		&aSerializarPaquete->tamano);
 	printf("tamaño mensaje%d\n", aSerializarPaquete->tamano);
 	send(socketUMV, aSerializarHeader->msj, 16, 0);
 	send(socketUMV, aSerializarPaquete->msj, *tamanoMensaje, 0);
@@ -354,7 +354,7 @@ void gestionarProgramaNuevo(char* literal, int sd, int tamanioLiteral) {
 	//sem_wait(&mutexProcesoActivo);
 	crear_Nuevo_Proceso(pcb->program_id);
 	cambiar_Proceso_Activo(pcb->program_id);
-	//if (crearSegmentos_Memoria(metadata, pcb, literal, tamanioLiteral) == 0) {
+	if (crearSegmentos_Memoria(metadata, pcb, literal, tamanioLiteral) == 0) {
 	//escribir_en_Memoria(metadata, pcb, literal, tamanioLiteral);
 	/*sem_post(&mutexProcesoActivo);
 	 encolar_New(pcb, peso);
@@ -365,7 +365,7 @@ void gestionarProgramaNuevo(char* literal, int sd, int tamanioLiteral) {
 	 close(sd);
 	 //free(pcb);
 	 liberar_numero(pcb->program_id);*/
-	//}
+	}
 	metadata_destruir(metadata); //OJO QUIZAS SOLO SEA EN EL ELSE REVISAR!
 	printf("PESO:%d\n", peso);
 	fflush(stdin);
