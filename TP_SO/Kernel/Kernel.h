@@ -37,7 +37,7 @@ sem_t  grado_Multiprogramacion;
 char* ip_UMV;
 char* puerto_UMV;
 char* puerto_programa;
-int puerto_CPU;
+char* puerto_CPU;
 int quantum;
 int retardo;
 int tamanio_stack;

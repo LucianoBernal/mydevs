@@ -22,10 +22,11 @@
 #include <biblioteca_comun/Serializacion.h>
 #include "syscall.h"
 #include "PCP.h"
+#include "multiplexorCPUs_interfaz.h"
+#include <biblioteca_comun/bibliotecaSockets.h>
 
 #define TRUE   1
 #define FALSE  0
-#define PORT 7004
 
 typedef enum {
 //	CONFIRMACION,
@@ -68,42 +69,9 @@ void* atencionCPUs(void* sinParametro) {
 		client_socket[i] = 0;
 	}
 
-	//create a master socket
-	if ((master_socket = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
-		perror("socket failed");
-		exit(EXIT_FAILURE);
-	}
+	master_socket=crearServidor(puerto_CPU,logKernel);
 
-	//set master socket to allow multiple connections , this is just a good habit, it will work without this
-	if (setsockopt(master_socket, SOL_SOCKET, SO_REUSEADDR, (char *) &opt,
-			sizeof(opt)) < 0) {
-		perror("setsockopt");
-		exit(EXIT_FAILURE);
-	}
-
-	//type of socket created
-	address.sin_family = AF_INET;
-	address.sin_addr.s_addr = INADDR_ANY;
-	address.sin_port = htons(PORT);
-
-	//bind the socket to localhost port 8888
-	if (bind(master_socket, (struct sockaddr *) &address, sizeof(address))
-			< 0) {
-		perror("bind failed");
-		exit(EXIT_FAILURE);
-	}
-	printf("Listener on port %d \n", PORT);
-
-	//try to specify maximum of 10 pending connections for the master socket
-	if (listen(master_socket, 10) < 0) {
-		perror("listen");
-		exit(EXIT_FAILURE);
-	}
-
-	//accept the incoming connection
-	addrlen = sizeof(address);
-	puts("Waiting for connections ...");
-
+	printf("Esperando conexiones en el puerto %s:",puerto_CPU);
 	while (TRUE) {
 		//clear the socket set
 		FD_ZERO(&readfds);
