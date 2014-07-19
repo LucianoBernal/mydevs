@@ -34,7 +34,7 @@ void* atencionScripts(void* sinParametro) {
 	int max_sd;
 	struct sockaddr_in address;
 	int* tamano = malloc(4);
-	char* literal=malloc(1025);
+	char literal[1025];
 
 	char buffer[1025];  //data buffer of 1K
 
@@ -52,7 +52,7 @@ void* atencionScripts(void* sinParametro) {
 
 	master_socket=crearServidor(puerto_programa,logKernel);
 
-	puts("Waiting for connections ...");
+	printf("Esperando conexiones en el puerto %s:",puerto_programa);
 
 	while (TRUE) {
 		//clear the socket set
@@ -130,7 +130,7 @@ void* atencionScripts(void* sinParametro) {
 			literal[*tamano] =0;
 			recv(new_socket, literal, *tamano, MSG_WAITALL);
 			gestionarProgramaNuevo(literal,new_socket,*tamano);
-
+			fflush(stdin);
 
 		}
 }

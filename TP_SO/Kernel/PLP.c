@@ -229,7 +229,8 @@ void escribir_en_Memoria(t_metadata_program * metadata, t_PCB *pcb,
 	t_paquete * aSerializarHeader = (t_paquete *) serializar2(
 			crear_nodoVar(&razon, 4),
 			crear_nodoVar(&aSerializarPaquete->tamano, 4), 0);
-	printf("%d == %d != %d", aSerializarPaquete->tamano, *tamanoMensaje, &aSerializarPaquete->tamano);
+	printf("%d == %d != %d", aSerializarPaquete->tamano, *tamanoMensaje,
+			&aSerializarPaquete->tamano);
 	printf("tamaño mensaje%d\n", aSerializarPaquete->tamano);
 	send(socketUMV, aSerializarHeader->msj, 16, 0);
 	send(socketUMV, aSerializarPaquete->msj, *tamanoMensaje, 0);
@@ -347,30 +348,29 @@ void gestionarProgramaNuevo(char* literal, int sd, int tamanioLiteral) {
 	t_metadata_program* metadata;
 	metadata = metadata_desde_literal(literal);
 	pcb->program_id = generarProgramID();
-    asignaciones_desde_metada(metadata, pcb);
+	asignaciones_desde_metada(metadata, pcb);
 	int peso = calcularPeso(metadata);
 	printf("\nEl codigo cambia pato, no seas paranoico\n");
 	//sem_wait(&mutexProcesoActivo);
 	crear_Nuevo_Proceso(pcb->program_id);
 	cambiar_Proceso_Activo(pcb->program_id);
-	if (crearSegmentos_Memoria(metadata, pcb, literal, tamanioLiteral) == 0) {
-		//escribir_en_Memoria(metadata, pcb, literal, tamanioLiteral);
-		/*sem_post(&mutexProcesoActivo);
-		encolar_New(pcb, peso);
-		agregar_En_Diccionario(pcb->program_id, sd);
-	} else {
-		sem_post(&mutexProcesoActivo);
-		notificar_Memoria_Llena(sd);
-		close(sd);
-		//free(pcb);
-		liberar_numero(pcb->program_id);*/
-	}
+	//if (crearSegmentos_Memoria(metadata, pcb, literal, tamanioLiteral) == 0) {
+	//escribir_en_Memoria(metadata, pcb, literal, tamanioLiteral);
+	/*sem_post(&mutexProcesoActivo);
+	 encolar_New(pcb, peso);
+	 agregar_En_Diccionario(pcb->program_id, sd);
+	 } else {
+	 sem_post(&mutexProcesoActivo);
+	 notificar_Memoria_Llena(sd);
+	 close(sd);
+	 //free(pcb);
+	 liberar_numero(pcb->program_id);*/
+	//}
 	metadata_destruir(metadata); //OJO QUIZAS SOLO SEA EN EL ELSE REVISAR!
-		printf("QESO:%d\n",peso);
-		fflush(stdin);
-		free(pcb);
+	printf("PESO:%d\n", peso);
+	fflush(stdin);
+	free(pcb);
 }
-
 
 void* deNewAReady(void* sinParametro) { // OTRO HILO
 	while (1) {
