@@ -63,5 +63,32 @@ int* sinParametros;
 t_dictionary* diccionarioDispositivos;
 t_list* CPUs;
 int idUltimaCPUDesconectada;
+sem_t mostarColasMutex;
+int socketUMV;
+sem_t  grado_Multiprogramacion;
+char* ip_UMV;
+char* puerto_UMV;
+char* puerto_programa;
+char* puerto_CPU;
+int quantum;
+int retardo;
+int tamanio_stack;
+int multiprogramacion;
+t_queue* colaReady;
+sem_t  colaReadyMutex;
+sem_t  vacioReady;
+sem_t mutexVG;
+sem_t colaExitVacio;
+sem_t colaExitMutex;
+t_queue* colaExit;
+int cantidadDeDispositivos;
+int cantidadDeSemaforos;
+t_list* valor_semaforos;
+t_list* semaforos;
+t_list* retardos;
+t_list* idDispositivos;
+extern t_log *logKernel;
+
+
 
 #endif /* PCP__H_ */

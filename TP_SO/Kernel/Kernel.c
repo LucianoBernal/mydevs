@@ -63,23 +63,26 @@ int main(int argc, char** argv) {
 	int* parametrosPCP = NULL;
 	iretPCP = pthread_create(&pcp, NULL, pcp_main, (void*) parametrosPCP);
 	if (iretPCP) {
-		fprintf(stderr, "Error - pthread_create() return code: %d\n", iretPCP);
+		log_error(logKernel,"Fallo la creacion del hilo PCP");
 		exit(EXIT_FAILURE);
 	}
-	printf("Hilo pcp exitoso");
+	log_info(logKernel,"Hilo PCP exitoso");
 	int* parametrosPLP = NULL;
 	iretPLP = pthread_create(&plp, NULL, plp_main, (void*) parametrosPLP);
 	if (iretPLP) {
-		fprintf(stderr, "Error - pthread_create() return code: %d\n", iretPLP);
+		log_error(logKernel,"Fallo la creacion del hilo PLP");
 		exit(EXIT_FAILURE);
 	}
-	printf("Hilo plp exitoso");
+	log_info(logKernel,"Hilo PLP exitoso");
 
 
 
-//	pthread_join(pcp, NULL );
+	pthread_join(pcp, NULL );
 	pthread_join(plp, NULL );
 	config_destroy(config);
+	log_destroy(logKernel);
+	free(parametrosPCP);
+	free(parametrosPLP);
 	return EXIT_FAILURE;
 }
 

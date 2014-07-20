@@ -294,6 +294,7 @@ void notificar_Memoria_Llena(int sd) {
 void* manejoColaExit(void* sinParametros) {
 	while (1) {
 		sem_wait(&colaExitVacio);
+		sem_post(&grado_Multiprogramacion);
 		sem_wait(&colaExitMutex);
 		t_PCB* pcb = queue_pop(colaExit);
 		sem_post(&colaExitMutex);

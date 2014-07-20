@@ -44,7 +44,7 @@ void* pcp_main(void* sinParametro) {
 		sem_post(&diccionarioDispositivosMutex);
 		pthread_t dispositivo;
 		int retIO = pthread_create(&dispositivo, NULL, bloquearYDevolverAReady,
-				(void*) &estructuraDispositivo);
+				(void*) estructuraDispositivo);
 		if (retIO) {
 			fprintf(stderr, "Error - pthread_create() return code: %d\n",
 					retIO);
@@ -111,7 +111,7 @@ void* enviarCPU(void* sinParametro) {
 		list_add(colaExec, pcbAEjecutar);
 		sem_post(&colaExecMutex);
 		t_paquete* paquete = serializarPCB(pcbAEjecutar);
-		int i = posicionEnLaLista(CPUs, IDCpuLibre);
+		int i = posicionEnLaLista(CPUs, IDCpuLibre);   //FIXME muere con concurrencia
 		t_estructuraCPU* estructura = malloc(sizeof(t_estructuraCPU));
 		estructura->idCPU = IDCpuLibre;
 		estructura->estado = 1;
@@ -120,7 +120,7 @@ void* enviarCPU(void* sinParametro) {
 		list_replace_and_destroy_element(CPUs, i, estructura,
 				(void*) cpu_destroy);
 		sem_post(&CPUsMutex);
-		send(IDCpuLibre, &paquete, sizeof(paquete), 0);
+		send(IDCpuLibre, &paquete, sizeof(paquete), 0);  //FIXME
 	}
 }
 
@@ -128,6 +128,7 @@ void* bloquearYDevolverAReady(void * param) {
 	t_estructuraDispositivoIO* estructura = malloc(
 			sizeof(t_estructuraDispositivoIO));
 	estructura = (t_estructuraDispositivoIO *) param;
+	while (1){
 	sem_wait(&(estructura->colaVacia));
 	sem_wait(&(estructura->mutexCola));
 	t_estructuraProcesoBloqueado* estructuraBloqueada = queue_pop(
@@ -139,6 +140,7 @@ void* bloquearYDevolverAReady(void * param) {
 	sem_wait(&colaReadyMutex);
 	queue_push(colaReady, estructuraBloqueada->pcb);
 	sem_post(&colaReadyMutex);
+	}
 	return NULL ;
 }
 
@@ -230,14 +232,17 @@ void seDesconectoCPU(int idCPU) { //TODO
 		int idPrograma = buscarIDPrograma(idCPU);
 		int sd = obtener_sd_Programa(idPrograma);
 		notificar_Programa(sd, "La CPU se desconectó, programa abortado");
-		sem_wait(&colaExitMutex);
-		//queue_push(colaExit, paquete_CPU.pcb); lo comento para que no me tire el error de que no encuenra pquetecpu
-		sem_post(&colaExitMutex);
+		bool esElpcb(t_PCB* pcbAcomparar){
+			return pcbAcomparar->program_id == idPrograma;
+		}
+		t_PCB* pcb=list_remove_by_condition(colaExec,(void*)esElpcb);
+		moverAColaExit(pcb,idCPU);
 		sem_wait(&CPUsMutex);
 		list_remove_by_condition(CPUs, (void*) tieneID);
 		sem_wait(&CPUsMutex);
 	}
 }
+
 
 void seDesconectoCPUSigusr(int idCPU, t_PCB* pcb) {
 	sem_wait(&CPUsMutex);
@@ -245,7 +250,7 @@ void seDesconectoCPUSigusr(int idCPU, t_PCB* pcb) {
 	sem_post(&CPUsMutex);
 	sem_wait(&colaExecMutex);
 	int posicion = posicionEnLaListaExec(colaExec, pcb->program_id);
-	list_remove(colaExec, posicion);
+	list_remove_and_destroy_element(colaExec, posicion,(void*)free);
 	sem_post(&colaExecMutex);
 	sem_wait(&colaReadyMutex);
 	queue_push(colaReady, pcb);
