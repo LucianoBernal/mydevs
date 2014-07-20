@@ -407,7 +407,7 @@ int verificarEspacio(int pid, int base, int offset, int tamano) {
 		if (tamano <= (int) (obtenerPtrASegmento(base, pid)->tamano) - offset) {
 			return 1;
 		} else {
-			printf("Segmentation fault");
+			printf("Segmentation fault\n coz %d > %d\n", (obtenerPtrASegmento(base, pid)->tamano) - offset, tamano);
 		}
 	}
 	return 0;

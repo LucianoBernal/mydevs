@@ -16,10 +16,9 @@ AnSISOP_funciones funciones_Ansisop;
 AnSISOP_kernel funciones_kernel;
 
 void vincularPrimitivas();
-
 char *solicitarBytesAUMV(t_puntero base, t_puntero desplazamiento, int tamano);
-void enviarBytesAUMV(t_puntero base, t_puntero desplazamiento, void *datos,
-		int tamano);
+void enviarBytesAUMV(t_puntero base, t_puntero desplazamiento,
+		int tamano, void *datos);
 
 t_puntero definirVariable(t_nombre_variable identificador_variable );
 t_puntero obtenerPosicionVariable(t_nombre_variable identificador_variable );
@@ -37,7 +36,7 @@ void imprimirTexto(char* texto);
 void entradaSalida(t_nombre_dispositivo dispositivo, int tiempo);
 
 void wait(t_nombre_semaforo identificador_semaforo);
-void signal(t_nombre_semaforo identificador_semaforo);
+//void signal(t_nombre_semaforo identificador_semaforo);
 
 
 

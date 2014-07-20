@@ -14,7 +14,6 @@ void crearProcesoArtificial() {
 void* consola(void* baseUMV) {
 	const int COMANDO_SIZE = 30;
 	char* comando = malloc(COMANDO_SIZE);
-	informarBaseUMV();
 	crearProcesoArtificial();
 	do {
 		printf("Ingrese comando: \n");
