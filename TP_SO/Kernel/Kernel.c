@@ -33,6 +33,9 @@ int main(int argc, char** argv) {
 	variables_globales = dictionary_create();
 	colaReady = queue_create();
 	colaExit = queue_create();
+
+
+	sem_init(&mostarColasMutex, 0, 1);
 	sem_init(&colaExitMutex, 0, 1);
 	sem_init(&colaExitVacio, 0, 0);
 	sem_init(&mutexVG, 0, 1);

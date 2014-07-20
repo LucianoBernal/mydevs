@@ -92,7 +92,8 @@ int generarProgramID() {
 
 t_new *crear_nodoNew(t_PCB* pcb, int peso) {
 	t_new *nuevo = malloc(sizeof(t_new));
-	nuevo->pcb = pcb;
+	nuevo->pcb = malloc(sizeof(t_PCB));
+	memcpy(nuevo->pcb,pcb,sizeof(t_PCB));
 	nuevo->peso = peso;
 	return nuevo;
 }
@@ -102,11 +103,13 @@ bool menor_Peso(t_new *program1, t_new *program2) {
 }
 
 void encolar_New(t_PCB* pcb, int peso) {
+	log_info(logKernel,"Encolando Nuevo Programa en Cola de NEW");
 	t_new* nodoNuevo = crear_nodoNew(pcb, peso);
 	sem_wait(&colaNuevosMutex);
 	list_add(colaNew, nodoNuevo);
 	list_sort(colaNew, (void*) menor_Peso);
 	sem_post(&colaNuevosMutex);
+	mostrar_todas_Las_Listas();
 	sem_post(&colaNuevosVacio);
 
 }
@@ -202,20 +205,19 @@ void gestionarProgramaNuevo(char* literal, int sd, int tamanioLiteral) {
 	asignaciones_desde_metada(metadata, pcb);
 	int peso = calcularPeso(metadata);
 	printf("\nEl codigo cambia pato, no seas paranoico\n");
-	//sem_wait(&mutexProcesoActivo);
+	sem_wait(&mutexProcesoActivo);
 	crear_Nuevo_Proceso(pcb->program_id);
 	cambiar_Proceso_Activo(pcb->program_id);
 	if (crearSegmentos_Memoria(metadata, pcb, literal, tamanioLiteral)) {
 		escribir_en_Memoria(metadata, pcb, literal, tamanioLiteral);
-//	sem_post(&mutexProcesoActivo);
-//	 encolar_New(pcb, peso);
-//	 agregar_En_Diccionario(pcb->program_id, sd);
-//	 } else {
-//	 sem_post(&mutexProcesoActivo);
-//	 notificar_Memoria_Llena(sd);
-//	 close(sd);
-//	 //free(pcb);
-//	 liberar_numero(pcb->program_id);
+	sem_post(&mutexProcesoActivo);
+	 encolar_New(pcb, peso);
+	 agregar_En_Diccionario(pcb->program_id, sd);
+	 } else {
+	 sem_post(&mutexProcesoActivo);
+	 notificar_Memoria_Llena(sd);
+	 close(sd);
+	 liberar_numero(pcb->program_id);
 	}
 	metadata_destruir(metadata); //OJO QUIZAS SOLO SEA EN EL ELSE REVISAR!
 	printf("PESO:%d\n", peso);
@@ -231,8 +233,8 @@ void* deNewAReady(void* sinParametro) { // OTRO HILO
 		sem_wait(&colaNuevosMutex);
 		elementoSacado = list_remove(colaNew, 0);
 		sem_post(&colaNuevosMutex);
-		t_PCB* pcb_Ready;
-		pcb_Ready = elementoSacado->pcb;
+		t_PCB* pcb_Ready=malloc(sizeof(t_PCB));
+		memcpy(pcb_Ready,elementoSacado->pcb,sizeof(t_PCB));
 		encolar_en_Ready(pcb_Ready);
 		free(elementoSacado);
 	}
@@ -241,6 +243,7 @@ void* deNewAReady(void* sinParametro) { // OTRO HILO
 
 void encolar_en_Ready(t_PCB* pcb) {
 	sem_wait(&colaReadyMutex);
+	log_info(logKernel,"Encolando Programa en Cola Ready");
 	queue_push(colaReady, pcb);
 	sem_post(&colaReadyMutex);
 	sem_post(&vacioReady);
@@ -252,7 +255,9 @@ void imprimirNodosNew(t_new* nodo) {
 
 void mostrarListaNew() {
 	printf("El estado de la Cola New es el siguiente:\n");
+	sem_wait(&colaNuevosMutex);
 	list_iterate(colaNew, (void*) (void*) imprimirNodosNew);
+	sem_post(&colaNuevosMutex);
 }
 
 void imprimirNodosPCBs(t_PCB* pcb) {
@@ -354,3 +359,14 @@ void cerrar_conexion(int pid) {
 
 }
 
+void mostrar_todas_Las_Listas(){
+sem_wait(&mostarColasMutex);
+printf("El estado actual de todas las colas es el siguiente:\n");
+mostrarListaNew();
+mostrarColaDeProcesosListos();
+mostrarColaDeProcesosFinalizados();
+//mostrarColaDeProcesosEnEjecucion();
+//mostrarColaDeProcesosBloqueados();
+sem_post(&mostarColasMutex);
+
+}

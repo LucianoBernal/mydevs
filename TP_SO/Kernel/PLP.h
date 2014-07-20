@@ -11,8 +11,11 @@
 #include "Kernel.h"
 #include "multiplexorScripts_interfaz.h"
 
+
+extern sem_t mostarColasMutex;
 extern int socketUMV;
 extern t_log *logKernel;
+extern sem_t  grado_Multiprogramacion;
 sem_t mutexProcesoActivo;
 sem_t  colaNuevosVacio;
 sem_t  randomMutex;
@@ -24,6 +27,13 @@ t_dictionary* pidYSockets;
 int numAleatorio;
 int numABorrar;
 sem_t  PidSD_Mutex;
+extern sem_t colaReadyMutex;
+extern t_queue* colaReady;
+extern sem_t vacioReady;
+extern sem_t colaExitVacio;
+extern sem_t colaExitMutex;
+extern t_queue* colaExit;
+
 
 
 #endif /* PLPFUNCTIONS_H_ */

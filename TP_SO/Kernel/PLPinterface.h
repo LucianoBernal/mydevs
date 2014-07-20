@@ -17,6 +17,7 @@ typedef struct {
 	int peso;
 } t_new;
 
+void mostrar_todas_Las_Listas(void);
 void crear_Nuevo_Proceso( int );
 void gestionarProgramaNuevo(char*, int ,int);
 void* deNewAReady(void*);

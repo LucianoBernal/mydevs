@@ -37,6 +37,10 @@ typedef struct {
 // int idProceso;
 // } t_estructuraCPU;
 
+
+extern t_queue* colaReady;
+extern sem_t  colaReadyMutex;
+extern sem_t  vacioReady;
 t_dictionary* diccionarioSemaforos;
 sem_t diccionarioDispositivosMutex;
 sem_t diccionarioSemaforosMutex;

@@ -32,6 +32,8 @@
 #include <biblioteca_comun/bibliotecaSockets.h>
 #include <time.h>
 
+
+sem_t mostarColasMutex;
 int socketUMV;
 sem_t  grado_Multiprogramacion;
 char* ip_UMV;
