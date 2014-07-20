@@ -47,7 +47,6 @@ typedef enum {
 } codigos_mensajes;
 
 void* atencionCPUs(void* sinParametro) {
-	int opt = TRUE;
 	int master_socket, addrlen, new_socket, client_socket[30], max_clients = 30,
 			activity, i, valread, sd;
 	int max_sd;

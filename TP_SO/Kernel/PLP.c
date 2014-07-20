@@ -207,7 +207,7 @@ void gestionarProgramaNuevo(char* literal, int sd, int tamanioLiteral) {
 	cambiar_Proceso_Activo(pcb->program_id);
 	if (crearSegmentos_Memoria(metadata, pcb, literal, tamanioLiteral)) {
 		escribir_en_Memoria(metadata, pcb, literal, tamanioLiteral);
-//	/*sem_post(&mutexProcesoActivo);
+//	sem_post(&mutexProcesoActivo);
 //	 encolar_New(pcb, peso);
 //	 agregar_En_Diccionario(pcb->program_id, sd);
 //	 } else {
@@ -215,7 +215,7 @@ void gestionarProgramaNuevo(char* literal, int sd, int tamanioLiteral) {
 //	 notificar_Memoria_Llena(sd);
 //	 close(sd);
 //	 //free(pcb);
-//	 liberar_numero(pcb->program_id);*/
+//	 liberar_numero(pcb->program_id);
 	}
 	metadata_destruir(metadata); //OJO QUIZAS SOLO SEA EN EL ELSE REVISAR!
 	printf("PESO:%d\n", peso);

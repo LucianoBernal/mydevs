@@ -22,12 +22,14 @@ int validarConfig(t_config*);
 void cargarConfig(t_config*);
 int programa(t_log*, FILE*);
 int main(int argc, char **argv) {
-	if (argc <= 2) {
+	if (argc <= 1) {
 			perror(
-					"Se debe ingresar la dirección de un archivo de configuración\n");
+					"Se debe ingresar la dirección de un script\n");
 			return EXIT_FAILURE;
 		}
-	t_config *config = config_create(argv[2]);
+
+	char* rutaConfig = getenv("ANSISOP_CONFIG");
+	t_config* config = config_create(rutaConfig);
 	if (validarConfig(config)) {
 			config_destroy(config);
 			perror("El archivo de configuración no es correcto");
@@ -116,7 +118,8 @@ int programa(t_log* logger, FILE* archivo) {
 			fin= 1;
 			break;
 		}
-		puts(server_reply);
+		respuesta[*tamano]=0;
+		puts(respuesta);
 		free(respuesta);
 
 	}
