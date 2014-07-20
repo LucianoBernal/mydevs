@@ -322,3 +322,32 @@
 [INFO] 23:11:16:741 UMV/(9676:9703): El hilo del Kernel se creó correctamente.
 [INFO] 23:11:25:781 UMV/(9676:9743): entro a atencionCpu
 [INFO] 23:11:27:34 UMV/(9676:9703): El hilo de CPU se creó correctamente.
+[INFO] 11:16:11:38 UMV/(4261:4261): Comienza la ejecución de la UMV.
+[INFO] 11:16:14:909 UMV/(4261:4261): El hilo de consola se creó correctamente
+[INFO] 11:16:32:804 UMV/(4328:4328): Comienza la ejecución de la UMV.
+[INFO] 11:16:32:816 UMV/(4328:4328): El hilo de consola se creó correctamente
+[INFO] 11:16:33:556 UMV/(4328:4328): El hilo de atención interna se creó correctamente
+[INFO] 11:16:43:368 UMV/(4328:4357): Entró a atencioKernel.
+[INFO] 11:16:44:847 UMV/(4328:4337): El hilo del Kernel se creó correctamente.
+[INFO] 11:18:03:160 UMV/(4328:4447): entro a atencionCpu
+[INFO] 11:18:05:483 UMV/(4328:4337): El hilo de CPU se creó correctamente.
+[INFO] 11:23:14:919 UMV/(4586:4586): Comienza la ejecución de la UMV.
+[INFO] 11:23:18:409 UMV/(4586:4586): El hilo de consola se creó correctamente
+[INFO] 11:23:19:50 UMV/(4586:4586): El hilo de atención interna se creó correctamente
+[INFO] 11:23:23:586 UMV/(4586:4607): El hilo del Kernel se creó correctamente.
+[INFO] 11:23:23:586 UMV/(4586:4613): Entró a atencioKernel.
+[INFO] 11:25:11:835 UMV/(4671:4671): Comienza la ejecución de la UMV.
+[INFO] 11:25:15:235 UMV/(4671:4671): El hilo de consola se creó correctamente
+[INFO] 11:25:16:513 UMV/(4671:4671): El hilo de atención interna se creó correctamente
+[INFO] 11:25:25:984 UMV/(4671:4711): Entró a atencioKernel.
+[INFO] 11:25:26:219 UMV/(4671:4691): El hilo del Kernel se creó correctamente.
+[INFO] 11:28:07:270 UMV/(4755:4755): Comienza la ejecución de la UMV.
+[INFO] 11:28:09:318 UMV/(4755:4755): El hilo de consola se creó correctamente
+[INFO] 11:28:10:733 UMV/(4755:4755): El hilo de atención interna se creó correctamente
+[INFO] 11:29:32:512 UMV/(4820:4820): Comienza la ejecución de la UMV.
+[INFO] 11:29:34:160 UMV/(4820:4820): El hilo de consola se creó correctamente
+[INFO] 11:29:36:71 UMV/(4820:4820): El hilo de atención interna se creó correctamente
+[INFO] 11:29:45:697 UMV/(4820:4858): Entró a atencioKernel.
+[INFO] 11:29:46:496 UMV/(4820:4840): El hilo del Kernel se creó correctamente.
+[INFO] 11:30:37:182 UMV/(4820:4944): entro a atencionCpu
+[INFO] 11:30:38:683 UMV/(4820:4840): El hilo de CPU se creó correctamente.

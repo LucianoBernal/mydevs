@@ -17,6 +17,7 @@
 int enviarConRazon(int socket, t_log* logs, int razon, t_paquete *pack){
 	if (pack==NULL){
 		pack=malloc(sizeof(t_paquete));
+		pack->msj=malloc(1);
 		pack->tamano=0;
 	}
 	int tamano=pack->tamano; //Esta linea les puede sonar a boludo pero es super necesaria

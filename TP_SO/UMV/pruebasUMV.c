@@ -413,10 +413,13 @@ int verificarEspacio(int pid, int base, int offset, int tamano) {
 	return 0;
 }
 
-void enviarUnosBytes(int base, int offset, int tamano, void *mensaje) {
+int enviarUnosBytes(int base, int offset, int tamano, void *mensaje) {
 	int pid = procesoActivo();
-	if (verificarEspacio(pid, base, offset, tamano))
+	if (verificarEspacio(pid, base, offset, tamano)){
 		memcpy(obtenerDirFisica(base, offset, pid), mensaje, tamano);
+		return 1;
+	}
+	return 0;
 }
 
 int enviarUnosBytesPConsola(int base, int offset, int tamano, void *mensaje) {
@@ -453,7 +456,8 @@ char *solicitarBytes(int base, int offset, int tamano) {
 		//*(aux + tamano) = 0;
 		return aux;
 	}
-	return "";
+	aux="error";
+	return aux;
 }
 char *solicitarBytesPConsola(int base, int offset, int tamano) {
 	return solicitarBytes(base, offset, tamano);

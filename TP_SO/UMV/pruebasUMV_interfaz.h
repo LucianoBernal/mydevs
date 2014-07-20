@@ -34,7 +34,7 @@ t_list *obtenerListaSegmentosOrdenada();
 void conseguirDeArchivo(int *);
 void *obtenerDirFisica(int, int, int);
 int enviarUnosBytesPConsola(int base, int offset, int tamano, void *mensaje);
-void enviarUnosBytes(int, int, int, void*);
+int enviarUnosBytes(int, int, int, void*);
 char *solicitarBytes(int, int, int);
 int obtenerInicioLogico(int, int);
 int buscarPid(int);

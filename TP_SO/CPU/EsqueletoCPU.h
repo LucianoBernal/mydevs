@@ -13,7 +13,7 @@
 
 int socketUMV, socketKernel;
 int sigusr1_activado;
-t_log* log;
+t_log* logs;
 t_dictionary* diccionarioDeVariables;
 int proceso_terminado;
 int proceso_bloqueado;

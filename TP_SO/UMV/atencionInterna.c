@@ -188,10 +188,12 @@ void atencionCpu(int *socketCPU) {
 		pthread_mutex_lock(&mutexOperacion);
 		cambiarProcesoActivo(procesoActivo);
 		desempaquetar2(mensaje, &parametro[0], &parametro[1], &parametro[2], 0);
+		printf("\nRecibi solicitar bytes, base: %d, offset: %d, y tamano: %d\n", parametro[0], parametro[1], parametro[2]);
 		char *respuesta = solicitarBytes(parametro[0], parametro[1],
 				parametro[2]);
+		printf("Y el resultado es buffer=%s", respuesta);
 		pthread_mutex_unlock(&mutexOperacion);
-		if (!strcmp(respuesta, "")) {
+		if (!strcmp(respuesta, "error")) {
 //			*razon = SEGMENTATION_FAULT;
 //			*tamanoMensaje = 0;
 //			t_paquete *varALiberar = (t_paquete *) serializar2(
@@ -223,7 +225,12 @@ void atencionCpu(int *socketCPU) {
 		char *buffer = malloc(*tamanoMensaje);
 		desempaquetar2(mensaje, &parametro[0], &parametro[1], &parametro[2],
 				buffer, 0);
-		enviarUnosBytes(parametro[0], parametro[1], parametro[2], buffer);
+		int resultado = enviarUnosBytes(parametro[0], parametro[1], parametro[2], buffer);
+		if (resultado){
+			enviarConRazon(*socketCPU, logger, CONFIRMACION, NULL);
+		}else{
+			enviarConRazon(*socketCPU, logger, SEGMENTATION_FAULT, NULL);
+		}
 		pthread_mutex_unlock(&mutexOperacion);
 		free(buffer);
 		break;

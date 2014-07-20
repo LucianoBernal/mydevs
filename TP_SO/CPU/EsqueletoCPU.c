@@ -32,13 +32,13 @@ void cerrarCPU(t_log *log) {
 int main(int arc, char **argv) {
 	proceso_terminado = 0;
 	proceso_bloqueado = 0;
-	log = log_create("logCPU", "CPU", true, LOG_LEVEL_INFO);
+	logs = log_create("logCPU", "CPU", true, LOG_LEVEL_INFO);
 	t_config *config = config_create(argv[1]);
 	obtenerDatosConfig(config);
 
-	if (!(socketUMV = conectarCliente(IP_UMV, PUERTO_UMV, log))) {
-		log_error(log, "No se pudo conectar a la UMV.");
-		cerrarCPU(log);
+	if (!(socketUMV = conectarCliente(IP_UMV, PUERTO_UMV, logs))) {
+		log_error(logs, "No se pudo conectar a la UMV.");
+		cerrarCPU(logs);
 	}
 //	if (!(socketKernel = conectarCliente(IP_KERNEL, PUERTO_PCP, log))) {
 //		log_error(log, "No se pudo conectar al Kernel.");
@@ -50,9 +50,9 @@ int main(int arc, char **argv) {
 	recv(socketUMV, respuestaUMV, 4, MSG_WAITALL);
 
 	if (!strncmp(respuestaUMV, "UMV", 3)) {
-		log_info(log, "El handshake con la UMV salió bien.");
+		log_info(logs, "El handshake con la UMV salió bien.");
 	} else {
-		log_error(log, "El handshake con la UMV salió mal.");
+		log_error(logs, "El handshake con la UMV salió mal.");
 	}
 	free(respuestaUMV);
 //	send(socketKernel, saludo, 4, 0); //TODO el saludo tiene tamaño 4?
@@ -66,8 +66,8 @@ int main(int arc, char **argv) {
 //	} else {
 //		log_error(log, "El handshake con el Kernel salió mal.");
 //	}
-	int pidMancodeado=10000;
-	enviarConRazon(socketUMV, log, CAMBIAR_PROCESO_ACTIVO, serializar2(crear_nodoVar(&pidMancodeado, 4), 0));
+	int pidMancodeado=3807;
+	enviarConRazon(socketUMV, logs, CAMBIAR_PROCESO_ACTIVO, serializar2(crear_nodoVar(&pidMancodeado, 4), 0));
 	int base, offset, tamano;
 	char*mensaje=malloc(50);
 	while (strncmp(mensaje, "exit", 4)){
@@ -90,6 +90,9 @@ int main(int arc, char **argv) {
 			scanf("%d", &tamano);
 			mensaje=solicitarBytesAUMV(base, offset, tamano);
 			printf("mensaje=%s\n", mensaje);
+			if (mensaje==NULL){
+				mensaje=malloc(40);
+			}
 		}else{
 			printf("\nLo que ingresaste no coincide, si queres salir manda exit m3n\n");
 		}

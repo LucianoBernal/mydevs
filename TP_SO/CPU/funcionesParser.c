@@ -41,7 +41,7 @@
 //
 //}
 extern int socketUMV, socketKernel;
-extern t_log *log;
+extern t_log *logs;
 //int programCounter;
 //t_puntero stackBase;
 //t_puntero desplazamiento;
@@ -158,23 +158,33 @@ extern t_log *log;
 // }
 // */
 ////claramente a este socket hace falta crearlo (y incluir las librerias)
-void enviarBytesAUMV(t_puntero base, t_puntero desplazamiento,
-		int tamano, void *datos) {
-	enviarConRazon(socketUMV, log, ESCRIBIR_EN_UMV, serializar2(crear_nodoVar(&base, sizeof(t_puntero)),
-			crear_nodoVar(&desplazamiento, sizeof(t_puntero)), crear_nodoVar(&tamano, 4),
-			crear_nodoVar(datos, tamano), 0));
-	//tambien deberia escuchar un mensaje de confirmacion
+void enviarBytesAUMV(t_puntero base, t_puntero desplazamiento, int tamano,
+		void *datos) {
+	int razon;
+	enviarConRazon(socketUMV, logs, ESCRIBIR_EN_UMV,
+			serializar2(crear_nodoVar(&base, sizeof(t_puntero)),
+					crear_nodoVar(&desplazamiento, sizeof(t_puntero)),
+					crear_nodoVar(&tamano, 4), crear_nodoVar(datos, tamano),
+					0));
+	recibirConRazon(socketUMV, &razon, logs);
+	if (razon==SEGMENTATION_FAULT){
+		log_error(logs, "Hubo segmentation fault");
+		//SACARPROCESODECPUPORABORTO();
+	}
 }
 char *solicitarBytesAUMV(t_puntero base, t_puntero desplazamiento, int tamano) {
 	int razon;
-	enviarConRazon(socketUMV, log, SOLICITAR_A_UMV,
+	enviarConRazon(socketUMV, logs, SOLICITAR_A_UMV,
 			serializar2(crear_nodoVar(&base, sizeof(t_puntero)),
 					crear_nodoVar(&desplazamiento, sizeof(t_puntero)),
 					crear_nodoVar(&tamano, 4), 0));
-	char *mensaje = recibirConRazon(socketUMV, &razon, log);
-	if (razon!=RESPUESTA_A_SOLICITAR_BUFFER)
-		log_error(log, "Hubo segmentation fault"); //No esta muy chequeado esto igual.
-	char *aux=malloc(tamano);
+	char *mensaje = recibirConRazon(socketUMV, &razon, logs);
+	if (razon == SEGMENTATION_FAULT) {
+		log_error(logs, "Hubo segmentation fault");
+		//SACARPROCESODECPUPORABORTO(); Declaratividad op
+		return NULL ;
+	}
+	char *aux = malloc(tamano);
 	desempaquetar2(mensaje, aux, 0);
 	free(mensaje);
 	return aux;
