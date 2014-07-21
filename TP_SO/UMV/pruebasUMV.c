@@ -94,7 +94,7 @@ void agregarProceso(int pid, char tipo) {
 		pthread_mutex_unlock(&mutexCantProcActivos);
 	} else {
 		printf("El numero pid ya esta en uso (?");
-		log_error(logger,"El número pid ya está en uso ?");//TODO fijarse.
+		log_error(logger,"El número pid ya está en uso.");//TODO fijarse.
 	}
 }
 
@@ -511,6 +511,20 @@ void dumpMemoriaChata(int offset, int tamano, bool archivo) {
 }
 
 void aplicarRetardo(int ret) {
-	usleep(ret);
+	//usleep(ret);
+	unsigned int usecs;
+	usecs= 1000 * ret;
+	usleep(usecs);
+	//	struct timespec *tim;
+	//	tim.tv_sec = 0;
+	//	tim.tv_nsec = 1000000*ret;
+	//	nanosleep(&tim, NULL);
+	//	const int INTERVAL_MS = ret * NANO_SECOND_MULTIPLIER;
+	//
+	//	struct timespec sleepValue;
+	//	sleepValue.tv_nsec = INTERVAL_MS;
+	//	nanosleep(&sleepValue, );
+	//	int tempo = 1000000000 * ret;
+	//	nanosleep((struct timespec[]){{0, tempo}}, NULL);
 }
 
