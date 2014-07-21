@@ -141,6 +141,8 @@ void* bloquearYDevolverAReady(void * param) {
 	queue_push(colaReady, estructuraBloqueada->pcb);
 	sem_post(&colaReadyMutex);
 	}
+	list_destroy(estructura->procesosBloqueados);
+	free(estructura);
 	return NULL ;
 }
 
@@ -235,11 +237,13 @@ void seDesconectoCPU(int idCPU) { //TODO
 		bool esElpcb(t_PCB* pcbAcomparar){
 			return pcbAcomparar->program_id == idPrograma;
 		}
+		sem_wait(&colaExecMutex);
 		t_PCB* pcb=list_remove_by_condition(colaExec,(void*)esElpcb);
+		sem_post(&colaExecMutex);
 		moverAColaExit(pcb,idCPU);
 		sem_wait(&CPUsMutex);
 		list_remove_by_condition(CPUs, (void*) tieneID);
-		sem_wait(&CPUsMutex);
+		sem_post(&CPUsMutex);
 	}
 }
 
@@ -277,7 +281,7 @@ int estaLibreID(int idCPU) {
 	sem_wait(&CPUsMutex);
 	int i = posicionEnLaLista(CPUs, idCPU);
 	t_estructuraCPU* estructura = list_get(CPUs, i);
-	sem_wait(&CPUsMutex);
+	sem_post(&CPUsMutex);
 	return (estructura->estado == 0);
 
 }
@@ -332,7 +336,7 @@ void mostrarColaDeProcesosBloqueados() {
 		sem_post(&(semaforo->mutexCola));
 		b++;
 	}
-	sem_wait(&diccionarioSemaforosMutex);
+	sem_post(&diccionarioSemaforosMutex);
 }
 
 void mostrarColaDePCBsBloqueados(t_queue* procesosBloqueados) {
@@ -348,7 +352,7 @@ int buscarIDPrograma(int idCPU) {
 	sem_wait(&CPUsMutex);
 	int posicion = posicionEnLaLista(CPUs, idCPU);
 	t_estructuraCPU* CPU = list_get(CPUs, posicion);
-	sem_wait(&CPUsMutex);
+	sem_post(&CPUsMutex);
 	return CPU->idProceso;
 }
 
