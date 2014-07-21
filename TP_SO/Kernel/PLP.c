@@ -33,23 +33,25 @@ void* plp_main(void* sinParametro) {
 	iretMultiScripts = pthread_create(&thread_multiplexorScripts, NULL,
 			atencionScripts, (void*) sinParametros);
 	if (iretMultiScripts) {
-		fprintf(stderr, "Error - pthread_create() return code: %d\n",
-				iretMultiScripts);
+		log_error(logKernel,"Error al crear hilo de multiplexor de Scripts");
 		exit(EXIT_FAILURE);
 	}
+	log_info(logKernel,"Hilo Multiplexor Scripts lanzado exitosamente");
 	iretColaNew = pthread_create(&threadColaNew, NULL, deNewAReady,
 			(void*) sinParametros);
 	if (iretColaNew) {
-		fprintf(stderr, "Error - pthread_create() return code: %d\n",
-				iretColaNew);
-		iretColaExit = pthread_create(&threadColaExit, NULL, manejoColaExit,
+		log_error(logKernel,"Error al crear hilo de Cola New");
+				exit(EXIT_FAILURE);
+	}
+	log_info(logKernel,"Hilo Cola New lanzado exitosamente");
+	iretColaExit = pthread_create(&threadColaExit, NULL, manejoColaExit,
 				(void*) sinParametros);
-	}
-	if (iretColaExit) {
-		fprintf(stderr, "Error - pthread_create() return code: %d\n",
-				iretColaExit);
-	}
 
+	if (iretColaExit) {
+		log_error(logKernel,"Error al crear hilo de Cola Exit");
+						exit(EXIT_FAILURE);
+	}
+	log_info(logKernel,"Hilo Cola Exit lanzado exitosamente");
 	pthread_join(thread_multiplexorScripts, NULL );
 	pthread_join(threadColaNew, NULL );
 	pthread_join(threadColaExit, NULL );
@@ -111,6 +113,7 @@ void encolar_New(t_PCB* pcb, int peso) {
 	sem_post(&colaNuevosMutex);
 	mostrar_todas_Las_Listas();
 	sem_post(&colaNuevosVacio);
+
 
 }
 
@@ -185,6 +188,7 @@ void escribir_en_Memoria(t_metadata_program * metadata, t_PCB *pcb,
 
 void agregar_En_Diccionario(int pid, int sd) {
 	sem_wait(&PidSD_Mutex);
+	log_debug(logKernel,"Agregando pid en diccionario");
 	dictionary_put(pidYSockets, (char*) &pid, &sd);
 	sem_post(&PidSD_Mutex);
 
@@ -204,12 +208,11 @@ void gestionarProgramaNuevo(char* literal, int sd, int tamanioLiteral) {
 	pcb->program_id = generarProgramID();
 	asignaciones_desde_metada(metadata, pcb);
 	int peso = calcularPeso(metadata);
-	printf("\nEl codigo cambia pato, no seas paranoico\n");
 	sem_wait(&mutexProcesoActivo);
 	crear_Nuevo_Proceso(pcb->program_id);
 	cambiar_Proceso_Activo(pcb->program_id);
-	if (crearSegmentos_Memoria(metadata, pcb, literal, tamanioLiteral)) {
-		escribir_en_Memoria(metadata, pcb, literal, tamanioLiteral);
+	if (1/*crearSegmentos_Memoria(metadata, pcb, literal, tamanioLiteral)*/) {
+		//escribir_en_Memoria(metadata, pcb, literal, tamanioLiteral);
 	sem_post(&mutexProcesoActivo);
 	 encolar_New(pcb, peso);
 	 agregar_En_Diccionario(pcb->program_id, sd);
@@ -246,6 +249,7 @@ void encolar_en_Ready(t_PCB* pcb) {
 	log_info(logKernel,"Encolando Programa en Cola Ready");
 	queue_push(colaReady, pcb);
 	sem_post(&colaReadyMutex);
+	mostrar_todas_Las_Listas();
 	sem_post(&vacioReady);
 }
 
@@ -298,6 +302,8 @@ void* manejoColaExit(void* sinParametros) {
 		sem_wait(&colaExitMutex);
 		t_PCB* pcb = queue_pop(colaExit);
 		sem_post(&colaExitMutex);
+		log_info(logKernel,"Sacando programa de cola exit");
+		mostrar_todas_Las_Listas();
 		sem_wait(&mutexProcesoActivo);
 		cambiar_Proceso_Activo(pcb->program_id);
 		solicitar_Destruccion_Segmentos();
@@ -366,7 +372,7 @@ printf("El estado actual de todas las colas es el siguiente:\n");
 mostrarListaNew();
 mostrarColaDeProcesosListos();
 mostrarColaDeProcesosFinalizados();
-//mostrarColaDeProcesosEnEjecucion();
+mostrarColaDeProcesosEnEjecucion();
 //mostrarColaDeProcesosBloqueados();
 sem_post(&mostarColasMutex);
 
