@@ -168,22 +168,27 @@ void escribir_en_Memoria(t_metadata_program * metadata, t_PCB *pcb,
 	int *offset = malloc(sizeof(int));
 	*offset = 0;
 	printf("Estoy en escribir memoria\n");
+	int segmentoCodigo=pcb->segmento_Codigo;
+	int indiceCodigo=pcb->indice_de_Codigo;
+	int instruccionesSize=metadata->instrucciones_size;
+	int indiceEtiquetas=pcb->indice_de_Etiquetas;
+	int etiquetasSize=metadata->etiquetas_size;
 	enviarConRazon(socketUMV, logKernel, ESCRIBIR_EN_UMV,
-			serializar2(crear_nodoVar(&pcb->segmento_Codigo, 4),
+			serializar2(crear_nodoVar(&segmentoCodigo, 4),
 					crear_nodoVar(offset, 4), crear_nodoVar(&tamanoLiteral, 4),
 					crear_nodoVar((char*) literal, tamanoLiteral), 0));
 	enviarConRazon(socketUMV, logKernel, ESCRIBIR_EN_UMV,
-			serializar2(crear_nodoVar(&pcb->indice_de_Codigo, 4),
+			serializar2(crear_nodoVar(&indiceCodigo, 4),
 					crear_nodoVar(offset, 4),
-					crear_nodoVar(&metadata->instrucciones_size, 4),
+					crear_nodoVar(&instruccionesSize, 4),
 					crear_nodoVar(metadata->instrucciones_serializado,
-							metadata->instrucciones_size), 0));
+							instruccionesSize), 0));
 	enviarConRazon(socketUMV, logKernel, ESCRIBIR_EN_UMV,
-			serializar2(crear_nodoVar(&pcb->indice_de_Etiquetas, 4),
+			serializar2(crear_nodoVar(&indiceEtiquetas, 4),
 					crear_nodoVar(offset, 4),
-					crear_nodoVar(&metadata->etiquetas_size, 4),
+					crear_nodoVar(&etiquetasSize, 4),
 					crear_nodoVar(&metadata->etiquetas,
-							metadata->etiquetas_size), 0));
+							etiquetasSize), 0));
 }
 
 void agregar_En_Diccionario(int pid, int sd) {
@@ -211,8 +216,8 @@ void gestionarProgramaNuevo(char* literal, int sd, int tamanioLiteral) {
 	sem_wait(&mutexProcesoActivo);
 	crear_Nuevo_Proceso(pcb->program_id);
 	cambiar_Proceso_Activo(pcb->program_id);
-	if (1/*crearSegmentos_Memoria(metadata, pcb, literal, tamanioLiteral)*/) {
-		//escribir_en_Memoria(metadata, pcb, literal, tamanioLiteral);
+	if (crearSegmentos_Memoria(metadata, pcb, literal, tamanioLiteral)) {
+		escribir_en_Memoria(metadata, pcb, literal, tamanioLiteral);
 	sem_post(&mutexProcesoActivo);
 	 encolar_New(pcb, peso);
 	 agregar_En_Diccionario(pcb->program_id, sd);

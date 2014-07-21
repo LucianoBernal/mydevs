@@ -121,7 +121,6 @@ int crearSegmento(int tamano) {
 	if (proceso->tabla == NULL )
 		proceso->tabla = list_create();
 	list_add(proceso->tabla, nuevoSegmento);
-	printf("Se creo un segmento de base %d\n", nuevoSegmento->inicioLogico);
 	log_info(logger,"Se creó un segmento de base %d\n",nuevoSegmento->inicioLogico);
 	return nuevoSegmento->inicioLogico;
 }
@@ -184,11 +183,11 @@ int obtenerInicioLogico(int pid, int tamano) {
 	srand(time(NULL ));
 	inicioLogico = rand() % SIZE_SEGMENT;
 
-	while (tieneProblemas(inicioLogico, pid, tamano) || (error > 20)) {
+	while (tieneProblemas(inicioLogico, pid, tamano) && (error < 100)) {
 		inicioLogico = rand() % SIZE_SEGMENT;
 		error++;
 	}
-	if (error > 20) {
+	if (error > 100) {
 		printf("Hay un tema con las bases logicas");
 		return -1;
 	}

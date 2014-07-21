@@ -127,8 +127,9 @@ void* atencionScripts(void* sinParametro) {
 				}
 			}
 			recv(new_socket, tamano, 4, MSG_WAITALL);
-			literal[*tamano] =0;
 			recv(new_socket, literal, *tamano, MSG_WAITALL);
+			literal[*tamano] =0;
+			puts(literal);
 			gestionarProgramaNuevo(literal,new_socket,*tamano);
 			fflush(stdin);
 

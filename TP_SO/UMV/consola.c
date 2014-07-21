@@ -59,8 +59,11 @@ void analizarYEjecutar(char *comando) {
 				char* msj = malloc(operacion.tamano);
 				printf("\n Ingrese bloque de mensaje: \n");
 				scanf("%s", msj);
+				pthread_mutex_lock(&mutexOperacion);
+				//cambiarProcesoActivo(10000);
 				enviarUnosBytes(operacion.base, operacion.offset,
 						operacion.tamano, msj);
+				pthread_mutex_unlock(&mutexOperacion);
 				free(msj);
 				break;
 
@@ -75,9 +78,11 @@ void analizarYEjecutar(char *comando) {
 				printf("\ningrese tamaño: ");
 				scanf("%d", &operacion.tamano);
 				int i;
-				//char *respuesta=malloc(operacion.tamano);
+				pthread_mutex_lock(&mutexOperacion);
+				//cambiarProcesoActivo(10000);
 				char *respuesta = solicitarBytes(operacion.base,
 						operacion.offset, operacion.tamano);
+				pthread_mutex_unlock(&mutexOperacion);
 				//printf("\n%d\n", strlen(respuesta));
 				if (strcmp(respuesta, "")) {
 					for (i = 0; i < operacion.tamano; i++) {

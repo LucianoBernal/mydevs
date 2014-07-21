@@ -47,7 +47,7 @@ t_paquete *serializar2(t_tamYDir *uno, ...){
 	int acum = 0;
 	t_tamYDir *arg=uno;
 	t_paquete *paquete=malloc(sizeof(t_paquete));
-	paquete->msj=malloc(1024);
+	paquete->msj=malloc(2048);
 	do{
 		memcpy(acum+(paquete->msj), &(arg->tamano), 4);
 		memcpy(acum+4+(paquete->msj), arg->p_var, arg->tamano);
@@ -81,14 +81,14 @@ void desempaquetar2(char *msjRecibido, void *uno, ...){
 	va_list(p);
 	va_start(p, uno);
 	void * arg=uno;
-	int tamano;
+	int *tamano=malloc(sizeof(int));
 	int acum=0;
 	do{
-		memcpy(&tamano, msjRecibido+acum, 4);
-		memcpy(arg, msjRecibido+acum+4, tamano);
-		acum+=(tamano+4);
+		memcpy(tamano, msjRecibido+acum, 4);
+		memcpy(arg, msjRecibido+acum+4, *tamano);
+		acum+=((*tamano)+4);
 	}while((arg = va_arg(p, void*)));
-
+	free(tamano);
 }
 /*
 void Desempaquetar(char *msjRecibido, t_queue *cola){

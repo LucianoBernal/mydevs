@@ -24,11 +24,13 @@ int enviarConRazon(int socket, t_log* logs, int razon, t_paquete *pack){
 	t_paquete *header=serializar2(crear_nodoVar(&razon, 4), crear_nodoVar(&tamano, 4), 0);
 	if(send(socket, header->msj, header->tamano, 0)==-1){
 		log_error(logs, "La cabecera no se pudo enviar correctamente");
+		close(socket);
 		return 0;
 	}
 	if (pack->tamano){
 		if (send(socket, pack->msj, pack->tamano, 0)==-1){
 			log_error(logs, "El mensaje no se pudo enviar correctamente");
+			close(socket);
 			return 0;
 		}
 	}
@@ -43,6 +45,7 @@ char *recibirConRazon(int socket, int *p_razon, t_log *logs){
 	char *header=malloc(16);
 	if (recv(socket, header, 16, MSG_WAITALL)==-1){
 		log_error(logs, "Hubo un error al recibir la cabecera");
+		close(socket);
 		return NULL;
 	}
 	int tamano;
@@ -52,6 +55,7 @@ char *recibirConRazon(int socket, int *p_razon, t_log *logs){
 		char *msj=malloc(tamano);
 		if(recv(socket, msj, tamano, MSG_WAITALL)==-1){
 			log_error(logs, "Hubo un error al recibir el mensaje");
+			close(socket);
 			return NULL;
 		}
 		return msj;
@@ -65,9 +69,9 @@ int crearServidor(char* puerto, t_log* logs){
 	struct addrinfo *serverInfo;
 
 	memset(&hints, 0, sizeof(hints));
-	hints.ai_family = AF_UNSPEC;		// No importa si uso IPv4 o IPv6
-	hints.ai_flags = AI_PASSIVE;		// Asigna el address del localhost: 127.0.0.1
-	hints.ai_socktype = SOCK_STREAM;	// Indica que usaremos el protocolo TCP
+	hints.ai_family = AF_UNSPEC;
+	hints.ai_flags = AI_PASSIVE;
+	hints.ai_socktype = SOCK_STREAM;
 	if (getaddrinfo(NULL, puerto, &hints, &serverInfo)){
 		log_error(logs, "Hubo un error al obtener la informacion del servidor");
 		return -1;

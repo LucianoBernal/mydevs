@@ -16,6 +16,7 @@
 #define HANDSHAKE_SIZE 16
 char *IP_UMV, *IP_KERNEL;
 char* PUERTO_UMV, *PUERTO_PCP;
+char *etiquetas;
 
 void obtenerDatosConfig(t_config *config) {
 	IP_UMV = config_get_string_value(config, "IP_UMV");
@@ -30,6 +31,7 @@ void cerrarCPU(t_log *log) {
 	log_error(log, "Deberia estar cerrando el CPU");
 }
 int main(int arc, char **argv) {
+	//vincPrimitivas();
 	proceso_terminado = 0;
 	proceso_bloqueado = 0;
 	logs = log_create("logCPU", "CPU", true, LOG_LEVEL_INFO);
@@ -66,7 +68,7 @@ int main(int arc, char **argv) {
 //	} else {
 //		log_error(log, "El handshake con el Kernel salió mal.");
 //	}
-	int pidMancodeado=3807;
+	int pidMancodeado=8331;
 	enviarConRazon(socketUMV, logs, CAMBIAR_PROCESO_ACTIVO, serializar2(crear_nodoVar(&pidMancodeado, 4), 0));
 	int base, offset, tamano;
 	char*mensaje=malloc(50);
@@ -96,43 +98,72 @@ int main(int arc, char **argv) {
 		}else{
 			printf("\nLo que ingresaste no coincide, si queres salir manda exit m3n\n");
 		}
-		fgets(mensaje, 30, stdin);
+		fflush(stdin);
+		gets(mensaje);
 	}
-
+//
 //	diccionarioDeVariables = dictionary_create();
 //
-//	//signal(SIGINT, manejar_seniales);
-//	//signal(SIGUSR1, manejar_seniales);
+//	signal(SIGINT, (sighandler_t) manejar_seniales);
+//	signal(SIGUSR1, (sighandler_t)manejar_seniales);
 //
 //	while (sigusr1_activado == 0) {
 //		//Recibo un PCB
-//		char* pcbEmpaquetado = malloc(sizeof(t_PCB));
-//		t_PCB *pcb;
-//		recv(socketKernel, pcbEmpaquetado, *pcbEmpaquetado, MSG_WAITALL);
-//		desempaquetar2(pcbEmpaquetado, &pcb, 0);
+//		int razon;
+//		char* mensaje = recibirConRazon(socketKernel, &razon, logs);
+//		char* pcbEmpaquetado=malloc(sizeof(t_PCB)+4*9+32);
+//		t_PCB *pcb=malloc(sizeof(t_PCB));
+//		if (razon){
+//			desempaquetar2(mensaje, pcbEmpaquetado, 0);
+//		//	desempaquetarPCB(pcb, pcbEmpaquetado);
+//		}
+//		free(mensaje);
+//		free(pcbEmpaquetado);
 //
-//		char *etiquetas = solicitarBytesAUMV(pcb->indice_de_Etiquetas, 0, pcb->tamanio_Indice_de_Etiquetas);
+//		etiquetas = solicitarBytesAUMV(pcb->indice_de_Etiquetas, 0, pcb->tamanio_Indice_de_Etiquetas);
+//		actualizarDiccionarioDeVariables(pcb);
 //		int lineasAnalizadas = 0;
 //		int programaBloqueado = 0;
 //		int ubInstruccion, largoInstruccion;
 //		while (lineasAnalizadas < quantumDeKernel || programaBloqueado) {
 //			//Si empieza en la instruccion 0 deberia ser progra_Counter-1 ???
-//			char *msjInstruccion = solicitarBytesAUMV(*(pcb->indice_de_Codigo),
+//			char *msjInstruccion = solicitarBytesAUMV(pcb->indice_de_Codigo,
 //					pcb->program_Counter * 8, 8);
 //			desempaquetar2(msjInstruccion, &ubInstruccion, &largoInstruccion,
 //					0);
-//			char *literalInstruccion = solicitarBytesAUMV(*(pcb->segmento_Codigo), ubInstruccion, largoInstruccion);
-//			analizarLinea(literalInstruccion, funcionesAnSISOP,
-//					funcionesKernel);
+//			char *literalInstruccion = solicitarBytesAUMV(pcb->segmento_Codigo, ubInstruccion, largoInstruccion);
+//			analizadorLinea(literalInstruccion, &funciones_Ansisop, &funciones_kernel);
 //			pcb->program_Counter++;
-//			actualizar(pcb);
 //			lineasAnalizadas++;
 //		}
-//		t_paquete* paquete = serializarPCB(pcb);
-//		send(socketKernel, &paquete, sizeof(t_paquete), 0);
-//		//enviar de nuevo el pcb al kernel, con la razon en el header
-//
+//		enviarConRazon(socketKernel, logs, razon, serializarPCB(pcb));
+//		free(pcb);
 //	}
 	return 0;
+}
+
+void actualizarDiccionarioDeVariables (t_PCB* pcb){
+	if (pcb->tamanio_Contexto_Actual){
+		char *datosContexto =solicitarBytesAUMV(pcb->cursor_Stack, 0, pcb->tamanio_Contexto_Actual);
+		int cantVariables=0;
+		while (cantVariables*5 < pcb->tamanio_Contexto_Actual){
+			char *nombreTemporal=malloc(1);
+			int *valorTemporal=malloc(sizeof(int));
+			memcpy(nombreTemporal, datosContexto+cantVariables*5, 1);
+			memcpy(valorTemporal, datosContexto+cantVariables*5+1, 4);
+			dictionary_put(diccionarioDeVariables, nombreTemporal, valorTemporal);
+		}
+	}
+}
+
+sighandler_t manejar_seniales (int senal){
+		switch(senal){
+		case SIGINT:
+			log_info(logs,"Se recibió la señal SIGNIT");
+			break;
+		case SIGUSR1:
+			log_info(logs, "Se recibió la señal SIGUSR_1");
+		}
+		return NULL;
 }
 

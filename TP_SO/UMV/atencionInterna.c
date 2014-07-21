@@ -19,10 +19,10 @@ void* atencionInterna(void* sinParametro) {
 	char* saludoCpu = malloc(4);
 
 	int socket = crearServidor(puertoUMV, logger);
-	int socketKernel = aceptarConexion(socket, logger);
 
 	while (1) {
 
+		int socketKernel = aceptarConexion(socket, logger);
 		recv(socketKernel, (void*) saludoKernel, 30, 0);
 
 		if (!strncmp(saludoKernel, "Kernel", 6)) {
@@ -76,6 +76,7 @@ void atencionKernel(int* socketKernel) {
 
 		j++;
 		char *mensaje = recibirConRazon(*socketKernel, razon, logger);
+		//aplicarRetardo(retardo);
 		switch (*razon) {
 
 		case CREAR_SEGMENTOS_PROGRAMA:
@@ -121,9 +122,10 @@ void atencionKernel(int* socketKernel) {
 			pthread_mutex_lock(&mutexOperacion);
 			cambiarProcesoActivo(procesoActivo);
 
-			char *buffer = malloc(80);
+			char *buffer = malloc(2048);
 			desempaquetar2(mensaje, &parametro[0], &parametro[1], &parametro[2],
 					buffer, 0);
+			buffer=realloc(buffer, parametro[2]);
 			printf("Los parametros que envio fueron:\n base= %d\n offset=%d\n tamano= %d\n buffer= %s\n", parametro[0], parametro[1], parametro[2], buffer);
 			enviarUnosBytes(parametro[0], parametro[1], parametro[2], buffer);
 			pthread_mutex_unlock(&mutexOperacion);
@@ -133,14 +135,11 @@ void atencionKernel(int* socketKernel) {
 		case CAMBIAR_PROCESO_ACTIVO:
 			printf("recibi cambiar proceso activo");
 			pthread_mutex_lock(&mutexOperacion);
-			int *pid2 = malloc(sizeof(int));
-			desempaquetar2(mensaje, pid2, 0);
-			procesoActivo = *pid2;
-			printf("\nel valor del pid es: %d\n", *pid2);
-			cambiarProcesoActivo(*pid2);
+			desempaquetar2(mensaje, &procesoActivo, 0);
+			printf("\nel valor del pid es: %d\n", procesoActivo);
+			cambiarProcesoActivo(procesoActivo);
 			pthread_mutex_unlock(&mutexOperacion);
 			puts("termine de cambiar proceso activo");
-			free(pid2);
 			break;
 		case CREAR_PROCESO_NUEVO:
 			puts("recibi crear proceso nuevo");
@@ -148,17 +147,11 @@ void atencionKernel(int* socketKernel) {
 			printf("el pid que recibi es:%d\n", *pid);
 			desempaquetar2(mensaje, pid, 0);
 			printf("el pid que recibi es:%d\n", *pid);
-//		int * pid=malloc(sizeof(int));
-//		*pid=parametro[0];
-//		list_add(listaProcesos, pid);
 			if (listaProcesos == NULL ) {
 				printf("lista procesos era null");
 				listaProcesos = list_create();
 			}
 			agregarProceso(*pid, 'c');
-			puts("no mori aca");
-//		procesoActivo = parametro[0];
-//		cambiarProcesoActivo(parametro[0]);
 			pthread_mutex_unlock(&mutexOperacion);
 			break;
 		}

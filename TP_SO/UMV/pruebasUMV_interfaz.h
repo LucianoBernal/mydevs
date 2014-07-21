@@ -42,6 +42,7 @@ int procesoActivo();
 void cambiarProcesoActivo(int);
 int verificarEspacio(int, int, int, int);
 void cambiarAlgoritmo();
+void aplicarRetardo(int);
 
 
 #endif /* PRUEBASUMV_INTERFAZ_H_ */

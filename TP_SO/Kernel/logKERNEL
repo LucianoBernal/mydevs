@@ -52,3 +52,73 @@
 [ERROR] 17:33:16:79 Kernel/(10441:10485): Hubo un error al bindear el socket
 [INFO] 17:34:08:905 Kernel/(10555:10555): Comienza la ejecución del Kernel.
 [INFO] 17:36:44:271 Kernel/(11057:11057): Comienza la ejecución del Kernel.
+[INFO] 17:21:40:307 Kernel/(5116:5116): Comienza la ejecución del Kernel.
+[INFO] 17:21:57:426 Kernel/(5116:5154): Exito al crear hilo atencionCPUs
+[INFO] 17:21:57:449 Kernel/(5116:5154): Exito al crear hilo mandar a Ejecutar
+[INFO] 17:21:57:482 Kernel/(5116:5154): Exito al crear hilo enviar CPU
+[INFO] 17:22:04:2 Kernel/(5116:5116): Hilo PCP exitoso
+[INFO] 17:22:17:263 Kernel/(5116:5116): Hilo PLP exitoso
+[INFO] 17:22:37:883 Kernel/(5116:5173): Hilo Multiplexor Scripts lanzado exitosamente
+[INFO] 17:23:00:890 Kernel/(5116:5173): Hilo Cola New lanzado exitosamente
+[INFO] 17:23:00:913 Kernel/(5116:5173): Hilo Cola Exit lanzado exitosamente
+[INFO] 17:23:28:512 Kernel/(5116:5195): Encolando Nuevo Programa en Cola de NEW
+[INFO] 17:23:28:513 Kernel/(5116:5196): Encolando Programa en Cola Ready
+[INFO] 17:23:28:513 Kernel/(5116:5156): Se saco programa de la cola Ready
+[INFO] 17:23:28:514 Kernel/(5116:5157): Agregando programa en cola de ejecucion
+[INFO] 17:23:28:514 Kernel/(5116:5157): Enviando Programa a CPU disponible
+[INFO] 17:27:08:184 Kernel/(5116:5195): Encolando Nuevo Programa en Cola de NEW
+[INFO] 17:27:08:186 Kernel/(5116:5196): Encolando Programa en Cola Ready
+[INFO] 17:27:08:187 Kernel/(5116:5156): Se saco programa de la cola Ready
+[INFO] 17:27:08:188 Kernel/(5116:5157): Agregando programa en cola de ejecucion
+[INFO] 17:27:08:191 Kernel/(5116:5157): Enviando Programa a CPU disponible
+[INFO] 18:24:26:446 Kernel/(7183:7183): Comienza la ejecución del Kernel.
+[INFO] 18:24:36:706 Kernel/(7183:7216): Exito al crear hilo atencionCPUs
+[ERROR] 18:24:36:707 Kernel/(7183:7217): Hubo un error al bindear el socket
+[INFO] 18:24:37:540 Kernel/(7183:7216): Exito al crear hilo mandar a Ejecutar
+[INFO] 18:24:37:566 Kernel/(7183:7216): Exito al crear hilo enviar CPU
+[INFO] 18:24:38:62 Kernel/(7183:7183): Hilo PCP exitoso
+[INFO] 18:24:47:970 Kernel/(7183:7183): Hilo PLP exitoso
+[INFO] 18:24:55:188 Kernel/(7183:7227): Hilo Multiplexor Scripts lanzado exitosamente
+[ERROR] 18:24:57:120 Kernel/(7183:7242): Hubo un error al bindear el socket
+[INFO] 18:24:57:151 Kernel/(7183:7227): Hilo Cola New lanzado exitosamente
+[INFO] 18:24:57:194 Kernel/(7183:7227): Hilo Cola Exit lanzado exitosamente
+[INFO] 18:27:31:654 Kernel/(7349:7349): Comienza la ejecución del Kernel.
+[INFO] 18:27:31:709 Kernel/(7349:7349): Hilo PCP exitoso
+[INFO] 18:27:32:740 Kernel/(7349:7355): Exito al crear hilo atencionCPUs
+[INFO] 18:27:32:766 Kernel/(7349:7349): Hilo PLP exitoso
+[INFO] 18:27:37:120 Kernel/(7349:7359): Hilo Multiplexor Scripts lanzado exitosamente
+[INFO] 18:27:39:823 Kernel/(7349:7359): Hilo Cola New lanzado exitosamente
+[INFO] 18:27:39:852 Kernel/(7349:7359): Hilo Cola Exit lanzado exitosamente
+[INFO] 18:27:39:867 Kernel/(7349:7355): Exito al crear hilo mandar a Ejecutar
+[INFO] 18:27:39:882 Kernel/(7349:7355): Exito al crear hilo enviar CPU
+[ERROR] 18:28:56:989 Kernel/(7349:7365): El mensaje no se pudo enviar correctamente
+[INFO] 18:29:25:289 Kernel/(7437:7437): Comienza la ejecución del Kernel.
+[INFO] 18:29:25:346 Kernel/(7437:7437): Hilo PCP exitoso
+[INFO] 18:29:25:917 Kernel/(7437:7443): Exito al crear hilo atencionCPUs
+[INFO] 18:29:25:945 Kernel/(7437:7437): Hilo PLP exitoso
+[INFO] 18:29:28:107 Kernel/(7437:7443): Exito al crear hilo mandar a Ejecutar
+[INFO] 18:29:28:132 Kernel/(7437:7447): Hilo Multiplexor Scripts lanzado exitosamente
+[INFO] 18:29:28:156 Kernel/(7437:7443): Exito al crear hilo enviar CPU
+[INFO] 18:29:28:179 Kernel/(7437:7447): Hilo Cola New lanzado exitosamente
+[ERROR] 18:29:29:325 Kernel/(7437:7453): Hubo un error al bindear el socket
+[INFO] 18:29:29:352 Kernel/(7437:7447): Hilo Cola Exit lanzado exitosamente
+[INFO] 18:31:16:287 Kernel/(7521:7521): Comienza la ejecución del Kernel.
+[INFO] 18:31:16:334 Kernel/(7521:7521): Hilo PCP exitoso
+[INFO] 18:31:16:353 Kernel/(7521:7527): Exito al crear hilo atencionCPUs
+[INFO] 18:31:16:375 Kernel/(7521:7527): Exito al crear hilo mandar a Ejecutar
+[INFO] 18:31:16:395 Kernel/(7521:7527): Exito al crear hilo enviar CPU
+[INFO] 18:31:17:58 Kernel/(7521:7521): Hilo PLP exitoso
+[INFO] 18:31:18:664 Kernel/(7521:7533): Hilo Multiplexor Scripts lanzado exitosamente
+[INFO] 18:31:19:773 Kernel/(7521:7533): Hilo Cola New lanzado exitosamente
+[INFO] 18:31:19:804 Kernel/(7521:7533): Hilo Cola Exit lanzado exitosamente
+[ERROR] 18:32:09:116 Kernel/(7521:7538): El mensaje no se pudo enviar correctamente
+[INFO] 18:33:15:782 Kernel/(7627:7627): Comienza la ejecución del Kernel.
+[INFO] 18:33:15:841 Kernel/(7627:7627): Hilo PCP exitoso
+[INFO] 18:33:16:719 Kernel/(7627:7633): Exito al crear hilo atencionCPUs
+[INFO] 18:33:16:748 Kernel/(7627:7633): Exito al crear hilo mandar a Ejecutar
+[INFO] 18:33:16:765 Kernel/(7627:7633): Exito al crear hilo enviar CPU
+[INFO] 18:33:16:774 Kernel/(7627:7627): Hilo PLP exitoso
+[INFO] 18:33:18:495 Kernel/(7627:7637): Hilo Multiplexor Scripts lanzado exitosamente
+[INFO] 18:33:19:579 Kernel/(7627:7637): Hilo Cola New lanzado exitosamente
+[INFO] 18:33:19:609 Kernel/(7627:7637): Hilo Cola Exit lanzado exitosamente
+[ERROR] 18:38:13:581 Kernel/(7627:7644): El mensaje no se pudo enviar correctamente

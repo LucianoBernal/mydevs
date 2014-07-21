@@ -25,6 +25,8 @@ typedef struct{
 	char *archivo;
 }t_operacion;
 
+extern pthread_mutex_t mutexOperacion;
+
 /*Funciones*/
 
 
