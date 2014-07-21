@@ -111,12 +111,12 @@ void* enviarCPU(void* sinParametro) {
 		list_add(colaExec, pcbAEjecutar);
 		sem_post(&colaExecMutex);
 		t_paquete* paquete = serializarPCB(pcbAEjecutar);
-		int i = posicionEnLaLista(CPUs, IDCpuLibre);   //FIXME muere con concurrencia
+		sem_wait(&CPUsMutex);
+		int i = posicionEnLaLista(CPUs, IDCpuLibre);
 		t_estructuraCPU* estructura = malloc(sizeof(t_estructuraCPU));
 		estructura->idCPU = IDCpuLibre;
 		estructura->estado = 1;
 		estructura->idProceso = (pcbAEjecutar->program_id);
-		sem_wait(&CPUsMutex);
 		list_replace_and_destroy_element(CPUs, i, estructura,
 				(void*) cpu_destroy);
 		sem_post(&CPUsMutex);
@@ -200,8 +200,10 @@ void programaSalioPorBloqueo(t_PCB* pcb, int tiempo, char* dispositivo,
 }
 
 void seLiberoUnaCPU(int idCPU) {
+	sem_wait(&CPUsMutex);
 	int i = posicionEnLaLista(CPUs, idCPU);
 	t_estructuraCPU* CPU = list_get(CPUs, i);
+	sem_post(&CPUsMutex);
 	int pidASacar = CPU->idProceso;
 	sem_wait(&colaExecMutex);
 	int posicion = posicionEnLaListaExec(colaExec, pidASacar);
@@ -212,7 +214,8 @@ void seLiberoUnaCPU(int idCPU) {
 	estructura->estado = 0;
 	estructura->idProceso = -1;
 	sem_wait(&CPUsMutex);
-	list_replace_and_destroy_element(CPUs, i, estructura, (void*) cpu_destroy);
+	int pos = posicionEnLaLista(CPUs, idCPU);
+	list_replace_and_destroy_element(CPUs, pos, estructura, (void*) cpu_destroy);
 	sem_post(&CPUsMutex);
 	sem_post(&CPUsLibres);
 
