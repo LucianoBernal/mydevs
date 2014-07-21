@@ -16,7 +16,7 @@ void* consola(void* baseUMV) {
 	char* comando = malloc(COMANDO_SIZE);
 	crearProcesoArtificial();
 	do {
-		printf("Ingrese comando: \n");
+		printf("\nIngrese comando: \n");
 		scanf("%s", comando);
 		analizarYEjecutar(comando);
 
@@ -32,7 +32,7 @@ void analizarYEjecutar(char *comando) {
 		t_operacion operacion;
 
 		printf(
-				"¿Qué operación desea ralizar?-para saber como usarlo enviar 'h'- \n");
+				"¿Qué operación desea ralizar?-para saber como usarlo enviar 'h'. \n");
 		int flag;
 		do {
 			flag = 0;
@@ -42,7 +42,7 @@ void analizarYEjecutar(char *comando) {
 
 			case 'h':
 				printf(
-						"para escribir bytes en memoria, ingrese 'e' \n para solicitar bytes en memoria, ingrese 's' \n para crear un segmento, ingrese 'c' \n para destruir un segmento, ingrese 'd' \n");
+						"Para escribir bytes en memoria, ingrese 'e' \nPara solicitar bytes en memoria, ingrese 's' \nPara crear un segmento, ingrese 'c' \nPara destruir un segmento, ingrese 'd' \n");
 				flag = 1;
 				break;
 
@@ -167,6 +167,7 @@ void analizarYEjecutar(char *comando) {
 		int pidPedido;
 		int off;
 		int tam;
+		int confirmaMemo;
 		bool arch = 0;	//TODO: archivo = log ?
 
 		printf("Estructuras de memoria.\n");
@@ -175,15 +176,19 @@ void analizarYEjecutar(char *comando) {
 		scanf("%d", &pidPedido);
 		dumpTablaSegmentos(arch, pidPedido);
 
-		printf("Memoria principal:\n");
+		printf("\nMemoria principal:\n");
 		dumpMemoriaLibreYSegmentos(arch);
 
+		printf("\nSi desea saber el contenido de la memoria principal, ingrese '1', sino, '0'. \n");
+		scanf("%d", &confirmaMemo);
+		if(confirmaMemo){
 		printf("\n Contenido de memoria principal.\n");
 		printf("\nIngrese offset: ");
 		scanf("%d", &off);
 		printf("\nIngrese tamaño: ");
 		scanf("%d", &tam);
 		dumpMemoriaChata(off, tam, arch);
+		}
 
 	}	//Termina if de dump.
 

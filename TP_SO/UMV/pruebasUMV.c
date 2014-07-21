@@ -94,6 +94,7 @@ void agregarProceso(int pid, char tipo) {
 		pthread_mutex_unlock(&mutexCantProcActivos);
 	} else {
 		printf("El numero pid ya esta en uso (?");
+		log_error(logger,"El número pid ya está en uso ?");//TODO fijarse.
 	}
 }
 
@@ -121,6 +122,7 @@ int crearSegmento(int tamano) {
 		proceso->tabla = list_create();
 	list_add(proceso->tabla, nuevoSegmento);
 	printf("Se creo un segmento de base %d\n", nuevoSegmento->inicioLogico);
+	log_info(logger,"Se creó un segmento de base %d\n",nuevoSegmento->inicioLogico);
 	return nuevoSegmento->inicioLogico;
 }
 
@@ -209,6 +211,7 @@ void compactarMemoria() {
 	list_iterate(listaSegmentosOrdenada,
 			(void*) _cambiar_posiciones_chetamente);
 	printf("Compacte\n");
+	log_debug(logger,"Memoria compactada.");
 	//list_destroy_and_destroy_elements(listaSegmentosOrdenada, (void*)free);
 }
 
@@ -230,6 +233,7 @@ void *obtenerInicioReal(int tamano) {
 			return obtenerInicioReal(tamano);
 		} else {
 			printf("Memory overload, u win \n");
+			log_error(logger,"Memory overload !!!");
 			//list_destroy_and_destroy_elements(lista_mascapita, (void*)free);
 			return (void *) 5; //Solo pongo esto para que me deje compilar, deberiamos crear un error.
 		}
