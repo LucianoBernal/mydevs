@@ -17,6 +17,8 @@
 char *IP_UMV, *IP_KERNEL;
 char* PUERTO_UMV, *PUERTO_PCP;
 char *etiquetas;
+t_PCB *pcbEnUso;
+t_dictionary *diccionarioDeVariables;
 
 void obtenerDatosConfig(t_config *config) {
 	IP_UMV = config_get_string_value(config, "IP_UMV");
@@ -32,6 +34,8 @@ void cerrarCPU(t_log *log) {
 }
 int main(int arc, char **argv) {
 	//vincPrimitivas();
+	diccionarioDeVariables = dictionary_create();
+	pcbEnUso=malloc(sizeof(t_PCB));
 	proceso_terminado = 0;
 	proceso_bloqueado = 0;
 	logs = log_create("logCPU", "CPU", true, LOG_LEVEL_INFO);

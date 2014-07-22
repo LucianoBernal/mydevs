@@ -23,8 +23,12 @@
 //
 extern int socketUMV, socketKernel;
 extern t_log *logs;
+extern t_PCB *pcbEnUso;
+extern t_dictionary *diccionarioDeVariables;
+extern char *etiquetas;
+//static unsigned char nivelContexto;
 //int programCounter;
-t_puntero stackBase;
+//t_puntero stackBase;
 //t_puntero desplazamiento;
 //t_dictionary *diccionario;
 //t_puntero cursorCtxto;
@@ -126,13 +130,20 @@ t_puntero stackBase;
 //	return nuevo;
 //}
 //
-//static t_variable_diccionario *crear_nodoDiccionario(
-//		t_nombre_variable identificador, int desplazamiento) {
-//	t_variable_diccionario *nuevo = malloc(sizeof(t_variable_diccionario));
-//	nuevo->identificador_variable = identificador;
-//	nuevo->desplazamiento = desplazamiento;
-//	return nuevo;
-//}
+
+typedef struct {
+	char identificador_variable;
+	int desplazamiento;
+} t_variable_diccionario;
+
+t_variable_diccionario *crear_nodoDiccionario(t_nombre_variable identificador,
+		int desplazamiento) {
+	t_variable_diccionario *nuevo = malloc(sizeof(t_variable_diccionario));
+	nuevo->identificador_variable = identificador;
+	nuevo->desplazamiento = desplazamiento;
+	return nuevo;
+}
+
 ///*
 // static void destruir_variable(t_variable *self) {
 // free(self);
@@ -140,28 +151,24 @@ t_puntero stackBase;
 // */
 ////claramente a este socket hace falta crearlo (y incluir las librerias)
 
-
-//void vincPrimitivas() {
-//	funciones_Ansisop.AnSISOP_asignar = asignar;
-//	funciones_Ansisop.AnSISOP_asignarValorCompartida = asignarValorCompartida;
-//	funciones_Ansisop.AnSISOP_definirVariable = definirVariable;
-//	funciones_Ansisop.AnSISOP_dereferenciar = dereferenciar;
-//	funciones_Ansisop.AnSISOP_entradaSalida = entradaSalida;
-//	funciones_Ansisop.AnSISOP_finalizar = finalizar;
-//	funciones_Ansisop.AnSISOP_imprimir = imprimir;
-//	funciones_Ansisop.AnSISOP_imprimirTexto = imprimirTexto;
-//	funciones_Ansisop.AnSISOP_irAlLabel = irAlLabel;
-//	funciones_Ansisop.AnSISOP_llamarConRetorno = llamarConRetorno;
-//	funciones_Ansisop.AnSISOP_llamarSinRetorno = llamarSinRetorno;
-//	funciones_Ansisop.AnSISOP_obtenerPosicionVariable = obtenerPosicionVariable;
-//	funciones_Ansisop.AnSISOP_obtenerValorCompartida = obtenerValorCompartida;
-//	funciones_Ansisop.AnSISOP_retornar = retornar;
-//	//funciones_kernel->AnSISOP_signal = signal;
-//	funciones_kernel.AnSISOP_wait = wait;
-//}
-
-
-
+void vincPrimitivas() {
+	funciones_Ansisop.AnSISOP_asignar = asignar;
+	funciones_Ansisop.AnSISOP_asignarValorCompartida = asignarValorCompartida;
+	funciones_Ansisop.AnSISOP_definirVariable = definirVariable;
+	funciones_Ansisop.AnSISOP_dereferenciar = dereferenciar;
+	funciones_Ansisop.AnSISOP_entradaSalida = entradaSalida;
+	funciones_Ansisop.AnSISOP_finalizar = finalizar;
+	funciones_Ansisop.AnSISOP_imprimir = imprimir;
+	funciones_Ansisop.AnSISOP_imprimirTexto = imprimirTexto;
+	funciones_Ansisop.AnSISOP_irAlLabel = irAlLabel;
+	funciones_Ansisop.AnSISOP_llamarConRetorno = llamarConRetorno;
+	funciones_Ansisop.AnSISOP_llamarSinRetorno = llamarSinRetorno;
+	funciones_Ansisop.AnSISOP_obtenerPosicionVariable = obtenerPosicionVariable;
+	funciones_Ansisop.AnSISOP_obtenerValorCompartida = obtenerValorCompartida;
+	funciones_Ansisop.AnSISOP_retornar = retornar;
+	//funciones_kernel->AnSISOP_signal = signal;
+	funciones_kernel.AnSISOP_wait = wait;
+}
 
 void enviarBytesAUMV(t_puntero base, t_puntero desplazamiento, int tamano,
 		void *datos) {
@@ -172,7 +179,7 @@ void enviarBytesAUMV(t_puntero base, t_puntero desplazamiento, int tamano,
 					crear_nodoVar(&tamano, 4), crear_nodoVar(datos, tamano),
 					0));
 	recibirConRazon(socketUMV, &razon, logs);
-	if (razon==SEGMENTATION_FAULT){
+	if (razon == SEGMENTATION_FAULT) {
 		log_error(logs, "Hubo segmentation fault");
 		//SACARPROCESODECPUPORABORTO();
 	}
@@ -213,28 +220,44 @@ char *solicitarBytesAUMV(t_puntero base, t_puntero desplazamiento, int tamano) {
 //
 t_puntero definirVariable(t_nombre_variable identificador_variable) {
 	/*
-	enviarBytesAUMV(stackBase, desplazamiento, &identificador_variable, 1);
-	t_variable_diccionario *aux = crear_nodoDiccionario(identificador_variable,
-			desplazamiento);
-	desplazamiento += 5; //PIENSO que en el diccionario se guarda un puntero al COMIENZO de la variable
-	dictionary_put(diccionario, &(aux->identificador_variable), aux);
-	return stackBase + desplazamiento - 4; //El tp dice posicion, para mi es desplazamiento nomas
-	*/
-	return 1;
+	 enviarBytesAUMV(stackBase, desplazamiento, &identificador_variable, 1);
+	 t_variable_diccionario *aux = crear_nodoDiccionario(identificador_variable,
+	 desplazamiento);
+	 desplazamiento += 5; //PIENSO que en el diccionario se guarda un puntero al COMIENZO de la variable
+	 dictionary_put(diccionario, &(aux->identificador_variable), aux);
+	 return stackBase + desplazamiento - 4; //El tp dice posicion, para mi es desplazamiento nomas
+	 */
+	enviarBytesAUMV(pcbEnUso->segmento_Stack,
+			pcbEnUso->tamanio_Contexto_Actual * 5, 1, &identificador_variable);
+	char *identificadorACopiar = strdup(&identificador_variable);
+	identificadorACopiar[1] = 0;
+	dictionary_put(diccionarioDeVariables, identificadorACopiar,
+			crear_nodoDiccionario(identificador_variable,
+					pcbEnUso->tamanio_Contexto_Actual * 5 + 1));
+	pcbEnUso->tamanio_Contexto_Actual++;
+	return pcbEnUso->segmento_Stack
+			+ (pcbEnUso->tamanio_Contexto_Actual - 1) * 5;
+}
+
+t_puntero obtenerPosicionVariable(t_nombre_variable identificador_variable) {
+	char *identificadorPosta = strdup(&identificador_variable);
+	identificadorPosta[1] = 0;
+	t_variable_diccionario *aux = dictionary_get(diccionarioDeVariables,
+			identificadorPosta);
+	return (aux == NULL ) ? -1 : aux->desplazamiento;
 }
 //
-//t_puntero obtenerPosicionVariable(t_nombre_variable identificador_variable) {
-//	t_variable_diccionario *aux = dictionary_get(diccionario,
-//			&(identificador_variable));
-//	return (aux == NULL ) ? -1 : aux->desplazamiento;
-//}
-//
-//t_valor_variable dereferenciar(t_puntero direccion_variable) {
-//	return *solicitarBytesAUMV(stackBase, direccion_variable + 1, 4);
-//}
-//
+t_valor_variable dereferenciar(t_puntero direccion_variable) {
+	char *aux = solicitarBytesAUMV(pcbEnUso->segmento_Stack,
+			direccion_variable + 1, 4);
+	t_valor_variable valor;
+	memcpy(&valor, aux, 4);
+	free(aux);
+	return valor;
+}
+////
 void asignar(t_puntero direccion_variable, t_valor_variable valor) {
-	enviarBytesAUMV(stackBase, direccion_variable, &valor, 4);
+	enviarBytesAUMV(pcbEnUso->segmento_Stack, direccion_variable, 4, &valor);
 }
 //
 //t_valor_variable obtenerValorCompartida(t_nombre_compartida variable) {
@@ -258,8 +281,8 @@ void asignar(t_puntero direccion_variable, t_valor_variable valor) {
 //	return *aux;
 //}
 //
-t_valor_variable asignarValorCompartida(t_nombre_compartida variable,
-		t_valor_variable valor) {
+//t_valor_variable asignarValorCompartida(t_nombre_compartida variable,
+//		t_valor_variable valor) {
 //	int *razon = malloc(sizeof(int));
 //	*razon = GRABAR_VALOR;
 //	t_paquete *paquete = serializar2(
@@ -271,35 +294,55 @@ t_valor_variable asignarValorCompartida(t_nombre_compartida variable,
 //	send(socketKernel, paquete->msj, paquete->tamano, 0);
 //	//Quizas deberias esperar a la confirmacion PROBABLEMENTE
 //	return valor;
+//}
+//
+void irAlLabel(t_nombre_etiqueta etiqueta) {
+//	Segun yo a las 12, al comienzo del programa en el cpu, debemos traer el segmento de etiquetas hacia el.
+//	etiquetas es una global en la que copiamos enterito el indice de etiquetas
+	pcbEnUso->program_Counter = metadata_buscar_etiqueta(etiqueta, etiquetas,
+			pcbEnUso->tamanio_Indice_de_Etiquetas);
 }
 //
-//void irAlLabel(t_nombre_etiqueta etiqueta) {
-//	//Segun yo a las 12, al comienzo del programa en el cpu, debemos traer el segmento de etiquetas hacia el.
-//	//etiquetas es una global en la que copiamos enterito el indice de etiquetas
-//	//programCounter=metadata_buscar_etiqueta(etiqueta, etiquetas, pcb->tamanio_Indice_de_Etiquetas);
-//}
-//
-//void llamarSinRetorno(t_nombre_etiqueta etiqueta) {
-//	//Yo crearia un nuevo diccionario, pero no se como es esta cosa.
-//	enviarBytesAUMV(stackBase, desplazamiento, &cursorCtxto, 4);
-//	enviarBytesAUMV(stackBase, desplazamiento + 4, &programCounter, 4);
-//	desplazamiento += 8;
-//	cursorCtxto = stackBase + desplazamiento;
-//	irAlLabel(etiqueta);
-//}
-//void llamarConRetorno(t_nombre_etiqueta etiqueta, t_puntero donde_retornar) {
-//	enviarBytesAUMV(stackBase, desplazamiento, &cursorCtxto, 4);
-//	enviarBytesAUMV(stackBase, desplazamiento + 4, &programCounter, 4);
-//	enviarBytesAUMV(stackBase, desplazamiento + 8, &donde_retornar, 4);
-//	desplazamiento += 12;
-//	cursorCtxto = stackBase + desplazamiento;
-//	irAlLabel(etiqueta);
-//}
-//void finalizar(void) {
+void llamarSinRetorno(t_nombre_etiqueta etiqueta) {
+	//Yo crearia un nuevo diccionario, pero no se como es esta cosa.
+	enviarBytesAUMV(pcbEnUso->cursor_Stack,
+			pcbEnUso->tamanio_Contexto_Actual * 5, 4,
+			&(pcbEnUso->cursor_Stack));
+	enviarBytesAUMV(pcbEnUso->cursor_Stack,
+			pcbEnUso->tamanio_Contexto_Actual * 5 + 4, 4,
+			&(pcbEnUso->program_Counter));
+	pcbEnUso->cursor_Stack = pcbEnUso->segmento_Stack
+			+ pcbEnUso->tamanio_Contexto_Actual * 5 + 8;
+	pcbEnUso->tamanio_Contexto_Actual = 0;
+	irAlLabel(etiqueta);
+}
+void llamarConRetorno(t_nombre_etiqueta etiqueta, t_puntero donde_retornar) {
+	enviarBytesAUMV(pcbEnUso->cursor_Stack,
+			pcbEnUso->tamanio_Contexto_Actual * 5, 4,
+			&(pcbEnUso->cursor_Stack));
+	enviarBytesAUMV(pcbEnUso->cursor_Stack,
+			pcbEnUso->tamanio_Contexto_Actual * 5 + 4, 4,
+			&(pcbEnUso->program_Counter));
+	enviarBytesAUMV(pcbEnUso->cursor_Stack,
+			pcbEnUso->tamanio_Contexto_Actual * 5 + 8, 4, &(donde_retornar));
+	pcbEnUso->cursor_Stack = pcbEnUso->segmento_Stack
+			+ pcbEnUso->tamanio_Contexto_Actual * 5 + 12;
+	pcbEnUso->tamanio_Contexto_Actual = 0;
+	irAlLabel(etiqueta);
+}
+void finalizar(void) {
 //	desplazamiento = cursorCtxto - 8 - stackBase;
 //	programCounter = *solicitarBytesAUMV(stackBase, cursorCtxto - 4, 4);
 //	cursorCtxto = *solicitarBytesAUMV(stackBase, cursorCtxto - 8, 4);
-//}
+	char *p_programCounter = solicitarBytesAUMV(pcbEnUso->segmento_Stack,
+			pcbEnUso->cursor_Stack - 4, 4);
+	char *p_cursorCtxto = solicitarBytesAUMV(pcbEnUso->segmento_Stack,
+			pcbEnUso->cursor_Stack - 8, 4);
+	memcpy(&(pcbEnUso->program_Counter), p_programCounter, 4);
+	memcpy(&(pcbEnUso->cursor_Stack), p_cursorCtxto, 4);
+	pcbEnUso->tamanio_Contexto_Actual = (pcbEnUso->cursor_Stack - 8
+			- pcbEnUso->segmento_Stack)/5;
+}
 //void retornar(t_valor_variable retorno) {
 //	desplazamiento = cursorCtxto - 12 - stackBase;
 //	enviarBytesAUMV(stackBase,
