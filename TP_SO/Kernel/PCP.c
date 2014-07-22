@@ -137,9 +137,7 @@ void* bloquearYDevolverAReady(void * param) {
 	t_estructuraProcesoBloqueado* estructuraBloqueada = queue_pop(
 			estructura->procesosBloqueados);
 	sem_post(&(estructura->mutexCola));
-	sleep((estructura->retardo)*1000);
-	sleep(estructuraBloqueada->tiempo);
-	//sleep(estructuraBloqueada->tiempo);
+	usleep((estructura->retardo)*(estructuraBloqueada->tiempo)*1000);
 	sem_wait(&colaReadyMutex);
 	queue_push(colaReady, estructuraBloqueada->pcb);
 	sem_post(&colaReadyMutex);
