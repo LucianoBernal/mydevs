@@ -38,6 +38,7 @@ char* puertoUMV;
 bool algoritmo;
 void *baseUMV;
 t_list *listaProcesos;
+FILE *dumpFile;
 
 pthread_t atencion_consola;
 pthread_t atencion_interna;

@@ -4,7 +4,7 @@
  *  Created on: 04/06/2014
  *      Author: utnso
  */
-//La idea es que vallamos probando las funciones auxiliares
+
 #include "pruebasUMV.h"
 #include "pruebasUMV_interfaz.h"
 
@@ -15,7 +15,7 @@ extern int tamanoUMV;
 int flag_compactado = 0;
 int flag = 1; //Esta ni se para que esta.
 int k = 0; //Esta esta solo para mostrar unos mensajes.
-bool algoritmo = 0; //0 significa FF, lo ponemos por defecto porque es el mas lindo*
+//bool algoritmo = 0; //0 significa FF, lo ponemos por defecto porque es el mas lindo*
 static t_tablaSegmento *crear_nodoSegm(int, int, int, void *);
 static void tsegm_destroy(t_tablaSegmento *);
 pthread_mutex_t mutexCantProcActivos, mutexFlagCompactado, mutexAlgoritmo =
@@ -263,7 +263,7 @@ void *seleccionarSegunAlgoritmo(t_list *lista) {
 void cambiarAlgoritmo() {
 	pthread_mutex_lock(&mutexAlgoritmo);
 	algoritmo = !algoritmo;
-	algoritmo ?
+	algoritmo ? //FIXME están al revés !!
 			printf("Ahora el algoritmo es First-Fit") :
 			printf("Ahora el algoritmo es Worst-Fit");
 	pthread_mutex_unlock(&mutexAlgoritmo);
@@ -271,8 +271,13 @@ void cambiarAlgoritmo() {
 
 void mostrarListaSegmentos(t_list *listaSegmento) {
 	printf("			  Comienzo Final pidOwner BaseLogica Tamano\n");
+	fprintf(dumpFile, "			  Comienzo Final pidOwner BaseLogica Tamano\n");
 	void _mostrar_posiciones_y_pid_owner(t_tablaSegmento* elemento) {
 		printf("Contenido lista Segmentos:%x %x %d       %d       %d\n",
+				(unsigned int) elemento->memPpal,
+				(unsigned int) elemento->memPpal + elemento->tamano,
+				elemento->pidOwner, elemento->inicioLogico, elemento->tamano);
+		fprintf(dumpFile, "Contenido lista Segmentos:%x %x %d       %d       %d\n",
 				(unsigned int) elemento->memPpal,
 				(unsigned int) elemento->memPpal + elemento->tamano,
 				elemento->pidOwner, elemento->inicioLogico, elemento->tamano);
@@ -474,7 +479,7 @@ void dumpMemoriaLibreYSegmentos(bool archivo) {
 	}
 	list_iterate(obtenerEspaciosDisponibles(), (void*) _acumularEspacio);
 	printf("El espacio actual disponible en memoria es: %d b\n", i);
-	//TODO: guardar en archivo
+	fprintf(dumpFile, "El espacio actual disponible en memoria es: %d b\n", i);
 }
 void dumpTablaSegmentos(bool archivo, int pid) {
 	int i;
@@ -482,16 +487,21 @@ void dumpTablaSegmentos(bool archivo, int pid) {
 		for (i = 0; i < cantProcesosActivos; i++) {
 			printf("Se muestra la tabla de segmentos del proceso %d\n",
 					((t_tablaProceso *) list_get(listaProcesos, i))->pid);
+			fprintf(dumpFile,"Se muestra la tabla de segmentos del proceso %d\n",
+					((t_tablaProceso *) list_get(listaProcesos, i))->pid);
+
 			mostrarListaSegmentos(
 					((t_tablaProceso *) list_get(listaProcesos, i))->tabla);
 		}
 	} else {
 		printf("Se muestra la tabla de segmentos del proceso %d\n",
 				((t_tablaProceso *) list_get(listaProcesos, buscarPid(pid)))->pid);
+		fprintf(dumpFile, "Se muestra la tabla de segmentos del proceso %d\n",
+				((t_tablaProceso *) list_get(listaProcesos, buscarPid(pid)))->pid);
+
 		mostrarListaSegmentos(
 				((t_tablaProceso *) list_get(listaProcesos, buscarPid(pid)))->tabla);
 	}
-	//TODO: guardar en archivo
 }
 
 void dumpMemoriaChata(int offset, int tamano, bool archivo) {
@@ -499,14 +509,21 @@ void dumpMemoriaChata(int offset, int tamano, bool archivo) {
 	printf("Se muestra la memoria desde la posicion %x a la %x \n",
 			(unsigned int) baseUMV + offset,
 			(unsigned int) baseUMV + offset + tamano);
+	fprintf(dumpFile, "Se muestra la memoria desde la posicion %x a la %x \n",
+			(unsigned int) baseUMV + offset,
+			(unsigned int) baseUMV + offset + tamano);
+
 	for (i = 0; i < tamano;) {
 		memcpy(a, baseUMV + offset + i, 4);
 		printf("%x ", (unsigned int) *a);
+		fprintf(dumpFile, "%x ", (unsigned int) *a);
 		i += 4;
-		if (i % 96 == 0)
+		if (i % 96 == 0){
 			printf(" \n");
+			fprintf(dumpFile, " \n");
+		}
 	}
-	//TODO: guardar en archivo
+
 }
 
 void aplicarRetardo(int ret) {
