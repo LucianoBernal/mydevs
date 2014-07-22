@@ -21,10 +21,15 @@
 #include "PCPinterface.h"
 #include <biblioteca_comun/Serializacion.h>
 #include "syscall.h"
-#include "PCP.h"
+#include "PCPinterface.h"
+#include "Kernel.h"
 #include "multiplexorCPUs_interfaz.h"
 #include <biblioteca_comun/bibliotecaSockets.h>
 
+extern char* puerto_CPU;
+extern t_log *logKernel;
+extern int quantum;
+extern int retardo;
 #define TRUE   1
 #define FALSE  0
 
@@ -55,99 +60,99 @@ void* atencionCPUs(void* sinParametro) {
 
 	char buffer[1025];  //data buffer of 1K
 
-	//set of socket descriptors
+	//inicializo set
 	fd_set readfds;
 
-	//a message
+
 	char *message = "Kernel";
 	char handshake[4] = "CPU";
 
 
-	//initialise all client_socket[] to 0 so not checked
+	//inicializo todos los clientes en 0
 	for (i = 0; i < max_clients; i++) {
 		client_socket[i] = 0;
 	}
 
 	master_socket=crearServidor(puerto_CPU,logKernel);
 
-	printf("Esperando conexiones en el puerto %s:",puerto_CPU);
+	log_info(logKernel,"Esperando conexiones de CPUs en el puerto: %s",puerto_CPU);
 	while (TRUE) {
-		//clear the socket set
+		//limpio el Set
 		FD_ZERO(&readfds);
 
-		//add master socket to set
+		//agrego master socket al set
 		FD_SET(master_socket, &readfds);
 		max_sd = master_socket;
 
-		//add child sockets to set
+		//agrego resto de sockets al set para que sean detectados por el select
 		for (i = 0; i < max_clients; i++) {
-			//socket descriptor
 			sd = client_socket[i];
 
-			//if valid socket descriptor then add to read list
+			//si el sd es valido lo agrego al set
 			if (sd > 0)
 				FD_SET(sd, &readfds);
 
-			//highest file descriptor number, need it for the select function
+			//guardo el mayor numero de sd, para poner como parametro en el select
 			if (sd > max_sd)
 				max_sd = sd;
 		}
 
-		//wait for an activity on one of the sockets , timeout is NULL , so wait indefinitely
+		//espero por actividad en alguno de los sockets, timeout es NULL , espera indefinidamente
 		activity = select(max_sd + 1, &readfds, NULL, NULL, NULL );
 
 		if ((activity < 0) && (errno != EINTR)) {
-			printf("select error");
+			log_error(logKernel,"Error en el select");
 		}
 
-		//If something happened on the master socket , then its an incoming connection
+		//Si hubo actividad en el master socket, es una nueva conexion
 		if (FD_ISSET(master_socket, &readfds)) {
 			if ((new_socket = accept(master_socket,
 					(struct sockaddr *) &address, (socklen_t*) &addrlen)) < 0) {
-				perror("accept");
-				exit(EXIT_FAILURE);
+				log_error(logKernel,"Error al aceptar nueva conexion");
+								exit(EXIT_FAILURE);
 			}
 
-			//inform user of socket number - used in send and receive commands
-			printf(
-					"New connectionHOLA , socket fd is %d , ip is : %s , port : %d \n",
-					new_socket, inet_ntoa(address.sin_addr),
-					ntohs(address.sin_port));
+			//informo nueva conexion
+			log_info(logKernel,
+								"Nueva Conexion de CPU , socket fd: %d , ip : %s , port: %d",
+								new_socket, inet_ntoa(address.sin_addr),
+								ntohs(address.sin_port));
+			//handshake
 			char*cpu=malloc(4);
 			if ((valread = recv(new_socket, cpu/*buffer*/, 4, 0)) < 0) {
-				perror("recive");
-				puts("nonononnonono");
+				log_error(logKernel,"Error en el recive del handshake");
 				close(new_socket);
 			}
-			puts("asd");
-			printf("\n");
 			if (strncmp(cpu/*buffer*/, handshake, 4) != 0) {
-				printf(
-						"Host disconnected No es una CPU Valida ,socket fd is %d , ip is : %s , port : %d \n",
-						new_socket, inet_ntoa(address.sin_addr),
-						ntohs(address.sin_port));
-				close(new_socket);
-			} else {
-				puts("el handsahke salio bien");
-				//send new connection greeting message
+				log_error(logKernel,"Handshake invalido");
+								log_info(logKernel,
+										"El Kernel desconecto a la CPU,no es una CPU Valida ,socket fd: %d , ip : %s , port: %d ",
+										new_socket, inet_ntoa(address.sin_addr),
+										ntohs(address.sin_port));
+										close(new_socket);
+										free(cpu);
+			}
+			else {
+				free(cpu);
+				//envio retardo y quantum a la CPU
 				t_paquete *paqueteACPU = serializar2(crear_nodoVar(message,7),crear_nodoVar(&quantum,4),crear_nodoVar(&retardo,4),0);
 				int* tamanioPaquete = malloc(4);
 				*tamanioPaquete=paqueteACPU->tamano;
 				if (send(new_socket, tamanioPaquete, 4, 0)){
-					perror("No se envió el tamaño del paquete correctamente");
+					log_error(logKernel,"No se envió el tamaño del paquete correctamente");
 				}
 				if (send(new_socket, paqueteACPU->msj, *tamanioPaquete, 0)==-1) {
-					perror("No se envió el paquete correctamente");
+					log_error(logKernel,"No se envió el paquete correctamente");
 				}
 
-				puts("Welcome message sent successfully");
+				log_info(logKernel,"Paquete con retardo y quantum enviado correctamente al sd: %d",new_socket);
 
-				//add new socket to array of sockets
+				//agrego nuevo socket al vector de sockets
 				for (i = 0; i < max_clients; i++) {
-					//if position is empty
+
 					if (client_socket[i] == 0) {
 						client_socket[i] = new_socket;
-						printf("Adding to list of sockets as %d\n", i);
+
 
 						break;
 					}
@@ -158,22 +163,21 @@ void* atencionCPUs(void* sinParametro) {
 			}
 		}
 
-		//else its some IO operation on some other socket :)
+		//Hubo activdad en el resto de los sockets
 		for (i = 0; i < max_clients; i++) {
 			sd = client_socket[i];
 
 			if (FD_ISSET( sd , &readfds)) {
-				//Check if it was for closing , and also read the incoming message
+				//Verifica si se cerro, y ademas lee el mensaje recibido
 				if ((valread = read(sd, buffer, 1024)) == 0) { //FIXME
-					//Somebody disconnected , get his details and print
+					//Alguna CPU se desconecto, obtengo la informacion
 					getpeername(sd, (struct sockaddr*) &address,
 							(socklen_t*) &addrlen);
-					printf(
-							"Host disconnected: socket fd is %d , ip %s , port %d \n",
-							sd, inet_ntoa(address.sin_addr),
-							ntohs(address.sin_port));
+					log_info(logKernel,"Una CPU se cerro abruptamente: socket fd: %d , ip: %s , puerto: %d \n",sd,
+												inet_ntoa(address.sin_addr),
+												ntohs(address.sin_port));
 
-					//Close the socket and mark as 0 in list for reuse
+					//Cierra el socket y marca 0 el bit de ocupado
 					close(sd);
 					client_socket[i] = 0;
 					sem_wait(&semCPUDesconectadaMutex);
@@ -184,8 +188,7 @@ void* atencionCPUs(void* sinParametro) {
 					//TODO Aca va lo que haces despues que una CPU se te desconecto,
 					//como ser sacarla de tu lista de CPUs
 				}
-
-				//Echo back the message that came in
+				//Algun socket me envio algo, responder
 				else {
 					char *header = malloc(16);
 //					int resultado;

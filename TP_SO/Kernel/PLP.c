@@ -193,7 +193,7 @@ void escribir_en_Memoria(t_metadata_program * metadata, t_PCB *pcb,
 
 void agregar_En_Diccionario(int pid, int sd) {
 	sem_wait(&PidSD_Mutex);
-	log_debug(logKernel,"Agregando pid en diccionario, con pid%d y sd%d",pid,sd);
+	log_debug(logKernel,"Agregando pid en diccionario, con pid: %d y sd :%d",pid,sd);
 	dictionary_put(pidYSockets, (char*) &pid, &sd);
 	sem_post(&PidSD_Mutex);
 
@@ -251,7 +251,7 @@ void* deNewAReady(void* sinParametro) { // OTRO HILO
 
 void encolar_en_Ready(t_PCB* pcb) {
 	sem_wait(&colaReadyMutex);
-	log_info(logKernel,"Encolando Programa en Cola Ready, pid:%d",pcb->program_id);
+	log_info(logKernel,"Encolando Programa en Cola Ready, pid: %d",pcb->program_id);
 	queue_push(colaReady, pcb);
 	sem_post(&colaReadyMutex);
 	mostrar_todas_Las_Listas();
@@ -307,7 +307,7 @@ void* manejoColaExit(void* sinParametros) {
 		sem_wait(&colaExitMutex);
 		t_PCB* pcb = queue_pop(colaExit);
 		sem_post(&colaExitMutex);
-		log_info(logKernel,"Sacando programa de cola exit,con pid:%d",pcb->program_id);
+		log_info(logKernel,"Sacando programa de cola exit,con pid: %d",pcb->program_id);
 		mostrar_todas_Las_Listas();
 		sem_wait(&mutexProcesoActivo);
 		cambiar_Proceso_Activo(pcb->program_id);

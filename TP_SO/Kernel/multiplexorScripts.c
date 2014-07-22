@@ -21,8 +21,11 @@
 #include "PLPinterface.h"
 #include <biblioteca_comun/bibliotecaSockets.h>
 #include "multiplexorScripts_interfaz.h"
+#include <commons/log.h>
 
 
+extern char* puerto_programa;
+extern t_log *logKernel;
 #define TRUE   1
 #define FALSE  0
 
@@ -30,105 +33,113 @@
 void* atencionScripts(void* sinParametro) {
 //int main() {
 	int master_socket, addrlen, new_socket, client_socket[30], max_clients = 30,
-			activity, i, valread, sd;
+			activity, i, valread, sd, primer_Prog=1;
 	int max_sd;
 	struct sockaddr_in address;
 	int* tamano = malloc(4);
 	char literal[1025];
 
-	char buffer[1025];  //data buffer of 1K
+	char buffer[1025];  //data buffer de 1K
 
-	//set of socket descriptors
+	//inicializo set
 	fd_set readfds;
 
-	//a message
+
 	char *message = "El programa se ha conectado al Kernel exitosamente \r\n";
 	char handshake[21] = "Soy un nuevo Programa";
 
-	//initialise all client_socket[] to 0 so not checked
+	//inicializo todos los clientes en 0
 	for (i = 0; i < max_clients; i++) {
 		client_socket[i] = 0;
 	}
 
 	master_socket=crearServidor(puerto_programa,logKernel);
 
-	printf("Esperando conexiones en el puerto %s:",puerto_programa);
+	log_info(logKernel,"Esperando conexiones de programas en el puerto: %s",puerto_programa);
 
 	while (TRUE) {
-		//clear the socket set
+		//limpio el Set
 		FD_ZERO(&readfds);
 
-		//add master socket to set
+		//agrego master socket al set
 		FD_SET(master_socket, &readfds);
 		max_sd = master_socket;
 
-		//add child sockets to set
+		//agrego resto de sockets al set para que sean detectados por el select
 		for (i = 0; i < max_clients; i++) {
 			//socket descriptor
 			sd = client_socket[i];
 
-			//if valid socket descriptor then add to read list
+			//si el sd es valido lo agrego al set
 			if (sd > 0)
 				FD_SET(sd, &readfds);
 
-			//highest file descriptor number, need it for the select function
+			//guardo el mayor numero de sd, para poner como parametro en el select
 			if (sd > max_sd)
 				max_sd = sd;
 		}
 
-		//wait for an activity on one of the sockets , timeout is NULL , so wait indefinitely
+		//espero por actividad en alguno de los sockets, timeout es NULL , espera indefinidamente
 		activity = select(max_sd + 1, &readfds, NULL, NULL, NULL );
 
 		if ((activity < 0) && (errno != EINTR)) {
-			printf("select error");
+			log_error(logKernel,"Error en el select");
 		}
 
-		//If something happened on the master socket , then its an incoming connection
+		//Si hubo actividad en el master socket, es una nueva conexion
 		if (FD_ISSET(master_socket, &readfds)) {
 			if ((new_socket = accept(master_socket,
 					(struct sockaddr *) &address, (socklen_t*) &addrlen)) < 0) {
-				perror("accept");
+				log_error(logKernel,"Error al aceptar nueva conexion");
 				exit(EXIT_FAILURE);
 			}
 
-			//inform user of socket number - used in send and receive commands
-			printf(
-					"New connection , socket fd is %d , ip is : %s , port : %d \n",
+			//informo nueva conexion
+			if(primer_Prog){
+				primer_Prog=0;
+				log_info(logKernel,
+									"Nueva Conexion de Programa , socket fd: %d",new_socket);
+			}
+			else{log_info(logKernel,
+					"Nueva Conexion de Programa , socket fd: %d , ip : %s , port: %d",
 					new_socket, inet_ntoa(address.sin_addr),
 					ntohs(address.sin_port));
+			}
 
+			//Handshake
 			if ((valread =recv(new_socket, buffer, 21, 0)) < 0) {
-				perror("recive");
+				log_error(logKernel,"Error en el recive del handshake");
 				close(new_socket);
 			}
 			if (strncmp(buffer, handshake,21)!=0) {
-				printf(
-						"Host disconnected No es un Programa Valido ,socket fd is %d , ip is : %s , port : %d \n",
+				log_error(logKernel,"Handshake invalido");
+				log_info(logKernel,
+						"El Kernel desconecto al Programa,no es un Programa Valido ,socket fd: %d , ip : %s , port: %d ",
 						new_socket, inet_ntoa(address.sin_addr),
 						ntohs(address.sin_port));
 						close(new_socket);
 			}
 			else{
-			//send new connection greeting message
+			//envio mensaje de bienvenida
 			if (send(new_socket, message, strlen(message), 0)
 					!= strlen(message)) {
-				perror("send");
+				log_error(logKernel,"Error al enviar mensaje de bienvenida");
 			}
 
-			puts("Welcome message sent successfully");
+			log_info(logKernel,"Mensaje de bienvenida enviado correctamente al sd: %d",new_socket);
 
-			//add new socket to array of sockets
+			//agrego nuevo socket al vector de sockets
 			for (i = 0; i < max_clients; i++) {
-				//if position is empty
+
 				if (client_socket[i] == 0) {
 					client_socket[i] = new_socket;
-					printf("Adding to list of sockets as %d\n", i);
 					break;
 				}
 			}
 			recv(new_socket, tamano, 4, MSG_WAITALL);
 			recv(new_socket, literal, *tamano, MSG_WAITALL);
 			literal[*tamano] =0;
+			log_info(logKernel,"Se recibio Literal proveniente del sd: %d",new_socket);
 			puts(literal);
 			gestionarProgramaNuevo(literal,new_socket,*tamano);
 			fflush(stdin);
@@ -136,26 +147,28 @@ void* atencionScripts(void* sinParametro) {
 		}
 }
 
-		//else its some IO operation on some other socket :)
+		//Hubo activdad en el resto de los sockets
 		for (i = 0; i < max_clients; i++) {
 			sd = client_socket[i];
 
 			if (FD_ISSET( sd , &readfds)) {
-				//Check if it was for closing , and also read the incoming message
+				//Verifica si se cerro, y ademas lee el mensaje recibido
 				if ((valread = read(sd, buffer, 1024)) == 0) {
-					//Somebody disconnected , get his details and print
+					//Algun programa se desconecto, obtengo la informacion
 					getpeername(sd, (struct sockaddr*) &address,
 							(socklen_t*) &addrlen);
-					printf("Host disconnected: socket fd is %d , ip %s , port %d \n",sd,
+					log_info(logKernel,"Un programa se cerro: socket fd: %d , ip: %s , puerto: %d \n",sd,
 							inet_ntoa(address.sin_addr),
 							ntohs(address.sin_port));
+					//Busco y borro PCB y Solicito destruccion de segmentos en la UMV
+					//TODO
 
-					//Close the socket and mark as 0 in list for reuse
+					//Cierra el socket y marca 0 el bit de ocupado
 					close(sd);
 					client_socket[i] = 0;
 				}
 
-				//Echo back the message that came in
+				//Algun socket me envio algo, responder
 				/*else {
 				}*/
 			}
