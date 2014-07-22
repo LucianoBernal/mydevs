@@ -5,10 +5,6 @@ void* pcp_main(void* sinParametro) {
 	sinParametros = NULL;
 	colaExec = list_create();
 	colaIntermedia = queue_create();
-	valor_semaforos = list_create();
-	semaforos = list_create();
-	retardos = list_create();
-	idDispositivos = list_create();
 	diccionarioDispositivos = dictionary_create();
 	sem_init(&diccionarioDispositivosMutex, 0, 1);
 	CPUs = list_create();
@@ -46,10 +42,10 @@ void* pcp_main(void* sinParametro) {
 		int retIO = pthread_create(&dispositivo, NULL, bloquearYDevolverAReady,
 				(void*) estructuraDispositivo);
 		if (retIO) {
-			log_error(logKernel,"Error al crear hilo bloquear y devolver a Ready de dispositivo");
+			log_error(logKernel,"Error al crear hilo bloquear y devolver a Ready de dispositivo,Error %d",retIO);
 			exit(EXIT_FAILURE);
 		}
-		log_info(logKernel,"Hilo bloquear y devolver a Ready de dispositivo exitoso");
+		log_info(logKernel,"Hilo bloquear y devolver a Ready de dispositivo %s exitoso",idDispositivo);
 		i++;
 	}
 	crearHilosPrincipales();
@@ -60,21 +56,21 @@ void crearHilosPrincipales() {
 	retMultiplexorCPUs = pthread_create(&multiplexorCPUs, NULL, atencionCPUs,
 			(void*) sinParametros);
 	if (retMultiplexorCPUs) {
-		log_error(logKernel,"Error al crear hilo atencionCPUs");
+		log_error(logKernel,"Error al crear hilo atencionCPUs,con error:",retMultiplexorCPUs);
 					exit(EXIT_FAILURE);
 	}
 	log_info(logKernel,"Exito al crear hilo atencionCPUs");
 	retMandarAEjecutar = pthread_create(&ejecutar, NULL, mandarAEjecutar,
 			(void*) sinParametros);
 	if (retMandarAEjecutar) {
-		log_error(logKernel,"Error al crear hilo mandar a Ejecutar");
+		log_error(logKernel,"Error al crear hilo mandar a Ejecutar, con error:",retMandarAEjecutar);
 					exit(EXIT_FAILURE);
 	}
 	log_info(logKernel,"Exito al crear hilo mandar a Ejecutar");
 	retEnviarCPU = pthread_create(&envCPU, NULL, enviarCPU,
 			(void*) sinParametros);
 	if (retEnviarCPU) {
-		log_error(logKernel,"Error al crear hilo enviar CPU");
+		log_error(logKernel,"Error al crear hilo enviar CPU,con error:%d",retEnviarCPU);
 					exit(EXIT_FAILURE);
 	}
 	log_info(logKernel,"Exito al crear hilo enviar CPU");
@@ -84,16 +80,17 @@ void crearHilosPrincipales() {
 
 }
 
-void* mandarAEjecutar(void* j) {  //FIXME REFACTOR NEED IT
+void* mandarAEjecutar(void* j) {
 	while (1) {
 		sem_wait(&vacioReady);
-		sem_wait(&colaReadyMutex);
+				sem_wait(&CPUsLibres);
+				sem_wait(&colaReadyMutex);
 		t_PCB* procesoAEjecutar = queue_pop(colaReady);
-		log_info(logKernel,"Se saco programa de la cola Ready");
+		log_info(logKernel,"Se saco programa de la cola Ready, con PID:%d",procesoAEjecutar->program_id);
 		sem_post(&colaReadyMutex);
 		sem_wait(&colaIntermediaMutex);
 		queue_push(colaIntermedia, procesoAEjecutar);
-		log_debug(logKernel,"Poniendo Programa en cola Intermedia");
+		log_debug(logKernel,"Poniendo Programa en cola Intermedia, con PID:%d",procesoAEjecutar->program_id);
 		sem_post(&colaIntermediaMutex);
 		sem_post(&colaIntermediaVacia);
 	}
@@ -102,18 +99,17 @@ void* mandarAEjecutar(void* j) {  //FIXME REFACTOR NEED IT
 void* enviarCPU(void* sinParametro) {
 	while (1) {
 		sem_wait(&colaIntermediaVacia);
-		sem_wait(&CPUsLibres);
 		sem_wait(&CPUsMutex);
 		//	int IDCpuLibre = encontrarPrimeraCpuLibre(CPUs); FIXME PARA PRUEBA
 		int IDCpuLibre =1;
 		sem_post(&CPUsMutex);
 		sem_wait(&colaIntermediaMutex);
 		t_PCB* pcbAEjecutar = queue_pop(colaIntermedia);
-		log_debug(logKernel,"Se saco programa de cola intermedia");
+		log_debug(logKernel,"Se saco programa de cola intermedia, con PID:%d",pcbAEjecutar->program_id);
 		sem_post(&colaIntermediaMutex);
 		sem_wait(&colaExecMutex);
 		list_add(colaExec, pcbAEjecutar);
-		log_info(logKernel,"Agregando programa en cola de ejecucion");
+		log_info(logKernel,"Agregando programa en cola de ejecucion,con PID:%d",pcbAEjecutar->program_id);
 		sem_post(&colaExecMutex);
 		mostrar_todas_Las_Listas();
 		t_paquete* paquete = serializarPCB(pcbAEjecutar);
@@ -126,14 +122,14 @@ void* enviarCPU(void* sinParametro) {
 //		list_replace_and_destroy_element(CPUs, i, estructura,   FIXME PARA
 //				(void*) cpu_destroy);							FIXME PRUEBA
 		sem_post(&CPUsMutex);
-		log_info(logKernel,"Enviando Programa a CPU disponible");
+		log_info(logKernel,"Enviando Programa a CPU disponible, con PID:%d y CPU:%d",pcbAEjecutar->program_id,IDCpuLibre);
 		//send(IDCpuLibre, &paquete, sizeof(paquete), 0);  //FIXME
 	}
 }
 
 void* bloquearYDevolverAReady(void * param) {
-	t_estructuraDispositivoIO* estructura = malloc(
-			sizeof(t_estructuraDispositivoIO));
+	t_estructuraDispositivoIO* estructura /*= malloc(
+			sizeof(t_estructuraDispositivoIO))*/;
 	estructura = (t_estructuraDispositivoIO *) param;
 	while (1){
 	sem_wait(&(estructura->colaVacia));
@@ -186,7 +182,7 @@ void moverAColaExit(t_PCB* pcb, int idCPU) {
 	sem_wait(&colaExitMutex);
 	queue_push(colaExit, pcb);
 	sem_post(&colaExitMutex);
-	log_info(logKernel,"Se movio programa a cola exit");
+	log_info(logKernel,"Se movio programa a cola exit, PID:%d",pcb->program_id);
 	mostrar_todas_Las_Listas();
 	sem_post(&colaExitVacio);
 	seLiberoUnaCPU(idCPU);
@@ -261,6 +257,7 @@ void seDesconectoCPU(int idCPU) { //TODO
 		sem_post(&CPUsMutex);
 	}
 }
+
 
 
 void seDesconectoCPUSigusr(int idCPU, t_PCB* pcb) {
@@ -371,4 +368,3 @@ int buscarIDPrograma(int idCPU) {
 	sem_post(&CPUsMutex);
 	return CPU->idProceso;
 }
-

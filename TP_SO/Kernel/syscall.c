@@ -1,9 +1,4 @@
-#include "Kernel.h"
-#include <string.h>
-#include "PCP.h"
 #include "syscall.h"
-#include <biblioteca_comun/Serializacion.h>
-
 
 int sc_obtener_valor(char* id, int idCpu) {
 	sem_wait(&mutexVG);
@@ -37,7 +32,7 @@ void sc_signal(char* idSem, int idCPU) {
 }
 
 void sc_wait(char* idSem, t_PCB* pcb, int idCPU) {
-	int * estado_semaforo;//=malloc(sizeof(int));
+	int * estado_semaforo=malloc(sizeof(int));
 	sem_wait(&diccionarioSemaforosMutex);
 	t_estructuraSemaforo* semaforo = dictionary_get(diccionarioSemaforos,
 			idSem);
@@ -74,26 +69,6 @@ int sc_imprimirTexto(char* texto, int idCpu) {
 	return strlen(texto);
 }
 
-void armarDiccionarioDeSemaforos() {
-	int i = 0;
-	diccionarioSemaforos = dictionary_create();
-	sem_init(&diccionarioSemaforosMutex, 0, 1);
-	while (i < cantidadDeSemaforos) {
-		t_estructuraSemaforo* semaforo = malloc(sizeof(t_estructuraSemaforo));
-		int* valor = list_get(valor_semaforos, i);
-		char* nombre = list_get(semaforos, i);
-		sem_t mutex;
-		t_queue* cola = queue_create();
-		sem_init(&mutex, 0, 1);
-		semaforo->mutexCola = mutex;
-		semaforo->procesosBloqueados = cola;
-		semaforo->valor = *valor;
-		sem_wait(&diccionarioSemaforosMutex);
-		dictionary_put(diccionarioSemaforos, nombre, semaforo);
-		sem_post(&diccionarioSemaforosMutex);
-		i++;
-	}
-}
 
 int programIdDeCpu(int idCPU) {
 	sem_wait(&CPUsMutex);

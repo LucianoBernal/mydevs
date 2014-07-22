@@ -31,8 +31,10 @@
 #include <biblioteca_comun/Serializacion.h>
 #include <biblioteca_comun/bibliotecaSockets.h>
 #include <time.h>
+#include "PCP.h"
 
-
+t_dictionary* diccionarioSemaforos;
+sem_t diccionarioSemaforosMutex;
 sem_t mostarColasMutex;
 int socketUMV;
 sem_t  grado_Multiprogramacion;
@@ -67,11 +69,9 @@ t_log *logKernel;
 
 void cargarConfig(t_config *);
 int32_t validarConfig(t_config*);
-/*void obtener_valor(char id, int idCpu);
-void grabar_valor(char id, int valor);
-void wait(char* idSem, int idCpu);
-void signal(char* idSem);
-int buscarValorSemaforo(char* semaforo);
-int buscarPosicion(char* semaforo);*/
+void cambiarTiposDeIO();
+void cambiarTiposDeSemaforos();
+void cambiarTiposDeVariablesGlobales();
+void armarDiccionarioDeSemaforos();
 
 #endif /* KERNEL_H_ */

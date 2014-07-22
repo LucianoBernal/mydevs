@@ -122,3 +122,6 @@
 [INFO] 18:33:19:579 Kernel/(7627:7637): Hilo Cola New lanzado exitosamente
 [INFO] 18:33:19:609 Kernel/(7627:7637): Hilo Cola Exit lanzado exitosamente
 [ERROR] 18:38:13:581 Kernel/(7627:7644): El mensaje no se pudo enviar correctamente
+[INFO] 01:54:00:965 Kernel/(3344:3344): Comienza la ejecución del Kernel.
+[INFO] 01:54:54:331 Kernel/(3436:3436): Comienza la ejecución del Kernel.
+[INFO] 01:55:16:363 Kernel/(3524:3524): Comienza la ejecución del Kernel.

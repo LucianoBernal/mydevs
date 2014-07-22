@@ -41,9 +41,9 @@ typedef struct {
 extern t_queue* colaReady;
 extern sem_t  colaReadyMutex;
 extern sem_t  vacioReady;
-t_dictionary* diccionarioSemaforos;
+extern t_dictionary* diccionarioSemaforos;
 sem_t diccionarioDispositivosMutex;
-sem_t diccionarioSemaforosMutex;
+extern sem_t diccionarioSemaforosMutex;
 sem_t CPUsLibres;
 sem_t sBloqueado;
 sem_t colaExecVacia;

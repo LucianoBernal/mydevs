@@ -61,4 +61,5 @@ void cambiar_Proceso_Activo(int);
 int posicionEnLaListaExec(t_list*, int);
 
 
+
 #endif /* PCPINTERFACE_H_ */

@@ -1,5 +1,5 @@
 /*
-* Kernel.c
+ * Kernel.c
  *
  *  Created on: 27/05/2014
  *      Author: utnso
@@ -23,17 +23,14 @@ int main(int argc, char** argv) {
 		return EXIT_FAILURE;
 	}
 
-	logKernel = log_create("logKERNEL", "Kernel", true, LOG_LEVEL_INFO);
+	logKernel = log_create("logKERNEL", "Kernel", true, LOG_LEVEL_TRACE);
 	log_info(logKernel, "Comienza la ejecución del Kernel.");
-
-
 
 	//Cargo parámetros del config en variables de Kernel.
 	cargarConfig(config);
 	variables_globales = dictionary_create();
 	colaReady = queue_create();
 	colaExit = queue_create();
-
 
 	sem_init(&mostarColasMutex, 0, 1);
 	sem_init(&colaExitMutex, 0, 1);
@@ -43,17 +40,17 @@ int main(int argc, char** argv) {
 	sem_init(&colaReadyMutex, 0, 1);
 	sem_init(&vacioReady, 0, 0);
 	socketUMV = conectarCliente(ip_UMV, puerto_UMV, logKernel);
-	if(send(socketUMV,"Kernel",7,0)==-1){
-		log_error(logKernel,"Fallo el Send del handshake");
+	if (send(socketUMV, "Kernel", 7, 0) == -1) {
+		log_error(logKernel, "Fallo el Send del handshake");
 		return EXIT_FAILURE;
 	}
-	char* buffer=malloc(4);
-	if(recv(socketUMV,buffer,30,0)==-1){
-		log_error(logKernel,"Fallo el Recive del handshake");
+	char* buffer = malloc(4);
+	if (recv(socketUMV, buffer, 30, 0) == -1) {
+		log_error(logKernel, "Fallo el Recive del handshake");
 		return EXIT_FAILURE;
 	};
-	if (strncmp(buffer, "UMV", 3)){
-		log_error(logKernel,"Fallo el Handshake con la UMV");
+	if (strncmp(buffer, "UMV", 3)) {
+		log_error(logKernel, "Fallo el Handshake con la UMV");
 		return EXIT_FAILURE;
 	}
 	free(buffer);
@@ -63,19 +60,19 @@ int main(int argc, char** argv) {
 	int* parametrosPCP = NULL;
 	iretPCP = pthread_create(&pcp, NULL, pcp_main, (void*) parametrosPCP);
 	if (iretPCP) {
-		log_error(logKernel,"Fallo la creacion del hilo PCP");
+		log_error(logKernel, "Fallo la creacion del hilo PCP,Error numero:%d",
+				iretPCP);
 		exit(EXIT_FAILURE);
 	}
-	log_info(logKernel,"Hilo PCP exitoso");
+	log_info(logKernel, "Hilo PCP exitoso");
 	int* parametrosPLP = NULL;
 	iretPLP = pthread_create(&plp, NULL, plp_main, (void*) parametrosPLP);
 	if (iretPLP) {
-		log_error(logKernel,"Fallo la creacion del hilo PLP");
+		log_error(logKernel, "Fallo la creacion del hilo PLP,Error numero:%d",
+				iretPLP);
 		exit(EXIT_FAILURE);
 	}
-	log_info(logKernel,"Hilo PLP exitoso");
-
-
+	log_info(logKernel, "Hilo PLP exitoso");
 
 	pthread_join(pcp, NULL );
 	pthread_join(plp, NULL );
@@ -162,56 +159,72 @@ void cargarConfig(t_config *config) {
 	hio_aux = config_get_array_value(config, "HIO");
 	idhio_aux = config_get_array_value(config, "ID_HIO");
 	variables_globales_aux = config_get_array_value(config, "COMPARTIDAS");
-	/*int i=0;
-	 while (idhio_aux[i] != NULL ) {
-	 t_io* io;
-	 io = malloc(sizeof(t_io));
-
-	 io->nombre = dispositivos[i];
-	 int a = atoi(dispRetardo[i]);
-	 io->retardo = a;
-	 io->cola = queue_create();
-	 sem_init(&io->hayAlgo, 0, 0);
-	 sem_init(&io->mutex, 0, 1);
-	 dictionary_put(dispositivosIO, io->nombre, io);
-
-	 pthread_t threadIO;
-	 int hiloIO = pthread_create(&threadIO, NULL, manejoIO, (void*) io); //HILO PLP
-	 i++;
-	 if (hiloIO) {
-	 log_error(logs, "Error en la creacion del hilo PLP");
-	 log_destroy(logs);
-
-	 exit(EXIT_FAILURE);
-	 }*/
-
-//	void cambiarTiposDeIO(){
-//		int i=0;
-//		cantidadDeDispositivos =0;
-//			while (idhio_aux[i] != NULL ) {
-//					list_add(idDispositivos, idhio_aux[i]);
-//					list_add(retardos, &(atoi(hio_aux[i])));
-//					i++;
-//					cantidadDeDispositivos ++;
-//					}
-//	}
-//	void cambiarTiposDeSemaforos(){
-//	int i=0;
-//	cantidadDeSemaforos = 0;
-//		while (semaforos_aux[i] != NULL ) {
-//				list_add(semaforos,semaforos_aux[i]);
-//				lit_add(valor_semaforos, &(atoi(semaforos_aux[i])));
-//				i++;
-//				cantidadDeSemaforos ++;
-//				}
-//}
-//	void cambiarTiposDeVariablesGlobales(){
-//	int i=0;
-//	variables_globales = dictionary_create();
-//		while (variables_globales_aux[i] != NULL ) {
-//				int a = 0;
-//				dictionary_put(variables_globales,variables_globales_aux[i], &a);
-//				i++;
-//				}
-//}
+	cambiarTiposDeIO();
+	cambiarTiposDeSemaforos();
+	cambiarTiposDeVariablesGlobales();
+	armarDiccionarioDeSemaforos();
 }
+void cambiarTiposDeIO() {
+	int i = 0;
+	cantidadDeDispositivos = 0;
+	retardos = list_create();
+	idDispositivos = list_create();
+	while (idhio_aux[i] != NULL ) {
+		int* retardoDis = malloc(sizeof(4));
+		*retardoDis = atoi(hio_aux[i]);
+		list_add(idDispositivos, idhio_aux[i]);
+		list_add(retardos, retardoDis);
+		i++;
+		cantidadDeDispositivos++;
+	}
+}
+void cambiarTiposDeSemaforos() {
+	int i = 0;
+	cantidadDeSemaforos = 0;
+	valor_semaforos = list_create();
+	semaforos = list_create();
+	while (semaforos_aux[i] != NULL ) {
+		int* valor = malloc(sizeof(int));
+		*valor = atoi(valor_semaforos_aux[i]);
+		list_add(semaforos, semaforos_aux[i]);
+		list_add(valor_semaforos, valor);
+		i++;
+		cantidadDeSemaforos++;
+	}
+}
+void cambiarTiposDeVariablesGlobales() {
+	int i = 0;
+	variables_globales = dictionary_create();
+	log_info(logKernel,"Se creo Diccionario Variables Compartidas");
+	while (variables_globales_aux[i] != NULL ) {
+		int *a = malloc(sizeof(int));
+		*a = 0;
+		dictionary_put(variables_globales, variables_globales_aux[i], a);
+		(log_info(logKernel,"Se agrego variable: %s con valor:%d al diccionario de variables compartidas",variables_globales_aux[i],*a));
+		i++;
+	}
+}
+
+void armarDiccionarioDeSemaforos() {
+	int i = 0;
+	diccionarioSemaforos = dictionary_create();
+	log_info(logKernel,"Armando Diccionario de Semaforos");
+	sem_init(&diccionarioSemaforosMutex, 0, 1);
+	while (i < cantidadDeSemaforos) {
+		t_estructuraSemaforo* semaforo = malloc(sizeof(t_estructuraSemaforo));
+		int* valor = list_get(valor_semaforos, i);
+		char* nombre = list_get(semaforos, i);
+		sem_t mutex;
+		t_queue* cola = queue_create();
+		sem_init(&mutex, 0, 1);
+		semaforo->mutexCola = mutex;
+		semaforo->procesosBloqueados = cola;
+		semaforo->valor = *valor;
+		sem_wait(&diccionarioSemaforosMutex);
+		dictionary_put(diccionarioSemaforos, nombre, semaforo);
+		log_info(logKernel,"Se agrego semaforo: %s con valor: %d al diccionario de semaforos",nombre,*valor);
+		sem_post(&diccionarioSemaforosMutex);
+		i++;
+	}
+}
+
