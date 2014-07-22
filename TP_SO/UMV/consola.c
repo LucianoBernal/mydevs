@@ -15,13 +15,22 @@ void* consola(void* baseUMV) {
 	const int COMANDO_SIZE = 30;
 	char* comando = malloc(COMANDO_SIZE);
 	crearProcesoArtificial();
+
+	dumpFile = fopen("archivoDeDump.txt","w+");
+	if (dumpFile==NULL) {
+		fputs ("File error",stderr);
+		exit (1);
+	}
+
 	do {
 		printf("\nIngrese comando: \n");
+		fflush(stdin);
 		scanf("%s", comando);
 		analizarYEjecutar(comando);
 
 	} while (strncmp("exit", comando, 4));
 	log_info(logger, "Se cerró la consola");
+	fclose(dumpFile);
 	free(comando);
 	return NULL ;
 }
@@ -36,6 +45,7 @@ void analizarYEjecutar(char *comando) {
 		int flag;
 		do {
 			flag = 0;
+			fflush(stdin);
 			scanf("%s", &operacion.accion);
 
 			switch (operacion.accion) {
@@ -58,6 +68,7 @@ void analizarYEjecutar(char *comando) {
 
 				char* msj = malloc(operacion.tamano);
 				printf("\n Ingrese bloque de mensaje: \n");
+				fflush(stdin);
 				scanf("%s", msj);
 				pthread_mutex_lock(&mutexOperacion);
 				//cambiarProcesoActivo(10000);
@@ -79,7 +90,7 @@ void analizarYEjecutar(char *comando) {
 				scanf("%d", &operacion.tamano);
 				int i;
 				pthread_mutex_lock(&mutexOperacion);
-				//cambiarProcesoActivo(10000);
+				//cambiarProcesoActivo(10000); //TODO me parece que va eh...
 				char *respuesta = solicitarBytes(operacion.base,
 						operacion.offset, operacion.tamano);
 				pthread_mutex_unlock(&mutexOperacion);
@@ -128,34 +139,40 @@ void analizarYEjecutar(char *comando) {
 
 	else if (!strncmp("algoritmo", comando, 9)) {
 		char alg;
+		printf("El algoritmo actual es %d.\n",algoritmo);
 		printf(
-				"Si quiere cambiar a Worst-Fit, ingrese w\n Si quiere cambiar a First-Fit, ingrese f:\n");
-		fflush(stdin); //FIXME
+				"Si quiere cambiar a Worst-Fit, ingrese 'w'\nSi quiere cambiar a First-Fit, ingrese 'f':\n");
+		fflush(stdin);
 		scanf("%s", &alg);
+
 		if (algoritmo) {
 			switch (alg) {
 			case 'w':
-				algoritmo = 1;
+				printf("Ya se encontraba en modo Worst-Fit.\n");
+				//algoritmo = 1;
 				break;
 			case 'f':
-				algoritmo = 0;
-				printf("Ya se encontraba en modo First-Fit.\n");
+				cambiarAlgoritmo();
+				//algoritmo = 0;
+				//printf("Ya se encontraba en modo First-Fit.\n");
 				break;
 			default:
-				printf("error al ingresar algoritmo, es f o w.\n");
+				printf("Error al ingresar algoritmo, es 'f' o 'w'.\n");
 				break;
 			}
 		} else {
 			switch (alg) {
 			case 'w':
-				algoritmo = 1;
-				printf("Ya se encontraba en modo Worst-Fit.\n");
+				cambiarAlgoritmo();
+				//algoritmo = 1;
+				//printf("Ya se encontraba en modo Worst-Fit.\n");
 				break;
 			case 'f':
-				algoritmo = 0;
+				printf("Ya se encontraba en modo First-Fit.\n");
+				//algoritmo = 0;
 				break;
 			default:
-				printf("error al ingresar algoritmo, es f o w.\n");
+				printf("Error al ingresar algoritmo, es 'f' o 'w'.\n");
 				break;
 			}
 
@@ -173,21 +190,24 @@ void analizarYEjecutar(char *comando) {
 		int off;
 		int tam;
 		int confirmaMemo;
-		bool arch = 0;	//TODO: archivo = log ?
+		bool arch = 0;
 
 		printf("Estructuras de memoria.\n");
+		fprintf(dumpFile,"Estructuras de memoria.\n");
 		printf(
 				"Si quiere las tablas de segmentos de un proceso ingrese su pid, sino ingrese -1: \n");
 		scanf("%d", &pidPedido);
-		dumpTablaSegmentos(arch, pidPedido);
+		dumpTablaSegmentos(arch, pidPedido);//todo
 
 		printf("\nMemoria principal:\n");
+		fprintf(dumpFile, "\nMemoria principal:\n");
 		dumpMemoriaLibreYSegmentos(arch);
 
 		printf("\nSi desea saber el contenido de la memoria principal, ingrese '1', sino, '0'. \n");
 		scanf("%d", &confirmaMemo);
 		if(confirmaMemo){
 		printf("\n Contenido de memoria principal.\n");
+		fprintf(dumpFile,"\n Contenido de memoria principal.\n");
 		printf("\nIngrese offset: ");
 		scanf("%d", &off);
 		printf("\nIngrese tamaño: ");

@@ -6,8 +6,6 @@
  */
 #include "umv.h"
 
-//pthread_mutex_t mutexCantProcActivos, mutexFlagCompactado, mutexAlgoritmo;
-
 int main(int argc, char** argv) {
 
 	//Verifico que se haya recibido por parámetro el archivo config.
@@ -33,11 +31,6 @@ int main(int argc, char** argv) {
 	logger = log_create("logUmv", "UMV", true, LOG_LEVEL_INFO);
 	log_info(logger, "Comienza la ejecución de la UMV.");
 
-//	pthread_mutex_init(&mutexCantProcActivos, NULL);
-//	pthread_mutex_init(&mutexFlagCompactado, NULL);
-//	pthread_mutex_init(&mutexAlgoritmo, NULL);
-
-
 	baseUMV = malloc(tamanoUMV);
 	listaProcesos = list_create();
 	int* sinParametros=baseUMV;
@@ -57,9 +50,7 @@ int main(int argc, char** argv) {
 	}
 	pthread_join(atencion_consola,NULL);
 	pthread_join(atencion_interna,NULL);
-	log_debug(logger, "Voy a probar que no rompa antes");
 	list_destroy_and_destroy_elements(listaProcesos, (void*)free);
-	log_debug(logger, "Voy a probar que no rompa despues");
 	config_destroy(config);
 	log_info(logger, "El proceso UMV ha finalizado");
 	log_destroy(logger);

@@ -20,7 +20,7 @@
 //extern int flag_compactado;
 //extern int flag; //Esta ni se para que esta.
 //extern int k; //Esta esta solo para mostrar unos mensajes.
-//extern bool algoritmo; //0 significa FF, lo ponemos por defecto porque es el mas lindo*
+extern bool algoritmo; //0 significa FF, lo ponemos por defecto porque es el mas lindo*
 pthread_mutex_t m_Segmentos;
 
 typedef struct {
