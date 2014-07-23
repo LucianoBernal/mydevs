@@ -24,4 +24,5 @@ int retardo;
 char * etiquetas;
 sighandler_t manejar_seniales (int);
 void actualizarDiccionarioDeVariables (t_PCB*);
+void recuperarDiccionario();
 #endif /* ESQUELETOCPU_H_ */

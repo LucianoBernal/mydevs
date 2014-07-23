@@ -166,7 +166,7 @@ void vincPrimitivas() {
 	funciones_Ansisop.AnSISOP_obtenerPosicionVariable = obtenerPosicionVariable;
 	funciones_Ansisop.AnSISOP_obtenerValorCompartida = obtenerValorCompartida;
 	funciones_Ansisop.AnSISOP_retornar = retornar;
-	//funciones_kernel->AnSISOP_signal = signal;
+//	funciones_kernel.AnSISOP_signal = signal;
 	funciones_kernel.AnSISOP_wait = wait;
 }
 

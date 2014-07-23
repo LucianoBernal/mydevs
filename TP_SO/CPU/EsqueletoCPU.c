@@ -33,9 +33,9 @@ void cerrarCPU(t_log *log) {
 	log_error(log, "Deberia estar cerrando el CPU");
 }
 int main(int arc, char **argv) {
-	//vincPrimitivas();
+	vincPrimitivas();
 	diccionarioDeVariables = dictionary_create();
-	pcbEnUso=malloc(sizeof(t_PCB));
+	pcbEnUso = malloc(sizeof(t_PCB));
 	proceso_terminado = 0;
 	proceso_bloqueado = 0;
 	logs = log_create("logCPU", "CPU", true, LOG_LEVEL_INFO);
@@ -46,10 +46,10 @@ int main(int arc, char **argv) {
 		log_error(logs, "No se pudo conectar a la UMV.");
 		cerrarCPU(logs);
 	}
-//	if (!(socketKernel = conectarCliente(IP_KERNEL, PUERTO_PCP, log))) {
-//		log_error(log, "No se pudo conectar al Kernel.");
-//		cerrarCPU(log);
-//	}
+	if (!(socketKernel = conectarCliente(IP_KERNEL, PUERTO_PCP, logs))) {
+		log_error(logs, "No se pudo conectar al Kernel.");
+		cerrarCPU(logs);
+	}
 	char *saludo = "CPU";
 	char* respuestaUMV = malloc(8);
 	send(socketUMV, saludo, 4, 0);
@@ -61,130 +61,125 @@ int main(int arc, char **argv) {
 		log_error(logs, "El handshake con la UMV salió mal.");
 	}
 	free(respuestaUMV);
-//	send(socketKernel, saludo, 4, 0); //TODO el saludo tiene tamaño 4?
-//	recv(socketKernel, (void *) header, 4, MSG_WAITALL);
-//	char *respuestaKernel = malloc(*header);
-//	recv(socketKernel, respuestaKernel, *header, MSG_WAITALL);
-//	desempaquetar2(respuestaKernel, saludoKernel, &quantumDeKernel, &retardo,
-//			0);
-//	if (!strncmp(saludoKernel, "Kernel", 6)) {
-//		log_info(log, "El handshake con el Kernel salió bien.");
-//	} else {
-//		log_error(log, "El handshake con el Kernel salió mal.");
-//	}
-	int pidMancodeado=8331;
-	enviarConRazon(socketUMV, logs, CAMBIAR_PROCESO_ACTIVO, serializar2(crear_nodoVar(&pidMancodeado, 4), 0));
-	int base, offset, tamano;
-	char*mensaje=malloc(50);
-	while (strncmp(mensaje, "exit", 4)){
-		if (!strncmp(mensaje, "enviar", 6)){
-			printf("Ingrese base:");
-			scanf("%d", &base);
-			printf("\nIngrese offset:");
-			scanf("%d", &offset);
-			printf("\nIngrese tamano:");
-			scanf("%d", &tamano);
-			scanf("%s", mensaje);
-			enviarBytesAUMV(base, offset, tamano, mensaje);
-			printf("\nlo enviado fue: %s\n", mensaje);
-		}else if(!strncmp(mensaje, "solicitar", 9)){
-			printf("Ingrese base:");
-			scanf("%d", &base);
-			printf("Ingrese offset:");
-			scanf("%d", &offset);
-			printf("Ingrese tamano:");
-			scanf("%d", &tamano);
-			mensaje=solicitarBytesAUMV(base, offset, tamano);
-			printf("mensaje=%s\n", mensaje);
-			if (mensaje==NULL){
-				mensaje=malloc(40);
-			}
-		}else{
-			printf("\nLo que ingresaste no coincide, si queres salir manda exit m3n\n");
-		}
-		fflush(stdin);
-		gets(mensaje);
+	send(socketKernel, saludo, 4, 0); //TODO el saludo tiene tamaño 4?
+	char *respuestaKernel = malloc(7);
+	recv(socketKernel, respuestaKernel, 7, MSG_WAITALL);
+	if (!strncmp(respuestaKernel, "Kernel", 6)) {
+		log_info(logs, "El handshake con el Kernel salió bien.");
+	} else {
+		log_error(logs, "El handshake con el Kernel salió mal.");
 	}
-//
-//	diccionarioDeVariables = dictionary_create();
-//
-//	signal(SIGINT, (sighandler_t) manejar_seniales);
-//	signal(SIGUSR1, (sighandler_t)manejar_seniales);
-//
-//	while (sigusr1_activado == 0) {
-//		//Recibo un PCB
-//		int razon;
-//		char* mensaje = recibirConRazon(socketKernel, &razon, logs);
-//		char* pcbEmpaquetado=malloc(sizeof(t_PCB)+4*9+32);
-//		t_PCB *pcb=malloc(sizeof(t_PCB));
-//		if (razon){
-//			desempaquetar2(mensaje, pcbEmpaquetado, 0);
-//		//	desempaquetarPCB(pcb, pcbEmpaquetado);
+//	int pidMancodeado=8331;
+//	enviarConRazon(socketUMV, logs, CAMBIAR_PROCESO_ACTIVO, serializar2(crear_nodoVar(&pidMancodeado, 4), 0));
+//	int base, offset, tamano;
+//	char*mensaje=malloc(50);
+//	while (strncmp(mensaje, "exit", 4)){
+//		if (!strncmp(mensaje, "enviar", 6)){
+//			printf("Ingrese base:");
+//			scanf("%d", &base);
+//			printf("\nIngrese offset:");
+//			scanf("%d", &offset);
+//			printf("\nIngrese tamano:");
+//			scanf("%d", &tamano);
+//			scanf("%s", mensaje);
+//			enviarBytesAUMV(base, offset, tamano, mensaje);
+//			printf("\nlo enviado fue: %s\n", mensaje);
+//		}else if(!strncmp(mensaje, "solicitar", 9)){
+//			printf("Ingrese base:");
+//			scanf("%d", &base);
+//			printf("Ingrese offset:");
+//			scanf("%d", &offset);
+//			printf("Ingrese tamano:");
+//			scanf("%d", &tamano);
+//			mensaje=solicitarBytesAUMV(base, offset, tamano);
+//			printf("mensaje=%s\n", mensaje);
+//			if (mensaje==NULL){
+//				mensaje=malloc(40);
+//			}
+//		}else{
+//			printf("\nLo que ingresaste no coincide, si queres salir manda exit m3n\n");
 //		}
-//		free(mensaje);
-//		free(pcbEmpaquetado);
-//
-//		etiquetas = solicitarBytesAUMV(pcb->indice_de_Etiquetas, 0, pcb->tamanio_Indice_de_Etiquetas);
-//		actualizarDiccionarioDeVariables(pcb);
-//		int lineasAnalizadas = 0;
-//		int programaBloqueado = 0;
-//		int ubInstruccion, largoInstruccion;
-//		while (lineasAnalizadas < quantumDeKernel || programaBloqueado) {
-//			//Si empieza en la instruccion 0 deberia ser progra_Counter-1 ???
-//			char *msjInstruccion = solicitarBytesAUMV(pcb->indice_de_Codigo,
-//					pcb->program_Counter * 8, 8);
-//			desempaquetar2(msjInstruccion, &ubInstruccion, &largoInstruccion,
-//					0);
-//			char *literalInstruccion = solicitarBytesAUMV(pcb->segmento_Codigo, ubInstruccion, largoInstruccion);
-//			analizadorLinea(literalInstruccion, &funciones_Ansisop, &funciones_kernel);
-//			pcb->program_Counter++;
-//			lineasAnalizadas++;
-//		}
-//		enviarConRazon(socketKernel, logs, razon, serializarPCB(pcb));
-//		free(pcb);
+//		fflush(stdin);
+//		gets(mensaje);
 //	}
+//
+	signal(SIGINT, (sighandler_t) manejar_seniales);
+	signal(SIGUSR1, (sighandler_t) manejar_seniales);
+
+	while (sigusr1_activado == 0) {
+		//Recibo un PCB
+		int razon;
+		char* mensaje = recibirConRazon(socketKernel, &razon, logs);
+		char* pcbEmpaquetado = malloc(sizeof(t_PCB) + 4 * 9 + 32);
+//		t_PCB *pcb = malloc(sizeof(t_PCB));
+		desempaquetar2(mensaje, pcbEmpaquetado, 0);
+		desempaquetarPCB(pcbEnUso, pcbEmpaquetado);
+		free(mensaje);
+		free(pcbEmpaquetado);
+
+		etiquetas = solicitarBytesAUMV(pcbEnUso->indice_de_Etiquetas, 0,
+				pcbEnUso->tamanio_Indice_de_Etiquetas);
+//		actualizarDiccionarioDeVariables(pcb);
+		recuperarDiccionario();
+		int lineasAnalizadas = 0;
+		int programaBloqueado = 0;
+		int ubInstruccion, largoInstruccion;
+		while (lineasAnalizadas < quantumDeKernel || programaBloqueado) {
+			//Si empieza en la instruccion 0 deberia ser progra_Counter-1 ???
+			char *msjInstruccion = solicitarBytesAUMV(pcbEnUso->indice_de_Codigo,
+					pcbEnUso->program_Counter * 8, 8);
+			desempaquetar2(msjInstruccion, &ubInstruccion, &largoInstruccion,
+					0);
+			char *literalInstruccion = solicitarBytesAUMV(pcbEnUso->segmento_Codigo,
+					ubInstruccion, largoInstruccion);
+			analizadorLinea(literalInstruccion, &funciones_Ansisop,
+					&funciones_kernel);
+			pcbEnUso->program_Counter++;
+			lineasAnalizadas++;
+		}
+		enviarConRazon(socketKernel, logs, razon, serializarPCB(pcbEnUso));
+		free(pcbEnUso);
+	}
 	return 0;
 }
 
-void actualizarDiccionarioDeVariables (t_PCB* pcb){
-	if (pcb->tamanio_Contexto_Actual){
-		char *datosContexto =solicitarBytesAUMV(pcb->cursor_Stack, 0, pcb->tamanio_Contexto_Actual);
-		int cantVariables=0;
-		while (cantVariables*5 < pcb->tamanio_Contexto_Actual){
-			char *nombreTemporal=malloc(1);
-			int *valorTemporal=malloc(sizeof(int));
-			memcpy(nombreTemporal, datosContexto+cantVariables*5, 1);
-			memcpy(valorTemporal, datosContexto+cantVariables*5+1, 4);
-			dictionary_put(diccionarioDeVariables, nombreTemporal, valorTemporal);
-		}
-	}
-}
+//void actualizarDiccionarioDeVariables (t_PCB* pcb){
+//	if (pcb->tamanio_Contexto_Actual){
+//		char *datosContexto =solicitarBytesAUMV(pcb->cursor_Stack, 0, pcb->tamanio_Contexto_Actual);
+//		int cantVariables=0;
+//		while (cantVariables*5 < pcb->tamanio_Contexto_Actual){
+//			char *nombreTemporal=malloc(1);
+//			int *valorTemporal=malloc(sizeof(int));
+//			memcpy(nombreTemporal, datosContexto+cantVariables*5, 1);
+//			memcpy(valorTemporal, datosContexto+cantVariables*5+1, 4);
+//			dictionary_put(diccionarioDeVariables, nombreTemporal, valorTemporal);
+//		}
+//	}
+//}
 //Difiere en detalles con la de arriba...
 void recuperarDiccionario() {
-	int i = 0;
-	int *valor=malloc(sizeof(int));
-	char *nombre;
-
-	char *stack = solicitarBytesAUMV(pcbEnUso->segmento_Stack,
+	int i = 0, *desplazamiento;
+	char *nombre, *stack = solicitarBytesAUMV(pcbEnUso->segmento_Stack,
 			pcbEnUso->cursor_Stack, pcbEnUso->tamanio_Contexto_Actual * 5);
 	while (i < pcbEnUso->tamanio_Contexto_Actual) {
 		nombre = malloc(2);
+		desplazamiento = malloc(4);
 		memcpy(nombre, stack + i * 5, 1);
-		memcpy(&valor, stack + i * 5 + 1, 4);
-//		nombre[1]=0;TODO acá que va?
-		dictionary_put(diccionarioDeVariables, nombre, valor);
+		nombre[1] = 0;
+		*desplazamiento = i * 5;
+		dictionary_put(diccionarioDeVariables, nombre, desplazamiento);
 		i++;
 	}
 }
 
-sighandler_t manejar_seniales (int senal){
-		switch(senal){
-		case SIGINT:
-			log_info(logs,"Se recibió la señal SIGNIT");
-			break;
-		case SIGUSR1:
-			log_info(logs, "Se recibió la señal SIGUSR_1");
-		}
-		return NULL;
+sighandler_t manejar_seniales(int senal) {
+	switch (senal) {
+	case SIGINT:
+		log_info(logs, "Se recibió la señal SIGNIT");
+		break;
+	case SIGUSR1:
+		log_info(logs, "Se recibió la señal SIGUSR_1");
+	}
+	return NULL ;
 }
 
