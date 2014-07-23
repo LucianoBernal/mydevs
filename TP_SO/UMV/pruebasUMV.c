@@ -262,10 +262,10 @@ void *seleccionarSegunAlgoritmo(t_list *lista) {
 //Habla bastante por si sola.
 void cambiarAlgoritmo() {
 	pthread_mutex_lock(&mutexAlgoritmo);
-	algoritmo = !algoritmo;
 	algoritmo ? //FIXME están al revés !!
-			printf("Ahora el algoritmo es First-Fit") :
-			printf("Ahora el algoritmo es Worst-Fit");
+			printf("Ahora el algoritmo es First-Fit\n") :
+			printf("Ahora el algoritmo es Worst-Fit\n");
+	algoritmo = !algoritmo;
 	pthread_mutex_unlock(&mutexAlgoritmo);
 }
 

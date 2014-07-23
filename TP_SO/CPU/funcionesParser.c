@@ -197,7 +197,7 @@ char *solicitarBytesAUMV(t_puntero base, t_puntero desplazamiento, int tamano) {
 		return NULL ;
 	}
 	char *aux = malloc(tamano);
-	desempaquetar2(mensaje, aux, 0);
+	mensaje!=NULL ? desempaquetar2(mensaje, aux, 0) : printf("Esta estaba vacia\n");
 	free(mensaje);
 	return aux;
 }
@@ -227,6 +227,7 @@ t_puntero definirVariable(t_nombre_variable identificador_variable) {
 	 dictionary_put(diccionario, &(aux->identificador_variable), aux);
 	 return stackBase + desplazamiento - 4; //El tp dice posicion, para mi es desplazamiento nomas
 	 */
+	log_info(logs,"Ejecuté definirVariable con %s", identificador_variable);
 	enviarBytesAUMV(pcbEnUso->segmento_Stack,
 			pcbEnUso->tamanio_Contexto_Actual * 5, 1, &identificador_variable);
 	char *identificadorACopiar = strdup(&identificador_variable);
@@ -240,6 +241,7 @@ t_puntero definirVariable(t_nombre_variable identificador_variable) {
 }
 
 t_puntero obtenerPosicionVariable(t_nombre_variable identificador_variable) {
+	log_info(logs,"Ejecute obtenerPosicionVariable con %s", identificador_variable);
 	char *identificadorPosta = strdup(&identificador_variable);
 	identificadorPosta[1] = 0;
 	t_variable_diccionario *aux = dictionary_get(diccionarioDeVariables,
@@ -248,6 +250,7 @@ t_puntero obtenerPosicionVariable(t_nombre_variable identificador_variable) {
 }
 //
 t_valor_variable dereferenciar(t_puntero direccion_variable) {
+	log_info(logs,"Ejecute dereferenciar con direccion: %d", direccion_variable);
 	char *aux = solicitarBytesAUMV(pcbEnUso->segmento_Stack,
 			direccion_variable + 1, 4);
 	t_valor_variable valor;
@@ -257,10 +260,12 @@ t_valor_variable dereferenciar(t_puntero direccion_variable) {
 }
 ////
 void asignar(t_puntero direccion_variable, t_valor_variable valor) {
+	log_info(logs,"Ejecute asignar con valor: %d", valor);
 	enviarBytesAUMV(pcbEnUso->segmento_Stack, direccion_variable, 4, &valor);
 }
 //
 t_valor_variable obtenerValorCompartida(t_nombre_compartida variable) {
+	log_info(logs,"Ejecute obtenerValorCompartida con %s", variable);
 //	int razon = OBTENER_VALOR;
 //	t_paquete *paquete = serializar2(crear_nodoVar(variable, strlen(variable)),
 //			0);
@@ -291,6 +296,7 @@ t_valor_variable obtenerValorCompartida(t_nombre_compartida variable) {
 //
 t_valor_variable asignarValorCompartida(t_nombre_compartida variable,
 		t_valor_variable valor) {
+	log_info(logs,"Ejecute asignarValorCompartida con %s", variable);
 //	int *razon = malloc(sizeof(int));
 //	*razon = GRABAR_VALOR;
 //	t_paquete *paquete = serializar2(
@@ -309,6 +315,7 @@ t_valor_variable asignarValorCompartida(t_nombre_compartida variable,
 }
 //
 void irAlLabel(t_nombre_etiqueta etiqueta) {
+	log_info(logs,"Ejecute irAlLabel con %s", etiqueta);
 //	Segun yo a las 12, al comienzo del programa en el cpu, debemos traer el segmento de etiquetas hacia el.
 //	etiquetas es una global en la que copiamos enterito el indice de etiquetas
 	pcbEnUso->program_Counter = metadata_buscar_etiqueta(etiqueta, etiquetas,
@@ -316,6 +323,7 @@ void irAlLabel(t_nombre_etiqueta etiqueta) {
 }
 //
 void llamarSinRetorno(t_nombre_etiqueta etiqueta) {
+	log_info(logs,"Ejecute llamarSinRetorno con %s", etiqueta);
 	//Yo crearia un nuevo diccionario, pero no se como es esta cosa.
 	enviarBytesAUMV(pcbEnUso->cursor_Stack,
 			pcbEnUso->tamanio_Contexto_Actual * 5, 4,
@@ -329,6 +337,7 @@ void llamarSinRetorno(t_nombre_etiqueta etiqueta) {
 	irAlLabel(etiqueta);
 }
 void llamarConRetorno(t_nombre_etiqueta etiqueta, t_puntero donde_retornar) {
+	log_info(logs,"Ejecute llamarConRetorno con %s", etiqueta);
 	enviarBytesAUMV(pcbEnUso->cursor_Stack,
 			pcbEnUso->tamanio_Contexto_Actual * 5, 4,
 			&(pcbEnUso->cursor_Stack));
@@ -343,8 +352,9 @@ void llamarConRetorno(t_nombre_etiqueta etiqueta, t_puntero donde_retornar) {
 	irAlLabel(etiqueta);
 }
 void finalizar(void) {
+	log_info(logs,"Ejecute finalizar");
 	if (pcbEnUso->cursor_Stack == pcbEnUso->segmento_Stack) {
-		printf("El programa deberia finalizar asi noma'\n");
+		printf("El programa deberia finalizar asi noma'\n");//FIXME
 	} else {
 		char *p_programCounter = solicitarBytesAUMV(pcbEnUso->segmento_Stack,
 				pcbEnUso->cursor_Stack - 4, 4);
@@ -359,6 +369,7 @@ void finalizar(void) {
 	}
 } //Esa division es bastante discutible
 void retornar(t_valor_variable retorno) {
+	log_info(logs,"Ejecute retornar con %d", retorno);
 	char *p_retorno = solicitarBytesAUMV(pcbEnUso->segmento_Stack,
 			pcbEnUso->cursor_Stack - 4, 4);
 	int dirRetorno;
@@ -377,6 +388,7 @@ void retornar(t_valor_variable retorno) {
 	free(p_cursorCtxto);
 }
 void imprimir(t_valor_variable valor_mostrar) {
+	log_info(logs,"Ejecute imprimir con %d", valor_mostrar);
 //	int *razon = malloc(sizeof(int));
 //	*razon = MOSTRAR_VALOR;
 //	t_paquete *paquete = serializar2(
@@ -391,6 +403,7 @@ void imprimir(t_valor_variable valor_mostrar) {
 					0));
 }
 void imprimirTexto(char* texto) {
+	log_info(logs,"Ejecute imprimirTexto con %s", texto);
 //	int *razon = malloc(sizeof(int));
 //	*razon = MOSTRAR_TEXTO;
 //	t_paquete *paquete = serializar2(crear_nodoVar(texto, strlen(texto) + 1),
@@ -404,6 +417,7 @@ void imprimirTexto(char* texto) {
 			serializar2(crear_nodoVar(texto, strlen(texto) + 1), 0));
 }
 void entradaSalida(t_nombre_dispositivo dispositivo, int tiempo) {
+	log_info(logs,"Ejecute entradaSalida con %s", dispositivo);
 //	int *razon = malloc(sizeof(int));
 //	*razon = SALIDA_POR_BLOQUEO;
 //	t_paquete *paquete = serializar2(crear_nodoVar(&pcb, sizeof(pcb)),
@@ -422,6 +436,7 @@ void entradaSalida(t_nombre_dispositivo dispositivo, int tiempo) {
 					crear_nodoVar(&tiempo, 4), 0));
 }
 void wait(t_nombre_semaforo identificador_semaforo) {
+	log_info(logs,"Ejecute wait con %s", identificador_semaforo);
 //	//PASO
 //	int razon = WAIT, tamano;
 //	t_paquete *paquete = serializar2(
@@ -450,6 +465,7 @@ void wait(t_nombre_semaforo identificador_semaforo) {
 }
 
 void signalPropia(t_nombre_semaforo identificador_semaforo) {
+	log_info(logs, "Ejecute signalPropia %s",identificador_semaforo);
 //	int razon = SIGNAL;
 //	t_paquete *paquete = serializrar2(
 //			crear_nodoVar(identificador_semaforo,

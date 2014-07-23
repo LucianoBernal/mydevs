@@ -137,7 +137,7 @@ void* atencionCPUs(void* sinParametro) {
 					}
 				}
 
-				nuevaCPU(sd); //TODO es una nueva CPU
+				nuevaCPU(new_socket); //TODO es una nueva CPU
 
 			}
 		}

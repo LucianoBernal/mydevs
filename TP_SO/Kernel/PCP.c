@@ -10,7 +10,7 @@ void* pcp_main(void* sinParametro) {
 	CPUs = list_create();
 	sem_init(&colaIntermediaVacia, 0, 0);
 	sem_init(&colaIntermediaMutex, 0, 1);
-	sem_init(&CPUsLibres, 0, 3); //FIXME CPUS LIBRES VA 0, PUSE 3 PARA PROBAR
+	sem_init(&CPUsLibres, 0, 0); //FIXME CPUS LIBRES VA 0, PUSE 3 PARA PROBAR
 	sem_init(&sBloqueado, 0, 0);
 	sem_init(&colaExecVacia, 0, 0);
 	sem_init(&semCPUDesconectadaMutex, 0, 1);
@@ -42,10 +42,14 @@ void* pcp_main(void* sinParametro) {
 		int retIO = pthread_create(&dispositivo, NULL, bloquearYDevolverAReady,
 				(void*) estructuraDispositivo);
 		if (retIO) {
-			log_error(logKernel,"Error al crear hilo bloquear y devolver a Ready de dispositivo,Error %d",retIO);
+			log_error(logKernel,
+					"Error al crear hilo bloquear y devolver a Ready de dispositivo,Error %d",
+					retIO);
 			exit(EXIT_FAILURE);
 		}
-		log_info(logKernel,"Hilo bloquear y devolver a Ready de dispositivo %s exitoso",idDispositivo);
+		log_info(logKernel,
+				"Hilo bloquear y devolver a Ready de dispositivo %s exitoso",
+				idDispositivo);
 		i++;
 	}
 	crearHilosPrincipales();
@@ -56,24 +60,28 @@ void crearHilosPrincipales() {
 	retMultiplexorCPUs = pthread_create(&multiplexorCPUs, NULL, atencionCPUs,
 			(void*) sinParametros);
 	if (retMultiplexorCPUs) {
-		log_error(logKernel,"Error al crear hilo atencionCPUs,con error:",retMultiplexorCPUs);
-					exit(EXIT_FAILURE);
+		log_error(logKernel, "Error al crear hilo atencionCPUs,con error:",
+				retMultiplexorCPUs);
+		exit(EXIT_FAILURE);
 	}
-	log_info(logKernel,"Exito al crear hilo atencionCPUs");
+	log_info(logKernel, "Exito al crear hilo atencionCPUs");
 	retMandarAEjecutar = pthread_create(&ejecutar, NULL, mandarAEjecutar,
 			(void*) sinParametros);
 	if (retMandarAEjecutar) {
-		log_error(logKernel,"Error al crear hilo mandar a Ejecutar, con error:",retMandarAEjecutar);
-					exit(EXIT_FAILURE);
+		log_error(logKernel,
+				"Error al crear hilo mandar a Ejecutar, con error:",
+				retMandarAEjecutar);
+		exit(EXIT_FAILURE);
 	}
-	log_info(logKernel,"Exito al crear hilo mandar a Ejecutar");
+	log_info(logKernel, "Exito al crear hilo mandar a Ejecutar");
 	retEnviarCPU = pthread_create(&envCPU, NULL, enviarCPU,
 			(void*) sinParametros);
 	if (retEnviarCPU) {
-		log_error(logKernel,"Error al crear hilo enviar CPU,con error:%d",retEnviarCPU);
-					exit(EXIT_FAILURE);
+		log_error(logKernel, "Error al crear hilo enviar CPU,con error:%d",
+				retEnviarCPU);
+		exit(EXIT_FAILURE);
 	}
-	log_info(logKernel,"Exito al crear hilo enviar CPU");
+	log_info(logKernel, "Exito al crear hilo enviar CPU");
 	pthread_join(multiplexorCPUs, NULL );
 	pthread_join(ejecutar, NULL );
 	pthread_join(envCPU, NULL );
@@ -83,14 +91,16 @@ void crearHilosPrincipales() {
 void* mandarAEjecutar(void* j) {
 	while (1) {
 		sem_wait(&vacioReady);
-				sem_wait(&CPUsLibres);
-				sem_wait(&colaReadyMutex);
+		sem_wait(&CPUsLibres);
+		sem_wait(&colaReadyMutex);
 		t_PCB* procesoAEjecutar = queue_pop(colaReady);
-		log_info(logKernel,"Se saco programa de la cola Ready, con PID:%d",procesoAEjecutar->program_id);
+		log_info(logKernel, "Se saco programa de la cola Ready, con PID:%d",
+				procesoAEjecutar->program_id);
 		sem_post(&colaReadyMutex);
 		sem_wait(&colaIntermediaMutex);
 		queue_push(colaIntermedia, procesoAEjecutar);
-		log_debug(logKernel,"Poniendo Programa en cola Intermedia, con PID:%d",procesoAEjecutar->program_id);
+		log_debug(logKernel, "Poniendo Programa en cola Intermedia, con PID:%d",
+				procesoAEjecutar->program_id);
 		sem_post(&colaIntermediaMutex);
 		sem_post(&colaIntermediaVacia);
 	}
@@ -100,48 +110,55 @@ void* enviarCPU(void* sinParametro) {
 	while (1) {
 		sem_wait(&colaIntermediaVacia);
 		sem_wait(&CPUsMutex);
-		//	int IDCpuLibre = encontrarPrimeraCpuLibre(CPUs); FIXME PARA PRUEBA
-		int IDCpuLibre =1;
+		int IDCpuLibre = encontrarPrimeraCpuLibre(CPUs); //FIXME PARA PRUEBA
+		//int IDCpuLibre =1;
 		sem_post(&CPUsMutex);
 		sem_wait(&colaIntermediaMutex);
 		t_PCB* pcbAEjecutar = queue_pop(colaIntermedia);
-		log_debug(logKernel,"Se saco programa de cola intermedia, con PID:%d",pcbAEjecutar->program_id);
+		log_debug(logKernel, "Se saco programa de cola intermedia, con PID:%d",
+				pcbAEjecutar->program_id);
 		sem_post(&colaIntermediaMutex);
 		sem_wait(&colaExecMutex);
 		list_add(colaExec, pcbAEjecutar);
-		log_info(logKernel,"Agregando programa en cola de ejecucion,con PID:%d",pcbAEjecutar->program_id);
+		log_info(logKernel,
+				"Agregando programa en cola de ejecucion,con PID:%d",
+				pcbAEjecutar->program_id);
 		sem_post(&colaExecMutex);
 		mostrar_todas_Las_Listas();
 		t_paquete* paquete = serializarPCB(pcbAEjecutar);
 		sem_wait(&CPUsMutex);
-//		int i = posicionEnLaLista(CPUs, IDCpuLibre); FIXME PARA PRUEBA
+		int i = posicionEnLaLista(CPUs, IDCpuLibre); //FIXME PARA PRUEBA
 		t_estructuraCPU* estructura = malloc(sizeof(t_estructuraCPU));
 		estructura->idCPU = IDCpuLibre;
 		estructura->estado = 1;
 		estructura->idProceso = (pcbAEjecutar->program_id);
-//		list_replace_and_destroy_element(CPUs, i, estructura,   FIXME PARA
-//				(void*) cpu_destroy);							FIXME PRUEBA
+		list_replace_and_destroy_element(CPUs, i, estructura, //  FIXME PARA
+				(void*) cpu_destroy);						//	FIXME PRUEBA
 		sem_post(&CPUsMutex);
-		log_info(logKernel,"Enviando Programa a CPU disponible, con PID:%d y CPU:%d",pcbAEjecutar->program_id,IDCpuLibre);
+		log_info(logKernel,
+				"Enviando Programa a CPU disponible, con PID:%d y CPU:%d",
+				pcbAEjecutar->program_id, IDCpuLibre);
+		enviarConRazon(IDCpuLibre, logKernel, HANDSHAKE_CPU_KERNEL,
+				serializar2(crear_nodoVar(paquete->msj, paquete->tamano), 0));
 		//send(IDCpuLibre, &paquete, sizeof(paquete), 0);  //FIXME
 	}
 }
 
 void* bloquearYDevolverAReady(void * param) {
 	t_estructuraDispositivoIO* estructura /*= malloc(
-			sizeof(t_estructuraDispositivoIO))*/;
+	 sizeof(t_estructuraDispositivoIO))*/;
 	estructura = (t_estructuraDispositivoIO *) param;
-	while (1){
-	sem_wait(&(estructura->colaVacia));
-	sem_wait(&(estructura->mutexCola));
-	t_estructuraProcesoBloqueado* estructuraBloqueada = queue_pop(
-			estructura->procesosBloqueados);
-	sem_post(&(estructura->mutexCola));
-	usleep((estructura->retardo)*(estructuraBloqueada->tiempo)*1000);
-	sem_wait(&colaReadyMutex);
-	queue_push(colaReady, estructuraBloqueada->pcb);
-	sem_post(&colaReadyMutex);
-	mostrar_todas_Las_Listas();
+	while (1) {
+		sem_wait(&(estructura->colaVacia));
+		sem_wait(&(estructura->mutexCola));
+		t_estructuraProcesoBloqueado* estructuraBloqueada = queue_pop(
+				estructura->procesosBloqueados);
+		sem_post(&(estructura->mutexCola));
+		usleep((estructura->retardo) * (estructuraBloqueada->tiempo) * 1000);
+		sem_wait(&colaReadyMutex);
+		queue_push(colaReady, estructuraBloqueada->pcb);
+		sem_post(&colaReadyMutex);
+		mostrar_todas_Las_Listas();
 	}
 	queue_destroy(estructura->procesosBloqueados);
 	free(estructura);
@@ -180,7 +197,8 @@ void moverAColaExit(t_PCB* pcb, int idCPU) {
 	sem_wait(&colaExitMutex);
 	queue_push(colaExit, pcb);
 	sem_post(&colaExitMutex);
-	log_info(logKernel,"Se movio programa a cola exit, PID:%d",pcb->program_id);
+	log_info(logKernel, "Se movio programa a cola exit, PID:%d",
+			pcb->program_id);
 	mostrar_todas_Las_Listas();
 	sem_post(&colaExitVacio);
 	seLiberoUnaCPU(idCPU);
@@ -221,7 +239,8 @@ void seLiberoUnaCPU(int idCPU) {
 	estructura->idProceso = -1;
 	sem_wait(&CPUsMutex);
 	int pos = posicionEnLaLista(CPUs, idCPU);
-	list_replace_and_destroy_element(CPUs, pos, estructura, (void*) cpu_destroy);
+	list_replace_and_destroy_element(CPUs, pos, estructura,
+			(void*) cpu_destroy);
 	sem_post(&CPUsMutex);
 	sem_post(&CPUsLibres);
 
@@ -243,20 +262,18 @@ void seDesconectoCPU(int idCPU) { //TODO
 		int idPrograma = buscarIDPrograma(idCPU);
 		int sd = obtener_sd_Programa(idPrograma);
 		notificar_Programa(sd, "La CPU se desconectó, programa abortado");
-		bool esElpcb(t_PCB* pcbAcomparar){
+		bool esElpcb(t_PCB* pcbAcomparar) {
 			return pcbAcomparar->program_id == idPrograma;
 		}
 		sem_wait(&colaExecMutex);
-		t_PCB* pcb=list_remove_by_condition(colaExec,(void*)esElpcb);
+		t_PCB* pcb = list_remove_by_condition(colaExec, (void*) esElpcb);
 		sem_post(&colaExecMutex);
-		moverAColaExit(pcb,idCPU);
+		moverAColaExit(pcb, idCPU);
 		sem_wait(&CPUsMutex);
 		list_remove_by_condition(CPUs, (void*) tieneID);
 		sem_post(&CPUsMutex);
 	}
 }
-
-
 
 void seDesconectoCPUSigusr(int idCPU, t_PCB* pcb) {
 	sem_wait(&CPUsMutex);
@@ -264,7 +281,7 @@ void seDesconectoCPUSigusr(int idCPU, t_PCB* pcb) {
 	sem_post(&CPUsMutex);
 	sem_wait(&colaExecMutex);
 	int posicion = posicionEnLaListaExec(colaExec, pcb->program_id);
-	list_remove_and_destroy_element(colaExec, posicion,(void*)free);
+	list_remove_and_destroy_element(colaExec, posicion, (void*) free);
 	sem_post(&colaExecMutex);
 	sem_wait(&colaReadyMutex);
 	queue_push(colaReady, pcb);

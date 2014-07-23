@@ -50,8 +50,8 @@ char *recibirConRazon(int socket, int *p_razon, t_log *logs){
 	}
 	int tamano;
 	desempaquetar2(header, p_razon, &tamano, 0);
-	free(header);
-	if (tamano){
+	//free(header);
+	if (tamano!=4){
 		char *msj=malloc(tamano);
 		if(recv(socket, msj, tamano, MSG_WAITALL)==-1){
 			log_error(logs, "Hubo un error al recibir el mensaje");

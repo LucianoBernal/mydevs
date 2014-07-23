@@ -112,10 +112,10 @@ int main(int arc, char **argv) {
 
 
 
-	if(signal(SIGINT, (sighandler_t)manejar_seniales)==SIG_ERR){
-		printf("mal\n");
-	} else {printf("todo ok\n");}
-	//signal(SIGUSR1, (sighandler_t) manejar_seniales);
+//	if(signal(SIGINT, (sighandler_t)manejar_seniales)==SIG_ERR){
+//		printf("mal\n");
+//	} else {printf("todo ok\n");}
+//	//signal(SIGUSR1, (sighandler_t) manejar_seniales);
 
 	sigusr1_activado=1;
 	while (sigusr1_activado) {
