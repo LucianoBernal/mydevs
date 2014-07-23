@@ -119,16 +119,11 @@ void* atencionCPUs(void* sinParametro) {
 			else {
 				free(cpu);
 				//envio retardo y quantum a la CPU
-				t_paquete *paqueteACPU = serializar2(crear_nodoVar(message,7),crear_nodoVar(&quantum,4),crear_nodoVar(&retardo,4),0);
-				int* tamanioPaquete = malloc(4);
-				*tamanioPaquete=paqueteACPU->tamano;
-				if (send(new_socket, tamanioPaquete, 4, 0)){
-					log_error(logKernel,"No se envió el tamaño del paquete correctamente");
-				}
-				if (send(new_socket, paqueteACPU->msj, *tamanioPaquete, 0)==-1) {
-					log_error(logKernel,"No se envió el paquete correctamente");
-				}
-
+				int* quantum2=malloc(4);
+				*quantum2=quantum;
+				int* retardo2=malloc(4);
+				*retardo2=retardo;
+				enviarConRazon(new_socket,logKernel,HANDSHAKE_CPU_KERNEL, serializar2(crear_nodoVar(message,7),crear_nodoVar(quantum2,4),crear_nodoVar(retardo2,4),0));
 				log_info(logKernel,"Paquete con retardo y quantum enviado correctamente al sd: %d",new_socket);
 
 				//agrego nuevo socket al vector de sockets

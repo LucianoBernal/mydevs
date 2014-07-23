@@ -63,7 +63,12 @@ int main(int arc, char **argv) {
 	free(respuestaUMV);
 	send(socketKernel, saludo, 4, 0); //TODO el saludo tiene tamaño 4?
 	char *respuestaKernel = malloc(7);
-	recv(socketKernel, respuestaKernel, 7, MSG_WAITALL);
+	int quantum;
+	int retardo;
+	int *razon = malloc(sizeof(int));
+	char * paquete = recibirConRazon(socketKernel, razon,logs);
+	desempaquetar2(paquete, respuestaKernel, &quantum, &retardo, 0);
+	puts(respuestaKernel);
 	if (!strncmp(respuestaKernel, "Kernel", 6)) {
 		log_info(logs, "El handshake con el Kernel salió bien.");
 	} else {
