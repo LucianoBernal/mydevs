@@ -159,6 +159,23 @@ void actualizarDiccionarioDeVariables (t_PCB* pcb){
 		}
 	}
 }
+//Difiere en detalles con la de arriba...
+void recuperarDiccionario() {
+	int i = 0;
+	int *valor=malloc(sizeof(int));
+	char *nombre;
+
+	char *stack = solicitarBytesAUMV(pcbEnUso->segmento_Stack,
+			pcbEnUso->cursor_Stack, pcbEnUso->tamanio_Contexto_Actual * 5);
+	while (i < pcbEnUso->tamanio_Contexto_Actual) {
+		nombre = malloc(2);
+		memcpy(nombre, stack + i * 5, 1);
+		memcpy(&valor, stack + i * 5 + 1, 4);
+//		nombre[1]=0;TODO acá que va?
+		dictionary_put(diccionarioDeVariables, nombre, valor);
+		i++;
+	}
+}
 
 sighandler_t manejar_seniales (int senal){
 		switch(senal){
