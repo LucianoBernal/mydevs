@@ -7,7 +7,6 @@
 
 #include "PLP.h"
 #include "PLPinterface.h"
-#include <biblioteca_comun/definiciones.h>
 
 typedef struct {
 	char* literal;

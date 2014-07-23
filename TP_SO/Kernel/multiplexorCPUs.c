@@ -33,23 +33,7 @@ extern int retardo;
 #define TRUE   1
 #define FALSE  0
 
-typedef enum {
-//	CONFIRMACION,
-	NUEVO_PROGRAMA,
-	SALIDA_POR_QUANTUM,
-	SALIDA_POR_BLOQUEO,
-	SALIDA_NORMAL,
-	SALIDA_POR_SEMAFORO,
-	SIG_INT,
-	SIGURS_1,
-	WAIT,
-	SIGNAL,
-	IMPRIMIR,
-	IMPRIMIR_TEXTO,
-	GRABAR_VALOR,
-	OBTENER_VALOR
 
-} codigos_mensajes;
 
 void* atencionCPUs(void* sinParametro) {
 	int master_socket, addrlen, new_socket, client_socket[30], max_clients = 30,
