@@ -166,7 +166,7 @@ void vincPrimitivas() {
 	funciones_Ansisop.AnSISOP_obtenerPosicionVariable = obtenerPosicionVariable;
 	funciones_Ansisop.AnSISOP_obtenerValorCompartida = obtenerValorCompartida;
 	funciones_Ansisop.AnSISOP_retornar = retornar;
-//	funciones_kernel.AnSISOP_signal = signal;
+	funciones_kernel.AnSISOP_signal = signalPropia;
 	funciones_kernel.AnSISOP_wait = wait;
 }
 
@@ -448,7 +448,8 @@ void wait(t_nombre_semaforo identificador_semaforo) {
 		//NARANJA;
 	}
 }
-void signal(t_nombre_semaforo identificador_semaforo) {
+
+void signalPropia(t_nombre_semaforo identificador_semaforo) {
 //	int razon = SIGNAL;
 //	t_paquete *paquete = serializrar2(
 //			crear_nodoVar(identificador_semaforo,
@@ -457,8 +458,8 @@ void signal(t_nombre_semaforo identificador_semaforo) {
 //			crear_nodoVar(&razon, 4), 0);
 //	send(socketKernel, (void*) header->msj, TAMANO_CABECERA, 0);
 //	send(socketKernel, (void*) paquete->msj, paquete->tamano, 0);
-//	/*Creo que no hace falta un recv, porque no le afecta directamente a el,
-//	 * el PCP deberia sacar de la cola de bloqueados a quien corresponda y listo.
-//	 */
+	/*Creo que no hace falta un recv, porque no le afecta directamente a el,
+	 * el PCP deberia sacar de la cola de bloqueados a quien corresponda y listo.
+	 */
 	enviarConRazon(socketKernel, logs, SIGNAL, serializar2(crear_nodoVar(identificador_semaforo, strlen(identificador_semaforo)+1), 0));
 }

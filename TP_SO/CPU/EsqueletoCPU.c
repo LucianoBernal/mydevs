@@ -68,7 +68,6 @@ int main(int arc, char **argv) {
 	int *razon = malloc(sizeof(int));
 	char * paquete = recibirConRazon(socketKernel, razon,logs);
 	desempaquetar2(paquete, respuestaKernel, &quantum, &retardo, 0);
-	puts(respuestaKernel);
 	if (!strncmp(respuestaKernel, "Kernel", 6)) {
 		log_info(logs, "El handshake con el Kernel salió bien.");
 	} else {
@@ -108,10 +107,18 @@ int main(int arc, char **argv) {
 //		gets(mensaje);
 //	}
 //
-	signal(SIGINT, (sighandler_t) manejar_seniales);
-	signal(SIGUSR1, (sighandler_t) manejar_seniales);
 
-	while (sigusr1_activado == 0) {
+
+
+
+
+	if(signal(SIGINT, (sighandler_t)manejar_seniales)==SIG_ERR){
+		printf("mal\n");
+	} else {printf("todo ok\n");}
+	//signal(SIGUSR1, (sighandler_t) manejar_seniales);
+
+	sigusr1_activado=1;
+	while (sigusr1_activado) {
 		//Recibo un PCB
 		int razon;
 		char* mensaje = recibirConRazon(socketKernel, &razon, logs);
@@ -177,14 +184,15 @@ void recuperarDiccionario() {
 	}
 }
 
-sighandler_t manejar_seniales(int senal) {
+void manejar_seniales(int senal) {
 	switch (senal) {
 	case SIGINT:
 		log_info(logs, "Se recibió la señal SIGNIT");
 		break;
 	case SIGUSR1:
+		sigusr1_activado=0;
 		log_info(logs, "Se recibió la señal SIGUSR_1");
+
 	}
-	return NULL ;
 }
 
