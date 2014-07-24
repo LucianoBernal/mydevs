@@ -20,6 +20,7 @@ char *etiquetas;
 t_PCB *pcbEnUso;
 t_dictionary *diccionarioDeVariables;
 t_log *logs;
+int programaFinalizo;
 
 void obtenerDatosConfig(t_config *config) {
 	IP_UMV = config_get_string_value(config, "IP_UMV");
@@ -132,11 +133,12 @@ int main(int arc, char **argv) {
 		etiquetas = solicitarBytesAUMV(pcbEnUso->indice_de_Etiquetas, 0,
 				pcbEnUso->tamanio_Indice_de_Etiquetas);
 //		actualizarDiccionarioDeVariables(pcb);
-//		recuperarDiccionario();
+		recuperarDiccionario();
 		int lineasAnalizadas = 0;
 		int programaBloqueado = 0;
+		programaFinalizo=0;
 		int ubInstruccion, largoInstruccion;
-		while (lineasAnalizadas < quantumDeKernel || programaBloqueado) {
+		while (/*lineasAnalizadas < quantumDeKernel&& */ !programaBloqueado && !programaFinalizo) {
 			//Si empieza en la instruccion 0 deberia ser progra_Counter-1 ???
 			char *msjInstruccion = solicitarBytesAUMV(pcbEnUso->indice_de_Codigo,
 					pcbEnUso->program_Counter * 8, 8);
@@ -150,6 +152,7 @@ int main(int arc, char **argv) {
 					&funciones_kernel);
 			pcbEnUso->program_Counter++;
 			lineasAnalizadas++;
+			printf("ESTA ES LA INSTRUCCION %d\n", lineasAnalizadas);
 		}
 		enviarConRazon(socketKernel, logs, razon, serializarPCB(pcbEnUso));
 		free(pcbEnUso);
@@ -171,20 +174,6 @@ int main(int arc, char **argv) {
 //	}
 //}
 //Difiere en detalles con la de arriba...
-void recuperarDiccionario() {
-	int i = 0, *desplazamiento;
-	char *nombre, *stack = solicitarBytesAUMV(pcbEnUso->segmento_Stack,
-			pcbEnUso->cursor_Stack, pcbEnUso->tamanio_Contexto_Actual * 5);
-	while (i < pcbEnUso->tamanio_Contexto_Actual) {
-		nombre = malloc(2);
-		desplazamiento = malloc(4);
-		memcpy(nombre, stack + i * 5, 1);
-		nombre[1] = 0;
-		*desplazamiento = i * 5;
-		dictionary_put(diccionarioDeVariables, nombre, desplazamiento);
-		i++;
-	}
-}
 
 void manejar_seniales(int senal) {
 	switch (senal) {

@@ -26,6 +26,7 @@ extern t_log *logs;
 extern t_PCB *pcbEnUso;
 extern t_dictionary *diccionarioDeVariables;
 extern char *etiquetas;
+extern int programaFinalizo;
 //static unsigned char nivelContexto;
 //int programCounter;
 //t_puntero stackBase;
@@ -170,9 +171,9 @@ void vincPrimitivas() {
 	funciones_kernel.AnSISOP_wait = wait;
 }
 
-static char* _depurar_sentencia(char* sentencia){
+static char* _depurar_sentencia(char* sentencia) {
 	int i = strlen(sentencia);
-	while (string_ends_with(sentencia, "\n")){
+	while (string_ends_with(sentencia, "\n")) {
 		i--;
 		sentencia = string_substring_until(sentencia, i);
 	}
@@ -180,6 +181,21 @@ static char* _depurar_sentencia(char* sentencia){
 	return sentencia;
 }
 
+void recuperarDiccionario() {
+	int i = 0, *desplazamiento;
+	char *nombre, *stack = solicitarBytesAUMV(pcbEnUso->segmento_Stack,
+			pcbEnUso->cursor_Stack-pcbEnUso->segmento_Stack, pcbEnUso->tamanio_Contexto_Actual * 5);
+	while (i < pcbEnUso->tamanio_Contexto_Actual) {
+		nombre = malloc(2);
+		desplazamiento = malloc(4);
+		memcpy(nombre, stack + i * 5, 1);
+		nombre[1] = 0;
+		*desplazamiento = pcbEnUso->cursor_Stack-pcbEnUso->segmento_Stack +i * 5;
+		dictionary_put(diccionarioDeVariables, nombre, desplazamiento);
+		i++;
+	}
+	i==0 ? printf("jamas entre al loop\n"): printf("regenere algo\n");
+}
 void enviarBytesAUMV(t_puntero base, t_puntero desplazamiento, int tamano,
 		void *datos) {
 	int razon;
@@ -191,6 +207,7 @@ void enviarBytesAUMV(t_puntero base, t_puntero desplazamiento, int tamano,
 	recibirConRazon(socketUMV, &razon, logs);
 	if (razon == SEGMENTATION_FAULT) {
 		log_error(logs, "Hubo segmentation fault");
+		programaFinalizo = 1;
 		//SACARPROCESODECPUPORABORTO();
 	}
 }
@@ -229,43 +246,52 @@ char *solicitarBytesAUMV(t_puntero base, t_puntero desplazamiento, int tamano) {
 ////	}
 //} //UFF SOY TAN HOMBRE
 //
-t_puntero definirVariable(t_nombre_variable identificador_variable) {//Chequeada
+t_puntero definirVariable(t_nombre_variable identificador_variable) { //Chequeada
 	enviarBytesAUMV(pcbEnUso->segmento_Stack,
-			pcbEnUso->tamanio_Contexto_Actual * 5, 1, &identificador_variable);
+			pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack
+					+ pcbEnUso->tamanio_Contexto_Actual * 5, 1,
+			&identificador_variable);
 	char *identificadorCopiado = malloc(2);
 	identificadorCopiado[0] = identificador_variable;
 	identificadorCopiado[1] = 0;
 	int *desplazamiento = malloc(4);
-	*desplazamiento = pcbEnUso->tamanio_Contexto_Actual * 5;
+	*desplazamiento = pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack
+			+ pcbEnUso->tamanio_Contexto_Actual * 5;
+	printf("Puse una variable de nombre = %c y de offset = %d\n",
+			identificador_variable, *desplazamiento);
 	dictionary_put(diccionarioDeVariables, identificadorCopiado,
 			desplazamiento);
 	pcbEnUso->tamanio_Contexto_Actual++;
 	return (pcbEnUso->tamanio_Contexto_Actual - 1) * 5;
 }
 
-t_puntero obtenerPosicionVariable(t_nombre_variable identificador_variable) {//Chequeada
-	printf("llame obtenerPosicion\n");
-	char *identificadorPosta=malloc(2);
+t_puntero obtenerPosicionVariable(t_nombre_variable identificador_variable) { //Chequeada
+	printf("llame obtenerPosicion con identif = %c\n", identificador_variable);
+	char *identificadorPosta = malloc(2);
 	identificadorPosta[0] = identificador_variable;
 	identificadorPosta[1] = 0;
-	int *aux = dictionary_get(diccionarioDeVariables,
-			identificadorPosta);
+	int *aux = dictionary_get(diccionarioDeVariables, identificadorPosta);
+	printf("Y la direccion obtenida es %d\n", *aux);
 	return (aux == NULL ) ? -1 : *aux;
 }
 //
-t_valor_variable dereferenciar(t_puntero direccion_variable) {//Chequeada
-	printf("llame dereferenciar\n");
+t_valor_variable dereferenciar(t_puntero direccion_variable) { //Chequeada
+	printf("llame dereferenciar con direccion = %d\n", direccion_variable);
 	char *aux = solicitarBytesAUMV(pcbEnUso->segmento_Stack,
 			direccion_variable + 1, 4);
+	printf("y el valor obtenido es = %d\n", *aux);
 	t_valor_variable valor;
 	memcpy(&valor, aux, 4);
 	free(aux);
 	return valor;
 }
 ////
-void asignar(t_puntero direccion_variable, t_valor_variable valor) {//Chequeada
-	printf("llame asignar\n");
-	enviarBytesAUMV(pcbEnUso->segmento_Stack, direccion_variable+1, 4, &valor);
+void asignar(t_puntero direccion_variable, t_valor_variable valor) { //Chequeada
+	printf("llame asignar con direccion = %d y valor = %d\n",
+			direccion_variable, valor);
+	enviarBytesAUMV(pcbEnUso->segmento_Stack,
+			pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack
+					+ direccion_variable + 1, 4, &valor);
 	printf("el valor asignado es %d\n", valor);
 }
 //
@@ -323,38 +349,55 @@ void irAlLabel(t_nombre_etiqueta etiqueta) {
 //	log_info(logs, "Ejecute irAlLabel con %s", etiqueta);
 //	Segun yo a las 12, al comienzo del programa en el cpu, debemos traer el segmento de etiquetas hacia el.
 //	etiquetas es una global en la que copiamos enterito el indice de etiquetas
-	printf("el valor del program counter viejo es %d\n", pcbEnUso->program_Counter);
-	pcbEnUso->program_Counter = metadata_buscar_etiqueta(_depurar_sentencia(etiqueta), etiquetas,
-			pcbEnUso->tamanio_Indice_de_Etiquetas);
-	printf("el valor del program counter nuevo es %d\n", pcbEnUso->program_Counter);
+	printf("el valor del program counter viejo es %d\n",
+			pcbEnUso->program_Counter);
+	pcbEnUso->program_Counter = metadata_buscar_etiqueta(
+			_depurar_sentencia(etiqueta), etiquetas,
+			pcbEnUso->tamanio_Indice_de_Etiquetas) - 1;
+	printf("el valor del program counter nuevo es %d\n",
+			pcbEnUso->program_Counter);
 }
 //
 void llamarSinRetorno(t_nombre_etiqueta etiqueta) {
 	//log_info(logs, "Ejecute llamarSinRetorno con %s", etiqueta);
 	//Yo crearia un nuevo diccionario, pero no se como es esta cosa.
-	enviarBytesAUMV(pcbEnUso->cursor_Stack,
-			pcbEnUso->tamanio_Contexto_Actual * 5, 4,
+	free(diccionarioDeVariables);//deberia liberarlo mejor, pero soy pato
+	diccionarioDeVariables=dictionary_create();
+	enviarBytesAUMV(pcbEnUso->segmento_Stack,
+			pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack
+					+ pcbEnUso->tamanio_Contexto_Actual * 5, 4,
 			&(pcbEnUso->cursor_Stack));
-	enviarBytesAUMV(pcbEnUso->cursor_Stack,
-			pcbEnUso->tamanio_Contexto_Actual * 5 + 4, 4,
+	enviarBytesAUMV(pcbEnUso->segmento_Stack,
+			pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack
+					+ pcbEnUso->tamanio_Contexto_Actual * 5 + 4, 4,
 			&(pcbEnUso->program_Counter));
-	pcbEnUso->cursor_Stack = pcbEnUso->segmento_Stack
+	printf("El viejo cursor stack es: %d\n", pcbEnUso->cursor_Stack);
+	pcbEnUso->cursor_Stack = pcbEnUso->cursor_Stack
 			+ pcbEnUso->tamanio_Contexto_Actual * 5 + 8;
+	printf("El nuevo cursor stack es: %d\n", pcbEnUso->cursor_Stack);
 	pcbEnUso->tamanio_Contexto_Actual = 0;
 	irAlLabel(etiqueta);
 }
 void llamarConRetorno(t_nombre_etiqueta etiqueta, t_puntero donde_retornar) {
 	//log_info(logs, "Ejecute llamarConRetorno con %s", etiqueta);
-	enviarBytesAUMV(pcbEnUso->cursor_Stack,
-			pcbEnUso->tamanio_Contexto_Actual * 5, 4,
+	free(diccionarioDeVariables);//deberia liberarlo mejor, pero soy pato
+	diccionarioDeVariables=dictionary_create();
+	enviarBytesAUMV(pcbEnUso->segmento_Stack,
+			pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack
+					+ pcbEnUso->tamanio_Contexto_Actual * 5, 4,
 			&(pcbEnUso->cursor_Stack));
-	enviarBytesAUMV(pcbEnUso->cursor_Stack,
-			pcbEnUso->tamanio_Contexto_Actual * 5 + 4, 4,
+	enviarBytesAUMV(pcbEnUso->segmento_Stack,
+			pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack
+					+ pcbEnUso->tamanio_Contexto_Actual * 5 + 4, 4,
 			&(pcbEnUso->program_Counter));
-	enviarBytesAUMV(pcbEnUso->cursor_Stack,
-			pcbEnUso->tamanio_Contexto_Actual * 5 + 8, 4, &(donde_retornar));
-	pcbEnUso->cursor_Stack = pcbEnUso->segmento_Stack
+	enviarBytesAUMV(pcbEnUso->segmento_Stack,
+			pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack
+					+ pcbEnUso->tamanio_Contexto_Actual * 5 + 8, 4,
+			&(donde_retornar));
+	printf("El viejo cursor stack es: %d\n", pcbEnUso->cursor_Stack);
+	pcbEnUso->cursor_Stack = pcbEnUso->cursor_Stack
 			+ pcbEnUso->tamanio_Contexto_Actual * 5 + 12;
+	printf("El nuevo cursor stack es: %d\n", pcbEnUso->cursor_Stack);
 	pcbEnUso->tamanio_Contexto_Actual = 0;
 	irAlLabel(etiqueta);
 }
@@ -362,15 +405,25 @@ void finalizar(void) {
 	log_info(logs, "Ejecute finalizar");
 	if (pcbEnUso->cursor_Stack == pcbEnUso->segmento_Stack) {
 		printf("El programa deberia finalizar asi noma'\n"); //FIXME
+		programaFinalizo = 1;
 	} else {
 		char *p_programCounter = solicitarBytesAUMV(pcbEnUso->segmento_Stack,
 				pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack - 4, 4);
 		char *p_cursorCtxto = solicitarBytesAUMV(pcbEnUso->segmento_Stack,
 				pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack - 8, 4);
-		pcbEnUso->tamanio_Contexto_Actual = (pcbEnUso->cursor_Stack - 8
-				- pcbEnUso->segmento_Stack) / 5;
+		int proximo_cursor_stack;
+		printf("el viejo program counter es %d\n", pcbEnUso->program_Counter);
 		memcpy(&(pcbEnUso->program_Counter), p_programCounter, 4);
-		memcpy(&(pcbEnUso->cursor_Stack), p_cursorCtxto, 4);
+		printf("el nuevo program counter es %d\n", pcbEnUso->program_Counter);
+		memcpy(&proximo_cursor_stack, p_cursorCtxto, 4);
+		pcbEnUso->tamanio_Contexto_Actual = (pcbEnUso->cursor_Stack - 8
+				- proximo_cursor_stack) / 5;
+		pcbEnUso->cursor_Stack=proximo_cursor_stack;
+		free(diccionarioDeVariables);
+		diccionarioDeVariables=dictionary_create();
+		recuperarDiccionario();
+//		memcpy(&(pcbEnUso->program_Counter), p_programCounter, 4);
+//		memcpy(&(pcbEnUso->cursor_Stack), p_cursorCtxto, 4);
 		free(p_programCounter);
 		free(p_cursorCtxto);
 	}
@@ -382,32 +435,31 @@ void retornar(t_valor_variable retorno) {
 	int dirRetorno;
 	memcpy(&dirRetorno, p_retorno, 4);
 	free(p_retorno);
-	enviarBytesAUMV(pcbEnUso->segmento_Stack, dirRetorno, 4, &retorno);
-	pcbEnUso->tamanio_Contexto_Actual = (pcbEnUso->cursor_Stack - 12
-			- pcbEnUso->segmento_Stack) / 5;
+	enviarBytesAUMV(pcbEnUso->segmento_Stack, dirRetorno+1, 4, &retorno);
 	char *p_programCounter = solicitarBytesAUMV(pcbEnUso->segmento_Stack,
 			pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack - 8, 4);
 	char *p_cursorCtxto = solicitarBytesAUMV(pcbEnUso->segmento_Stack,
 			pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack - 12, 4);
+	int proximo_cursor_stack;
+	printf("el viejo program counter es %d\n", pcbEnUso->program_Counter);
 	memcpy(&pcbEnUso->program_Counter, p_programCounter, 4);
-	memcpy(&pcbEnUso->cursor_Stack, p_cursorCtxto, 4);
+	printf("el nuevo program counter es %d\n", pcbEnUso->program_Counter);
+	memcpy(&proximo_cursor_stack, p_cursorCtxto, 4);
+	pcbEnUso->tamanio_Contexto_Actual = (pcbEnUso->cursor_Stack - 12
+			- proximo_cursor_stack) / 5;
+	pcbEnUso->cursor_Stack=proximo_cursor_stack;
+	printf("el nuevo contexto actual es %d\n", pcbEnUso->tamanio_Contexto_Actual);
+	free(diccionarioDeVariables);
+	diccionarioDeVariables=dictionary_create();
+	recuperarDiccionario();
 	free(p_programCounter);
 	free(p_cursorCtxto);
 }
 void imprimir(t_valor_variable valor_mostrar) {
 	log_info(logs, "Ejecute imprimir con %d", valor_mostrar);
-//	int *razon = malloc(sizeof(int));
-//	*razon = MOSTRAR_VALOR;
-//	t_paquete *paquete = serializar2(
-//			crear_nodoVar(&valor_mostrar, sizeof(t_valor_variable)), 0);
-//	t_paquete *header = serializar2(crear_nodoVar(&(paquete->tamano), 4),
-//			crear_nodoVar(razon, 4), 0);
-//	send(socketKernel, header->msj, TAMANO_CABECERA, 0);
-//	send(socketKernel, paquete->msj, paquete->tamano, 0);
-//	//Quizas deberiamos esperar la respuesta
-	enviarConRazon(socketKernel, logs, IMPRIMIR,
-			serializar2(crear_nodoVar(&valor_mostrar, sizeof(t_valor_variable)),
-					0));
+	/*enviarConRazon(socketKernel, logs, IMPRIMIR,
+	 serializar2(crear_nodoVar(&valor_mostrar, sizeof(t_valor_variable)),
+	 0));*/
 }
 void imprimirTexto(char* texto) {
 	log_info(logs, "Ejecute imprimirTexto con %s", texto);
@@ -420,8 +472,8 @@ void imprimirTexto(char* texto) {
 //	send(socketKernel, header->msj, TAMANO_CABECERA, 0);
 //	send(socketKernel, paquete->msj, paquete->tamano, 0);
 //	//Quizas deberiamos esperar la respuesta
-	enviarConRazon(socketKernel, logs, IMPRIMIR_TEXTO,
-			serializar2(crear_nodoVar(texto, strlen(texto) + 1), 0));
+	/*	enviarConRazon(socketKernel, logs, IMPRIMIR_TEXTO,
+	 serializar2(crear_nodoVar(texto, strlen(texto) + 1), 0));*/
 }
 void entradaSalida(t_nombre_dispositivo dispositivo, int tiempo) {
 	log_info(logs, "Ejecute entradaSalida con %s", dispositivo);
@@ -435,12 +487,12 @@ void entradaSalida(t_nombre_dispositivo dispositivo, int tiempo) {
 //	send(socketKernel, header->msj, TAMANO_CABECERA, 0);
 //	send(socketKernel, paquete->msj, paquete->tamano, 0);
 //	log_info(log, "Se desalojó un programa de esta CPU");
-	t_paquete * paquetePCB = serializarPCB(pcbEnUso);
-	int tamano = paquetePCB->tamano;
-	enviarConRazon(socketKernel, logs, SALIO_POR_IO,
-			serializar2(crear_nodoVar(paquetePCB->msj, tamano),
-					crear_nodoVar(dispositivo, strlen(dispositivo) + 1),
-					crear_nodoVar(&tiempo, 4), 0));
+	/*	t_paquete * paquetePCB = serializarPCB(pcbEnUso);
+	 int tamano = paquetePCB->tamano;
+	 enviarConRazon(socketKernel, logs, SALIO_POR_IO,
+	 serializar2(crear_nodoVar(paquetePCB->msj, tamano),
+	 crear_nodoVar(dispositivo, strlen(dispositivo) + 1),
+	 crear_nodoVar(&tiempo, 4), 0));*/
 }
 void wait(t_nombre_semaforo identificador_semaforo) {
 	log_info(logs, "Ejecute wait con %s", identificador_semaforo);
@@ -487,8 +539,8 @@ void signalPropia(t_nombre_semaforo identificador_semaforo) {
 	/*Creo que no hace falta un recv, porque no le afecta directamente a el,
 	 * el PCP deberia sacar de la cola de bloqueados a quien corresponda y listo.
 	 */
-	enviarConRazon(socketKernel, logs, SIGNAL,
-			serializar2(
-					crear_nodoVar(identificador_semaforo,
-							strlen(identificador_semaforo) + 1), 0));
+	/*	enviarConRazon(socketKernel, logs, SIGNAL,
+	 serializar2(
+	 crear_nodoVar(identificador_semaforo,
+	 strlen(identificador_semaforo) + 1), 0));*/
 }
