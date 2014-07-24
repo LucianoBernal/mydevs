@@ -221,7 +221,7 @@ void* atencionCPUs(void* sinParametro) {
 						break;
 					case GRABAR_VALOR:
 						desempaquetar2(mensaje, &id, &valor, 0);
-						sc_grabar_valor(id, valor);
+						sc_grabar_valor(id, valor,sd);
 						break;
 					case OBTENER_VALOR:
 						desempaquetar2(mensaje, &id, 0);

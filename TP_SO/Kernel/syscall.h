@@ -14,7 +14,7 @@ extern t_dictionary* diccionarioSemaforos;
 extern sem_t colaReadyMutex;
 int sc_obtener_valor(char*, int);
 
-int sc_grabar_valor(char*, int);
+int sc_grabar_valor(char*, int, int);
 void sc_signal(char*, int);
 void sc_wait(char*, t_PCB* , int);
 
