@@ -146,8 +146,8 @@ int main(int arc, char **argv) {
 					ubInstruccion, largoInstruccion);
 			literalInstruccion[largoInstruccion]=0;
 			log_info(logs, "El literal es juancito: %s", literalInstruccion);
-//			analizadorLinea(literalInstruccion, &funciones_Ansisop,
-//					&funciones_kernel);
+			analizadorLinea(strdup(literalInstruccion), &funciones_Ansisop,
+					&funciones_kernel);
 			pcbEnUso->program_Counter++;
 			lineasAnalizadas++;
 		}

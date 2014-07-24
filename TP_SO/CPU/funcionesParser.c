@@ -227,41 +227,44 @@ t_puntero definirVariable(t_nombre_variable identificador_variable) {
 	 dictionary_put(diccionario, &(aux->identificador_variable), aux);
 	 return stackBase + desplazamiento - 4; //El tp dice posicion, para mi es desplazamiento nomas
 	 */
-	log_info(logs,"Ejecuté definirVariable con %s", identificador_variable);
-	enviarBytesAUMV(pcbEnUso->segmento_Stack,
-			pcbEnUso->tamanio_Contexto_Actual * 5, 1, &identificador_variable);
-	char *identificadorACopiar = strdup(&identificador_variable);
-	identificadorACopiar[1] = 0;
-	dictionary_put(diccionarioDeVariables, identificadorACopiar,
-			crear_nodoDiccionario(identificador_variable,
-					pcbEnUso->tamanio_Contexto_Actual * 5 + 1));
-	pcbEnUso->tamanio_Contexto_Actual++;
-	return pcbEnUso->segmento_Stack
-			+ (pcbEnUso->tamanio_Contexto_Actual - 1) * 5;
+//	log_info(logs,"Ejecute definirVariable con %s", identificador_variable);
+//	enviarBytesAUMV(pcbEnUso->segmento_Stack,
+//			pcbEnUso->tamanio_Contexto_Actual * 5, 1, &identificador_variable);
+//	char *identificadorCopiado = malloc(2);
+//	identificadorCopiado[0] = identificador_variable;
+//	identificadorCopiado[1] = 0;
+//	int *desplazamiento = malloc(4);
+//	*desplazamiento = pcbEnUso->tamanio_Contexto_Actual*5;
+//	dictionary_put(diccionarioDeVariables, identificadorCopiado, desplazamiento);
+//	pcbEnUso->tamanio_Contexto_Actual++;
+//	return pcbEnUso->segmento_Stack
+//			+ (pcbEnUso->tamanio_Contexto_Actual - 1) * 5;
+	return 1;
 }
 
 t_puntero obtenerPosicionVariable(t_nombre_variable identificador_variable) {
-	log_info(logs,"Ejecute obtenerPosicionVariable con %s", identificador_variable);
-	char *identificadorPosta = strdup(&identificador_variable);
-	identificadorPosta[1] = 0;
-	t_variable_diccionario *aux = dictionary_get(diccionarioDeVariables,
-			identificadorPosta);
-	return (aux == NULL ) ? -1 : aux->desplazamiento;
+//	log_info(logs,"Ejecute obtenerPosicionVariable con %s", identificador_variable);
+//	char *identificadorPosta = strdup(&identificador_variable);
+//	identificadorPosta[1] = 0;
+//	t_variable_diccionario *aux = dictionary_get(diccionarioDeVariables,
+//			identificadorPosta);
+//	return (aux == NULL ) ? -1 : aux->desplazamiento;
 }
 //
 t_valor_variable dereferenciar(t_puntero direccion_variable) {
-	log_info(logs,"Ejecute dereferenciar con direccion: %d", direccion_variable);
-	char *aux = solicitarBytesAUMV(pcbEnUso->segmento_Stack,
-			direccion_variable + 1, 4);
-	t_valor_variable valor;
-	memcpy(&valor, aux, 4);
-	free(aux);
-	return valor;
+//	log_info(logs,"Ejecute dereferenciar con direccion: %d", direccion_variable);
+//	char *aux = solicitarBytesAUMV(pcbEnUso->segmento_Stack,
+//			direccion_variable + 1, 4);
+//	t_valor_variable valor;
+//	memcpy(&valor, aux, 4);
+//	free(aux);
+//	return valor;
+	return 1;
 }
 ////
 void asignar(t_puntero direccion_variable, t_valor_variable valor) {
-	log_info(logs,"Ejecute asignar con valor: %d", valor);
-	enviarBytesAUMV(pcbEnUso->segmento_Stack, direccion_variable, 4, &valor);
+//	log_info(logs,"Ejecute asignar con valor: %d", valor);
+//	enviarBytesAUMV(pcbEnUso->segmento_Stack, direccion_variable, 4, &valor);
 }
 //
 t_valor_variable obtenerValorCompartida(t_nombre_compartida variable) {
@@ -286,7 +289,7 @@ t_valor_variable obtenerValorCompartida(t_nombre_compartida variable) {
 //	return *aux;
 	t_valor_variable aux;
 	int razon;
-	enviarConRazon(socketKernel, logs, OBTENER_VALOR_COMPARTIDA,
+	enviarConRazon(socketKernel, logs, OBTENER_VALOR,
 			serializar2(crear_nodoVar(variable, strlen(variable) + 1), 0));
 	char *respuesta = recibirConRazon(socketKernel, &razon, logs);
 	desempaquetar2(respuesta, &aux, 0);
