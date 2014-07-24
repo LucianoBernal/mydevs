@@ -121,7 +121,7 @@ int crearSegmento(int tamano) {
 	if (proceso->tabla == NULL )
 		proceso->tabla = list_create();
 	list_add(proceso->tabla, nuevoSegmento);
-	log_info(logger,"Se creó un segmento de base %d\n",nuevoSegmento->inicioLogico);
+	log_info(logger,"Se creó un segmento de base %d y tamano %d\n",nuevoSegmento->inicioLogico, nuevoSegmento->tamano);
 	return nuevoSegmento->inicioLogico;
 }
 
@@ -146,7 +146,7 @@ bool tieneProblemas(int inicio, int pid, int tamano) {
 		}
 		aux->comienzo = elemento->inicioLogico + elemento->tamano + 1;
 		if (list_get(tabla, i) == NULL ) {
-			aux->final = 1000;
+			aux->final = 10000;
 		} else {
 			aux->final = ((t_tablaSegmento *) list_get(tabla, i))->inicioLogico
 					- 1;
@@ -158,7 +158,7 @@ bool tieneProblemas(int inicio, int pid, int tamano) {
 	t_limites_logico *aux = malloc(sizeof(t_limites_logico));
 	if (list_is_empty(listaEspacios)) {
 		aux->comienzo = 0;
-		aux->final = 1000;
+		aux->final = 10000;
 		list_add(listaEspacios, aux);
 	}
 	if ((listaEspacios->elements_count == tabla->elements_count)
@@ -178,18 +178,13 @@ bool tieneProblemas(int inicio, int pid, int tamano) {
 }
 
 int obtenerInicioLogico(int pid, int tamano) {
-	const int SIZE_SEGMENT = 1000;
+	const int SIZE_SEGMENT = 10000;
 	int inicioLogico, error = 0;
 	srand(time(NULL ));
 	inicioLogico = rand() % SIZE_SEGMENT;
 
-	while (tieneProblemas(inicioLogico, pid, tamano) && (error < 100)) {
+	while (tieneProblemas(inicioLogico, pid, tamano)) {
 		inicioLogico = rand() % SIZE_SEGMENT;
-		error++;
-	}
-	if (error > 100) {
-		printf("Hay un tema con las bases logicas");
-		return -1;
 	}
 	return inicioLogico;
 }
@@ -199,10 +194,12 @@ void compactarMemoria() {
 	void _cambiar_posiciones_chetamente(t_tablaSegmento *self) {
 		t_tablaSegmento *aux;
 		if (i == -1) {
+			memcpy(baseUMV, self->memPpal, self->tamano);
 			self->memPpal = baseUMV;
 		} else {
 			aux = list_get(listaSegmentosOrdenada, i);
 			if (aux != NULL )
+				memcpy(aux->memPpal+aux->tamano+1, self->memPpal, self->tamano);
 				self->memPpal = aux->memPpal + aux->tamano + 1;
 		}
 		i++;

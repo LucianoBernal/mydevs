@@ -30,6 +30,6 @@ t_tamYDir *crear_nodoVar(void *, int);
 t_paquete *serializar2(t_tamYDir *uno, ...);
 void desempaquetar2(char *, void *, ...);
 t_paquete *serializarPCB(t_PCB*);
-void desempaqutarPCB(t_PCB*, char*);
+void desempaquetarPCB(t_PCB*, char*);
 
 #endif /* SERIALIZACION_H_ */

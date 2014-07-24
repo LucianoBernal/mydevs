@@ -147,9 +147,10 @@ int crearSegmentos_Memoria(t_metadata_program *metadata, t_PCB *pcb,
 	printf("razon de CREAR SEGMENTOS es%d\n", CREAR_SEGMENTOS_PROGRAMA);
 	printf("%d %d %d %d", tamanioScript, metadata->instrucciones_size,
 			metadata->etiquetas_size, tamanio_stack);
+	int tamanoInstrucciones=metadata->instrucciones_size*8;
 	enviarConRazon(socketUMV, logKernel, CREAR_SEGMENTOS_PROGRAMA,
 			serializar2(crear_nodoVar(&tamanioScript, 4),
-					crear_nodoVar(&metadata->instrucciones_size, 4),
+					crear_nodoVar(&tamanoInstrucciones, 4),
 					crear_nodoVar(&metadata->etiquetas_size, 4),
 					crear_nodoVar(&tamanio_stack, 4), 0));
 	char *mensaje = recibirConRazon(socketUMV, &razon, logKernel);
@@ -175,7 +176,7 @@ void escribir_en_Memoria(t_metadata_program * metadata, t_PCB *pcb,
 	printf("Estoy en escribir memoria\n");
 	int segmentoCodigo = pcb->segmento_Codigo;
 	int indiceCodigo = pcb->indice_de_Codigo;
-	int instruccionesSize = metadata->instrucciones_size;
+	int instruccionesSize = metadata->instrucciones_size*8;
 	int indiceEtiquetas = pcb->indice_de_Etiquetas;
 	int etiquetasSize = metadata->etiquetas_size;
 	enviarConRazon(socketUMV, logKernel, ESCRIBIR_EN_UMV,
