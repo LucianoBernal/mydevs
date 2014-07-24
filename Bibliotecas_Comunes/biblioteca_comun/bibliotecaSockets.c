@@ -27,7 +27,7 @@ int enviarConRazon(int socket, t_log* logs, int razon, t_paquete *pack){
 		close(socket);
 		return 0;
 	}
-	if (pack->tamano){
+	if (pack->tamano!=4&&pack->tamano!=0){
 		if (send(socket, pack->msj, pack->tamano, 0)==-1){
 			log_error(logs, "El mensaje no se pudo enviar correctamente");
 			close(socket);
@@ -51,7 +51,7 @@ char *recibirConRazon(int socket, int *p_razon, t_log *logs){
 	int tamano;
 	desempaquetar2(header, p_razon, &tamano, 0);
 	//free(header);
-	if (tamano!=4){
+	if (tamano!=4&&tamano!=0){
 		char *msj=malloc(tamano);
 		if(recv(socket, msj, tamano, MSG_WAITALL)==-1){
 			log_error(logs, "Hubo un error al recibir el mensaje");
