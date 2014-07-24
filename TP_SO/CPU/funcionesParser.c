@@ -196,7 +196,7 @@ char *solicitarBytesAUMV(t_puntero base, t_puntero desplazamiento, int tamano) {
 		//SACARPROCESODECPUPORABORTO(); Declaratividad op
 		return NULL ;
 	}
-	char *aux = malloc(tamano);
+	char *aux = malloc(tamano+1);
 	mensaje!=NULL ? desempaquetar2(mensaje, aux, 0) : printf("Esta estaba vacia\n");
 	free(mensaje);
 	return aux;

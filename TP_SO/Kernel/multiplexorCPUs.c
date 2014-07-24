@@ -197,7 +197,7 @@ void* atencionCPUs(void* sinParametro) {
 								0);
 						programaSalioPorBloqueo(pcb, tiempo, dispositivoIO, sd);
 						break;
-					case SIGURS_1: //la CPU se desconectó CON SIGUSR
+					case SIGUSR_1: //la CPU se desconectó CON SIGUSR
 						desempaquetar2(mensaje, &pcb, 0);
 						sem_wait(&semCPUDesconectadaMutex);
 						idUltimaCPUDesconectada = sd;

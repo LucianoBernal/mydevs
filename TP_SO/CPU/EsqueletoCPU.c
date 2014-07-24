@@ -145,7 +145,7 @@ int main(int arc, char **argv) {
 			char *literalInstruccion = solicitarBytesAUMV(pcbEnUso->segmento_Codigo,
 					ubInstruccion, largoInstruccion);
 			literalInstruccion[largoInstruccion]=0;
-			log_info(logs, "El literal es: %s", literalInstruccion);
+			log_info(logs, "El literal es juancito: %s", literalInstruccion);
 //			analizadorLinea(literalInstruccion, &funciones_Ansisop,
 //					&funciones_kernel);
 			pcbEnUso->program_Counter++;
