@@ -83,6 +83,14 @@ int crearServidor(char* puerto, t_log* logs){
 		return -1;
 	}
 
+	//Pequeño fragmento salvador que permite re-utilizar los puertos.
+	int yes=1;
+	if (setsockopt(listenningSocket,SOL_SOCKET,SO_REUSEADDR,&yes,sizeof(int)) == -1){
+		perror("setsockopt");
+		exit(1);
+	}
+	//Vieron que era pequeño.
+
 	if (bind(listenningSocket,serverInfo->ai_addr, serverInfo->ai_addrlen)==-1){
 		log_error(logs, "Hubo un error al bindear el socket");
 		close(listenningSocket);
