@@ -174,6 +174,7 @@ void atencionCpu(int *socketCPU) {
 //	desempaquetar2(header, razon, tamanoMensaje, 0);
 //	char *mensaje = malloc(*tamanoMensaje);
 //	recv(*socketCPU, (void*) mensaje, *tamanoMensaje, MSG_WAITALL);
+//	aplicarRetardo(retardo);
 	char *mensaje=recibirConRazon(*socketCPU, razon, logger);
 	switch (*razon) {
 

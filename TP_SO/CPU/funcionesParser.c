@@ -277,11 +277,12 @@ t_puntero obtenerPosicionVariable(t_nombre_variable identificador_variable) { //
 //
 t_valor_variable dereferenciar(t_puntero direccion_variable) { //Chequeada
 	printf("llame dereferenciar con direccion = %d\n", direccion_variable);
+
 	char *aux = solicitarBytesAUMV(pcbEnUso->segmento_Stack,
-			direccion_variable + 1, 4);
-	printf("y el valor obtenido es = %d\n", *aux);
+			/*pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack +*/ direccion_variable + 1, 4);
 	t_valor_variable valor;
 	memcpy(&valor, aux, 4);
+	printf("y el valor obtenido es = %d\n", valor);
 	free(aux);
 	return valor;
 }
@@ -289,9 +290,12 @@ t_valor_variable dereferenciar(t_puntero direccion_variable) { //Chequeada
 void asignar(t_puntero direccion_variable, t_valor_variable valor) { //Chequeada
 	printf("llame asignar con direccion = %d y valor = %d\n",
 			direccion_variable, valor);
+	if (direccion_variable<pcbEnUso->cursor_Stack-pcbEnUso->segmento_Stack){
+		direccion_variable+=pcbEnUso->cursor_Stack-pcbEnUso->segmento_Stack;
+	}
 	enviarBytesAUMV(pcbEnUso->segmento_Stack,
-			pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack
-					+ direccion_variable + 1, 4, &valor);
+			/*pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack
+					+*/ direccion_variable + 1, 4, &valor);
 	printf("el valor asignado es %d\n", valor);
 }
 //
