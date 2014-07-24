@@ -170,6 +170,16 @@ void vincPrimitivas() {
 	funciones_kernel.AnSISOP_wait = wait;
 }
 
+static char* _depurar_sentencia(char* sentencia){
+	int i = strlen(sentencia);
+	while (string_ends_with(sentencia, "\n")){
+		i--;
+		sentencia = string_substring_until(sentencia, i);
+	}
+	log_info(logs, "Sentencia depurada: %s", sentencia);
+	return sentencia;
+}
+
 void enviarBytesAUMV(t_puntero base, t_puntero desplazamiento, int tamano,
 		void *datos) {
 	int razon;
@@ -219,16 +229,7 @@ char *solicitarBytesAUMV(t_puntero base, t_puntero desplazamiento, int tamano) {
 ////	}
 //} //UFF SOY TAN HOMBRE
 //
-t_puntero definirVariable(t_nombre_variable identificador_variable) {
-	/*
-	 enviarBytesAUMV(stackBase, desplazamiento, &identificador_variable, 1);
-	 t_variable_diccionario *aux = crear_nodoDiccionario(identificador_variable,
-	 desplazamiento);
-	 desplazamiento += 5; //PIENSO que en el diccionario se guarda un puntero al COMIENZO de la variable
-	 dictionary_put(diccionario, &(aux->identificador_variable), aux);
-	 return stackBase + desplazamiento - 4; //El tp dice posicion, para mi es desplazamiento nomas
-	 */
-//	log_info(logs,"Ejecute definirVariable con %s", identificador_variable);
+t_puntero definirVariable(t_nombre_variable identificador_variable) {//Chequeada
 	enviarBytesAUMV(pcbEnUso->segmento_Stack,
 			pcbEnUso->tamanio_Contexto_Actual * 5, 1, &identificador_variable);
 	char *identificadorCopiado = malloc(2);
@@ -239,13 +240,10 @@ t_puntero definirVariable(t_nombre_variable identificador_variable) {
 	dictionary_put(diccionarioDeVariables, identificadorCopiado,
 			desplazamiento);
 	pcbEnUso->tamanio_Contexto_Actual++;
-	return pcbEnUso->segmento_Stack
-			+ (pcbEnUso->tamanio_Contexto_Actual - 1) * 5;
+	return (pcbEnUso->tamanio_Contexto_Actual - 1) * 5;
 }
 
-t_puntero obtenerPosicionVariable(t_nombre_variable identificador_variable) {
-//	log_info(logs,"Ejecute obtenerPosicionVariable con %s", identificador_variable);
-//	char *identificadorPosta = strdup(&identificador_variable);
+t_puntero obtenerPosicionVariable(t_nombre_variable identificador_variable) {//Chequeada
 	printf("llame obtenerPosicion\n");
 	char *identificadorPosta=malloc(2);
 	identificadorPosta[0] = identificador_variable;
@@ -255,8 +253,7 @@ t_puntero obtenerPosicionVariable(t_nombre_variable identificador_variable) {
 	return (aux == NULL ) ? -1 : *aux;
 }
 //
-t_valor_variable dereferenciar(t_puntero direccion_variable) {
-//	log_info(logs,"Ejecute dereferenciar con direccion: %d", direccion_variable);
+t_valor_variable dereferenciar(t_puntero direccion_variable) {//Chequeada
 	printf("llame dereferenciar\n");
 	char *aux = solicitarBytesAUMV(pcbEnUso->segmento_Stack,
 			direccion_variable + 1, 4);
@@ -266,8 +263,7 @@ t_valor_variable dereferenciar(t_puntero direccion_variable) {
 	return valor;
 }
 ////
-void asignar(t_puntero direccion_variable, t_valor_variable valor) {
-//	log_info(logs,"Ejecute asignar con valor: %d", valor);
+void asignar(t_puntero direccion_variable, t_valor_variable valor) {//Chequeada
 	printf("llame asignar\n");
 	enviarBytesAUMV(pcbEnUso->segmento_Stack, direccion_variable+1, 4, &valor);
 	printf("el valor asignado es %d\n", valor);
@@ -324,15 +320,17 @@ t_valor_variable asignarValorCompartida(t_nombre_compartida variable,
 }
 //
 void irAlLabel(t_nombre_etiqueta etiqueta) {
-	log_info(logs, "Ejecute irAlLabel con %s", etiqueta);
+//	log_info(logs, "Ejecute irAlLabel con %s", etiqueta);
 //	Segun yo a las 12, al comienzo del programa en el cpu, debemos traer el segmento de etiquetas hacia el.
 //	etiquetas es una global en la que copiamos enterito el indice de etiquetas
-	pcbEnUso->program_Counter = metadata_buscar_etiqueta(etiqueta, etiquetas,
+	printf("el valor del program counter viejo es %d\n", pcbEnUso->program_Counter);
+	pcbEnUso->program_Counter = metadata_buscar_etiqueta(_depurar_sentencia(etiqueta), etiquetas,
 			pcbEnUso->tamanio_Indice_de_Etiquetas);
+	printf("el valor del program counter nuevo es %d\n", pcbEnUso->program_Counter);
 }
 //
 void llamarSinRetorno(t_nombre_etiqueta etiqueta) {
-	log_info(logs, "Ejecute llamarSinRetorno con %s", etiqueta);
+	//log_info(logs, "Ejecute llamarSinRetorno con %s", etiqueta);
 	//Yo crearia un nuevo diccionario, pero no se como es esta cosa.
 	enviarBytesAUMV(pcbEnUso->cursor_Stack,
 			pcbEnUso->tamanio_Contexto_Actual * 5, 4,
@@ -346,7 +344,7 @@ void llamarSinRetorno(t_nombre_etiqueta etiqueta) {
 	irAlLabel(etiqueta);
 }
 void llamarConRetorno(t_nombre_etiqueta etiqueta, t_puntero donde_retornar) {
-	log_info(logs, "Ejecute llamarConRetorno con %s", etiqueta);
+	//log_info(logs, "Ejecute llamarConRetorno con %s", etiqueta);
 	enviarBytesAUMV(pcbEnUso->cursor_Stack,
 			pcbEnUso->tamanio_Contexto_Actual * 5, 4,
 			&(pcbEnUso->cursor_Stack));
@@ -366,9 +364,9 @@ void finalizar(void) {
 		printf("El programa deberia finalizar asi noma'\n"); //FIXME
 	} else {
 		char *p_programCounter = solicitarBytesAUMV(pcbEnUso->segmento_Stack,
-				pcbEnUso->cursor_Stack - 4, 4);
+				pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack - 4, 4);
 		char *p_cursorCtxto = solicitarBytesAUMV(pcbEnUso->segmento_Stack,
-				pcbEnUso->cursor_Stack - 8, 4);
+				pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack - 8, 4);
 		pcbEnUso->tamanio_Contexto_Actual = (pcbEnUso->cursor_Stack - 8
 				- pcbEnUso->segmento_Stack) / 5;
 		memcpy(&(pcbEnUso->program_Counter), p_programCounter, 4);
@@ -380,7 +378,7 @@ void finalizar(void) {
 void retornar(t_valor_variable retorno) {
 	log_info(logs, "Ejecute retornar con %d", retorno);
 	char *p_retorno = solicitarBytesAUMV(pcbEnUso->segmento_Stack,
-			pcbEnUso->cursor_Stack - 4, 4);
+			pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack - 4, 4);
 	int dirRetorno;
 	memcpy(&dirRetorno, p_retorno, 4);
 	free(p_retorno);
@@ -388,9 +386,9 @@ void retornar(t_valor_variable retorno) {
 	pcbEnUso->tamanio_Contexto_Actual = (pcbEnUso->cursor_Stack - 12
 			- pcbEnUso->segmento_Stack) / 5;
 	char *p_programCounter = solicitarBytesAUMV(pcbEnUso->segmento_Stack,
-			pcbEnUso->cursor_Stack - 8, 4);
+			pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack - 8, 4);
 	char *p_cursorCtxto = solicitarBytesAUMV(pcbEnUso->segmento_Stack,
-			pcbEnUso->cursor_Stack - 12, 4);
+			pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack - 12, 4);
 	memcpy(&pcbEnUso->program_Counter, p_programCounter, 4);
 	memcpy(&pcbEnUso->cursor_Stack, p_cursorCtxto, 4);
 	free(p_programCounter);

@@ -42,3 +42,31 @@
 [INFO] 02:10:05:24 CPU/(2481:2481): El handshake con el Kernel salió bien.
 [INFO] 02:10:17:162 CPU/(2481:2481): El literal es juancito: 	variables a, b
 
+[INFO] 04:05:16:43 CPU/(2308:2308): El handshake con la UMV salió bien.
+[INFO] 04:05:18:985 CPU/(2308:2308): El handshake con el Kernel salió bien.
+[INFO] 04:05:46:901 CPU/(2308:2308): El literal es juancito: variables x
+
+[INFO] 04:07:56:207 CPU/(2308:2308): El literal es juancito: 	x <- fibo 50
+
+[ERROR] 04:09:46:797 CPU/(2308:2308): Hubo segmentation fault
+[INFO] 04:10:30:218 CPU/(2308:2308): El literal es juancito: 	jz $0 return0
+
+[INFO] 04:11:01:921 CPU/(2308:2308): El literal es juancito: variables x
+
+[INFO] 04:11:04:865 CPU/(2308:2308): El literal es juancito: 	x <- fibo 50
+
+[ERROR] 04:11:05:196 CPU/(2308:2308): Hubo segmentation fault
+[ERROR] 04:11:05:237 CPU/(2308:2308): Hubo segmentation fault
+[ERROR] 04:11:05:276 CPU/(2308:2308): Hubo segmentation fault
+[ERROR] 04:11:05:356 CPU/(2308:2308): Hubo segmentation fault
+[INFO] 04:11:14:410 CPU/(2308:2308): El literal es juancito: 	jz $0 return0
+
+[INFO] 04:34:05:267 CPU/(3135:3135): El handshake con la UMV salió bien.
+[INFO] 04:34:07:77 CPU/(3135:3135): El handshake con el Kernel salió bien.
+[INFO] 04:34:38:755 CPU/(3135:3135): El literal es juancito: 	goto Etiqueta19
+
+[INFO] 04:35:15:834 CPU/(3135:3135): Sentencia depurada: Etiqueta19
+[INFO] 04:37:00:216 CPU/(3135:3135): El literal es juancito: end
+
+[INFO] 04:37:00:482 CPU/(3135:3135): Ejecute finalizar
+[ERROR] 04:37:02:121 CPU/(3135:3135): Hubo segmentation fault

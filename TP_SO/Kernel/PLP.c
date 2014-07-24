@@ -192,7 +192,7 @@ void escribir_en_Memoria(t_metadata_program * metadata, t_PCB *pcb,
 	enviarConRazon(socketUMV, logKernel, ESCRIBIR_EN_UMV,
 			serializar2(crear_nodoVar(&indiceEtiquetas, 4),
 					crear_nodoVar(offset, 4), crear_nodoVar(&etiquetasSize, 4),
-					crear_nodoVar(&metadata->etiquetas, etiquetasSize), 0));
+					crear_nodoVar(metadata->etiquetas, etiquetasSize), 0));
 }
 
 void agregar_En_Diccionario(int pid, int sd) {

@@ -4,3 +4,31 @@
 [INFO] 00:16:12:320 UMV/(2824:2824): Comienza la ejecución de la UMV.
 [INFO] 00:16:12:330 UMV/(2824:2824): El hilo de consola se creó correctamente
 [INFO] 00:16:12:330 UMV/(2824:2824): El hilo de atención interna se creó correctamente
+[INFO] 04:43:25:918 UMV/(3456:3456): Comienza la ejecución de la UMV.
+[INFO] 04:43:29:544 UMV/(3456:3456): El hilo de consola se creó correctamente
+[INFO] 04:43:33:694 UMV/(3456:3456): El hilo de atención interna se creó correctamente
+[INFO] 04:43:49:182 UMV/(3456:3477): El hilo del Kernel se creó correctamente.
+[INFO] 04:43:58:346 UMV/(3456:3506): Entró a atencioKernel.
+[INFO] 04:44:20:12 UMV/(3456:3506): Se creó un segmento de base 5861 y tamano 994
+
+[INFO] 04:44:20:409 UMV/(3456:3506): Se creó un segmento de base 9566 y tamano 424
+
+[INFO] 04:44:20:775 UMV/(3456:3506): Se creó un segmento de base 7806 y tamano 151
+
+[INFO] 04:44:21:106 UMV/(3456:3506): Se creó un segmento de base 9203 y tamano 300
+
+[INFO] 04:45:28:716 UMV/(3677:3677): Comienza la ejecución de la UMV.
+[INFO] 04:45:30:750 UMV/(3677:3677): El hilo de consola se creó correctamente
+[INFO] 04:45:35:381 UMV/(3677:3677): El hilo de atención interna se creó correctamente
+[INFO] 04:45:49:477 UMV/(3677:3722): Entró a atencioKernel.
+[INFO] 04:45:50:793 UMV/(3677:3696): El hilo del Kernel se creó correctamente.
+[INFO] 04:45:56:169 UMV/(3677:3722): Se creó un segmento de base 7978 y tamano 994
+
+[INFO] 04:45:56:169 UMV/(3677:3722): Se creó un segmento de base 4249 y tamano 424
+
+[INFO] 04:45:56:169 UMV/(3677:3722): Se creó un segmento de base 2867 y tamano 151
+
+[INFO] 04:45:56:169 UMV/(3677:3722): Se creó un segmento de base 893 y tamano 300
+
+[INFO] 04:46:15:271 UMV/(3677:3696): El hilo de CPU se creó correctamente.
+[INFO] 04:46:16:186 UMV/(3677:3738): entro a atencionCpu
