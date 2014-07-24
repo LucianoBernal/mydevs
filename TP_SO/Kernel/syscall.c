@@ -4,7 +4,7 @@ void sc_obtener_valor(char* id, int idCpu) {
 	sem_wait(&mutexVG);
 	int* a = dictionary_get(variables_globales, id);
 	int *aProp=malloc(sizeof(int));
-	*aProp= a;
+	*aProp= *a;
 	sem_post(&mutexVG);
 	enviarConRazon(idCpu, logKernel, OBTENER_VALOR, serializar2(crear_nodoVar(aProp,4),0));
 	free(aProp);
@@ -65,7 +65,9 @@ void sc_wait(char* idSem, t_PCB* pcb, int idCPU) {
 void sc_imprimir(int valorAMostrar, int idCpu) {
 	int programID = programIdDeCpu(idCpu);
 		int sd = obtener_sd_Programa(programID);
-		send(sd, valorAMostrar, 4, 0);
+		int* valorAMostrarBuffer=malloc(sizeof(int));
+		*valorAMostrarBuffer=valorAMostrar;
+		send(sd, valorAMostrarBuffer, 4, 0);
 		int cantDigitos = strlen(string_from_format("%d",valorAMostrar));
 		enviarConRazon(idCpu, logKernel, IMPRIMIR_TEXTO, serializar2(crear_nodoVar(&cantDigitos,4),0));
 } //VISTA

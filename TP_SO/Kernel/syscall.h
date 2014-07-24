@@ -12,15 +12,15 @@ extern t_dictionary* variables_globales;
 extern sem_t diccionarioSemaforosMutex;
 extern t_dictionary* diccionarioSemaforos;
 extern sem_t colaReadyMutex;
-int sc_obtener_valor(char*, int);
+void sc_obtener_valor(char*, int);
 
-int sc_grabar_valor(char*, int, int);
+void sc_grabar_valor(char*, int, int);
 void sc_signal(char*, int);
 void sc_wait(char*, t_PCB* , int);
 
-int sc_imprimir();
+void sc_imprimir();
 
-int sc_imprimirTexto(char*, int );
+void sc_imprimirTexto(char*, int );
 
 int programIdDeCpu(int);
 
