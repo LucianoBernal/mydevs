@@ -19,6 +19,7 @@ char* PUERTO_UMV, *PUERTO_PCP;
 char *etiquetas;
 t_PCB *pcbEnUso;
 t_dictionary *diccionarioDeVariables;
+t_log *logs;
 
 void obtenerDatosConfig(t_config *config) {
 	IP_UMV = config_get_string_value(config, "IP_UMV");
@@ -126,11 +127,12 @@ int main(int arc, char **argv) {
 		desempaquetarPCB(pcbEnUso, pcbEmpaquetado);
 		free(mensaje);
 		free(pcbEmpaquetado);
-
+		int pid = pcbEnUso->program_id;
+		enviarConRazon(socketUMV, logs, CAMBIAR_PROCESO_ACTIVO,serializar2(crear_nodoVar(&pid, 4), 0));
 		etiquetas = solicitarBytesAUMV(pcbEnUso->indice_de_Etiquetas, 0,
-				pcbEnUso->tamanio_Indice_de_Etiquetas*8);
+				pcbEnUso->tamanio_Indice_de_Etiquetas);
 //		actualizarDiccionarioDeVariables(pcb);
-		recuperarDiccionario();
+//		recuperarDiccionario();
 		int lineasAnalizadas = 0;
 		int programaBloqueado = 0;
 		int ubInstruccion, largoInstruccion;
@@ -142,6 +144,8 @@ int main(int arc, char **argv) {
 			memcpy(&largoInstruccion, msjInstruccion+4, 4);
 			char *literalInstruccion = solicitarBytesAUMV(pcbEnUso->segmento_Codigo,
 					ubInstruccion, largoInstruccion);
+			literalInstruccion[largoInstruccion]=0;
+			log_info(logs, "El literal es: %s", literalInstruccion);
 //			analizadorLinea(literalInstruccion, &funciones_Ansisop,
 //					&funciones_kernel);
 			pcbEnUso->program_Counter++;
