@@ -63,11 +63,9 @@ int main(int arc, char **argv) {
 	free(respuestaUMV);
 	send(socketKernel, saludo, 4, 0); //TODO el saludo tiene tamaño 4?
 	char *respuestaKernel = malloc(7);
-	int quantum;
-	int retardo;
 	int *razon = malloc(sizeof(int));
 	char * paquete = recibirConRazon(socketKernel, razon,logs);
-	desempaquetar2(paquete, respuestaKernel, &quantum, &retardo, 0);
+	desempaquetar2(paquete, respuestaKernel, &quantumDeKernel, &retardo, 0);
 	if (!strncmp(respuestaKernel, "Kernel", 6)) {
 		log_info(logs, "El handshake con el Kernel salió bien.");
 	} else {
@@ -130,7 +128,7 @@ int main(int arc, char **argv) {
 		free(pcbEmpaquetado);
 
 		etiquetas = solicitarBytesAUMV(pcbEnUso->indice_de_Etiquetas, 0,
-				pcbEnUso->tamanio_Indice_de_Etiquetas);
+				pcbEnUso->tamanio_Indice_de_Etiquetas*8);
 //		actualizarDiccionarioDeVariables(pcb);
 		recuperarDiccionario();
 		int lineasAnalizadas = 0;
@@ -140,12 +138,12 @@ int main(int arc, char **argv) {
 			//Si empieza en la instruccion 0 deberia ser progra_Counter-1 ???
 			char *msjInstruccion = solicitarBytesAUMV(pcbEnUso->indice_de_Codigo,
 					pcbEnUso->program_Counter * 8, 8);
-			desempaquetar2(msjInstruccion, &ubInstruccion, &largoInstruccion,
-					0);
+			memcpy(&ubInstruccion, msjInstruccion, 4);
+			memcpy(&largoInstruccion, msjInstruccion+4, 4);
 			char *literalInstruccion = solicitarBytesAUMV(pcbEnUso->segmento_Codigo,
 					ubInstruccion, largoInstruccion);
-			analizadorLinea(literalInstruccion, &funciones_Ansisop,
-					&funciones_kernel);
+//			analizadorLinea(literalInstruccion, &funciones_Ansisop,
+//					&funciones_kernel);
 			pcbEnUso->program_Counter++;
 			lineasAnalizadas++;
 		}
