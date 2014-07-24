@@ -215,9 +215,11 @@ void atencionCpu(int *socketCPU) {
 	case ESCRIBIR_EN_UMV:
 		pthread_mutex_lock(&mutexOperacion);
 		cambiarProcesoActivo(procesoActivo);
-		char *buffer = malloc(*tamanoMensaje);
+		char *buffer = malloc(*tamanoMensaje+1);
 		desempaquetar2(mensaje, &parametro[0], &parametro[1], &parametro[2],
 				buffer, 0);
+		buffer[parametro[2]]= 0;
+		printf("\nRecibi escribir bytes, base: %d, offset: %d, tamano: %d y buffer: %s\n", parametro[0], parametro[1], parametro[2], buffer);
 		int resultado = enviarUnosBytes(parametro[0], parametro[1], parametro[2], buffer);
 		if (resultado){
 			enviarConRazon(*socketCPU, logger, CONFIRMACION, NULL);
