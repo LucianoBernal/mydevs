@@ -57,6 +57,26 @@ void* atencionInterna(void* sinParametro) {
 			} else {
 				log_info(logger, "El hilo de CPU se creó correctamente.");
 			}
+//			//CODIGO PELIGROSO E
+//			char buffer[1025];  //data buffer de 1K
+//			//inicializo set
+//			fd_set readfds;
+//			struct sockaddr_in address;
+//			int addrlen;
+//			if (FD_ISSET( socketCPU , &readfds)) {
+//				//Verifica si se cerro, y ademas lee el mensaje recibido
+//				if ((valread = read(socketCPU, buffer, 1024)) == 0) {
+//					//Algun programa se desconecto, obtengo la informacion
+//					getpeername(socketCPU, (struct sockaddr*) &address,
+//							(socklen_t*) &addrlen);
+//					log_info(logger,"Una cpu se cerro: socket fd: %d , ip: %s , puerto: %d \n",socketCPU,
+//							inet_ntoa(address.sin_addr),
+//							ntohs(address.sin_port));
+//					//Cierra el socket y marca 0 el bit de ocupado
+//					close(socketCPU);
+//				}
+//			}
+//			//CODIGO PELIGROSO T
 
 		} else {
 			close(socketCPU);
@@ -167,13 +187,9 @@ void atencionCpu(int *socketCPU) {
 	int procesoActivo = 0, parametro[4];
 
 	int *tamanoMensaje = malloc(4);
-//	char *header = malloc(16);
 	int * razon = malloc(sizeof(int));
+
 	while(1){
-//	recv(*socketCPU, (void*) header, 16, MSG_WAITALL);
-//	desempaquetar2(header, razon, tamanoMensaje, 0);
-//	char *mensaje = malloc(*tamanoMensaje);
-//	recv(*socketCPU, (void*) mensaje, *tamanoMensaje, MSG_WAITALL);
 //	aplicarRetardo(retardo);
 	char *mensaje=recibirConRazon(*socketCPU, razon, logger);
 	switch (*razon) {
@@ -238,12 +254,13 @@ void atencionCpu(int *socketCPU) {
 		procesoActivo = *pid2;
 		printf("\nel valor del pid es: %d\n", *pid2);
 		cambiarProcesoActivo(*pid2);
+		free(pid2);
 		pthread_mutex_unlock(&mutexOperacion);
 		puts("termine de cambiar proceso activo");
-		free(pid2);
+//		free(pid2); //TODO lo puse arriba del mutex... no se en qué varía pero creo q es mas seguro asi.
 		break;
 	}
-	//free(header);
+
 	free(mensaje);
 	}
 	free(tamanoMensaje);
