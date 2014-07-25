@@ -215,7 +215,7 @@ void atencionCpu(int *socketCPU) {
 	switch (*razon) {
 
 	case SOLICITAR_A_UMV:
-		log_debug(logger, "Recibí solicitar a umv, de la CPU: %d",socketCPU);
+		log_debug(logger, "Recibí solicitar a umv, de la CPU: %d",*socketCPU);
 		pthread_mutex_lock(&mutexOperacion);
 		cambiarProcesoActivo(procesoActivo);
 		desempaquetar2(mensaje, &parametro[0], &parametro[1], &parametro[2], 0);
@@ -248,11 +248,11 @@ void atencionCpu(int *socketCPU) {
 		enviarConRazon(*socketCPU, logger, RESPUESTA_A_SOLICITAR_BUFFER, serializar2(
 				crear_nodoVar(respuesta, *tamanoMensaje), 0));
 		free(respuesta);
-		log_debug(logger, "Terminé solicitar a umv, de la CPU: %d",socketCPU);
+		log_debug(logger, "Terminé solicitar a umv, de la CPU: %d",*socketCPU);
 		break;
 
 	case ESCRIBIR_EN_UMV:
-		log_debug(logger, "Recibí escribir en umv, de la CPU: %d",socketCPU);
+		log_debug(logger, "Recibí escribir en umv, de la CPU: %d",*socketCPU);
 		pthread_mutex_lock(&mutexOperacion);
 		cambiarProcesoActivo(procesoActivo);
 		char *buffer = malloc(*tamanoMensaje+1);
@@ -268,10 +268,10 @@ void atencionCpu(int *socketCPU) {
 		}
 		pthread_mutex_unlock(&mutexOperacion);
 		free(buffer);
-		log_debug(logger, "Terminé escribir en umv, de la CPU: %d",socketCPU);
+		log_debug(logger, "Terminé escribir en umv, de la CPU: %d",*socketCPU);
 		break;
 	case CAMBIAR_PROCESO_ACTIVO:
-		log_debug(logger, "Recibí cambiar proceso activo, de la CPU: %d",socketCPU);
+		log_debug(logger, "Recibí cambiar proceso activo, de la CPU: %d",*socketCPU);
 		printf("recibi cambiar proceso activo");
 		pthread_mutex_lock(&mutexOperacion);
 		int *pid2 = malloc(sizeof(int));
@@ -283,8 +283,11 @@ void atencionCpu(int *socketCPU) {
 		pthread_mutex_unlock(&mutexOperacion);
 		puts("termine de cambiar proceso activo");
 //		free(pid2); //TODO lo puse arriba del mutex... no se en qué varía pero creo q es mas seguro asi.
-		log_debug(logger, "Terminé cambiar proceso activo, de la CPU: %d",socketCPU);
+		log_debug(logger, "Terminé cambiar proceso activo, de la CPU: %d",*socketCPU);
 		break;
+//	default:
+//		close(*socketCPU);
+//		break;
 	}
 
 	free(mensaje);
