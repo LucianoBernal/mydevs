@@ -64,6 +64,7 @@ void* atencionInterna(void* sinParametro) {
 				log_info(logger, "El hilo de CPU se creó correctamente.");
 				cantCpu++;
 			}
+
 //			//CODIGO PELIGROSO E
 //			char buffer[1025];  //data buffer de 1K
 //			//inicializo set
@@ -90,6 +91,7 @@ void* atencionInterna(void* sinParametro) {
 			log_error(logger, "No es una CPU válida.");
 		}
 	}			//Cierra while de CPU
+
 }			//Cierra atencionInterna
 
 void atencionKernel(int* socketKernel) {

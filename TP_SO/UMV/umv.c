@@ -36,7 +36,7 @@ int main(int argc, char** argv) {
 	int* sinParametros=baseUMV;
 	//Creo hilo que atiende a la consola.
 	if (pthread_create(&atencion_consola, NULL, (void *) consola, (void*)sinParametros )) {
-		log_info(logger, "Hubo un error en la creación del hilo de consola");
+		log_error(logger, "Hubo un error en la creación del hilo de consola");
 	} else {
 		log_info(logger, "El hilo de consola se creó correctamente");
 	}
@@ -44,7 +44,7 @@ int main(int argc, char** argv) {
 	//Creo hilo que creará hilos que atienden al kernel/cpu's.
 	if (pthread_create(&atencion_interna, NULL, (void *) atencionInterna,
 			(void*)sinParametros )) {
-		log_info(logger, "Hubo un error en la creación del hilo de atención interna");
+		log_error(logger, "Hubo un error en la creación del hilo de atención interna");
 	} else {
 		log_info(logger, "El hilo de atención interna se creó correctamente");
 	}
