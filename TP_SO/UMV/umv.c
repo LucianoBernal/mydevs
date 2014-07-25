@@ -28,7 +28,7 @@ int main(int argc, char** argv) {
 	//Cargo parámetros del config en variables de UMV.
 	cargarConfig(config);
 	//Creo Log.
-	logger = log_create("logUmv", "UMV", true, LOG_LEVEL_INFO);
+	logger = log_create("logUmv", "UMV", true, LOG_LEVEL_TRACE);
 	log_info(logger, "Comienza la ejecución de la UMV.");
 
 	baseUMV = malloc(tamanoUMV);

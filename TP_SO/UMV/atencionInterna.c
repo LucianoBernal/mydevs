@@ -19,36 +19,42 @@ void* atencionInterna(void* sinParametro) {
 	char* saludoCpu = malloc(4);
 
 	int socket = crearServidor(puertoUMV, logger);
+	log_debug(logger, "Se creó servidor para atención interna");
 
 	while (1) {
 
 		int socketKernel = aceptarConexion(socket, logger);
 		recv(socketKernel, (void*) saludoKernel, 30, 0);
+		log_info(logger, "Se intenta conectar un posible Kernel. Comprobando...");
 
 		if (!strncmp(saludoKernel, "Kernel", 6)) {
+			log_info(logger, "El handshake con el Kernel salió bien.");
 			send(socketKernel, "UMV", 4, 0);
+			//free(saludoKernel);FIXME va acá?
 			//Creo hilo de atención al kernel.
 			if (pthread_create(&hiloKernel, NULL, (void *) atencionKernel,
 					(void*) &socketKernel)) {
 				log_error(logger,
 						"El hilo del Kernel no se creó correctamente.");
 			} else {
-				log_info(logger, "El hilo del Kernel se creó correctamente.");
+				log_debug(logger, "El hilo del Kernel se creó correctamente.");
 			}
 			break;
 		} else {
 			close(socketKernel);
+			log_error(logger, "No es un Kernel válido o ya existe un Kernel activo.");
 		}
+
 	} //Cierra while de Kernel
 
 	while (1) {
 
 		int socketCPU = aceptarConexion(socket, logger);
-		cantCpu++;
-
 		recv(socketCPU, (void*) saludoCpu, 30, 0);
+		log_info(logger, "Se intenta conectar un posible CPU. Comprobando...");
 
 		if (!strncmp(saludoCpu, "CPU", 3)) {
+			log_info(logger, "El handshake con la CPU salió bien.");
 			send(socketCPU, "UMV", 4, 0);
 			//Creo hilo de atención a CPU.
 			if (pthread_create(&hiloCpu, NULL, (void *) atencionCpu,
@@ -56,6 +62,7 @@ void* atencionInterna(void* sinParametro) {
 				log_error(logger, "El hilo de CPU no se creó correctamente.");
 			} else {
 				log_info(logger, "El hilo de CPU se creó correctamente.");
+				cantCpu++;
 			}
 //			//CODIGO PELIGROSO E
 //			char buffer[1025];  //data buffer de 1K
@@ -80,6 +87,7 @@ void* atencionInterna(void* sinParametro) {
 
 		} else {
 			close(socketCPU);
+			log_error(logger, "No es una CPU válida.");
 		}
 	}			//Cierra while de CPU
 }			//Cierra atencionInterna
@@ -100,6 +108,7 @@ void atencionKernel(int* socketKernel) {
 		switch (*razon) {
 
 		case CREAR_SEGMENTOS_PROGRAMA:
+			log_debug(logger, "Recibí crear segmentos programa, de parte del Kernel.");
 			puts("recibi crear segmentos programa");
 			pthread_mutex_lock(&mutexOperacion);
 			int *tamano1 = malloc(sizeof(int)), *tamano2 = malloc(sizeof(int)),
@@ -128,16 +137,20 @@ void atencionKernel(int* socketKernel) {
 							crear_nodoVar(&basesLogicas[1], 4),
 							crear_nodoVar(&basesLogicas[2], 4),
 							crear_nodoVar(&basesLogicas[3], 4), 0));
+			log_debug(logger, "Terminé de crear segmentos programa, de parte del Kernel.");
 			break;
 
 		case DESTRUIR_SEGMENTOS:
+			log_debug(logger, "Recibí destruir segmentos, de parte del Kernel.");
 			pthread_mutex_lock(&mutexOperacion);
 			cambiarProcesoActivo(procesoActivo);
 			destruirTodosLosSegmentos();
 			pthread_mutex_unlock(&mutexOperacion);
+			log_debug(logger, "Terminé de destruir segmentos, de parte del Kernel.");
 			break;
 
 		case ESCRIBIR_EN_UMV:
+			log_debug(logger, "Recibí escribir en umv, de parte del Kernel.");
 			printf("recibi escribir en umv\n");
 			pthread_mutex_lock(&mutexOperacion);
 			cambiarProcesoActivo(procesoActivo);
@@ -150,9 +163,11 @@ void atencionKernel(int* socketKernel) {
 			enviarUnosBytes(parametro[0], parametro[1], parametro[2], buffer);
 			pthread_mutex_unlock(&mutexOperacion);
 			free(buffer);
+			log_debug(logger, "Terminé de escribir en umv, de parte del Kernel.");
 			break;
 
 		case CAMBIAR_PROCESO_ACTIVO:
+			log_debug(logger, "Recibí cambiar proceso activo, de parte del Kernel.");
 			printf("recibi cambiar proceso activo");
 			pthread_mutex_lock(&mutexOperacion);
 			desempaquetar2(mensaje, &procesoActivo, 0);
@@ -160,8 +175,10 @@ void atencionKernel(int* socketKernel) {
 			cambiarProcesoActivo(procesoActivo);
 			pthread_mutex_unlock(&mutexOperacion);
 			puts("termine de cambiar proceso activo");
+			log_debug(logger, "Terminé de cambiar proceso activo, de parte del Kernel.");
 			break;
 		case CREAR_PROCESO_NUEVO:
+			log_debug(logger, "Recibí crear proceso nuevo, de parte del Kernel.");
 			puts("recibi crear proceso nuevo");
 			pthread_mutex_lock(&mutexOperacion);
 			printf("el pid que recibi es:%d\n", *pid);
@@ -173,6 +190,7 @@ void atencionKernel(int* socketKernel) {
 			}
 			agregarProceso(*pid, 'c');
 			pthread_mutex_unlock(&mutexOperacion);
+			log_debug(logger, "Terminé de crear proceso nuevo, de parte del Kernel.");
 			break;
 		}
 
@@ -182,7 +200,7 @@ void atencionKernel(int* socketKernel) {
 	free(tamanoMensaje);
 }
 void atencionCpu(int *socketCPU) {
-	log_info(logger, "entro a atencionCpu");
+	log_info(logger, "Entró a atencionCpu");
 
 	int procesoActivo = 0, parametro[4];
 
@@ -195,6 +213,7 @@ void atencionCpu(int *socketCPU) {
 	switch (*razon) {
 
 	case SOLICITAR_A_UMV:
+		log_debug(logger, "Recibí solicitar a umv, de la CPU: %d",socketCPU);
 		pthread_mutex_lock(&mutexOperacion);
 		cambiarProcesoActivo(procesoActivo);
 		desempaquetar2(mensaje, &parametro[0], &parametro[1], &parametro[2], 0);
@@ -227,9 +246,11 @@ void atencionCpu(int *socketCPU) {
 		enviarConRazon(*socketCPU, logger, RESPUESTA_A_SOLICITAR_BUFFER, serializar2(
 				crear_nodoVar(respuesta, *tamanoMensaje), 0));
 		free(respuesta);
+		log_debug(logger, "Terminé solicitar a umv, de la CPU: %d",socketCPU);
 		break;
 
 	case ESCRIBIR_EN_UMV:
+		log_debug(logger, "Recibí escribir en umv, de la CPU: %d",socketCPU);
 		pthread_mutex_lock(&mutexOperacion);
 		cambiarProcesoActivo(procesoActivo);
 		char *buffer = malloc(*tamanoMensaje+1);
@@ -245,8 +266,10 @@ void atencionCpu(int *socketCPU) {
 		}
 		pthread_mutex_unlock(&mutexOperacion);
 		free(buffer);
+		log_debug(logger, "Terminé escribir en umv, de la CPU: %d",socketCPU);
 		break;
 	case CAMBIAR_PROCESO_ACTIVO:
+		log_debug(logger, "Recibí cambiar proceso activo, de la CPU: %d",socketCPU);
 		printf("recibi cambiar proceso activo");
 		pthread_mutex_lock(&mutexOperacion);
 		int *pid2 = malloc(sizeof(int));
@@ -258,6 +281,7 @@ void atencionCpu(int *socketCPU) {
 		pthread_mutex_unlock(&mutexOperacion);
 		puts("termine de cambiar proceso activo");
 //		free(pid2); //TODO lo puse arriba del mutex... no se en qué varía pero creo q es mas seguro asi.
+		log_debug(logger, "Terminé cambiar proceso activo, de la CPU: %d",socketCPU);
 		break;
 	}
 
