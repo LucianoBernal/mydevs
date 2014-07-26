@@ -65,6 +65,7 @@ int programa(t_log* logger, FILE* archivo) {
 	char handshake[21] = "Soy un nuevo Programa";
 	int* tamano = malloc(4);
 	*tamano = obtenerTamanoArchivo(archivo);
+	log_info(logger,"Obtuve tamanio del archivo,%d",*tamano);
 	char* literal = malloc(*tamano);
 	char server_reply[1024];
 	fgets(lineaLiteral, PACKAGESIZE, archivo);
@@ -73,7 +74,8 @@ int programa(t_log* logger, FILE* archivo) {
 		fgets(lineaLiteral, PACKAGESIZE, archivo);
 		strcat(literal, lineaLiteral);
 	}
-	fclose(archivo);
+	close((int)archivo);
+	literal[*tamano] = '\0';
 	log_info(logger,
 			"Se concateno Script en buffer interno y se cerro archivo");
 	//Create socket
