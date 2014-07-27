@@ -1,0 +1,1683 @@
+[INFO] 04:01:23:167 Kernel/(7960:7960): Comienza la ejecución del Kernel.
+[INFO] 04:01:23:167 Kernel/(7960:7960): Se creo Diccionario Variables Compartidas
+[INFO] 04:01:23:167 Kernel/(7960:7960): Se agrego variable: colas con valor:0 al diccionario de variables compartidas
+[INFO] 04:01:23:167 Kernel/(7960:7960): Se agrego variable: compartida con valor:0 al diccionario de variables compartidas
+[INFO] 04:01:23:167 Kernel/(7960:7960): Armando Diccionario de Semaforos
+[INFO] 04:01:23:167 Kernel/(7960:7960): Se agrego semaforo: b con valor: 1 al diccionario de semaforos
+[INFO] 04:01:23:167 Kernel/(7960:7960): Se agrego semaforo: c con valor: 0 al diccionario de semaforos
+[INFO] 04:01:23:168 Kernel/(7960:7960): Hilo PCP exitoso
+[INFO] 04:01:23:168 Kernel/(7960:7960): Hilo PLP exitoso
+[INFO] 04:01:23:168 Kernel/(7960:7963): Hilo Multiplexor Scripts lanzado exitosamente
+[INFO] 04:01:23:168 Kernel/(7960:7963): Hilo Cola New lanzado exitosamente
+[INFO] 04:01:23:168 Kernel/(7960:7964): Esperando conexiones de programas en el puerto: 8005
+[INFO] 04:01:23:168 Kernel/(7960:7963): Hilo Cola Exit lanzado exitosamente
+[INFO] 04:01:23:168 Kernel/(7960:7962): Hilo bloquear y devolver a Ready de dispositivo HDD1 exitoso
+[INFO] 04:01:23:169 Kernel/(7960:7962): Hilo bloquear y devolver a Ready de dispositivo LPT1 exitoso
+[INFO] 04:01:23:169 Kernel/(7960:7962): Exito al crear hilo atencionCPUs
+[INFO] 04:01:23:169 Kernel/(7960:7962): Exito al crear hilo mandar a Ejecutar
+[INFO] 04:01:23:169 Kernel/(7960:7969): Esperando conexiones de CPUs en el puerto: 8015
+[INFO] 04:01:23:169 Kernel/(7960:7962): Exito al crear hilo enviar CPU
+[INFO] 04:01:32:199 Kernel/(7960:7969): Nueva Conexion de CPU , socket fd: 7
+[INFO] 04:01:32:200 Kernel/(7960:7969): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 04:01:42:163 Kernel/(7960:7964): Nueva Conexion de Programa , socket fd: 8
+[INFO] 04:01:42:163 Kernel/(7960:7964): Mensaje de bienvenida enviado correctamente al sd: 8
+[INFO] 04:01:42:203 Kernel/(7960:7964): Se recibio Literal proveniente del sd: 8
+[INFO] 04:01:42:244 Kernel/(7960:7964): Encolando Nuevo Programa en Cola de NEW,con Pid7551 y Peso 5
+[DEBUG] 04:01:42:244 Kernel/(7960:7964): Agregando pid en diccionario, con pid: 7551 y sd :8
+[INFO] 04:01:42:244 Kernel/(7960:7965): Encolando Programa en Cola Ready, pid: 7551
+[INFO] 04:01:42:244 Kernel/(7960:7970): Se saco programa de la cola Ready, con PID:7551
+[DEBUG] 04:01:42:244 Kernel/(7960:7970): Poniendo Programa en cola Intermedia, con PID:7551
+[DEBUG] 04:01:42:244 Kernel/(7960:7971): Se saco programa de cola intermedia, con PID:7551
+[INFO] 04:01:42:244 Kernel/(7960:7971): Agregando programa en cola de ejecucion,con PID:7551
+[INFO] 04:01:42:244 Kernel/(7960:7971): Enviando Programa a CPU disponible, con PID:7551 y CPU:7
+[INFO] 04:01:47:506 Kernel/(7960:7969): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57447 
+
+[INFO] 04:04:06:363 Kernel/(8067:8067): Comienza la ejecución del Kernel.
+[INFO] 04:04:06:363 Kernel/(8067:8067): Se creo Diccionario Variables Compartidas
+[INFO] 04:04:06:363 Kernel/(8067:8067): Se agrego variable: colas con valor:0 al diccionario de variables compartidas
+[INFO] 04:04:06:363 Kernel/(8067:8067): Se agrego variable: compartida con valor:0 al diccionario de variables compartidas
+[INFO] 04:04:06:363 Kernel/(8067:8067): Armando Diccionario de Semaforos
+[INFO] 04:04:06:363 Kernel/(8067:8067): Se agrego semaforo: b con valor: 1 al diccionario de semaforos
+[INFO] 04:04:06:363 Kernel/(8067:8067): Se agrego semaforo: c con valor: 0 al diccionario de semaforos
+[INFO] 04:04:06:364 Kernel/(8067:8067): Hilo PCP exitoso
+[INFO] 04:04:06:364 Kernel/(8067:8067): Hilo PLP exitoso
+[INFO] 04:04:06:364 Kernel/(8067:8070): Hilo Multiplexor Scripts lanzado exitosamente
+[INFO] 04:04:06:364 Kernel/(8067:8070): Hilo Cola New lanzado exitosamente
+[INFO] 04:04:06:364 Kernel/(8067:8070): Hilo Cola Exit lanzado exitosamente
+[INFO] 04:04:06:364 Kernel/(8067:8069): Hilo bloquear y devolver a Ready de dispositivo HDD1 exitoso
+[INFO] 04:04:06:364 Kernel/(8067:8069): Hilo bloquear y devolver a Ready de dispositivo LPT1 exitoso
+[INFO] 04:04:06:364 Kernel/(8067:8069): Exito al crear hilo atencionCPUs
+[INFO] 04:04:06:365 Kernel/(8067:8069): Exito al crear hilo mandar a Ejecutar
+[INFO] 04:04:06:365 Kernel/(8067:8069): Exito al crear hilo enviar CPU
+[INFO] 04:04:06:365 Kernel/(8067:8076): Esperando conexiones de CPUs en el puerto: 8015
+[INFO] 04:04:06:365 Kernel/(8067:8071): Esperando conexiones de programas en el puerto: 8005
+[INFO] 04:04:07:811 Kernel/(8067:8076): Nueva Conexion de CPU , socket fd: 7
+[INFO] 04:04:07:812 Kernel/(8067:8076): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 04:04:09:317 Kernel/(8067:8071): Nueva Conexion de Programa , socket fd: 8
+[INFO] 04:04:09:317 Kernel/(8067:8071): Mensaje de bienvenida enviado correctamente al sd: 8
+[INFO] 04:04:09:355 Kernel/(8067:8071): Se recibio Literal proveniente del sd: 8
+[INFO] 04:04:09:397 Kernel/(8067:8071): Encolando Nuevo Programa en Cola de NEW,con Pid2267 y Peso 5
+[DEBUG] 04:04:09:397 Kernel/(8067:8071): Agregando pid en diccionario, con pid: 2267 y sd :8
+[INFO] 04:04:09:397 Kernel/(8067:8072): Encolando Programa en Cola Ready, pid: 2267
+[INFO] 04:04:09:397 Kernel/(8067:8077): Se saco programa de la cola Ready, con PID:2267
+[DEBUG] 04:04:09:397 Kernel/(8067:8077): Poniendo Programa en cola Intermedia, con PID:2267
+[DEBUG] 04:04:09:397 Kernel/(8067:8078): Se saco programa de cola intermedia, con PID:2267
+[INFO] 04:04:09:397 Kernel/(8067:8078): Agregando programa en cola de ejecucion,con PID:2267
+[INFO] 04:04:09:397 Kernel/(8067:8078): Enviando Programa a CPU disponible, con PID:2267 y CPU:7
+[INFO] 04:04:28:873 Kernel/(8067:8076): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57451 
+
+[INFO] 04:42:19:288 Kernel/(9440:9440): Comienza la ejecución del Kernel.
+[INFO] 04:42:19:288 Kernel/(9440:9440): Se creo Diccionario Variables Compartidas
+[INFO] 04:42:19:289 Kernel/(9440:9440): Se agrego variable: colas con valor:0 al diccionario de variables compartidas
+[INFO] 04:42:19:289 Kernel/(9440:9440): Se agrego variable: compartida con valor:0 al diccionario de variables compartidas
+[INFO] 04:42:19:289 Kernel/(9440:9440): Armando Diccionario de Semaforos
+[INFO] 04:42:19:289 Kernel/(9440:9440): Se agrego semaforo: b con valor: 1 al diccionario de semaforos
+[INFO] 04:42:19:289 Kernel/(9440:9440): Se agrego semaforo: c con valor: 0 al diccionario de semaforos
+[INFO] 04:42:19:290 Kernel/(9440:9440): Hilo PCP exitoso
+[INFO] 04:42:19:290 Kernel/(9440:9440): Hilo PLP exitoso
+[INFO] 04:42:19:290 Kernel/(9440:9443): Hilo Multiplexor Scripts lanzado exitosamente
+[INFO] 04:42:19:290 Kernel/(9440:9443): Hilo Cola New lanzado exitosamente
+[INFO] 04:42:19:290 Kernel/(9440:9443): Hilo Cola Exit lanzado exitosamente
+[INFO] 04:42:19:290 Kernel/(9440:9442): Hilo bloquear y devolver a Ready de dispositivo HDD1 exitoso
+[INFO] 04:42:19:290 Kernel/(9440:9442): Hilo bloquear y devolver a Ready de dispositivo LPT1 exitoso
+[INFO] 04:42:19:291 Kernel/(9440:9442): Exito al crear hilo atencionCPUs
+[INFO] 04:42:19:291 Kernel/(9440:9442): Exito al crear hilo mandar a Ejecutar
+[INFO] 04:42:19:291 Kernel/(9440:9444): Esperando conexiones de programas en el puerto: 8005
+[INFO] 04:42:19:291 Kernel/(9440:9449): Esperando conexiones de CPUs en el puerto: 8015
+[INFO] 04:42:19:291 Kernel/(9440:9442): Exito al crear hilo enviar CPU
+[INFO] 04:42:22:644 Kernel/(9440:9444): Nueva Conexion de Programa , socket fd: 7
+[INFO] 04:42:22:644 Kernel/(9440:9444): Mensaje de bienvenida enviado correctamente al sd: 7
+[INFO] 04:42:22:682 Kernel/(9440:9444): Se recibio Literal proveniente del sd: 7
+[INFO] 04:42:22:722 Kernel/(9440:9444): Encolando Nuevo Programa en Cola de NEW,con Pid132 y Peso 5
+[DEBUG] 04:42:22:723 Kernel/(9440:9444): Agregando pid en diccionario, con pid: 132 y sd :7
+[INFO] 04:42:22:723 Kernel/(9440:9445): Encolando Programa en Cola Ready, pid: 132
+[INFO] 04:42:24:348 Kernel/(9440:9449): Nueva Conexion de CPU , socket fd: 8
+[INFO] 04:42:24:349 Kernel/(9440:9449): Paquete con retardo y quantum enviado correctamente al sd: 8
+[INFO] 04:42:24:349 Kernel/(9440:9450): Se saco programa de la cola Ready, con PID:132
+[DEBUG] 04:42:24:349 Kernel/(9440:9450): Poniendo Programa en cola Intermedia, con PID:132
+[DEBUG] 04:42:24:349 Kernel/(9440:9451): Se saco programa de cola intermedia, con PID:132
+[INFO] 04:42:24:349 Kernel/(9440:9451): Agregando programa en cola de ejecucion,con PID:132
+[INFO] 04:42:24:349 Kernel/(9440:9451): Enviando Programa a CPU disponible, con PID:132 y CPU:8
+[INFO] 04:42:26:990 Kernel/(9440:9449): Una CPU se cerro abruptamente: socket fd: 8 , ip: 127.0.0.1 , puerto: 57456 
+
+[INFO] 04:45:31:209 Kernel/(9541:9541): Comienza la ejecución del Kernel.
+[INFO] 04:45:31:210 Kernel/(9541:9541): Se creo Diccionario Variables Compartidas
+[INFO] 04:45:31:210 Kernel/(9541:9541): Se agrego variable: colas con valor:0 al diccionario de variables compartidas
+[INFO] 04:45:31:210 Kernel/(9541:9541): Se agrego variable: compartida con valor:0 al diccionario de variables compartidas
+[INFO] 04:45:31:210 Kernel/(9541:9541): Armando Diccionario de Semaforos
+[INFO] 04:45:31:210 Kernel/(9541:9541): Se agrego semaforo: b con valor: 1 al diccionario de semaforos
+[INFO] 04:45:31:210 Kernel/(9541:9541): Se agrego semaforo: c con valor: 0 al diccionario de semaforos
+[INFO] 04:45:31:210 Kernel/(9541:9541): Hilo PCP exitoso
+[INFO] 04:45:31:211 Kernel/(9541:9541): Hilo PLP exitoso
+[INFO] 04:45:31:211 Kernel/(9541:9544): Hilo Multiplexor Scripts lanzado exitosamente
+[INFO] 04:45:31:211 Kernel/(9541:9544): Hilo Cola New lanzado exitosamente
+[INFO] 04:45:31:211 Kernel/(9541:9544): Hilo Cola Exit lanzado exitosamente
+[INFO] 04:45:31:211 Kernel/(9541:9545): Esperando conexiones de programas en el puerto: 8005
+[INFO] 04:45:31:211 Kernel/(9541:9543): Hilo bloquear y devolver a Ready de dispositivo HDD1 exitoso
+[INFO] 04:45:31:212 Kernel/(9541:9543): Hilo bloquear y devolver a Ready de dispositivo LPT1 exitoso
+[INFO] 04:45:31:212 Kernel/(9541:9543): Exito al crear hilo atencionCPUs
+[INFO] 04:45:31:212 Kernel/(9541:9543): Exito al crear hilo mandar a Ejecutar
+[INFO] 04:45:31:212 Kernel/(9541:9543): Exito al crear hilo enviar CPU
+[INFO] 04:45:31:212 Kernel/(9541:9550): Esperando conexiones de CPUs en el puerto: 8015
+[INFO] 04:45:33:622 Kernel/(9541:9545): Nueva Conexion de Programa , socket fd: 7
+[INFO] 04:45:33:622 Kernel/(9541:9545): Mensaje de bienvenida enviado correctamente al sd: 7
+[INFO] 04:45:33:662 Kernel/(9541:9545): Se recibio Literal proveniente del sd: 7
+[INFO] 04:45:33:703 Kernel/(9541:9545): Encolando Nuevo Programa en Cola de NEW,con Pid4431 y Peso 5
+[DEBUG] 04:45:33:703 Kernel/(9541:9545): Agregando pid en diccionario, con pid: 4431 y sd :7
+[INFO] 04:45:33:703 Kernel/(9541:9546): Encolando Programa en Cola Ready, pid: 4431
+[INFO] 04:45:34:943 Kernel/(9541:9550): Nueva Conexion de CPU , socket fd: 8
+[INFO] 04:45:34:944 Kernel/(9541:9550): Paquete con retardo y quantum enviado correctamente al sd: 8
+[INFO] 04:45:34:944 Kernel/(9541:9551): Se saco programa de la cola Ready, con PID:4431
+[DEBUG] 04:45:34:944 Kernel/(9541:9551): Poniendo Programa en cola Intermedia, con PID:4431
+[DEBUG] 04:45:34:944 Kernel/(9541:9552): Se saco programa de cola intermedia, con PID:4431
+[INFO] 04:45:34:945 Kernel/(9541:9552): Agregando programa en cola de ejecucion,con PID:4431
+[INFO] 04:45:34:945 Kernel/(9541:9552): Enviando Programa a CPU disponible, con PID:4431 y CPU:8
+[INFO] 04:45:37:43 Kernel/(9541:9550): Una CPU se cerro abruptamente: socket fd: 8 , ip: 127.0.0.1 , puerto: 57460 
+
+[INFO] 04:47:17:991 Kernel/(9600:9600): Comienza la ejecución del Kernel.
+[INFO] 04:47:17:991 Kernel/(9600:9600): Se creo Diccionario Variables Compartidas
+[INFO] 04:47:17:991 Kernel/(9600:9600): Se agrego variable: colas con valor:0 al diccionario de variables compartidas
+[INFO] 04:47:17:991 Kernel/(9600:9600): Se agrego variable: compartida con valor:0 al diccionario de variables compartidas
+[INFO] 04:47:17:991 Kernel/(9600:9600): Armando Diccionario de Semaforos
+[INFO] 04:47:17:991 Kernel/(9600:9600): Se agrego semaforo: b con valor: 1 al diccionario de semaforos
+[INFO] 04:47:17:991 Kernel/(9600:9600): Se agrego semaforo: c con valor: 0 al diccionario de semaforos
+[INFO] 04:47:17:992 Kernel/(9600:9600): Hilo PCP exitoso
+[INFO] 04:47:17:992 Kernel/(9600:9600): Hilo PLP exitoso
+[INFO] 04:47:17:992 Kernel/(9600:9602): Hilo bloquear y devolver a Ready de dispositivo HDD1 exitoso
+[INFO] 04:47:17:992 Kernel/(9600:9603): Hilo Multiplexor Scripts lanzado exitosamente
+[INFO] 04:47:17:992 Kernel/(9600:9603): Hilo Cola New lanzado exitosamente
+[INFO] 04:47:17:992 Kernel/(9600:9602): Hilo bloquear y devolver a Ready de dispositivo LPT1 exitoso
+[INFO] 04:47:17:993 Kernel/(9600:9604): Esperando conexiones de programas en el puerto: 8005
+[INFO] 04:47:17:993 Kernel/(9600:9603): Hilo Cola Exit lanzado exitosamente
+[INFO] 04:47:17:993 Kernel/(9600:9602): Exito al crear hilo atencionCPUs
+[INFO] 04:47:17:993 Kernel/(9600:9602): Exito al crear hilo mandar a Ejecutar
+[INFO] 04:47:17:993 Kernel/(9600:9602): Exito al crear hilo enviar CPU
+[INFO] 04:47:17:993 Kernel/(9600:9609): Esperando conexiones de CPUs en el puerto: 8015
+[INFO] 04:47:19:722 Kernel/(9600:9609): Nueva Conexion de CPU , socket fd: 7
+[INFO] 04:47:19:723 Kernel/(9600:9609): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 04:47:21:33 Kernel/(9600:9604): Nueva Conexion de Programa , socket fd: 8
+[INFO] 04:47:21:33 Kernel/(9600:9604): Mensaje de bienvenida enviado correctamente al sd: 8
+[INFO] 04:47:21:73 Kernel/(9600:9604): Se recibio Literal proveniente del sd: 8
+[INFO] 04:47:21:111 Kernel/(9600:9604): Encolando Nuevo Programa en Cola de NEW,con Pid6733 y Peso 5
+[DEBUG] 04:47:21:111 Kernel/(9600:9604): Agregando pid en diccionario, con pid: 6733 y sd :8
+[INFO] 04:47:21:111 Kernel/(9600:9606): Encolando Programa en Cola Ready, pid: 6733
+[INFO] 04:47:21:111 Kernel/(9600:9610): Se saco programa de la cola Ready, con PID:6733
+[DEBUG] 04:47:21:111 Kernel/(9600:9610): Poniendo Programa en cola Intermedia, con PID:6733
+[DEBUG] 04:47:21:111 Kernel/(9600:9611): Se saco programa de cola intermedia, con PID:6733
+[INFO] 04:47:21:111 Kernel/(9600:9611): Agregando programa en cola de ejecucion,con PID:6733
+[INFO] 04:47:21:111 Kernel/(9600:9611): Enviando Programa a CPU disponible, con PID:6733 y CPU:7
+[INFO] 04:47:23:186 Kernel/(9600:9609): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57463 
+
+[INFO] 04:47:23:187 Kernel/(9600:9609): Se movio programa a cola exit, PID:6733
+[INFO] 04:48:27:967 Kernel/(9665:9665): Comienza la ejecución del Kernel.
+[INFO] 04:48:27:967 Kernel/(9665:9665): Se creo Diccionario Variables Compartidas
+[INFO] 04:48:27:967 Kernel/(9665:9665): Se agrego variable: colas con valor:0 al diccionario de variables compartidas
+[INFO] 04:48:27:967 Kernel/(9665:9665): Se agrego variable: compartida con valor:0 al diccionario de variables compartidas
+[INFO] 04:48:27:967 Kernel/(9665:9665): Armando Diccionario de Semaforos
+[INFO] 04:48:27:967 Kernel/(9665:9665): Se agrego semaforo: b con valor: 1 al diccionario de semaforos
+[INFO] 04:48:27:967 Kernel/(9665:9665): Se agrego semaforo: c con valor: 0 al diccionario de semaforos
+[INFO] 04:48:27:968 Kernel/(9665:9665): Hilo PCP exitoso
+[INFO] 04:48:27:968 Kernel/(9665:9665): Hilo PLP exitoso
+[INFO] 04:48:27:968 Kernel/(9665:9667): Hilo bloquear y devolver a Ready de dispositivo HDD1 exitoso
+[INFO] 04:48:27:969 Kernel/(9665:9668): Hilo Multiplexor Scripts lanzado exitosamente
+[INFO] 04:48:27:969 Kernel/(9665:9667): Hilo bloquear y devolver a Ready de dispositivo LPT1 exitoso
+[INFO] 04:48:27:969 Kernel/(9665:9669): Esperando conexiones de programas en el puerto: 8005
+[INFO] 04:48:27:969 Kernel/(9665:9667): Exito al crear hilo atencionCPUs
+[INFO] 04:48:27:969 Kernel/(9665:9667): Exito al crear hilo mandar a Ejecutar
+[INFO] 04:48:27:969 Kernel/(9665:9672): Esperando conexiones de CPUs en el puerto: 8015
+[INFO] 04:48:27:969 Kernel/(9665:9667): Exito al crear hilo enviar CPU
+[INFO] 04:48:27:969 Kernel/(9665:9668): Hilo Cola New lanzado exitosamente
+[INFO] 04:48:27:970 Kernel/(9665:9668): Hilo Cola Exit lanzado exitosamente
+[INFO] 04:48:29:299 Kernel/(9665:9672): Nueva Conexion de CPU , socket fd: 7
+[INFO] 04:48:29:300 Kernel/(9665:9672): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 04:48:29:2 Kernel/(9665:9672): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57467 
+
+[INFO] 04:48:31:453 Kernel/(9665:9669): Nueva Conexion de Programa , socket fd: 7
+[INFO] 04:48:31:454 Kernel/(9665:9669): Mensaje de bienvenida enviado correctamente al sd: 7
+[INFO] 04:48:31:494 Kernel/(9665:9669): Se recibio Literal proveniente del sd: 7
+[INFO] 04:48:31:535 Kernel/(9665:9669): Encolando Nuevo Programa en Cola de NEW,con Pid3703 y Peso 5
+[DEBUG] 04:48:31:535 Kernel/(9665:9669): Agregando pid en diccionario, con pid: 3703 y sd :7
+[INFO] 04:48:31:535 Kernel/(9665:9675): Encolando Programa en Cola Ready, pid: 3703
+[INFO] 04:48:31:535 Kernel/(9665:9673): Se saco programa de la cola Ready, con PID:3703
+[DEBUG] 04:48:31:535 Kernel/(9665:9673): Poniendo Programa en cola Intermedia, con PID:3703
+[INFO] 04:51:21:766 Kernel/(9753:9753): Comienza la ejecución del Kernel.
+[INFO] 04:51:21:766 Kernel/(9753:9753): Se creo Diccionario Variables Compartidas
+[INFO] 04:51:21:766 Kernel/(9753:9753): Se agrego variable: colas con valor:0 al diccionario de variables compartidas
+[INFO] 04:51:21:766 Kernel/(9753:9753): Se agrego variable: compartida con valor:0 al diccionario de variables compartidas
+[INFO] 04:51:21:766 Kernel/(9753:9753): Armando Diccionario de Semaforos
+[INFO] 04:51:21:766 Kernel/(9753:9753): Se agrego semaforo: b con valor: 1 al diccionario de semaforos
+[INFO] 04:51:21:766 Kernel/(9753:9753): Se agrego semaforo: c con valor: 0 al diccionario de semaforos
+[INFO] 04:51:21:767 Kernel/(9753:9753): Hilo PCP exitoso
+[INFO] 04:51:21:767 Kernel/(9753:9753): Hilo PLP exitoso
+[INFO] 04:51:21:767 Kernel/(9753:9756): Hilo Multiplexor Scripts lanzado exitosamente
+[INFO] 04:51:21:767 Kernel/(9753:9755): Hilo bloquear y devolver a Ready de dispositivo HDD1 exitoso
+[INFO] 04:51:21:767 Kernel/(9753:9756): Hilo Cola New lanzado exitosamente
+[INFO] 04:51:21:768 Kernel/(9753:9755): Hilo bloquear y devolver a Ready de dispositivo LPT1 exitoso
+[INFO] 04:51:21:768 Kernel/(9753:9756): Hilo Cola Exit lanzado exitosamente
+[INFO] 04:51:21:768 Kernel/(9753:9755): Exito al crear hilo atencionCPUs
+[INFO] 04:51:21:768 Kernel/(9753:9755): Exito al crear hilo mandar a Ejecutar
+[INFO] 04:51:21:768 Kernel/(9753:9755): Exito al crear hilo enviar CPU
+[INFO] 04:51:21:768 Kernel/(9753:9757): Esperando conexiones de programas en el puerto: 8005
+[INFO] 04:51:21:768 Kernel/(9753:9762): Esperando conexiones de CPUs en el puerto: 8015
+[INFO] 04:51:23:226 Kernel/(9753:9762): Nueva Conexion de CPU , socket fd: 7
+[INFO] 04:51:23:227 Kernel/(9753:9762): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 04:51:23:691 Kernel/(9753:9762): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57471 
+
+[INFO] 04:51:24:997 Kernel/(9753:9757): Nueva Conexion de Programa , socket fd: 7
+[INFO] 04:51:24:997 Kernel/(9753:9757): Mensaje de bienvenida enviado correctamente al sd: 7
+[INFO] 04:51:25:38 Kernel/(9753:9757): Se recibio Literal proveniente del sd: 7
+[INFO] 04:51:25:78 Kernel/(9753:9757): Encolando Nuevo Programa en Cola de NEW,con Pid1981 y Peso 5
+[DEBUG] 04:51:25:79 Kernel/(9753:9757): Agregando pid en diccionario, con pid: 1981 y sd :7
+[INFO] 04:51:25:79 Kernel/(9753:9759): Encolando Programa en Cola Ready, pid: 1981
+[INFO] 04:51:30:321 Kernel/(9753:9762): Nueva Conexion de CPU , socket fd: 8 , ip : 127.0.0.1 , port: 57474
+[INFO] 04:51:30:322 Kernel/(9753:9762): Paquete con retardo y quantum enviado correctamente al sd: 8
+[INFO] 04:51:30:322 Kernel/(9753:9763): Se saco programa de la cola Ready, con PID:1981
+[DEBUG] 04:51:30:322 Kernel/(9753:9763): Poniendo Programa en cola Intermedia, con PID:1981
+[DEBUG] 04:51:30:322 Kernel/(9753:9764): Se saco programa de cola intermedia, con PID:1981
+[INFO] 04:51:30:322 Kernel/(9753:9764): Agregando programa en cola de ejecucion,con PID:1981
+[INFO] 04:51:30:322 Kernel/(9753:9764): Enviando Programa a CPU disponible, con PID:1981 y CPU:8
+[INFO] 04:51:34:528 Kernel/(9753:9762): Una CPU se cerro abruptamente: socket fd: 8 , ip: 127.0.0.1 , puerto: 57474 
+
+[INFO] 04:59:39:253 Kernel/(9978:9978): Comienza la ejecución del Kernel.
+[INFO] 04:59:39:253 Kernel/(9978:9978): Se creo Diccionario Variables Compartidas
+[INFO] 04:59:39:253 Kernel/(9978:9978): Se agrego variable: colas con valor:0 al diccionario de variables compartidas
+[INFO] 04:59:39:253 Kernel/(9978:9978): Se agrego variable: compartida con valor:0 al diccionario de variables compartidas
+[INFO] 04:59:39:253 Kernel/(9978:9978): Armando Diccionario de Semaforos
+[INFO] 04:59:39:253 Kernel/(9978:9978): Se agrego semaforo: b con valor: 1 al diccionario de semaforos
+[INFO] 04:59:39:253 Kernel/(9978:9978): Se agrego semaforo: c con valor: 0 al diccionario de semaforos
+[INFO] 04:59:39:254 Kernel/(9978:9978): Hilo PCP exitoso
+[INFO] 04:59:39:254 Kernel/(9978:9978): Hilo PLP exitoso
+[INFO] 04:59:39:254 Kernel/(9978:9980): Hilo bloquear y devolver a Ready de dispositivo HDD1 exitoso
+[INFO] 04:59:39:254 Kernel/(9978:9980): Hilo bloquear y devolver a Ready de dispositivo LPT1 exitoso
+[INFO] 04:59:39:255 Kernel/(9978:9980): Exito al crear hilo atencionCPUs
+[INFO] 04:59:39:255 Kernel/(9978:9981): Hilo Multiplexor Scripts lanzado exitosamente
+[INFO] 04:59:39:255 Kernel/(9978:9981): Hilo Cola New lanzado exitosamente
+[INFO] 04:59:39:255 Kernel/(9978:9980): Exito al crear hilo mandar a Ejecutar
+[INFO] 04:59:39:255 Kernel/(9978:9980): Exito al crear hilo enviar CPU
+[INFO] 04:59:39:255 Kernel/(9978:9981): Hilo Cola Exit lanzado exitosamente
+[INFO] 04:59:39:256 Kernel/(9978:9985): Esperando conexiones de CPUs en el puerto: 8015
+[INFO] 04:59:39:256 Kernel/(9978:9984): Esperando conexiones de programas en el puerto: 8005
+[INFO] 04:59:40:872 Kernel/(9978:9985): Nueva Conexion de CPU , socket fd: 7
+[INFO] 04:59:40:872 Kernel/(9978:9985): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 04:59:43:25 Kernel/(9978:9985): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57477 
+
+[INFO] 04:59:44:271 Kernel/(9978:9984): Nueva Conexion de Programa , socket fd: 7
+[INFO] 04:59:44:304 Kernel/(9978:9984): Mensaje de bienvenida enviado correctamente al sd: 7
+[INFO] 04:59:44:342 Kernel/(9978:9984): Se recibio Literal proveniente del sd: 7
+[INFO] 04:59:44:382 Kernel/(9978:9984): Encolando Nuevo Programa en Cola de NEW,con Pid2272 y Peso 5
+[DEBUG] 04:59:44:382 Kernel/(9978:9984): Agregando pid en diccionario, con pid: 2272 y sd :7
+[INFO] 04:59:44:383 Kernel/(9978:9986): Encolando Programa en Cola Ready, pid: 2272
+[INFO] 04:59:45:887 Kernel/(9978:9985): Nueva Conexion de CPU , socket fd: 8 , ip : 127.0.0.1 , port: 57480
+[INFO] 04:59:45:887 Kernel/(9978:9985): Paquete con retardo y quantum enviado correctamente al sd: 8
+[INFO] 04:59:45:887 Kernel/(9978:9987): Se saco programa de la cola Ready, con PID:2272
+[DEBUG] 04:59:45:887 Kernel/(9978:9987): Poniendo Programa en cola Intermedia, con PID:2272
+[DEBUG] 04:59:45:887 Kernel/(9978:9988): Se saco programa de cola intermedia, con PID:2272
+[INFO] 04:59:45:887 Kernel/(9978:9988): Agregando programa en cola de ejecucion,con PID:2272
+[INFO] 04:59:45:887 Kernel/(9978:9988): Enviando Programa a CPU disponible, con PID:2272 y CPU:8
+[INFO] 04:59:49:471 Kernel/(9978:9985): Una CPU se cerro abruptamente: socket fd: 8 , ip: 127.0.0.1 , puerto: 57480 
+
+[INFO] 04:59:49:471 Kernel/(9978:9985): Se movio programa a cola exit, PID:2272
+[INFO] 04:59:49:471 Kernel/(9978:9989): Sacando programa de cola exit,con pid: 2272
+[DEBUG] 04:59:49:471 Kernel/(9978:9989): Borrando pid:2272 del diccionario
+[INFO] 05:01:44:119 Kernel/(10056:10056): Comienza la ejecución del Kernel.
+[INFO] 05:01:44:119 Kernel/(10056:10056): Se creo Diccionario Variables Compartidas
+[INFO] 05:01:44:119 Kernel/(10056:10056): Se agrego variable: colas con valor:0 al diccionario de variables compartidas
+[INFO] 05:01:44:119 Kernel/(10056:10056): Se agrego variable: compartida con valor:0 al diccionario de variables compartidas
+[INFO] 05:01:44:119 Kernel/(10056:10056): Armando Diccionario de Semaforos
+[INFO] 05:01:44:119 Kernel/(10056:10056): Se agrego semaforo: b con valor: 1 al diccionario de semaforos
+[INFO] 05:01:44:119 Kernel/(10056:10056): Se agrego semaforo: c con valor: 0 al diccionario de semaforos
+[INFO] 05:01:44:120 Kernel/(10056:10056): Hilo PCP exitoso
+[INFO] 05:01:44:120 Kernel/(10056:10058): Hilo bloquear y devolver a Ready de dispositivo HDD1 exitoso
+[INFO] 05:01:44:120 Kernel/(10056:10058): Hilo bloquear y devolver a Ready de dispositivo LPT1 exitoso
+[INFO] 05:01:44:120 Kernel/(10056:10056): Hilo PLP exitoso
+[INFO] 05:01:44:120 Kernel/(10056:10061): Hilo Multiplexor Scripts lanzado exitosamente
+[INFO] 05:01:44:120 Kernel/(10056:10058): Exito al crear hilo atencionCPUs
+[INFO] 05:01:44:120 Kernel/(10056:10061): Hilo Cola New lanzado exitosamente
+[INFO] 05:01:44:120 Kernel/(10056:10058): Exito al crear hilo mandar a Ejecutar
+[INFO] 05:01:44:121 Kernel/(10056:10061): Hilo Cola Exit lanzado exitosamente
+[INFO] 05:01:44:121 Kernel/(10056:10058): Exito al crear hilo enviar CPU
+[INFO] 05:01:44:121 Kernel/(10056:10062): Esperando conexiones de programas en el puerto: 8005
+[INFO] 05:01:44:121 Kernel/(10056:10063): Esperando conexiones de CPUs en el puerto: 8015
+[INFO] 05:01:46:407 Kernel/(10056:10062): Nueva Conexion de Programa , socket fd: 7
+[INFO] 05:01:46:407 Kernel/(10056:10062): Mensaje de bienvenida enviado correctamente al sd: 7
+[INFO] 05:01:46:449 Kernel/(10056:10062): Se recibio Literal proveniente del sd: 7
+[INFO] 05:01:46:487 Kernel/(10056:10062): Encolando Nuevo Programa en Cola de NEW,con Pid745 y Peso 5
+[INFO] 05:01:46:487 Kernel/(10056:10064): Encolando Programa en Cola Ready, pid: 745
+[DEBUG] 05:01:46:487 Kernel/(10056:10062): Agregando pid en diccionario, con pid: 745 y sd :7
+[INFO] 05:01:48:408 Kernel/(10056:10063): Nueva Conexion de CPU , socket fd: 8
+[INFO] 05:01:48:408 Kernel/(10056:10063): Paquete con retardo y quantum enviado correctamente al sd: 8
+[INFO] 05:01:48:408 Kernel/(10056:10065): Se saco programa de la cola Ready, con PID:745
+[DEBUG] 05:01:48:408 Kernel/(10056:10065): Poniendo Programa en cola Intermedia, con PID:745
+[DEBUG] 05:01:48:409 Kernel/(10056:10067): Se saco programa de cola intermedia, con PID:745
+[INFO] 05:01:48:409 Kernel/(10056:10067): Agregando programa en cola de ejecucion,con PID:745
+[INFO] 05:01:48:409 Kernel/(10056:10067): Enviando Programa a CPU disponible, con PID:745 y CPU:8
+[INFO] 05:01:51:29 Kernel/(10056:10063): Una CPU se cerro abruptamente: socket fd: 8 , ip: 127.0.0.1 , puerto: 57484 
+
+[INFO] 05:01:51:29 Kernel/(10056:10063): Se movio programa a cola exit, PID:745
+[INFO] 05:01:51:29 Kernel/(10056:10066): Sacando programa de cola exit,con pid: 745
+[DEBUG] 05:01:51:29 Kernel/(10056:10066): Borrando pid:745 del diccionario
+[INFO] 05:05:09:929 Kernel/(10160:10160): Comienza la ejecución del Kernel.
+[INFO] 05:05:09:929 Kernel/(10160:10160): Se creo Diccionario Variables Compartidas
+[INFO] 05:05:09:929 Kernel/(10160:10160): Se agrego variable: colas con valor:0 al diccionario de variables compartidas
+[INFO] 05:05:09:929 Kernel/(10160:10160): Se agrego variable: compartida con valor:0 al diccionario de variables compartidas
+[INFO] 05:05:09:929 Kernel/(10160:10160): Armando Diccionario de Semaforos
+[INFO] 05:05:09:929 Kernel/(10160:10160): Se agrego semaforo: b con valor: 1 al diccionario de semaforos
+[INFO] 05:05:09:929 Kernel/(10160:10160): Se agrego semaforo: c con valor: 0 al diccionario de semaforos
+[INFO] 05:05:09:930 Kernel/(10160:10160): Hilo PCP exitoso
+[INFO] 05:05:09:930 Kernel/(10160:10160): Hilo PLP exitoso
+[INFO] 05:05:09:930 Kernel/(10160:10162): Hilo bloquear y devolver a Ready de dispositivo HDD1 exitoso
+[INFO] 05:05:09:930 Kernel/(10160:10163): Hilo Multiplexor Scripts lanzado exitosamente
+[INFO] 05:05:09:930 Kernel/(10160:10162): Hilo bloquear y devolver a Ready de dispositivo LPT1 exitoso
+[INFO] 05:05:09:930 Kernel/(10160:10163): Hilo Cola New lanzado exitosamente
+[INFO] 05:05:09:931 Kernel/(10160:10162): Exito al crear hilo atencionCPUs
+[INFO] 05:05:09:931 Kernel/(10160:10163): Hilo Cola Exit lanzado exitosamente
+[INFO] 05:05:09:931 Kernel/(10160:10162): Exito al crear hilo mandar a Ejecutar
+[INFO] 05:05:09:931 Kernel/(10160:10168): Esperando conexiones de CPUs en el puerto: 8015
+[INFO] 05:05:09:931 Kernel/(10160:10165): Esperando conexiones de programas en el puerto: 8005
+[INFO] 05:05:09:931 Kernel/(10160:10162): Exito al crear hilo enviar CPU
+[INFO] 05:05:11:739 Kernel/(10160:10168): Nueva Conexion de CPU , socket fd: 7
+[INFO] 05:05:11:740 Kernel/(10160:10168): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 05:05:12:251 Kernel/(10160:10168): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57487 
+
+[INFO] 05:05:12:754 Kernel/(10160:10168): Nueva Conexion de CPU , socket fd: 7 , ip : 127.0.0.1 , port: 57489
+[INFO] 05:05:12:754 Kernel/(10160:10168): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 05:05:12:967 Kernel/(10160:10168): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57489 
+
+[INFO] 05:05:13:565 Kernel/(10160:10168): Nueva Conexion de CPU , socket fd: 7 , ip : 127.0.0.1 , port: 57491
+[INFO] 05:05:13:565 Kernel/(10160:10168): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 05:05:13:936 Kernel/(10160:10168): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57491 
+
+[INFO] 05:05:16:32 Kernel/(10160:10165): Nueva Conexion de Programa , socket fd: 7
+[INFO] 05:05:16:32 Kernel/(10160:10165): Mensaje de bienvenida enviado correctamente al sd: 7
+[INFO] 05:05:16:71 Kernel/(10160:10165): Se recibio Literal proveniente del sd: 7
+[INFO] 05:05:16:110 Kernel/(10160:10165): Encolando Nuevo Programa en Cola de NEW,con Pid9452 y Peso 5
+[DEBUG] 05:05:16:111 Kernel/(10160:10165): Agregando pid en diccionario, con pid: 9452 y sd :7
+[INFO] 05:05:16:111 Kernel/(10160:10167): Encolando Programa en Cola Ready, pid: 9452
+[INFO] 05:05:17:836 Kernel/(10160:10168): Nueva Conexion de CPU , socket fd: 8 , ip : 127.0.0.1 , port: 57494
+[INFO] 05:05:17:836 Kernel/(10160:10168): Paquete con retardo y quantum enviado correctamente al sd: 8
+[INFO] 05:05:17:836 Kernel/(10160:10170): Se saco programa de la cola Ready, con PID:9452
+[DEBUG] 05:05:17:836 Kernel/(10160:10170): Poniendo Programa en cola Intermedia, con PID:9452
+[DEBUG] 05:05:17:836 Kernel/(10160:10171): Se saco programa de cola intermedia, con PID:9452
+[INFO] 05:05:17:836 Kernel/(10160:10171): Agregando programa en cola de ejecucion,con PID:9452
+[INFO] 05:05:17:836 Kernel/(10160:10171): Enviando Programa a CPU disponible, con PID:9452 y CPU:8
+[INFO] 05:05:20:313 Kernel/(10160:10168): Una CPU se cerro abruptamente: socket fd: 8 , ip: 127.0.0.1 , puerto: 57494 
+
+[INFO] 05:05:20:314 Kernel/(10160:10168): Se movio programa a cola exit, PID:9452
+[INFO] 05:05:20:314 Kernel/(10160:10169): Sacando programa de cola exit,con pid: 9452
+[DEBUG] 05:05:20:314 Kernel/(10160:10169): Borrando pid:9452 del diccionario
+[INFO] 05:07:13:79 Kernel/(10225:10225): Comienza la ejecución del Kernel.
+[INFO] 05:07:13:79 Kernel/(10225:10225): Se creo Diccionario Variables Compartidas
+[INFO] 05:07:13:79 Kernel/(10225:10225): Se agrego variable: colas con valor:0 al diccionario de variables compartidas
+[INFO] 05:07:13:79 Kernel/(10225:10225): Se agrego variable: compartida con valor:0 al diccionario de variables compartidas
+[INFO] 05:07:13:79 Kernel/(10225:10225): Armando Diccionario de Semaforos
+[INFO] 05:07:13:79 Kernel/(10225:10225): Se agrego semaforo: b con valor: 1 al diccionario de semaforos
+[INFO] 05:07:13:79 Kernel/(10225:10225): Se agrego semaforo: c con valor: 0 al diccionario de semaforos
+[INFO] 05:07:13:80 Kernel/(10225:10225): Hilo PCP exitoso
+[INFO] 05:07:13:80 Kernel/(10225:10227): Hilo bloquear y devolver a Ready de dispositivo HDD1 exitoso
+[INFO] 05:07:13:80 Kernel/(10225:10225): Hilo PLP exitoso
+[INFO] 05:07:13:80 Kernel/(10225:10227): Hilo bloquear y devolver a Ready de dispositivo LPT1 exitoso
+[INFO] 05:07:13:80 Kernel/(10225:10227): Exito al crear hilo atencionCPUs
+[INFO] 05:07:13:81 Kernel/(10225:10231): Esperando conexiones de CPUs en el puerto: 8015
+[INFO] 05:07:13:81 Kernel/(10225:10227): Exito al crear hilo mandar a Ejecutar
+[INFO] 05:07:13:81 Kernel/(10225:10229): Hilo Multiplexor Scripts lanzado exitosamente
+[INFO] 05:07:13:81 Kernel/(10225:10227): Exito al crear hilo enviar CPU
+[INFO] 05:07:13:81 Kernel/(10225:10229): Hilo Cola New lanzado exitosamente
+[INFO] 05:07:13:81 Kernel/(10225:10229): Hilo Cola Exit lanzado exitosamente
+[INFO] 05:07:13:81 Kernel/(10225:10233): Esperando conexiones de programas en el puerto: 8005
+[INFO] 05:07:14:480 Kernel/(10225:10231): Nueva Conexion de CPU , socket fd: 7
+[INFO] 05:07:14:481 Kernel/(10225:10231): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 05:07:15:732 Kernel/(10225:10233): Nueva Conexion de Programa , socket fd: 8
+[INFO] 05:07:15:732 Kernel/(10225:10233): Mensaje de bienvenida enviado correctamente al sd: 8
+[INFO] 05:07:15:770 Kernel/(10225:10233): Se recibio Literal proveniente del sd: 8
+[INFO] 05:07:15:810 Kernel/(10225:10233): Encolando Nuevo Programa en Cola de NEW,con Pid6603 y Peso 5
+[DEBUG] 05:07:15:811 Kernel/(10225:10233): Agregando pid en diccionario, con pid: 6603 y sd :8
+[INFO] 05:07:15:811 Kernel/(10225:10235): Encolando Programa en Cola Ready, pid: 6603
+[INFO] 05:07:15:811 Kernel/(10225:10232): Se saco programa de la cola Ready, con PID:6603
+[DEBUG] 05:07:15:811 Kernel/(10225:10232): Poniendo Programa en cola Intermedia, con PID:6603
+[DEBUG] 05:07:15:811 Kernel/(10225:10234): Se saco programa de cola intermedia, con PID:6603
+[INFO] 05:07:15:811 Kernel/(10225:10234): Agregando programa en cola de ejecucion,con PID:6603
+[INFO] 05:07:15:811 Kernel/(10225:10234): Enviando Programa a CPU disponible, con PID:6603 y CPU:7
+[INFO] 05:07:16:900 Kernel/(10225:10231): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57497 
+
+[INFO] 05:07:16:900 Kernel/(10225:10231): Se movio programa a cola exit, PID:6603
+[INFO] 05:07:16:901 Kernel/(10225:10236): Sacando programa de cola exit,con pid: 6603
+[DEBUG] 05:07:16:901 Kernel/(10225:10236): Borrando pid:6603 del diccionario
+[INFO] 05:08:06:807 Kernel/(10245:10245): Comienza la ejecución del Kernel.
+[INFO] 05:08:06:808 Kernel/(10245:10245): Se creo Diccionario Variables Compartidas
+[INFO] 05:08:06:808 Kernel/(10245:10245): Se agrego variable: colas con valor:0 al diccionario de variables compartidas
+[INFO] 05:08:06:808 Kernel/(10245:10245): Se agrego variable: compartida con valor:0 al diccionario de variables compartidas
+[INFO] 05:08:06:808 Kernel/(10245:10245): Armando Diccionario de Semaforos
+[INFO] 05:08:06:808 Kernel/(10245:10245): Se agrego semaforo: b con valor: 1 al diccionario de semaforos
+[INFO] 05:08:06:808 Kernel/(10245:10245): Se agrego semaforo: c con valor: 0 al diccionario de semaforos
+[INFO] 05:08:06:808 Kernel/(10245:10245): Hilo PCP exitoso
+[INFO] 05:08:06:808 Kernel/(10245:10245): Hilo PLP exitoso
+[INFO] 05:08:06:808 Kernel/(10245:10248): Hilo Multiplexor Scripts lanzado exitosamente
+[INFO] 05:08:06:809 Kernel/(10245:10248): Hilo Cola New lanzado exitosamente
+[INFO] 05:08:06:809 Kernel/(10245:10247): Hilo bloquear y devolver a Ready de dispositivo HDD1 exitoso
+[INFO] 05:08:06:809 Kernel/(10245:10248): Hilo Cola Exit lanzado exitosamente
+[INFO] 05:08:06:809 Kernel/(10245:10247): Hilo bloquear y devolver a Ready de dispositivo LPT1 exitoso
+[INFO] 05:08:06:809 Kernel/(10245:10249): Esperando conexiones de programas en el puerto: 8005
+[INFO] 05:08:06:809 Kernel/(10245:10247): Exito al crear hilo atencionCPUs
+[INFO] 05:08:06:809 Kernel/(10245:10247): Exito al crear hilo mandar a Ejecutar
+[INFO] 05:08:06:809 Kernel/(10245:10247): Exito al crear hilo enviar CPU
+[INFO] 05:08:06:810 Kernel/(10245:10254): Esperando conexiones de CPUs en el puerto: 8015
+[INFO] 05:08:09:116 Kernel/(10245:10249): Nueva Conexion de Programa , socket fd: 7
+[INFO] 05:08:09:116 Kernel/(10245:10249): Mensaje de bienvenida enviado correctamente al sd: 7
+[INFO] 05:08:09:154 Kernel/(10245:10249): Se recibio Literal proveniente del sd: 7
+[INFO] 05:08:09:196 Kernel/(10245:10249): Encolando Nuevo Programa en Cola de NEW,con Pid3217 y Peso 5
+[DEBUG] 05:08:09:196 Kernel/(10245:10249): Agregando pid en diccionario, con pid: 3217 y sd :7
+[INFO] 05:08:09:196 Kernel/(10245:10250): Encolando Programa en Cola Ready, pid: 3217
+[INFO] 05:08:12:117 Kernel/(10245:10254): Nueva Conexion de CPU , socket fd: 8
+[INFO] 05:08:12:118 Kernel/(10245:10254): Paquete con retardo y quantum enviado correctamente al sd: 8
+[INFO] 05:08:12:118 Kernel/(10245:10255): Se saco programa de la cola Ready, con PID:3217
+[DEBUG] 05:08:12:118 Kernel/(10245:10255): Poniendo Programa en cola Intermedia, con PID:3217
+[DEBUG] 05:08:12:118 Kernel/(10245:10256): Se saco programa de cola intermedia, con PID:3217
+[INFO] 05:08:12:118 Kernel/(10245:10256): Agregando programa en cola de ejecucion,con PID:3217
+[INFO] 05:08:12:118 Kernel/(10245:10256): Enviando Programa a CPU disponible, con PID:3217 y CPU:8
+[INFO] 05:08:13:589 Kernel/(10245:10254): Una CPU se cerro abruptamente: socket fd: 8 , ip: 127.0.0.1 , puerto: 57502 
+
+[INFO] 05:08:13:589 Kernel/(10245:10254): Se movio programa a cola exit, PID:3217
+[INFO] 05:08:13:589 Kernel/(10245:10252): Sacando programa de cola exit,con pid: 3217
+[DEBUG] 05:08:13:590 Kernel/(10245:10252): Borrando pid:3217 del diccionario
+[INFO] 05:08:25:704 Kernel/(10263:10263): Comienza la ejecución del Kernel.
+[INFO] 05:08:25:704 Kernel/(10263:10263): Se creo Diccionario Variables Compartidas
+[INFO] 05:08:25:704 Kernel/(10263:10263): Se agrego variable: colas con valor:0 al diccionario de variables compartidas
+[INFO] 05:08:25:704 Kernel/(10263:10263): Se agrego variable: compartida con valor:0 al diccionario de variables compartidas
+[INFO] 05:08:25:704 Kernel/(10263:10263): Armando Diccionario de Semaforos
+[INFO] 05:08:25:704 Kernel/(10263:10263): Se agrego semaforo: b con valor: 1 al diccionario de semaforos
+[INFO] 05:08:25:704 Kernel/(10263:10263): Se agrego semaforo: c con valor: 0 al diccionario de semaforos
+[INFO] 05:08:25:705 Kernel/(10263:10263): Hilo PCP exitoso
+[INFO] 05:08:25:705 Kernel/(10263:10263): Hilo PLP exitoso
+[INFO] 05:08:25:705 Kernel/(10263:10265): Hilo bloquear y devolver a Ready de dispositivo HDD1 exitoso
+[INFO] 05:08:25:706 Kernel/(10263:10265): Hilo bloquear y devolver a Ready de dispositivo LPT1 exitoso
+[INFO] 05:08:25:706 Kernel/(10263:10265): Exito al crear hilo atencionCPUs
+[INFO] 05:08:25:706 Kernel/(10263:10265): Exito al crear hilo mandar a Ejecutar
+[INFO] 05:08:25:706 Kernel/(10263:10265): Exito al crear hilo enviar CPU
+[INFO] 05:08:25:706 Kernel/(10263:10269): Esperando conexiones de CPUs en el puerto: 8015
+[INFO] 05:08:25:706 Kernel/(10263:10266): Hilo Multiplexor Scripts lanzado exitosamente
+[INFO] 05:08:25:706 Kernel/(10263:10270): Esperando conexiones de programas en el puerto: 8005
+[INFO] 05:08:25:707 Kernel/(10263:10266): Hilo Cola New lanzado exitosamente
+[INFO] 05:08:25:707 Kernel/(10263:10266): Hilo Cola Exit lanzado exitosamente
+[INFO] 05:08:27:984 Kernel/(10263:10270): Nueva Conexion de Programa , socket fd: 7
+[INFO] 05:08:27:984 Kernel/(10263:10270): Mensaje de bienvenida enviado correctamente al sd: 7
+[INFO] 05:08:28:22 Kernel/(10263:10270): Se recibio Literal proveniente del sd: 7
+[INFO] 05:08:28:63 Kernel/(10263:10270): Encolando Nuevo Programa en Cola de NEW,con Pid7315 y Peso 5
+[DEBUG] 05:08:28:63 Kernel/(10263:10270): Agregando pid en diccionario, con pid: 7315 y sd :7
+[INFO] 05:08:28:63 Kernel/(10263:10273): Encolando Programa en Cola Ready, pid: 7315
+[INFO] 05:08:29:246 Kernel/(10263:10269): Nueva Conexion de CPU , socket fd: 8
+[INFO] 05:08:29:247 Kernel/(10263:10269): Paquete con retardo y quantum enviado correctamente al sd: 8
+[INFO] 05:08:29:247 Kernel/(10263:10271): Se saco programa de la cola Ready, con PID:7315
+[DEBUG] 05:08:29:247 Kernel/(10263:10271): Poniendo Programa en cola Intermedia, con PID:7315
+[DEBUG] 05:08:29:247 Kernel/(10263:10272): Se saco programa de cola intermedia, con PID:7315
+[INFO] 05:08:29:247 Kernel/(10263:10272): Agregando programa en cola de ejecucion,con PID:7315
+[INFO] 05:08:29:247 Kernel/(10263:10272): Enviando Programa a CPU disponible, con PID:7315 y CPU:8
+[INFO] 05:08:29:551 Kernel/(10263:10269): Una CPU se cerro abruptamente: socket fd: 8 , ip: 127.0.0.1 , puerto: 57506 
+
+[INFO] 05:08:29:551 Kernel/(10263:10269): Se movio programa a cola exit, PID:7315
+[INFO] 05:08:29:551 Kernel/(10263:10274): Sacando programa de cola exit,con pid: 7315
+[DEBUG] 05:08:29:551 Kernel/(10263:10274): Borrando pid:7315 del diccionario
+[INFO] 05:11:35:228 Kernel/(10335:10335): Comienza la ejecución del Kernel.
+[INFO] 05:11:35:228 Kernel/(10335:10335): Se creo Diccionario Variables Compartidas
+[INFO] 05:11:35:228 Kernel/(10335:10335): Se agrego variable: colas con valor:0 al diccionario de variables compartidas
+[INFO] 05:11:35:228 Kernel/(10335:10335): Se agrego variable: compartida con valor:0 al diccionario de variables compartidas
+[INFO] 05:11:35:228 Kernel/(10335:10335): Armando Diccionario de Semaforos
+[INFO] 05:11:35:228 Kernel/(10335:10335): Se agrego semaforo: b con valor: 1 al diccionario de semaforos
+[INFO] 05:11:35:228 Kernel/(10335:10335): Se agrego semaforo: c con valor: 0 al diccionario de semaforos
+[INFO] 05:11:35:229 Kernel/(10335:10335): Hilo PCP exitoso
+[INFO] 05:11:35:229 Kernel/(10335:10335): Hilo PLP exitoso
+[INFO] 05:11:35:229 Kernel/(10335:10338): Hilo Multiplexor Scripts lanzado exitosamente
+[INFO] 05:11:35:229 Kernel/(10335:10338): Hilo Cola New lanzado exitosamente
+[INFO] 05:11:35:229 Kernel/(10335:10338): Hilo Cola Exit lanzado exitosamente
+[INFO] 05:11:35:230 Kernel/(10335:10339): Esperando conexiones de programas en el puerto: 8005
+[INFO] 05:11:35:230 Kernel/(10335:10337): Hilo bloquear y devolver a Ready de dispositivo HDD1 exitoso
+[INFO] 05:11:35:230 Kernel/(10335:10337): Hilo bloquear y devolver a Ready de dispositivo LPT1 exitoso
+[INFO] 05:11:35:230 Kernel/(10335:10337): Exito al crear hilo atencionCPUs
+[INFO] 05:11:35:230 Kernel/(10335:10337): Exito al crear hilo mandar a Ejecutar
+[INFO] 05:11:35:230 Kernel/(10335:10337): Exito al crear hilo enviar CPU
+[INFO] 05:11:35:230 Kernel/(10335:10344): Esperando conexiones de CPUs en el puerto: 8015
+[INFO] 05:11:36:535 Kernel/(10335:10344): Nueva Conexion de CPU , socket fd: 7
+[INFO] 05:11:36:536 Kernel/(10335:10344): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 05:11:38:301 Kernel/(10335:10339): Nueva Conexion de Programa , socket fd: 8
+[INFO] 05:11:38:301 Kernel/(10335:10339): Mensaje de bienvenida enviado correctamente al sd: 8
+[INFO] 05:11:38:338 Kernel/(10335:10339): Se recibio Literal proveniente del sd: 8
+[INFO] 05:11:38:380 Kernel/(10335:10339): Encolando Nuevo Programa en Cola de NEW,con Pid995 y Peso 5
+[DEBUG] 05:11:38:380 Kernel/(10335:10339): Agregando pid en diccionario, con pid: 995 y sd :8
+[INFO] 05:11:38:380 Kernel/(10335:10340): Encolando Programa en Cola Ready, pid: 995
+[INFO] 05:11:38:380 Kernel/(10335:10345): Se saco programa de la cola Ready, con PID:995
+[DEBUG] 05:11:38:380 Kernel/(10335:10345): Poniendo Programa en cola Intermedia, con PID:995
+[DEBUG] 05:11:38:380 Kernel/(10335:10346): Se saco programa de cola intermedia, con PID:995
+[INFO] 05:11:38:380 Kernel/(10335:10346): Agregando programa en cola de ejecucion,con PID:995
+[INFO] 05:11:38:380 Kernel/(10335:10346): Enviando Programa a CPU disponible, con PID:995 y CPU:7
+[INFO] 05:11:58:268 Kernel/(10335:10344): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57509 
+
+[INFO] 05:11:58:268 Kernel/(10335:10344): Se movio programa a cola exit, PID:995
+[INFO] 05:11:58:268 Kernel/(10335:10341): Sacando programa de cola exit,con pid: 995
+[DEBUG] 05:11:58:269 Kernel/(10335:10341): Borrando pid:995 del diccionario
+[INFO] 05:12:05:260 Kernel/(10335:10339): Nueva Conexion de Programa , socket fd: 7 , ip : 127.0.0.1 , port: 43692
+[INFO] 05:12:05:260 Kernel/(10335:10339): Mensaje de bienvenida enviado correctamente al sd: 7
+[INFO] 05:12:05:298 Kernel/(10335:10339): Se recibio Literal proveniente del sd: 7
+[INFO] 05:12:05:338 Kernel/(10335:10339): Encolando Nuevo Programa en Cola de NEW,con Pid7116 y Peso 5
+[DEBUG] 05:12:05:338 Kernel/(10335:10339): Agregando pid en diccionario, con pid: 7116 y sd :7
+[ERROR] 05:12:05:338 Kernel/(10335:10339): Error en el select
+[INFO] 05:12:05:338 Kernel/(10335:10340): Encolando Programa en Cola Ready, pid: 7116
+[INFO] 05:12:43:848 Kernel/(10335:10339): Nueva Conexion de Programa , socket fd: 8 , ip : 127.0.0.1 , port: 43697
+[INFO] 05:12:43:848 Kernel/(10335:10339): Mensaje de bienvenida enviado correctamente al sd: 8
+[INFO] 05:12:43:886 Kernel/(10335:10339): Se recibio Literal proveniente del sd: 8
+[INFO] 05:12:43:931 Kernel/(10335:10339): Encolando Nuevo Programa en Cola de NEW,con Pid1140 y Peso 5
+[DEBUG] 05:12:43:931 Kernel/(10335:10339): Agregando pid en diccionario, con pid: 1140 y sd :8
+[INFO] 05:12:43:932 Kernel/(10335:10340): Encolando Programa en Cola Ready, pid: 1140
+[INFO] 05:12:56:876 Kernel/(10335:10339): Un programa se cerro: socket fd: 8 , ip: 127.0.0.1 , puerto: 43697 
+
+[INFO] 05:12:56:876 Kernel/(10335:10339): Un programa se cerro: socket fd: 7 , ip: 127.0.0.1 , puerto: 43692 
+
+[ERROR] 05:12:56:876 Kernel/(10335:10339): Error en el select
+[INFO] 05:13:16:588 Kernel/(10363:10363): Comienza la ejecución del Kernel.
+[INFO] 05:13:16:589 Kernel/(10363:10363): Se creo Diccionario Variables Compartidas
+[INFO] 05:13:16:589 Kernel/(10363:10363): Se agrego variable: colas con valor:0 al diccionario de variables compartidas
+[INFO] 05:13:16:589 Kernel/(10363:10363): Se agrego variable: compartida con valor:0 al diccionario de variables compartidas
+[INFO] 05:13:16:589 Kernel/(10363:10363): Armando Diccionario de Semaforos
+[INFO] 05:13:16:589 Kernel/(10363:10363): Se agrego semaforo: b con valor: 1 al diccionario de semaforos
+[INFO] 05:13:16:589 Kernel/(10363:10363): Se agrego semaforo: c con valor: 0 al diccionario de semaforos
+[INFO] 05:13:16:589 Kernel/(10363:10363): Hilo PCP exitoso
+[INFO] 05:13:16:589 Kernel/(10363:10363): Hilo PLP exitoso
+[INFO] 05:13:16:590 Kernel/(10363:10365): Hilo bloquear y devolver a Ready de dispositivo HDD1 exitoso
+[INFO] 05:13:16:590 Kernel/(10363:10365): Hilo bloquear y devolver a Ready de dispositivo LPT1 exitoso
+[INFO] 05:13:16:590 Kernel/(10363:10366): Hilo Multiplexor Scripts lanzado exitosamente
+[INFO] 05:13:16:590 Kernel/(10363:10365): Exito al crear hilo atencionCPUs
+[INFO] 05:13:16:590 Kernel/(10363:10366): Hilo Cola New lanzado exitosamente
+[INFO] 05:13:16:590 Kernel/(10363:10365): Exito al crear hilo mandar a Ejecutar
+[INFO] 05:13:16:590 Kernel/(10363:10366): Hilo Cola Exit lanzado exitosamente
+[INFO] 05:13:16:590 Kernel/(10363:10365): Exito al crear hilo enviar CPU
+[INFO] 05:13:16:591 Kernel/(10363:10368): Esperando conexiones de programas en el puerto: 8005
+[INFO] 05:13:16:591 Kernel/(10363:10370): Esperando conexiones de CPUs en el puerto: 8015
+[INFO] 05:13:19:369 Kernel/(10363:10368): Nueva Conexion de Programa , socket fd: 7
+[INFO] 05:13:19:369 Kernel/(10363:10368): Mensaje de bienvenida enviado correctamente al sd: 7
+[INFO] 05:13:19:406 Kernel/(10363:10368): Se recibio Literal proveniente del sd: 7
+[INFO] 05:13:19:446 Kernel/(10363:10368): Encolando Nuevo Programa en Cola de NEW,con Pid4951 y Peso 5
+[DEBUG] 05:13:19:447 Kernel/(10363:10368): Agregando pid en diccionario, con pid: 4951 y sd :7
+[INFO] 05:13:19:447 Kernel/(10363:10371): Encolando Programa en Cola Ready, pid: 4951
+[INFO] 05:13:20:822 Kernel/(10363:10370): Nueva Conexion de CPU , socket fd: 8
+[INFO] 05:13:20:822 Kernel/(10363:10370): Paquete con retardo y quantum enviado correctamente al sd: 8
+[INFO] 05:13:20:822 Kernel/(10363:10372): Se saco programa de la cola Ready, con PID:4951
+[DEBUG] 05:13:20:822 Kernel/(10363:10372): Poniendo Programa en cola Intermedia, con PID:4951
+[DEBUG] 05:13:20:823 Kernel/(10363:10374): Se saco programa de cola intermedia, con PID:4951
+[INFO] 05:13:20:823 Kernel/(10363:10374): Agregando programa en cola de ejecucion,con PID:4951
+[INFO] 05:13:20:823 Kernel/(10363:10374): Enviando Programa a CPU disponible, con PID:4951 y CPU:8
+[INFO] 05:13:25:229 Kernel/(10363:10370): Una CPU se cerro abruptamente: socket fd: 8 , ip: 127.0.0.1 , puerto: 57522 
+
+[INFO] 05:13:25:229 Kernel/(10363:10370): Se movio programa a cola exit, PID:4951
+[INFO] 05:13:25:229 Kernel/(10363:10373): Sacando programa de cola exit,con pid: 4951
+[DEBUG] 05:13:25:229 Kernel/(10363:10373): Borrando pid:4951 del diccionario
+[INFO] 05:13:41:607 Kernel/(10363:10368): Nueva Conexion de Programa , socket fd: 7 , ip : 127.0.0.1 , port: 43704
+[INFO] 05:13:41:607 Kernel/(10363:10368): Mensaje de bienvenida enviado correctamente al sd: 7
+[INFO] 05:13:41:646 Kernel/(10363:10368): Se recibio Literal proveniente del sd: 7
+[INFO] 05:13:41:687 Kernel/(10363:10368): Encolando Nuevo Programa en Cola de NEW,con Pid2948 y Peso 5
+[DEBUG] 05:13:41:687 Kernel/(10363:10368): Agregando pid en diccionario, con pid: 2948 y sd :7
+[INFO] 05:13:41:687 Kernel/(10363:10371): Encolando Programa en Cola Ready, pid: 2948
+[INFO] 05:13:48:781 Kernel/(10363:10368): Un programa se cerro: socket fd: 7 , ip: 127.0.0.1 , puerto: 43704 
+
+[ERROR] 05:13:48:781 Kernel/(10363:10368): Error en el select
+[INFO] 05:13:54:394 Kernel/(10363:10368): Nueva Conexion de Programa , socket fd: 7 , ip : 127.0.0.1 , port: 43705
+[INFO] 05:13:54:395 Kernel/(10363:10368): Mensaje de bienvenida enviado correctamente al sd: 7
+[INFO] 05:13:54:434 Kernel/(10363:10368): Se recibio Literal proveniente del sd: 7
+[INFO] 05:13:54:475 Kernel/(10363:10368): Encolando Nuevo Programa en Cola de NEW,con Pid9743 y Peso 5
+[DEBUG] 05:13:54:475 Kernel/(10363:10368): Agregando pid en diccionario, con pid: 9743 y sd :7
+[INFO] 05:13:54:475 Kernel/(10363:10371): Encolando Programa en Cola Ready, pid: 9743
+[INFO] 05:13:57:806 Kernel/(10363:10368): Un programa se cerro: socket fd: 7 , ip: 127.0.0.1 , puerto: 43705 
+
+[ERROR] 05:13:57:806 Kernel/(10363:10368): Error en el select
+[INFO] 05:13:58:498 Kernel/(10363:10368): Nueva Conexion de Programa , socket fd: 7 , ip : 127.0.0.1 , port: 43706
+[INFO] 05:13:58:498 Kernel/(10363:10368): Mensaje de bienvenida enviado correctamente al sd: 7
+[INFO] 05:13:58:538 Kernel/(10363:10368): Se recibio Literal proveniente del sd: 7
+[INFO] 05:13:58:578 Kernel/(10363:10368): Encolando Nuevo Programa en Cola de NEW,con Pid1652 y Peso 5
+[DEBUG] 05:13:58:578 Kernel/(10363:10368): Agregando pid en diccionario, con pid: 1652 y sd :7
+[INFO] 05:13:58:578 Kernel/(10363:10371): Encolando Programa en Cola Ready, pid: 1652
+[INFO] 05:13:59:424 Kernel/(10363:10368): Un programa se cerro: socket fd: 7 , ip: 127.0.0.1 , puerto: 43706 
+
+[ERROR] 05:13:59:425 Kernel/(10363:10368): Error en el select
+[INFO] 05:13:59:951 Kernel/(10363:10368): Nueva Conexion de Programa , socket fd: 7 , ip : 127.0.0.1 , port: 43707
+[INFO] 05:13:59:951 Kernel/(10363:10368): Mensaje de bienvenida enviado correctamente al sd: 7
+[INFO] 05:13:59:990 Kernel/(10363:10368): Se recibio Literal proveniente del sd: 7
+[INFO] 05:14:00:31 Kernel/(10363:10368): Encolando Nuevo Programa en Cola de NEW,con Pid996 y Peso 5
+[DEBUG] 05:14:00:31 Kernel/(10363:10368): Agregando pid en diccionario, con pid: 996 y sd :7
+[INFO] 05:14:00:31 Kernel/(10363:10371): Encolando Programa en Cola Ready, pid: 996
+[INFO] 05:14:00:912 Kernel/(10363:10368): Un programa se cerro: socket fd: 7 , ip: 127.0.0.1 , puerto: 43707 
+
+[ERROR] 05:14:00:912 Kernel/(10363:10368): Error en el select
+[INFO] 05:14:01:504 Kernel/(10363:10368): Nueva Conexion de Programa , socket fd: 7 , ip : 127.0.0.1 , port: 43708
+[INFO] 05:14:01:505 Kernel/(10363:10368): Mensaje de bienvenida enviado correctamente al sd: 7
+[INFO] 05:14:01:542 Kernel/(10363:10368): Se recibio Literal proveniente del sd: 7
+[INFO] 05:14:01:582 Kernel/(10363:10368): Encolando Nuevo Programa en Cola de NEW,con Pid7563 y Peso 5
+[DEBUG] 05:14:01:582 Kernel/(10363:10368): Agregando pid en diccionario, con pid: 7563 y sd :7
+[INFO] 05:14:05:651 Kernel/(10363:10368): Un programa se cerro: socket fd: 7 , ip: 127.0.0.1 , puerto: 43708 
+
+[ERROR] 05:14:05:651 Kernel/(10363:10368): Error en el select
+[INFO] 05:15:07:166 Kernel/(10387:10387): Comienza la ejecución del Kernel.
+[INFO] 05:15:07:166 Kernel/(10387:10387): Se creo Diccionario Variables Compartidas
+[INFO] 05:15:07:166 Kernel/(10387:10387): Se agrego variable: colas con valor:0 al diccionario de variables compartidas
+[INFO] 05:15:07:166 Kernel/(10387:10387): Se agrego variable: compartida con valor:0 al diccionario de variables compartidas
+[INFO] 05:15:07:166 Kernel/(10387:10387): Armando Diccionario de Semaforos
+[INFO] 05:15:07:166 Kernel/(10387:10387): Se agrego semaforo: b con valor: 1 al diccionario de semaforos
+[INFO] 05:15:07:166 Kernel/(10387:10387): Se agrego semaforo: c con valor: 0 al diccionario de semaforos
+[ERROR] 05:15:07:166 Kernel/(10387:10387): Error al conectar el socket
+[ERROR] 05:15:07:167 Kernel/(10387:10387): Fallo el Send del handshake
+[INFO] 05:15:13:82 Kernel/(10392:10392): Comienza la ejecución del Kernel.
+[INFO] 05:15:13:82 Kernel/(10392:10392): Se creo Diccionario Variables Compartidas
+[INFO] 05:15:13:82 Kernel/(10392:10392): Se agrego variable: colas con valor:0 al diccionario de variables compartidas
+[INFO] 05:15:13:82 Kernel/(10392:10392): Se agrego variable: compartida con valor:0 al diccionario de variables compartidas
+[INFO] 05:15:13:82 Kernel/(10392:10392): Armando Diccionario de Semaforos
+[INFO] 05:15:13:82 Kernel/(10392:10392): Se agrego semaforo: b con valor: 1 al diccionario de semaforos
+[INFO] 05:15:13:82 Kernel/(10392:10392): Se agrego semaforo: c con valor: 0 al diccionario de semaforos
+[INFO] 05:15:13:82 Kernel/(10392:10392): Hilo PCP exitoso
+[INFO] 05:15:13:83 Kernel/(10392:10392): Hilo PLP exitoso
+[INFO] 05:15:13:83 Kernel/(10392:10394): Hilo bloquear y devolver a Ready de dispositivo HDD1 exitoso
+[INFO] 05:15:13:83 Kernel/(10392:10394): Hilo bloquear y devolver a Ready de dispositivo LPT1 exitoso
+[INFO] 05:15:13:83 Kernel/(10392:10394): Exito al crear hilo atencionCPUs
+[INFO] 05:15:13:83 Kernel/(10392:10395): Hilo Multiplexor Scripts lanzado exitosamente
+[INFO] 05:15:13:83 Kernel/(10392:10395): Hilo Cola New lanzado exitosamente
+[INFO] 05:15:13:84 Kernel/(10392:10394): Exito al crear hilo mandar a Ejecutar
+[INFO] 05:15:13:84 Kernel/(10392:10395): Hilo Cola Exit lanzado exitosamente
+[INFO] 05:15:13:84 Kernel/(10392:10394): Exito al crear hilo enviar CPU
+[INFO] 05:15:13:84 Kernel/(10392:10398): Esperando conexiones de programas en el puerto: 8005
+[INFO] 05:15:13:84 Kernel/(10392:10399): Esperando conexiones de CPUs en el puerto: 8015
+[INFO] 05:15:15:179 Kernel/(10392:10398): Nueva Conexion de Programa , socket fd: 7
+[INFO] 05:15:15:179 Kernel/(10392:10398): Mensaje de bienvenida enviado correctamente al sd: 7
+[INFO] 05:15:15:218 Kernel/(10392:10398): Se recibio Literal proveniente del sd: 7
+[INFO] 05:15:15:259 Kernel/(10392:10398): Encolando Nuevo Programa en Cola de NEW,con Pid9833 y Peso 5
+[DEBUG] 05:15:15:259 Kernel/(10392:10398): Agregando pid en diccionario, con pid: 9833 y sd :7
+[INFO] 05:15:15:259 Kernel/(10392:10400): Encolando Programa en Cola Ready, pid: 9833
+[INFO] 05:15:15:572 Kernel/(10392:10398): Un programa se cerro: socket fd: 7 , ip: 127.0.0.1 , puerto: 43713 
+
+[INFO] 05:15:16:81 Kernel/(10392:10398): Nueva Conexion de Programa , socket fd: 7 , ip : 127.0.0.1 , port: 43714
+[INFO] 05:15:16:81 Kernel/(10392:10398): Mensaje de bienvenida enviado correctamente al sd: 7
+[INFO] 05:15:16:120 Kernel/(10392:10398): Se recibio Literal proveniente del sd: 7
+[INFO] 05:15:16:162 Kernel/(10392:10398): Encolando Nuevo Programa en Cola de NEW,con Pid7050 y Peso 5
+[DEBUG] 05:15:16:162 Kernel/(10392:10398): Agregando pid en diccionario, con pid: 7050 y sd :7
+[INFO] 05:15:16:162 Kernel/(10392:10400): Encolando Programa en Cola Ready, pid: 7050
+[INFO] 05:15:16:532 Kernel/(10392:10398): Un programa se cerro: socket fd: 7 , ip: 127.0.0.1 , puerto: 43714 
+
+[INFO] 05:15:17:113 Kernel/(10392:10398): Nueva Conexion de Programa , socket fd: 7 , ip : 127.0.0.1 , port: 43715
+[INFO] 05:15:17:113 Kernel/(10392:10398): Mensaje de bienvenida enviado correctamente al sd: 7
+[INFO] 05:15:17:154 Kernel/(10392:10398): Se recibio Literal proveniente del sd: 7
+[INFO] 05:15:17:194 Kernel/(10392:10398): Encolando Nuevo Programa en Cola de NEW,con Pid3866 y Peso 5
+[DEBUG] 05:15:17:194 Kernel/(10392:10398): Agregando pid en diccionario, con pid: 3866 y sd :7
+[INFO] 05:15:17:194 Kernel/(10392:10400): Encolando Programa en Cola Ready, pid: 3866
+[INFO] 05:15:17:574 Kernel/(10392:10398): Un programa se cerro: socket fd: 7 , ip: 127.0.0.1 , puerto: 43715 
+
+[INFO] 05:15:18:87 Kernel/(10392:10398): Nueva Conexion de Programa , socket fd: 7 , ip : 127.0.0.1 , port: 43716
+[INFO] 05:15:18:87 Kernel/(10392:10398): Mensaje de bienvenida enviado correctamente al sd: 7
+[INFO] 05:15:18:126 Kernel/(10392:10398): Se recibio Literal proveniente del sd: 7
+[INFO] 05:15:18:167 Kernel/(10392:10398): Encolando Nuevo Programa en Cola de NEW,con Pid4796 y Peso 5
+[DEBUG] 05:15:18:167 Kernel/(10392:10398): Agregando pid en diccionario, con pid: 4796 y sd :7
+[INFO] 05:15:18:167 Kernel/(10392:10400): Encolando Programa en Cola Ready, pid: 4796
+[INFO] 05:15:19:13 Kernel/(10392:10398): Un programa se cerro: socket fd: 7 , ip: 127.0.0.1 , puerto: 43716 
+
+[INFO] 05:15:19:665 Kernel/(10392:10398): Nueva Conexion de Programa , socket fd: 7 , ip : 127.0.0.1 , port: 43717
+[INFO] 05:15:19:665 Kernel/(10392:10398): Mensaje de bienvenida enviado correctamente al sd: 7
+[INFO] 05:15:19:702 Kernel/(10392:10398): Se recibio Literal proveniente del sd: 7
+[INFO] 05:15:19:742 Kernel/(10392:10398): Encolando Nuevo Programa en Cola de NEW,con Pid4357 y Peso 5
+[DEBUG] 05:15:19:742 Kernel/(10392:10398): Agregando pid en diccionario, con pid: 4357 y sd :7
+[INFO] 05:15:20:240 Kernel/(10392:10398): Un programa se cerro: socket fd: 7 , ip: 127.0.0.1 , puerto: 43717 
+
+[INFO] 05:15:21:470 Kernel/(10392:10399): Nueva Conexion de CPU , socket fd: 7
+[INFO] 05:15:21:470 Kernel/(10392:10399): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 05:15:21:470 Kernel/(10392:10401): Se saco programa de la cola Ready, con PID:9833
+[DEBUG] 05:15:21:470 Kernel/(10392:10401): Poniendo Programa en cola Intermedia, con PID:9833
+[DEBUG] 05:15:21:470 Kernel/(10392:10403): Se saco programa de cola intermedia, con PID:9833
+[INFO] 05:15:21:470 Kernel/(10392:10403): Agregando programa en cola de ejecucion,con PID:9833
+[INFO] 05:15:21:471 Kernel/(10392:10403): Enviando Programa a CPU disponible, con PID:9833 y CPU:7
+[INFO] 05:15:21:898 Kernel/(10392:10399): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57538 
+
+[INFO] 05:15:21:899 Kernel/(10392:10399): Se movio programa a cola exit, PID:9833
+[INFO] 05:15:21:899 Kernel/(10392:10402): Sacando programa de cola exit,con pid: 9833
+[DEBUG] 05:15:21:899 Kernel/(10392:10402): Borrando pid:9833 del diccionario
+[INFO] 05:15:21:899 Kernel/(10392:10400): Encolando Programa en Cola Ready, pid: 4357
+[INFO] 05:15:53:382 Kernel/(10417:10417): Comienza la ejecución del Kernel.
+[INFO] 05:15:53:382 Kernel/(10417:10417): Se creo Diccionario Variables Compartidas
+[INFO] 05:15:53:382 Kernel/(10417:10417): Se agrego variable: colas con valor:0 al diccionario de variables compartidas
+[INFO] 05:15:53:382 Kernel/(10417:10417): Se agrego variable: compartida con valor:0 al diccionario de variables compartidas
+[INFO] 05:15:53:382 Kernel/(10417:10417): Armando Diccionario de Semaforos
+[INFO] 05:15:53:382 Kernel/(10417:10417): Se agrego semaforo: b con valor: 1 al diccionario de semaforos
+[INFO] 05:15:53:382 Kernel/(10417:10417): Se agrego semaforo: c con valor: 0 al diccionario de semaforos
+[INFO] 05:15:53:383 Kernel/(10417:10417): Hilo PCP exitoso
+[INFO] 05:15:53:383 Kernel/(10417:10419): Hilo bloquear y devolver a Ready de dispositivo HDD1 exitoso
+[INFO] 05:15:53:383 Kernel/(10417:10417): Hilo PLP exitoso
+[INFO] 05:15:53:383 Kernel/(10417:10419): Hilo bloquear y devolver a Ready de dispositivo LPT1 exitoso
+[INFO] 05:15:53:383 Kernel/(10417:10421): Hilo Multiplexor Scripts lanzado exitosamente
+[INFO] 05:15:53:383 Kernel/(10417:10419): Exito al crear hilo atencionCPUs
+[INFO] 05:15:53:383 Kernel/(10417:10419): Exito al crear hilo mandar a Ejecutar
+[INFO] 05:15:53:383 Kernel/(10417:10421): Hilo Cola New lanzado exitosamente
+[INFO] 05:15:53:384 Kernel/(10417:10419): Exito al crear hilo enviar CPU
+[INFO] 05:15:53:384 Kernel/(10417:10421): Hilo Cola Exit lanzado exitosamente
+[INFO] 05:15:53:384 Kernel/(10417:10423): Esperando conexiones de programas en el puerto: 8005
+[INFO] 05:15:53:384 Kernel/(10417:10424): Esperando conexiones de CPUs en el puerto: 8015
+[INFO] 05:15:55:128 Kernel/(10417:10423): Nueva Conexion de Programa , socket fd: 7
+[INFO] 05:15:55:128 Kernel/(10417:10423): Mensaje de bienvenida enviado correctamente al sd: 7
+[INFO] 05:15:55:166 Kernel/(10417:10423): Se recibio Literal proveniente del sd: 7
+[INFO] 05:15:55:206 Kernel/(10417:10423): Encolando Nuevo Programa en Cola de NEW,con Pid6924 y Peso 5
+[DEBUG] 05:15:55:207 Kernel/(10417:10423): Agregando pid en diccionario, con pid: 6924 y sd :7
+[INFO] 05:15:55:207 Kernel/(10417:10426): Encolando Programa en Cola Ready, pid: 6924
+[INFO] 05:15:58:135 Kernel/(10417:10423): Un programa se cerro: socket fd: 7 , ip: 127.0.0.1 , puerto: 43725 
+
+[INFO] 05:15:58:701 Kernel/(10417:10423): Nueva Conexion de Programa , socket fd: 7 , ip : 127.0.0.1 , port: 43726
+[INFO] 05:15:58:701 Kernel/(10417:10423): Mensaje de bienvenida enviado correctamente al sd: 7
+[INFO] 05:15:58:738 Kernel/(10417:10423): Se recibio Literal proveniente del sd: 7
+[INFO] 05:15:58:779 Kernel/(10417:10423): Encolando Nuevo Programa en Cola de NEW,con Pid9107 y Peso 5
+[DEBUG] 05:15:58:779 Kernel/(10417:10423): Agregando pid en diccionario, con pid: 9107 y sd :7
+[INFO] 05:15:58:779 Kernel/(10417:10426): Encolando Programa en Cola Ready, pid: 9107
+[INFO] 05:15:59:155 Kernel/(10417:10423): Un programa se cerro: socket fd: 7 , ip: 127.0.0.1 , puerto: 43726 
+
+[INFO] 05:15:59:617 Kernel/(10417:10423): Nueva Conexion de Programa , socket fd: 7 , ip : 127.0.0.1 , port: 43727
+[INFO] 05:15:59:618 Kernel/(10417:10423): Mensaje de bienvenida enviado correctamente al sd: 7
+[INFO] 05:15:59:658 Kernel/(10417:10423): Se recibio Literal proveniente del sd: 7
+[INFO] 05:15:59:699 Kernel/(10417:10423): Encolando Nuevo Programa en Cola de NEW,con Pid8175 y Peso 5
+[DEBUG] 05:15:59:699 Kernel/(10417:10423): Agregando pid en diccionario, con pid: 8175 y sd :7
+[INFO] 05:15:59:699 Kernel/(10417:10426): Encolando Programa en Cola Ready, pid: 8175
+[INFO] 05:15:59:983 Kernel/(10417:10423): Un programa se cerro: socket fd: 7 , ip: 127.0.0.1 , puerto: 43727 
+
+[INFO] 05:16:00:531 Kernel/(10417:10423): Nueva Conexion de Programa , socket fd: 7 , ip : 127.0.0.1 , port: 43728
+[INFO] 05:16:00:531 Kernel/(10417:10423): Mensaje de bienvenida enviado correctamente al sd: 7
+[INFO] 05:16:00:571 Kernel/(10417:10423): Se recibio Literal proveniente del sd: 7
+[INFO] 05:16:00:613 Kernel/(10417:10423): Encolando Nuevo Programa en Cola de NEW,con Pid5377 y Peso 5
+[DEBUG] 05:16:00:614 Kernel/(10417:10423): Agregando pid en diccionario, con pid: 5377 y sd :7
+[INFO] 05:16:00:614 Kernel/(10417:10426): Encolando Programa en Cola Ready, pid: 5377
+[INFO] 05:16:00:971 Kernel/(10417:10423): Un programa se cerro: socket fd: 7 , ip: 127.0.0.1 , puerto: 43728 
+
+[INFO] 05:16:01:450 Kernel/(10417:10423): Nueva Conexion de Programa , socket fd: 7 , ip : 127.0.0.1 , port: 43729
+[INFO] 05:16:01:450 Kernel/(10417:10423): Mensaje de bienvenida enviado correctamente al sd: 7
+[INFO] 05:16:01:491 Kernel/(10417:10423): Se recibio Literal proveniente del sd: 7
+[INFO] 05:16:01:531 Kernel/(10417:10423): Encolando Nuevo Programa en Cola de NEW,con Pid9897 y Peso 5
+[DEBUG] 05:16:01:531 Kernel/(10417:10423): Agregando pid en diccionario, con pid: 9897 y sd :7
+[INFO] 05:16:02:52 Kernel/(10417:10423): Un programa se cerro: socket fd: 7 , ip: 127.0.0.1 , puerto: 43729 
+
+[INFO] 05:16:02:749 Kernel/(10417:10423): Nueva Conexion de Programa , socket fd: 7 , ip : 127.0.0.1 , port: 43730
+[INFO] 05:16:02:749 Kernel/(10417:10423): Mensaje de bienvenida enviado correctamente al sd: 7
+[INFO] 05:16:02:786 Kernel/(10417:10423): Se recibio Literal proveniente del sd: 7
+[INFO] 05:16:02:826 Kernel/(10417:10423): Encolando Nuevo Programa en Cola de NEW,con Pid318 y Peso 5
+[DEBUG] 05:16:02:826 Kernel/(10417:10423): Agregando pid en diccionario, con pid: 318 y sd :7
+[INFO] 05:16:04:385 Kernel/(10417:10424): Nueva Conexion de CPU , socket fd: 8
+[INFO] 05:16:04:385 Kernel/(10417:10424): Paquete con retardo y quantum enviado correctamente al sd: 8
+[INFO] 05:16:04:386 Kernel/(10417:10425): Se saco programa de la cola Ready, con PID:6924
+[DEBUG] 05:16:04:386 Kernel/(10417:10425): Poniendo Programa en cola Intermedia, con PID:6924
+[DEBUG] 05:16:04:386 Kernel/(10417:10427): Se saco programa de cola intermedia, con PID:6924
+[INFO] 05:16:04:386 Kernel/(10417:10427): Agregando programa en cola de ejecucion,con PID:6924
+[INFO] 05:16:04:386 Kernel/(10417:10427): Enviando Programa a CPU disponible, con PID:6924 y CPU:8
+[INFO] 05:16:06:326 Kernel/(10417:10424): Una CPU se cerro abruptamente: socket fd: 8 , ip: 127.0.0.1 , puerto: 57551 
+
+[INFO] 05:16:06:326 Kernel/(10417:10424): Se movio programa a cola exit, PID:6924
+[INFO] 05:16:06:326 Kernel/(10417:10428): Sacando programa de cola exit,con pid: 6924
+[DEBUG] 05:16:06:326 Kernel/(10417:10428): Borrando pid:6924 del diccionario
+[INFO] 05:16:06:326 Kernel/(10417:10426): Encolando Programa en Cola Ready, pid: 318
+[INFO] 05:21:03:810 Kernel/(10682:10682): Comienza la ejecución del Kernel.
+[INFO] 05:21:03:810 Kernel/(10682:10682): Se creo Diccionario Variables Compartidas
+[INFO] 05:21:03:810 Kernel/(10682:10682): Se agrego variable: colas con valor:0 al diccionario de variables compartidas
+[INFO] 05:21:03:810 Kernel/(10682:10682): Se agrego variable: compartida con valor:0 al diccionario de variables compartidas
+[INFO] 05:21:03:810 Kernel/(10682:10682): Armando Diccionario de Semaforos
+[INFO] 05:21:03:810 Kernel/(10682:10682): Se agrego semaforo: b con valor: 1 al diccionario de semaforos
+[INFO] 05:21:03:810 Kernel/(10682:10682): Se agrego semaforo: c con valor: 0 al diccionario de semaforos
+[INFO] 05:21:03:810 Kernel/(10682:10682): Hilo PCP exitoso
+[INFO] 05:21:03:811 Kernel/(10682:10682): Hilo PLP exitoso
+[INFO] 05:21:03:811 Kernel/(10682:10685): Hilo Multiplexor Scripts lanzado exitosamente
+[INFO] 05:21:03:811 Kernel/(10682:10684): Hilo bloquear y devolver a Ready de dispositivo HDD1 exitoso
+[INFO] 05:21:03:811 Kernel/(10682:10685): Hilo Cola New lanzado exitosamente
+[INFO] 05:21:03:812 Kernel/(10682:10686): Esperando conexiones de programas en el puerto: 8005
+[INFO] 05:21:03:812 Kernel/(10682:10685): Hilo Cola Exit lanzado exitosamente
+[INFO] 05:21:03:812 Kernel/(10682:10684): Hilo bloquear y devolver a Ready de dispositivo LPT1 exitoso
+[INFO] 05:21:03:812 Kernel/(10682:10684): Exito al crear hilo atencionCPUs
+[INFO] 05:21:03:812 Kernel/(10682:10684): Exito al crear hilo mandar a Ejecutar
+[INFO] 05:21:03:812 Kernel/(10682:10691): Esperando conexiones de CPUs en el puerto: 8015
+[INFO] 05:21:03:812 Kernel/(10682:10684): Exito al crear hilo enviar CPU
+[INFO] 05:21:05:136 Kernel/(10682:10691): Nueva Conexion de CPU , socket fd: 7
+[INFO] 05:21:05:205 Kernel/(10682:10691): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 05:21:05:808 Kernel/(10682:10691): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57556 
+
+[INFO] 05:21:06:559 Kernel/(10682:10691): Nueva Conexion de CPU , socket fd: 7 , ip : 127.0.0.1 , port: 57558
+[INFO] 05:21:06:560 Kernel/(10682:10691): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 05:21:07:98 Kernel/(10682:10691): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57558 
+
+[INFO] 05:21:07:731 Kernel/(10682:10691): Nueva Conexion de CPU , socket fd: 7 , ip : 127.0.0.1 , port: 57560
+[INFO] 05:21:07:731 Kernel/(10682:10691): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 05:21:08:192 Kernel/(10682:10691): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57560 
+
+[INFO] 05:21:08:704 Kernel/(10682:10691): Nueva Conexion de CPU , socket fd: 7 , ip : 127.0.0.1 , port: 57562
+[INFO] 05:21:08:704 Kernel/(10682:10691): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 05:21:09:209 Kernel/(10682:10691): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57562 
+
+[INFO] 05:21:09:797 Kernel/(10682:10691): Nueva Conexion de CPU , socket fd: 7 , ip : 127.0.0.1 , port: 57564
+[INFO] 05:21:09:797 Kernel/(10682:10691): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 05:21:10:371 Kernel/(10682:10691): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57564 
+
+[INFO] 05:21:10:929 Kernel/(10682:10691): Nueva Conexion de CPU , socket fd: 7 , ip : 127.0.0.1 , port: 57566
+[INFO] 05:21:10:930 Kernel/(10682:10691): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 05:21:12:831 Kernel/(10682:10686): Nueva Conexion de Programa , socket fd: 8
+[INFO] 05:21:12:831 Kernel/(10682:10686): Mensaje de bienvenida enviado correctamente al sd: 8
+[INFO] 05:21:12:870 Kernel/(10682:10686): Se recibio Literal proveniente del sd: 8
+[INFO] 05:21:12:911 Kernel/(10682:10686): Encolando Nuevo Programa en Cola de NEW,con Pid9213 y Peso 5
+[DEBUG] 05:21:12:911 Kernel/(10682:10686): Agregando pid en diccionario, con pid: 9213 y sd :8
+[INFO] 05:21:12:911 Kernel/(10682:10688): Encolando Programa en Cola Ready, pid: 9213
+[INFO] 05:21:12:911 Kernel/(10682:10692): Se saco programa de la cola Ready, con PID:9213
+[DEBUG] 05:21:12:911 Kernel/(10682:10692): Poniendo Programa en cola Intermedia, con PID:9213
+[DEBUG] 05:21:12:911 Kernel/(10682:10693): Se saco programa de cola intermedia, con PID:9213
+[INFO] 05:21:12:911 Kernel/(10682:10693): Agregando programa en cola de ejecucion,con PID:9213
+[INFO] 05:21:12:911 Kernel/(10682:10693): Enviando Programa a CPU disponible, con PID:9213 y CPU:7
+[INFO] 05:21:15:428 Kernel/(10682:10691): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57566 
+
+[INFO] 05:21:15:428 Kernel/(10682:10691): Se movio programa a cola exit, PID:9213
+[INFO] 05:21:15:428 Kernel/(10682:10689): Sacando programa de cola exit,con pid: 9213
+[DEBUG] 05:21:15:428 Kernel/(10682:10689): Borrando pid:9213 del diccionario
+[INFO] 05:21:48:501 Kernel/(10754:10754): Comienza la ejecución del Kernel.
+[INFO] 05:21:48:501 Kernel/(10754:10754): Se creo Diccionario Variables Compartidas
+[INFO] 05:21:48:501 Kernel/(10754:10754): Se agrego variable: colas con valor:0 al diccionario de variables compartidas
+[INFO] 05:21:48:501 Kernel/(10754:10754): Se agrego variable: compartida con valor:0 al diccionario de variables compartidas
+[INFO] 05:21:48:501 Kernel/(10754:10754): Armando Diccionario de Semaforos
+[INFO] 05:21:48:501 Kernel/(10754:10754): Se agrego semaforo: b con valor: 1 al diccionario de semaforos
+[INFO] 05:21:48:501 Kernel/(10754:10754): Se agrego semaforo: c con valor: 0 al diccionario de semaforos
+[INFO] 05:21:48:502 Kernel/(10754:10754): Hilo PCP exitoso
+[INFO] 05:21:48:502 Kernel/(10754:10754): Hilo PLP exitoso
+[INFO] 05:21:48:502 Kernel/(10754:10756): Hilo bloquear y devolver a Ready de dispositivo HDD1 exitoso
+[INFO] 05:21:48:502 Kernel/(10754:10757): Hilo Multiplexor Scripts lanzado exitosamente
+[INFO] 05:21:48:502 Kernel/(10754:10756): Hilo bloquear y devolver a Ready de dispositivo LPT1 exitoso
+[INFO] 05:21:48:502 Kernel/(10754:10757): Hilo Cola New lanzado exitosamente
+[INFO] 05:21:48:502 Kernel/(10754:10756): Exito al crear hilo atencionCPUs
+[INFO] 05:21:48:503 Kernel/(10754:10757): Hilo Cola Exit lanzado exitosamente
+[INFO] 05:21:48:503 Kernel/(10754:10756): Exito al crear hilo mandar a Ejecutar
+[INFO] 05:21:48:503 Kernel/(10754:10756): Exito al crear hilo enviar CPU
+[INFO] 05:21:48:503 Kernel/(10754:10762): Esperando conexiones de CPUs en el puerto: 8015
+[INFO] 05:21:48:503 Kernel/(10754:10759): Esperando conexiones de programas en el puerto: 8005
+[INFO] 05:21:51:651 Kernel/(10754:10762): Nueva Conexion de CPU , socket fd: 7
+[INFO] 05:21:51:651 Kernel/(10754:10762): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 05:21:52:897 Kernel/(10754:10759): Nueva Conexion de Programa , socket fd: 8
+[INFO] 05:21:52:897 Kernel/(10754:10759): Mensaje de bienvenida enviado correctamente al sd: 8
+[INFO] 05:21:52:934 Kernel/(10754:10759): Se recibio Literal proveniente del sd: 8
+[INFO] 05:21:52:975 Kernel/(10754:10759): Encolando Nuevo Programa en Cola de NEW,con Pid2700 y Peso 5
+[DEBUG] 05:21:52:975 Kernel/(10754:10759): Agregando pid en diccionario, con pid: 2700 y sd :8
+[INFO] 05:21:52:975 Kernel/(10754:10761): Encolando Programa en Cola Ready, pid: 2700
+[INFO] 05:21:52:975 Kernel/(10754:10764): Se saco programa de la cola Ready, con PID:2700
+[DEBUG] 05:21:52:975 Kernel/(10754:10764): Poniendo Programa en cola Intermedia, con PID:2700
+[DEBUG] 05:21:52:975 Kernel/(10754:10765): Se saco programa de cola intermedia, con PID:2700
+[INFO] 05:21:52:975 Kernel/(10754:10765): Agregando programa en cola de ejecucion,con PID:2700
+[INFO] 05:21:52:975 Kernel/(10754:10765): Enviando Programa a CPU disponible, con PID:2700 y CPU:7
+[INFO] 05:21:55:440 Kernel/(10754:10762): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57572 
+
+[INFO] 05:21:56:214 Kernel/(10754:10762): Nueva Conexion de CPU , socket fd: 7 , ip : 127.0.0.1 , port: 57575
+[INFO] 05:21:56:214 Kernel/(10754:10762): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 05:22:01:759 Kernel/(10754:10759): Un programa se cerro: socket fd: 8 , ip: 127.0.0.1 , puerto: 43754 
+
+[INFO] 05:22:03:191 Kernel/(10754:10759): Nueva Conexion de Programa , socket fd: 8 , ip : 127.0.0.1 , port: 43757
+[INFO] 05:22:03:191 Kernel/(10754:10759): Mensaje de bienvenida enviado correctamente al sd: 8
+[INFO] 05:22:03:232 Kernel/(10754:10759): Se recibio Literal proveniente del sd: 8
+[INFO] 05:22:03:270 Kernel/(10754:10759): Encolando Nuevo Programa en Cola de NEW,con Pid2661 y Peso 5
+[DEBUG] 05:22:03:270 Kernel/(10754:10759): Agregando pid en diccionario, con pid: 2661 y sd :8
+[INFO] 05:22:03:270 Kernel/(10754:10761): Encolando Programa en Cola Ready, pid: 2661
+[INFO] 05:22:03:270 Kernel/(10754:10764): Se saco programa de la cola Ready, con PID:2661
+[DEBUG] 05:22:03:270 Kernel/(10754:10764): Poniendo Programa en cola Intermedia, con PID:2661
+[DEBUG] 05:22:03:270 Kernel/(10754:10765): Se saco programa de cola intermedia, con PID:2661
+[INFO] 05:22:03:270 Kernel/(10754:10765): Agregando programa en cola de ejecucion,con PID:2661
+[INFO] 05:22:03:270 Kernel/(10754:10765): Enviando Programa a CPU disponible, con PID:2661 y CPU:7
+[INFO] 05:22:06:825 Kernel/(10754:10762): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57575 
+
+[INFO] 05:22:08:378 Kernel/(10754:10762): Nueva Conexion de CPU , socket fd: 7 , ip : 127.0.0.1 , port: 57578
+[INFO] 05:22:08:378 Kernel/(10754:10762): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 05:22:10:349 Kernel/(10754:10759): Un programa se cerro: socket fd: 8 , ip: 127.0.0.1 , puerto: 43757 
+
+[INFO] 05:22:11:66 Kernel/(10754:10759): Nueva Conexion de Programa , socket fd: 8 , ip : 127.0.0.1 , port: 43760
+[INFO] 05:22:11:66 Kernel/(10754:10759): Mensaje de bienvenida enviado correctamente al sd: 8
+[INFO] 05:22:11:106 Kernel/(10754:10759): Se recibio Literal proveniente del sd: 8
+[INFO] 05:22:11:147 Kernel/(10754:10759): Encolando Nuevo Programa en Cola de NEW,con Pid3912 y Peso 5
+[DEBUG] 05:22:11:147 Kernel/(10754:10759): Agregando pid en diccionario, con pid: 3912 y sd :8
+[INFO] 05:22:11:147 Kernel/(10754:10761): Encolando Programa en Cola Ready, pid: 3912
+[INFO] 05:22:11:147 Kernel/(10754:10764): Se saco programa de la cola Ready, con PID:3912
+[DEBUG] 05:22:11:147 Kernel/(10754:10764): Poniendo Programa en cola Intermedia, con PID:3912
+[DEBUG] 05:22:11:147 Kernel/(10754:10765): Se saco programa de cola intermedia, con PID:3912
+[INFO] 05:22:11:148 Kernel/(10754:10765): Agregando programa en cola de ejecucion,con PID:3912
+[INFO] 05:22:11:148 Kernel/(10754:10765): Enviando Programa a CPU disponible, con PID:3912 y CPU:7
+[INFO] 05:22:11:625 Kernel/(10754:10759): Un programa se cerro: socket fd: 8 , ip: 127.0.0.1 , puerto: 43760 
+
+[INFO] 05:22:12:425 Kernel/(10754:10759): Nueva Conexion de Programa , socket fd: 8 , ip : 127.0.0.1 , port: 43761
+[INFO] 05:22:12:425 Kernel/(10754:10759): Mensaje de bienvenida enviado correctamente al sd: 8
+[INFO] 05:22:12:462 Kernel/(10754:10759): Se recibio Literal proveniente del sd: 8
+[INFO] 05:22:12:502 Kernel/(10754:10759): Encolando Nuevo Programa en Cola de NEW,con Pid5401 y Peso 5
+[DEBUG] 05:22:12:502 Kernel/(10754:10759): Agregando pid en diccionario, con pid: 5401 y sd :8
+[INFO] 05:22:12:502 Kernel/(10754:10761): Encolando Programa en Cola Ready, pid: 5401
+[INFO] 05:22:16:81 Kernel/(10754:10762): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57578 
+
+[INFO] 05:22:17:241 Kernel/(10754:10762): Nueva Conexion de CPU , socket fd: 7 , ip : 127.0.0.1 , port: 57582
+[INFO] 05:22:17:241 Kernel/(10754:10762): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 05:22:17:242 Kernel/(10754:10764): Se saco programa de la cola Ready, con PID:5401
+[DEBUG] 05:22:17:242 Kernel/(10754:10764): Poniendo Programa en cola Intermedia, con PID:5401
+[DEBUG] 05:22:17:242 Kernel/(10754:10765): Se saco programa de cola intermedia, con PID:5401
+[INFO] 05:22:17:242 Kernel/(10754:10765): Agregando programa en cola de ejecucion,con PID:5401
+[INFO] 05:22:17:242 Kernel/(10754:10765): Enviando Programa a CPU disponible, con PID:5401 y CPU:7
+[INFO] 05:22:21:463 Kernel/(10754:10762): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57582 
+
+[INFO] 05:22:51:454 Kernel/(10825:10825): Comienza la ejecución del Kernel.
+[INFO] 05:22:51:455 Kernel/(10825:10825): Se creo Diccionario Variables Compartidas
+[INFO] 05:22:51:455 Kernel/(10825:10825): Se agrego variable: colas con valor:0 al diccionario de variables compartidas
+[INFO] 05:22:51:455 Kernel/(10825:10825): Se agrego variable: compartida con valor:0 al diccionario de variables compartidas
+[INFO] 05:22:51:455 Kernel/(10825:10825): Armando Diccionario de Semaforos
+[INFO] 05:22:51:455 Kernel/(10825:10825): Se agrego semaforo: b con valor: 1 al diccionario de semaforos
+[INFO] 05:22:51:455 Kernel/(10825:10825): Se agrego semaforo: c con valor: 0 al diccionario de semaforos
+[INFO] 05:22:51:456 Kernel/(10825:10825): Hilo PCP exitoso
+[INFO] 05:22:51:456 Kernel/(10825:10825): Hilo PLP exitoso
+[INFO] 05:22:51:456 Kernel/(10825:10828): Hilo Multiplexor Scripts lanzado exitosamente
+[INFO] 05:22:51:457 Kernel/(10825:10828): Hilo Cola New lanzado exitosamente
+[INFO] 05:22:51:457 Kernel/(10825:10828): Hilo Cola Exit lanzado exitosamente
+[INFO] 05:22:51:457 Kernel/(10825:10827): Hilo bloquear y devolver a Ready de dispositivo HDD1 exitoso
+[INFO] 05:22:51:457 Kernel/(10825:10827): Hilo bloquear y devolver a Ready de dispositivo LPT1 exitoso
+[INFO] 05:22:51:457 Kernel/(10825:10827): Exito al crear hilo atencionCPUs
+[INFO] 05:22:51:457 Kernel/(10825:10827): Exito al crear hilo mandar a Ejecutar
+[INFO] 05:22:51:457 Kernel/(10825:10827): Exito al crear hilo enviar CPU
+[INFO] 05:22:51:457 Kernel/(10825:10834): Esperando conexiones de CPUs en el puerto: 8015
+[INFO] 05:22:51:457 Kernel/(10825:10829): Esperando conexiones de programas en el puerto: 8005
+[INFO] 05:22:52:609 Kernel/(10825:10834): Nueva Conexion de CPU , socket fd: 7
+[INFO] 05:22:52:609 Kernel/(10825:10834): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 05:22:54:502 Kernel/(10825:10829): Nueva Conexion de Programa , socket fd: 8
+[INFO] 05:22:54:502 Kernel/(10825:10829): Mensaje de bienvenida enviado correctamente al sd: 8
+[INFO] 05:22:54:543 Kernel/(10825:10829): Se recibio Literal proveniente del sd: 8
+[INFO] 05:22:54:583 Kernel/(10825:10829): Encolando Nuevo Programa en Cola de NEW,con Pid6023 y Peso 5
+[DEBUG] 05:22:54:583 Kernel/(10825:10829): Agregando pid en diccionario, con pid: 6023 y sd :8
+[INFO] 05:22:54:583 Kernel/(10825:10830): Encolando Programa en Cola Ready, pid: 6023
+[INFO] 05:22:54:583 Kernel/(10825:10835): Se saco programa de la cola Ready, con PID:6023
+[DEBUG] 05:22:54:583 Kernel/(10825:10835): Poniendo Programa en cola Intermedia, con PID:6023
+[DEBUG] 05:22:54:583 Kernel/(10825:10836): Se saco programa de cola intermedia, con PID:6023
+[INFO] 05:22:54:583 Kernel/(10825:10836): Agregando programa en cola de ejecucion,con PID:6023
+[INFO] 05:22:54:583 Kernel/(10825:10836): Enviando Programa a CPU disponible, con PID:6023 y CPU:7
+[INFO] 05:22:56:767 Kernel/(10825:10834): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57585 
+
+[INFO] 05:22:57:935 Kernel/(10825:10834): Nueva Conexion de CPU , socket fd: 7 , ip : 127.0.0.1 , port: 57588
+[INFO] 05:22:57:935 Kernel/(10825:10834): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 05:23:01:412 Kernel/(10825:10829): Un programa se cerro: socket fd: 8 , ip: 127.0.0.1 , puerto: 43767 
+
+[INFO] 05:23:02:50 Kernel/(10825:10829): Nueva Conexion de Programa , socket fd: 8 , ip : 127.0.0.1 , port: 43770
+[INFO] 05:23:02:51 Kernel/(10825:10829): Mensaje de bienvenida enviado correctamente al sd: 8
+[INFO] 05:23:02:90 Kernel/(10825:10829): Se recibio Literal proveniente del sd: 8
+[INFO] 05:23:02:130 Kernel/(10825:10829): Encolando Nuevo Programa en Cola de NEW,con Pid498 y Peso 5
+[DEBUG] 05:23:02:130 Kernel/(10825:10829): Agregando pid en diccionario, con pid: 498 y sd :8
+[INFO] 05:23:02:130 Kernel/(10825:10830): Encolando Programa en Cola Ready, pid: 498
+[INFO] 05:23:02:130 Kernel/(10825:10835): Se saco programa de la cola Ready, con PID:498
+[DEBUG] 05:23:02:130 Kernel/(10825:10835): Poniendo Programa en cola Intermedia, con PID:498
+[DEBUG] 05:23:02:130 Kernel/(10825:10836): Se saco programa de cola intermedia, con PID:498
+[INFO] 05:23:02:130 Kernel/(10825:10836): Agregando programa en cola de ejecucion,con PID:498
+[INFO] 05:23:02:130 Kernel/(10825:10836): Enviando Programa a CPU disponible, con PID:498 y CPU:7
+[INFO] 05:23:04:28 Kernel/(10825:10829): Un programa se cerro: socket fd: 8 , ip: 127.0.0.1 , puerto: 43770 
+
+[INFO] 05:23:04:689 Kernel/(10825:10829): Nueva Conexion de Programa , socket fd: 8 , ip : 127.0.0.1 , port: 43771
+[INFO] 05:23:04:689 Kernel/(10825:10829): Mensaje de bienvenida enviado correctamente al sd: 8
+[INFO] 05:23:04:727 Kernel/(10825:10829): Se recibio Literal proveniente del sd: 8
+[INFO] 05:23:04:766 Kernel/(10825:10829): Encolando Nuevo Programa en Cola de NEW,con Pid7468 y Peso 5
+[DEBUG] 05:23:04:766 Kernel/(10825:10829): Agregando pid en diccionario, con pid: 7468 y sd :8
+[INFO] 05:23:04:766 Kernel/(10825:10830): Encolando Programa en Cola Ready, pid: 7468
+[INFO] 05:23:07:340 Kernel/(10825:10834): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57588 
+
+[INFO] 05:23:08:760 Kernel/(10825:10834): Nueva Conexion de CPU , socket fd: 7 , ip : 127.0.0.1 , port: 57592
+[INFO] 05:23:08:761 Kernel/(10825:10834): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 05:23:08:761 Kernel/(10825:10835): Se saco programa de la cola Ready, con PID:7468
+[DEBUG] 05:23:08:761 Kernel/(10825:10835): Poniendo Programa en cola Intermedia, con PID:7468
+[DEBUG] 05:23:08:761 Kernel/(10825:10836): Se saco programa de cola intermedia, con PID:7468
+[INFO] 05:23:08:761 Kernel/(10825:10836): Agregando programa en cola de ejecucion,con PID:7468
+[INFO] 05:23:08:761 Kernel/(10825:10836): Enviando Programa a CPU disponible, con PID:7468 y CPU:7
+[INFO] 05:23:10:803 Kernel/(10825:10834): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57592 
+
+[INFO] 05:23:11:889 Kernel/(10825:10829): Un programa se cerro: socket fd: 8 , ip: 127.0.0.1 , puerto: 43771 
+
+[INFO] 05:23:26:267 Kernel/(10880:10880): Comienza la ejecución del Kernel.
+[INFO] 05:23:26:267 Kernel/(10880:10880): Se creo Diccionario Variables Compartidas
+[INFO] 05:23:26:267 Kernel/(10880:10880): Se agrego variable: colas con valor:0 al diccionario de variables compartidas
+[INFO] 05:23:26:267 Kernel/(10880:10880): Se agrego variable: compartida con valor:0 al diccionario de variables compartidas
+[INFO] 05:23:26:267 Kernel/(10880:10880): Armando Diccionario de Semaforos
+[INFO] 05:23:26:267 Kernel/(10880:10880): Se agrego semaforo: b con valor: 1 al diccionario de semaforos
+[INFO] 05:23:26:268 Kernel/(10880:10880): Se agrego semaforo: c con valor: 0 al diccionario de semaforos
+[INFO] 05:23:26:268 Kernel/(10880:10880): Hilo PCP exitoso
+[INFO] 05:23:26:268 Kernel/(10880:10880): Hilo PLP exitoso
+[INFO] 05:23:26:269 Kernel/(10880:10883): Hilo Multiplexor Scripts lanzado exitosamente
+[INFO] 05:23:26:269 Kernel/(10880:10882): Hilo bloquear y devolver a Ready de dispositivo HDD1 exitoso
+[INFO] 05:23:26:269 Kernel/(10880:10883): Hilo Cola New lanzado exitosamente
+[INFO] 05:23:26:269 Kernel/(10880:10882): Hilo bloquear y devolver a Ready de dispositivo LPT1 exitoso
+[INFO] 05:23:26:269 Kernel/(10880:10882): Exito al crear hilo atencionCPUs
+[INFO] 05:23:26:269 Kernel/(10880:10882): Exito al crear hilo mandar a Ejecutar
+[INFO] 05:23:26:269 Kernel/(10880:10883): Hilo Cola Exit lanzado exitosamente
+[INFO] 05:23:26:270 Kernel/(10880:10882): Exito al crear hilo enviar CPU
+[INFO] 05:23:26:270 Kernel/(10880:10888): Esperando conexiones de CPUs en el puerto: 8015
+[INFO] 05:23:26:270 Kernel/(10880:10884): Esperando conexiones de programas en el puerto: 8005
+[INFO] 05:23:27:799 Kernel/(10880:10888): Nueva Conexion de CPU , socket fd: 7
+[INFO] 05:23:27:800 Kernel/(10880:10888): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 05:23:29:695 Kernel/(10880:10884): Nueva Conexion de Programa , socket fd: 8
+[INFO] 05:23:29:695 Kernel/(10880:10884): Mensaje de bienvenida enviado correctamente al sd: 8
+[INFO] 05:23:29:735 Kernel/(10880:10884): Se recibio Literal proveniente del sd: 8
+[INFO] 05:23:29:775 Kernel/(10880:10884): Encolando Nuevo Programa en Cola de NEW,con Pid7844 y Peso 5
+[DEBUG] 05:23:29:775 Kernel/(10880:10884): Agregando pid en diccionario, con pid: 7844 y sd :8
+[INFO] 05:23:29:775 Kernel/(10880:10886): Encolando Programa en Cola Ready, pid: 7844
+[INFO] 05:23:29:775 Kernel/(10880:10889): Se saco programa de la cola Ready, con PID:7844
+[DEBUG] 05:23:29:775 Kernel/(10880:10889): Poniendo Programa en cola Intermedia, con PID:7844
+[DEBUG] 05:23:29:775 Kernel/(10880:10891): Se saco programa de cola intermedia, con PID:7844
+[INFO] 05:23:29:775 Kernel/(10880:10891): Agregando programa en cola de ejecucion,con PID:7844
+[INFO] 05:23:29:775 Kernel/(10880:10891): Enviando Programa a CPU disponible, con PID:7844 y CPU:7
+[INFO] 05:23:31:805 Kernel/(10880:10888): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57595 
+
+[INFO] 05:23:31:805 Kernel/(10880:10888): Se movio programa a cola exit, PID:7844
+[INFO] 05:23:31:805 Kernel/(10880:10890): Sacando programa de cola exit,con pid: 7844
+[DEBUG] 05:23:31:805 Kernel/(10880:10890): Borrando pid:7844 del diccionario
+[INFO] 05:25:06:538 Kernel/(10950:10950): Comienza la ejecución del Kernel.
+[INFO] 05:25:06:538 Kernel/(10950:10950): Se creo Diccionario Variables Compartidas
+[INFO] 05:25:06:538 Kernel/(10950:10950): Se agrego variable: colas con valor:0 al diccionario de variables compartidas
+[INFO] 05:25:06:538 Kernel/(10950:10950): Se agrego variable: compartida con valor:0 al diccionario de variables compartidas
+[INFO] 05:25:06:538 Kernel/(10950:10950): Armando Diccionario de Semaforos
+[INFO] 05:25:06:538 Kernel/(10950:10950): Se agrego semaforo: b con valor: 1 al diccionario de semaforos
+[INFO] 05:25:06:538 Kernel/(10950:10950): Se agrego semaforo: c con valor: 0 al diccionario de semaforos
+[INFO] 05:25:06:539 Kernel/(10950:10950): Hilo PCP exitoso
+[INFO] 05:25:06:539 Kernel/(10950:10950): Hilo PLP exitoso
+[INFO] 05:25:06:539 Kernel/(10950:10953): Hilo Multiplexor Scripts lanzado exitosamente
+[INFO] 05:25:06:539 Kernel/(10950:10953): Hilo Cola New lanzado exitosamente
+[INFO] 05:25:06:539 Kernel/(10950:10953): Hilo Cola Exit lanzado exitosamente
+[INFO] 05:25:06:540 Kernel/(10950:10952): Hilo bloquear y devolver a Ready de dispositivo HDD1 exitoso
+[INFO] 05:25:06:540 Kernel/(10950:10952): Hilo bloquear y devolver a Ready de dispositivo LPT1 exitoso
+[INFO] 05:25:06:540 Kernel/(10950:10952): Exito al crear hilo atencionCPUs
+[INFO] 05:25:06:540 Kernel/(10950:10952): Exito al crear hilo mandar a Ejecutar
+[INFO] 05:25:06:540 Kernel/(10950:10952): Exito al crear hilo enviar CPU
+[INFO] 05:25:06:540 Kernel/(10950:10959): Esperando conexiones de CPUs en el puerto: 8015
+[INFO] 05:25:06:540 Kernel/(10950:10954): Esperando conexiones de programas en el puerto: 8005
+[INFO] 05:25:08:988 Kernel/(10950:10959): Nueva Conexion de CPU , socket fd: 7
+[INFO] 05:25:08:988 Kernel/(10950:10959): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 05:25:10:211 Kernel/(10950:10954): Nueva Conexion de Programa , socket fd: 8
+[INFO] 05:25:10:211 Kernel/(10950:10954): Mensaje de bienvenida enviado correctamente al sd: 8
+[INFO] 05:25:10:250 Kernel/(10950:10954): Se recibio Literal proveniente del sd: 8
+[INFO] 05:25:10:290 Kernel/(10950:10954): Encolando Nuevo Programa en Cola de NEW,con Pid6991 y Peso 5
+[DEBUG] 05:25:10:291 Kernel/(10950:10954): Agregando pid en diccionario, con pid: 6991 y sd :8
+[INFO] 05:25:10:291 Kernel/(10950:10955): Encolando Programa en Cola Ready, pid: 6991
+[INFO] 05:25:10:291 Kernel/(10950:10960): Se saco programa de la cola Ready, con PID:6991
+[DEBUG] 05:25:10:291 Kernel/(10950:10960): Poniendo Programa en cola Intermedia, con PID:6991
+[DEBUG] 05:25:10:291 Kernel/(10950:10961): Se saco programa de cola intermedia, con PID:6991
+[INFO] 05:25:10:291 Kernel/(10950:10961): Agregando programa en cola de ejecucion,con PID:6991
+[INFO] 05:25:10:291 Kernel/(10950:10961): Enviando Programa a CPU disponible, con PID:6991 y CPU:7
+[INFO] 05:25:12:517 Kernel/(10950:10954): Un programa se cerro: socket fd: 8 , ip: 127.0.0.1 , puerto: 43783 
+
+[INFO] 05:25:13:791 Kernel/(10950:10959): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57601 
+
+[INFO] 05:25:16:707 Kernel/(10950:10954): Nueva Conexion de Programa , socket fd: 7 , ip : 127.0.0.1 , port: 43784
+[INFO] 05:25:16:707 Kernel/(10950:10954): Mensaje de bienvenida enviado correctamente al sd: 7
+[INFO] 05:25:16:746 Kernel/(10950:10954): Se recibio Literal proveniente del sd: 7
+[INFO] 05:25:16:787 Kernel/(10950:10954): Encolando Nuevo Programa en Cola de NEW,con Pid6608 y Peso 5
+[DEBUG] 05:25:16:787 Kernel/(10950:10954): Agregando pid en diccionario, con pid: 6608 y sd :7
+[INFO] 05:25:16:787 Kernel/(10950:10955): Encolando Programa en Cola Ready, pid: 6608
+[INFO] 05:25:28:70 Kernel/(10950:10954): Un programa se cerro: socket fd: 7 , ip: 127.0.0.1 , puerto: 43784 
+
+[INFO] 05:26:30:141 Kernel/(11018:11018): Comienza la ejecución del Kernel.
+[INFO] 05:26:30:141 Kernel/(11018:11018): Se creo Diccionario Variables Compartidas
+[INFO] 05:26:30:141 Kernel/(11018:11018): Se agrego variable: colas con valor:0 al diccionario de variables compartidas
+[INFO] 05:26:30:141 Kernel/(11018:11018): Se agrego variable: compartida con valor:0 al diccionario de variables compartidas
+[INFO] 05:26:30:141 Kernel/(11018:11018): Armando Diccionario de Semaforos
+[INFO] 05:26:30:141 Kernel/(11018:11018): Se agrego semaforo: b con valor: 1 al diccionario de semaforos
+[INFO] 05:26:30:141 Kernel/(11018:11018): Se agrego semaforo: c con valor: 0 al diccionario de semaforos
+[INFO] 05:26:30:141 Kernel/(11018:11018): Hilo PCP exitoso
+[INFO] 05:26:30:142 Kernel/(11018:11018): Hilo PLP exitoso
+[INFO] 05:26:30:142 Kernel/(11018:11021): Hilo Multiplexor Scripts lanzado exitosamente
+[INFO] 05:26:30:142 Kernel/(11018:11021): Hilo Cola New lanzado exitosamente
+[INFO] 05:26:30:143 Kernel/(11018:11020): Hilo bloquear y devolver a Ready de dispositivo HDD1 exitoso
+[INFO] 05:26:30:143 Kernel/(11018:11020): Hilo bloquear y devolver a Ready de dispositivo LPT1 exitoso
+[INFO] 05:26:30:143 Kernel/(11018:11021): Hilo Cola Exit lanzado exitosamente
+[INFO] 05:26:30:143 Kernel/(11018:11020): Exito al crear hilo atencionCPUs
+[INFO] 05:26:30:143 Kernel/(11018:11020): Exito al crear hilo mandar a Ejecutar
+[INFO] 05:26:30:143 Kernel/(11018:11020): Exito al crear hilo enviar CPU
+[INFO] 05:26:30:143 Kernel/(11018:11022): Esperando conexiones de programas en el puerto: 8005
+[INFO] 05:26:30:143 Kernel/(11018:11027): Esperando conexiones de CPUs en el puerto: 8015
+[INFO] 05:26:31:486 Kernel/(11018:11027): Nueva Conexion de CPU , socket fd: 7
+[INFO] 05:26:31:486 Kernel/(11018:11027): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 05:26:33:77 Kernel/(11018:11027): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57608 
+
+[INFO] 05:26:34:270 Kernel/(11018:11022): Nueva Conexion de Programa , socket fd: 7
+[INFO] 05:26:34:270 Kernel/(11018:11022): Mensaje de bienvenida enviado correctamente al sd: 7
+[INFO] 05:26:34:311 Kernel/(11018:11022): Se recibio Literal proveniente del sd: 7
+[INFO] 05:26:34:351 Kernel/(11018:11022): Encolando Nuevo Programa en Cola de NEW,con Pid9076 y Peso 5
+[DEBUG] 05:26:34:351 Kernel/(11018:11022): Agregando pid en diccionario, con pid: 9076 y sd :7
+[INFO] 05:26:34:351 Kernel/(11018:11023): Encolando Programa en Cola Ready, pid: 9076
+[INFO] 05:26:35:601 Kernel/(11018:11027): Nueva Conexion de CPU , socket fd: 8 , ip : 127.0.0.1 , port: 57611
+[INFO] 05:26:35:601 Kernel/(11018:11027): Paquete con retardo y quantum enviado correctamente al sd: 8
+[INFO] 05:26:35:601 Kernel/(11018:11028): Se saco programa de la cola Ready, con PID:9076
+[DEBUG] 05:26:35:601 Kernel/(11018:11028): Poniendo Programa en cola Intermedia, con PID:9076
+[DEBUG] 05:26:35:601 Kernel/(11018:11029): Se saco programa de cola intermedia, con PID:9076
+[INFO] 05:26:35:601 Kernel/(11018:11029): Agregando programa en cola de ejecucion,con PID:9076
+[INFO] 05:26:35:601 Kernel/(11018:11029): Enviando Programa a CPU disponible, con PID:9076 y CPU:8
+[INFO] 05:26:38:225 Kernel/(11018:11027): Una CPU se cerro abruptamente: socket fd: 8 , ip: 127.0.0.1 , puerto: 57611 
+
+[INFO] 05:27:17:185 Kernel/(11080:11080): Comienza la ejecución del Kernel.
+[INFO] 05:27:17:185 Kernel/(11080:11080): Se creo Diccionario Variables Compartidas
+[INFO] 05:27:17:185 Kernel/(11080:11080): Se agrego variable: colas con valor:0 al diccionario de variables compartidas
+[INFO] 05:27:17:185 Kernel/(11080:11080): Se agrego variable: compartida con valor:0 al diccionario de variables compartidas
+[INFO] 05:27:17:185 Kernel/(11080:11080): Armando Diccionario de Semaforos
+[INFO] 05:27:17:185 Kernel/(11080:11080): Se agrego semaforo: b con valor: 1 al diccionario de semaforos
+[INFO] 05:27:17:185 Kernel/(11080:11080): Se agrego semaforo: c con valor: 0 al diccionario de semaforos
+[INFO] 05:27:17:186 Kernel/(11080:11080): Hilo PCP exitoso
+[INFO] 05:27:17:186 Kernel/(11080:11082): Hilo bloquear y devolver a Ready de dispositivo HDD1 exitoso
+[INFO] 05:27:17:186 Kernel/(11080:11080): Hilo PLP exitoso
+[INFO] 05:27:17:186 Kernel/(11080:11082): Hilo bloquear y devolver a Ready de dispositivo LPT1 exitoso
+[INFO] 05:27:17:186 Kernel/(11080:11082): Exito al crear hilo atencionCPUs
+[INFO] 05:27:17:186 Kernel/(11080:11084): Hilo Multiplexor Scripts lanzado exitosamente
+[INFO] 05:27:17:186 Kernel/(11080:11082): Exito al crear hilo mandar a Ejecutar
+[INFO] 05:27:17:186 Kernel/(11080:11084): Hilo Cola New lanzado exitosamente
+[INFO] 05:27:17:186 Kernel/(11080:11082): Exito al crear hilo enviar CPU
+[INFO] 05:27:17:186 Kernel/(11080:11084): Hilo Cola Exit lanzado exitosamente
+[INFO] 05:27:17:187 Kernel/(11080:11087): Esperando conexiones de CPUs en el puerto: 8015
+[INFO] 05:27:17:187 Kernel/(11080:11086): Esperando conexiones de programas en el puerto: 8005
+[INFO] 05:27:18:390 Kernel/(11080:11087): Nueva Conexion de CPU , socket fd: 7
+[INFO] 05:27:18:390 Kernel/(11080:11087): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 05:27:18:913 Kernel/(11080:11087): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57616 
+
+[INFO] 05:27:19:843 Kernel/(11080:11087): Nueva Conexion de CPU , socket fd: 7 , ip : 127.0.0.1 , port: 57618
+[INFO] 05:27:19:843 Kernel/(11080:11087): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 05:27:20:293 Kernel/(11080:11087): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57618 
+
+[INFO] 05:27:21:347 Kernel/(11080:11087): Nueva Conexion de CPU , socket fd: 7 , ip : 127.0.0.1 , port: 57620
+[INFO] 05:27:21:347 Kernel/(11080:11087): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 05:27:22:647 Kernel/(11080:11086): Nueva Conexion de Programa , socket fd: 8
+[INFO] 05:27:22:647 Kernel/(11080:11086): Mensaje de bienvenida enviado correctamente al sd: 8
+[INFO] 05:27:22:688 Kernel/(11080:11086): Se recibio Literal proveniente del sd: 8
+[INFO] 05:27:22:728 Kernel/(11080:11086): Encolando Nuevo Programa en Cola de NEW,con Pid6899 y Peso 5
+[DEBUG] 05:27:22:728 Kernel/(11080:11086): Agregando pid en diccionario, con pid: 6899 y sd :8
+[INFO] 05:27:22:728 Kernel/(11080:11089): Encolando Programa en Cola Ready, pid: 6899
+[INFO] 05:27:22:728 Kernel/(11080:11088): Se saco programa de la cola Ready, con PID:6899
+[DEBUG] 05:27:22:728 Kernel/(11080:11088): Poniendo Programa en cola Intermedia, con PID:6899
+[DEBUG] 05:27:22:728 Kernel/(11080:11090): Se saco programa de cola intermedia, con PID:6899
+[INFO] 05:27:22:728 Kernel/(11080:11090): Agregando programa en cola de ejecucion,con PID:6899
+[INFO] 05:27:22:728 Kernel/(11080:11090): Enviando Programa a CPU disponible, con PID:6899 y CPU:7
+[INFO] 05:27:25:107 Kernel/(11080:11087): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57620 
+
+[INFO] 05:28:01:239 Kernel/(11140:11140): Comienza la ejecución del Kernel.
+[INFO] 05:28:01:240 Kernel/(11140:11140): Se creo Diccionario Variables Compartidas
+[INFO] 05:28:01:240 Kernel/(11140:11140): Se agrego variable: colas con valor:0 al diccionario de variables compartidas
+[INFO] 05:28:01:240 Kernel/(11140:11140): Se agrego variable: compartida con valor:0 al diccionario de variables compartidas
+[INFO] 05:28:01:240 Kernel/(11140:11140): Armando Diccionario de Semaforos
+[INFO] 05:28:01:240 Kernel/(11140:11140): Se agrego semaforo: b con valor: 1 al diccionario de semaforos
+[INFO] 05:28:01:240 Kernel/(11140:11140): Se agrego semaforo: c con valor: 0 al diccionario de semaforos
+[INFO] 05:28:01:240 Kernel/(11140:11140): Hilo PCP exitoso
+[INFO] 05:28:01:240 Kernel/(11140:11142): Hilo bloquear y devolver a Ready de dispositivo HDD1 exitoso
+[INFO] 05:28:01:241 Kernel/(11140:11140): Hilo PLP exitoso
+[INFO] 05:28:01:241 Kernel/(11140:11142): Hilo bloquear y devolver a Ready de dispositivo LPT1 exitoso
+[INFO] 05:28:01:241 Kernel/(11140:11142): Exito al crear hilo atencionCPUs
+[INFO] 05:28:01:241 Kernel/(11140:11146): Esperando conexiones de CPUs en el puerto: 8015
+[INFO] 05:28:01:241 Kernel/(11140:11142): Exito al crear hilo mandar a Ejecutar
+[INFO] 05:28:01:241 Kernel/(11140:11144): Hilo Multiplexor Scripts lanzado exitosamente
+[INFO] 05:28:01:242 Kernel/(11140:11142): Exito al crear hilo enviar CPU
+[INFO] 05:28:01:242 Kernel/(11140:11144): Hilo Cola New lanzado exitosamente
+[INFO] 05:28:01:242 Kernel/(11140:11144): Hilo Cola Exit lanzado exitosamente
+[INFO] 05:28:01:242 Kernel/(11140:11148): Esperando conexiones de programas en el puerto: 8005
+[INFO] 05:28:04:537 Kernel/(11140:11146): Nueva Conexion de CPU , socket fd: 7
+[INFO] 05:28:04:538 Kernel/(11140:11146): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 05:28:06:540 Kernel/(11140:11148): Nueva Conexion de Programa , socket fd: 8
+[INFO] 05:28:06:540 Kernel/(11140:11148): Mensaje de bienvenida enviado correctamente al sd: 8
+[INFO] 05:28:06:578 Kernel/(11140:11148): Se recibio Literal proveniente del sd: 8
+[INFO] 05:28:06:619 Kernel/(11140:11148): Encolando Nuevo Programa en Cola de NEW,con Pid3839 y Peso 5
+[DEBUG] 05:28:06:619 Kernel/(11140:11148): Agregando pid en diccionario, con pid: 3839 y sd :8
+[INFO] 05:28:06:619 Kernel/(11140:11150): Encolando Programa en Cola Ready, pid: 3839
+[INFO] 05:28:06:619 Kernel/(11140:11147): Se saco programa de la cola Ready, con PID:3839
+[DEBUG] 05:28:06:619 Kernel/(11140:11147): Poniendo Programa en cola Intermedia, con PID:3839
+[DEBUG] 05:28:06:619 Kernel/(11140:11149): Se saco programa de cola intermedia, con PID:3839
+[INFO] 05:28:06:619 Kernel/(11140:11149): Agregando programa en cola de ejecucion,con PID:3839
+[INFO] 05:28:06:619 Kernel/(11140:11149): Enviando Programa a CPU disponible, con PID:3839 y CPU:7
+[INFO] 05:28:08:724 Kernel/(11140:11146): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57626 
+
+[INFO] 05:28:59:533 Kernel/(11207:11207): Comienza la ejecución del Kernel.
+[INFO] 05:28:59:533 Kernel/(11207:11207): Se creo Diccionario Variables Compartidas
+[INFO] 05:28:59:533 Kernel/(11207:11207): Se agrego variable: colas con valor:0 al diccionario de variables compartidas
+[INFO] 05:28:59:533 Kernel/(11207:11207): Se agrego variable: compartida con valor:0 al diccionario de variables compartidas
+[INFO] 05:28:59:533 Kernel/(11207:11207): Armando Diccionario de Semaforos
+[INFO] 05:28:59:533 Kernel/(11207:11207): Se agrego semaforo: b con valor: 1 al diccionario de semaforos
+[INFO] 05:28:59:533 Kernel/(11207:11207): Se agrego semaforo: c con valor: 0 al diccionario de semaforos
+[INFO] 05:28:59:533 Kernel/(11207:11207): Hilo PCP exitoso
+[INFO] 05:28:59:534 Kernel/(11207:11207): Hilo PLP exitoso
+[INFO] 05:28:59:534 Kernel/(11207:11209): Hilo bloquear y devolver a Ready de dispositivo HDD1 exitoso
+[INFO] 05:28:59:534 Kernel/(11207:11209): Hilo bloquear y devolver a Ready de dispositivo LPT1 exitoso
+[INFO] 05:28:59:534 Kernel/(11207:11209): Exito al crear hilo atencionCPUs
+[INFO] 05:28:59:534 Kernel/(11207:11209): Exito al crear hilo mandar a Ejecutar
+[INFO] 05:28:59:534 Kernel/(11207:11209): Exito al crear hilo enviar CPU
+[INFO] 05:28:59:534 Kernel/(11207:11210): Hilo Multiplexor Scripts lanzado exitosamente
+[INFO] 05:28:59:535 Kernel/(11207:11210): Hilo Cola New lanzado exitosamente
+[INFO] 05:28:59:535 Kernel/(11207:11210): Hilo Cola Exit lanzado exitosamente
+[INFO] 05:28:59:535 Kernel/(11207:11216): Esperando conexiones de programas en el puerto: 8005
+[INFO] 05:28:59:535 Kernel/(11207:11213): Esperando conexiones de CPUs en el puerto: 8015
+[INFO] 05:29:00:870 Kernel/(11207:11213): Nueva Conexion de CPU , socket fd: 7
+[INFO] 05:29:00:871 Kernel/(11207:11213): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 05:29:02:593 Kernel/(11207:11216): Nueva Conexion de Programa , socket fd: 8
+[INFO] 05:29:02:594 Kernel/(11207:11216): Mensaje de bienvenida enviado correctamente al sd: 8
+[INFO] 05:29:02:634 Kernel/(11207:11216): Se recibio Literal proveniente del sd: 8
+[INFO] 05:29:02:675 Kernel/(11207:11216): Encolando Nuevo Programa en Cola de NEW,con Pid5400 y Peso 5
+[DEBUG] 05:29:02:675 Kernel/(11207:11216): Agregando pid en diccionario, con pid: 5400 y sd :8
+[INFO] 05:29:02:675 Kernel/(11207:11217): Encolando Programa en Cola Ready, pid: 5400
+[INFO] 05:29:02:675 Kernel/(11207:11214): Se saco programa de la cola Ready, con PID:5400
+[DEBUG] 05:29:02:675 Kernel/(11207:11214): Poniendo Programa en cola Intermedia, con PID:5400
+[DEBUG] 05:29:02:675 Kernel/(11207:11215): Se saco programa de cola intermedia, con PID:5400
+[INFO] 05:29:02:675 Kernel/(11207:11215): Agregando programa en cola de ejecucion,con PID:5400
+[INFO] 05:29:02:675 Kernel/(11207:11215): Enviando Programa a CPU disponible, con PID:5400 y CPU:7
+[INFO] 05:29:04:668 Kernel/(11207:11213): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57632 
+
+[INFO] 05:29:51:564 Kernel/(11268:11268): Comienza la ejecución del Kernel.
+[INFO] 05:29:51:564 Kernel/(11268:11268): Se creo Diccionario Variables Compartidas
+[INFO] 05:29:51:564 Kernel/(11268:11268): Se agrego variable: colas con valor:0 al diccionario de variables compartidas
+[INFO] 05:29:51:564 Kernel/(11268:11268): Se agrego variable: compartida con valor:0 al diccionario de variables compartidas
+[INFO] 05:29:51:564 Kernel/(11268:11268): Armando Diccionario de Semaforos
+[INFO] 05:29:51:564 Kernel/(11268:11268): Se agrego semaforo: b con valor: 1 al diccionario de semaforos
+[INFO] 05:29:51:564 Kernel/(11268:11268): Se agrego semaforo: c con valor: 0 al diccionario de semaforos
+[INFO] 05:29:51:566 Kernel/(11268:11268): Hilo PCP exitoso
+[INFO] 05:29:51:566 Kernel/(11268:11268): Hilo PLP exitoso
+[INFO] 05:29:51:566 Kernel/(11268:11271): Hilo Multiplexor Scripts lanzado exitosamente
+[INFO] 05:29:51:566 Kernel/(11268:11271): Hilo Cola New lanzado exitosamente
+[INFO] 05:29:51:566 Kernel/(11268:11271): Hilo Cola Exit lanzado exitosamente
+[INFO] 05:29:51:566 Kernel/(11268:11272): Esperando conexiones de programas en el puerto: 8005
+[INFO] 05:29:51:566 Kernel/(11268:11270): Hilo bloquear y devolver a Ready de dispositivo HDD1 exitoso
+[INFO] 05:29:51:566 Kernel/(11268:11270): Hilo bloquear y devolver a Ready de dispositivo LPT1 exitoso
+[INFO] 05:29:51:567 Kernel/(11268:11270): Exito al crear hilo atencionCPUs
+[INFO] 05:29:51:567 Kernel/(11268:11270): Exito al crear hilo mandar a Ejecutar
+[INFO] 05:29:51:567 Kernel/(11268:11277): Esperando conexiones de CPUs en el puerto: 8015
+[INFO] 05:29:51:567 Kernel/(11268:11270): Exito al crear hilo enviar CPU
+[INFO] 05:29:52:840 Kernel/(11268:11277): Nueva Conexion de CPU , socket fd: 7
+[INFO] 05:29:52:840 Kernel/(11268:11277): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 05:29:55:361 Kernel/(11268:11272): Nueva Conexion de Programa , socket fd: 8
+[INFO] 05:29:55:361 Kernel/(11268:11272): Mensaje de bienvenida enviado correctamente al sd: 8
+[INFO] 05:29:55:399 Kernel/(11268:11272): Se recibio Literal proveniente del sd: 8
+[INFO] 05:29:55:438 Kernel/(11268:11272): Encolando Nuevo Programa en Cola de NEW,con Pid5315 y Peso 5
+[DEBUG] 05:29:55:439 Kernel/(11268:11272): Agregando pid en diccionario, con pid: 5315 y sd :8
+[INFO] 05:29:55:439 Kernel/(11268:11273): Encolando Programa en Cola Ready, pid: 5315
+[INFO] 05:29:55:439 Kernel/(11268:11278): Se saco programa de la cola Ready, con PID:5315
+[DEBUG] 05:29:55:439 Kernel/(11268:11278): Poniendo Programa en cola Intermedia, con PID:5315
+[DEBUG] 05:29:55:439 Kernel/(11268:11279): Se saco programa de cola intermedia, con PID:5315
+[INFO] 05:29:55:439 Kernel/(11268:11279): Agregando programa en cola de ejecucion,con PID:5315
+[INFO] 05:29:55:439 Kernel/(11268:11279): Enviando Programa a CPU disponible, con PID:5315 y CPU:7
+[INFO] 05:29:57:459 Kernel/(11268:11277): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57638 
+
+[INFO] 05:29:58:189 Kernel/(11268:11277): Nueva Conexion de CPU , socket fd: 7 , ip : 127.0.0.1 , port: 57641
+[INFO] 05:29:58:189 Kernel/(11268:11277): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 05:30:01:483 Kernel/(11268:11277): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57641 
+
+[INFO] 05:30:18:716 Kernel/(11320:11320): Comienza la ejecución del Kernel.
+[INFO] 05:30:18:717 Kernel/(11320:11320): Se creo Diccionario Variables Compartidas
+[INFO] 05:30:18:717 Kernel/(11320:11320): Se agrego variable: colas con valor:0 al diccionario de variables compartidas
+[INFO] 05:30:18:717 Kernel/(11320:11320): Se agrego variable: compartida con valor:0 al diccionario de variables compartidas
+[INFO] 05:30:18:717 Kernel/(11320:11320): Armando Diccionario de Semaforos
+[INFO] 05:30:18:717 Kernel/(11320:11320): Se agrego semaforo: b con valor: 1 al diccionario de semaforos
+[INFO] 05:30:18:717 Kernel/(11320:11320): Se agrego semaforo: c con valor: 0 al diccionario de semaforos
+[INFO] 05:30:18:717 Kernel/(11320:11320): Hilo PCP exitoso
+[INFO] 05:30:18:718 Kernel/(11320:11320): Hilo PLP exitoso
+[INFO] 05:30:18:718 Kernel/(11320:11323): Hilo Multiplexor Scripts lanzado exitosamente
+[INFO] 05:30:18:718 Kernel/(11320:11322): Hilo bloquear y devolver a Ready de dispositivo HDD1 exitoso
+[INFO] 05:30:18:718 Kernel/(11320:11323): Hilo Cola New lanzado exitosamente
+[INFO] 05:30:18:719 Kernel/(11320:11324): Esperando conexiones de programas en el puerto: 8005
+[INFO] 05:30:18:719 Kernel/(11320:11322): Hilo bloquear y devolver a Ready de dispositivo LPT1 exitoso
+[INFO] 05:30:18:719 Kernel/(11320:11322): Exito al crear hilo atencionCPUs
+[INFO] 05:30:18:719 Kernel/(11320:11322): Exito al crear hilo mandar a Ejecutar
+[INFO] 05:30:18:719 Kernel/(11320:11328): Esperando conexiones de CPUs en el puerto: 8015
+[INFO] 05:30:18:719 Kernel/(11320:11322): Exito al crear hilo enviar CPU
+[INFO] 05:30:18:719 Kernel/(11320:11323): Hilo Cola Exit lanzado exitosamente
+[INFO] 05:30:20:823 Kernel/(11320:11328): Nueva Conexion de CPU , socket fd: 7
+[INFO] 05:30:20:824 Kernel/(11320:11328): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 05:30:22:249 Kernel/(11320:11324): Nueva Conexion de Programa , socket fd: 8
+[INFO] 05:30:22:249 Kernel/(11320:11324): Mensaje de bienvenida enviado correctamente al sd: 8
+[INFO] 05:30:22:286 Kernel/(11320:11324): Se recibio Literal proveniente del sd: 8
+[INFO] 05:30:22:327 Kernel/(11320:11324): Encolando Nuevo Programa en Cola de NEW,con Pid8300 y Peso 5
+[DEBUG] 05:30:22:327 Kernel/(11320:11324): Agregando pid en diccionario, con pid: 8300 y sd :8
+[INFO] 05:30:22:327 Kernel/(11320:11326): Encolando Programa en Cola Ready, pid: 8300
+[INFO] 05:30:22:327 Kernel/(11320:11329): Se saco programa de la cola Ready, con PID:8300
+[DEBUG] 05:30:22:327 Kernel/(11320:11329): Poniendo Programa en cola Intermedia, con PID:8300
+[DEBUG] 05:30:22:327 Kernel/(11320:11330): Se saco programa de cola intermedia, con PID:8300
+[INFO] 05:30:22:327 Kernel/(11320:11330): Agregando programa en cola de ejecucion,con PID:8300
+[INFO] 05:30:22:327 Kernel/(11320:11330): Enviando Programa a CPU disponible, con PID:8300 y CPU:7
+[INFO] 05:30:24:398 Kernel/(11320:11328): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57644 
+
+[INFO] 05:30:25:936 Kernel/(11320:11328): Nueva Conexion de CPU , socket fd: 7 , ip : 127.0.0.1 , port: 57647
+[INFO] 05:30:25:936 Kernel/(11320:11328): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 05:30:26:803 Kernel/(11320:11328): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57647 
+
+[INFO] 05:33:11:271 Kernel/(11399:11399): Comienza la ejecución del Kernel.
+[INFO] 05:33:11:271 Kernel/(11399:11399): Se creo Diccionario Variables Compartidas
+[INFO] 05:33:11:271 Kernel/(11399:11399): Se agrego variable: colas con valor:0 al diccionario de variables compartidas
+[INFO] 05:33:11:271 Kernel/(11399:11399): Se agrego variable: compartida con valor:0 al diccionario de variables compartidas
+[INFO] 05:33:11:271 Kernel/(11399:11399): Armando Diccionario de Semaforos
+[INFO] 05:33:11:271 Kernel/(11399:11399): Se agrego semaforo: b con valor: 1 al diccionario de semaforos
+[INFO] 05:33:11:271 Kernel/(11399:11399): Se agrego semaforo: c con valor: 0 al diccionario de semaforos
+[INFO] 05:33:11:272 Kernel/(11399:11399): Hilo PCP exitoso
+[INFO] 05:33:11:272 Kernel/(11399:11399): Hilo PLP exitoso
+[INFO] 05:33:11:273 Kernel/(11399:11402): Hilo Multiplexor Scripts lanzado exitosamente
+[INFO] 05:33:11:273 Kernel/(11399:11401): Hilo bloquear y devolver a Ready de dispositivo HDD1 exitoso
+[INFO] 05:33:11:273 Kernel/(11399:11402): Hilo Cola New lanzado exitosamente
+[INFO] 05:33:11:273 Kernel/(11399:11401): Hilo bloquear y devolver a Ready de dispositivo LPT1 exitoso
+[INFO] 05:33:11:273 Kernel/(11399:11402): Hilo Cola Exit lanzado exitosamente
+[INFO] 05:33:11:273 Kernel/(11399:11401): Exito al crear hilo atencionCPUs
+[INFO] 05:33:11:273 Kernel/(11399:11401): Exito al crear hilo mandar a Ejecutar
+[INFO] 05:33:11:273 Kernel/(11399:11401): Exito al crear hilo enviar CPU
+[INFO] 05:33:11:274 Kernel/(11399:11408): Esperando conexiones de CPUs en el puerto: 8015
+[INFO] 05:33:11:274 Kernel/(11399:11403): Esperando conexiones de programas en el puerto: 8005
+[INFO] 05:33:12:512 Kernel/(11399:11408): Nueva Conexion de CPU , socket fd: 7
+[INFO] 05:33:12:512 Kernel/(11399:11408): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 05:33:13:58 Kernel/(11399:11408): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57650 
+
+[INFO] 05:33:13:599 Kernel/(11399:11408): Nueva Conexion de CPU , socket fd: 7 , ip : 127.0.0.1 , port: 57652
+[INFO] 05:33:13:600 Kernel/(11399:11408): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 05:33:14:119 Kernel/(11399:11408): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57652 
+
+[INFO] 05:33:14:573 Kernel/(11399:11408): Nueva Conexion de CPU , socket fd: 7 , ip : 127.0.0.1 , port: 57654
+[INFO] 05:33:14:573 Kernel/(11399:11408): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 05:33:14:999 Kernel/(11399:11408): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57654 
+
+[INFO] 05:33:15:661 Kernel/(11399:11408): Nueva Conexion de CPU , socket fd: 7 , ip : 127.0.0.1 , port: 57656
+[INFO] 05:33:15:662 Kernel/(11399:11408): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 05:33:16:91 Kernel/(11399:11408): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57656 
+
+[INFO] 05:33:16:690 Kernel/(11399:11408): Nueva Conexion de CPU , socket fd: 7 , ip : 127.0.0.1 , port: 57658
+[INFO] 05:33:16:691 Kernel/(11399:11408): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 05:33:17:125 Kernel/(11399:11408): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57658 
+
+[INFO] 05:33:17:827 Kernel/(11399:11408): Nueva Conexion de CPU , socket fd: 7 , ip : 127.0.0.1 , port: 57660
+[INFO] 05:33:17:827 Kernel/(11399:11408): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 05:33:19:337 Kernel/(11399:11403): Nueva Conexion de Programa , socket fd: 8
+[INFO] 05:33:19:337 Kernel/(11399:11403): Mensaje de bienvenida enviado correctamente al sd: 8
+[INFO] 05:33:19:374 Kernel/(11399:11403): Se recibio Literal proveniente del sd: 8
+[INFO] 05:33:19:415 Kernel/(11399:11403): Encolando Nuevo Programa en Cola de NEW,con Pid3555 y Peso 5
+[DEBUG] 05:33:19:415 Kernel/(11399:11403): Agregando pid en diccionario, con pid: 3555 y sd :8
+[INFO] 05:33:19:415 Kernel/(11399:11405): Encolando Programa en Cola Ready, pid: 3555
+[INFO] 05:33:19:415 Kernel/(11399:11409): Se saco programa de la cola Ready, con PID:3555
+[DEBUG] 05:33:19:415 Kernel/(11399:11409): Poniendo Programa en cola Intermedia, con PID:3555
+[DEBUG] 05:33:19:415 Kernel/(11399:11410): Se saco programa de cola intermedia, con PID:3555
+[INFO] 05:33:19:415 Kernel/(11399:11410): Agregando programa en cola de ejecucion,con PID:3555
+[INFO] 05:33:19:415 Kernel/(11399:11410): Enviando Programa a CPU disponible, con PID:3555 y CPU:7
+[INFO] 05:33:21:678 Kernel/(11399:11408): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57660 
+
+[INFO] 05:33:27:708 Kernel/(11399:11403): Un programa se cerro: socket fd: 8 , ip: 127.0.0.1 , puerto: 43842 
+
+[INFO] 05:35:51:487 Kernel/(11478:11478): Comienza la ejecución del Kernel.
+[INFO] 05:35:51:487 Kernel/(11478:11478): Se creo Diccionario Variables Compartidas
+[INFO] 05:35:51:487 Kernel/(11478:11478): Se agrego variable: colas con valor:0 al diccionario de variables compartidas
+[INFO] 05:35:51:487 Kernel/(11478:11478): Se agrego variable: compartida con valor:0 al diccionario de variables compartidas
+[INFO] 05:35:51:487 Kernel/(11478:11478): Armando Diccionario de Semaforos
+[INFO] 05:35:51:487 Kernel/(11478:11478): Se agrego semaforo: b con valor: 1 al diccionario de semaforos
+[INFO] 05:35:51:487 Kernel/(11478:11478): Se agrego semaforo: c con valor: 0 al diccionario de semaforos
+[INFO] 05:35:51:488 Kernel/(11478:11478): Hilo PCP exitoso
+[INFO] 05:35:51:488 Kernel/(11478:11480): Hilo bloquear y devolver a Ready de dispositivo HDD1 exitoso
+[INFO] 05:35:51:488 Kernel/(11478:11480): Hilo bloquear y devolver a Ready de dispositivo LPT1 exitoso
+[INFO] 05:35:51:488 Kernel/(11478:11478): Hilo PLP exitoso
+[INFO] 05:35:51:488 Kernel/(11478:11480): Exito al crear hilo atencionCPUs
+[INFO] 05:35:51:488 Kernel/(11478:11480): Exito al crear hilo mandar a Ejecutar
+[INFO] 05:35:51:489 Kernel/(11478:11480): Exito al crear hilo enviar CPU
+[INFO] 05:35:51:489 Kernel/(11478:11482): Hilo Multiplexor Scripts lanzado exitosamente
+[INFO] 05:35:51:489 Kernel/(11478:11484): Esperando conexiones de CPUs en el puerto: 8015
+[INFO] 05:35:51:489 Kernel/(11478:11486): Esperando conexiones de programas en el puerto: 8005
+[INFO] 05:35:51:489 Kernel/(11478:11482): Hilo Cola New lanzado exitosamente
+[INFO] 05:35:51:489 Kernel/(11478:11482): Hilo Cola Exit lanzado exitosamente
+[INFO] 05:35:53:72 Kernel/(11478:11484): Nueva Conexion de CPU , socket fd: 7
+[INFO] 05:35:53:73 Kernel/(11478:11484): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 05:35:53:455 Kernel/(11478:11484): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57666 
+
+[INFO] 05:35:53:928 Kernel/(11478:11484): Nueva Conexion de CPU , socket fd: 7 , ip : 127.0.0.1 , port: 57668
+[INFO] 05:35:53:929 Kernel/(11478:11484): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 05:35:54:151 Kernel/(11478:11484): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57668 
+
+[INFO] 05:35:54:654 Kernel/(11478:11484): Nueva Conexion de CPU , socket fd: 7 , ip : 127.0.0.1 , port: 57670
+[INFO] 05:35:54:654 Kernel/(11478:11484): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 05:35:54:965 Kernel/(11478:11484): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57670 
+
+[INFO] 05:35:56:527 Kernel/(11478:11484): Nueva Conexion de CPU , socket fd: 7 , ip : 127.0.0.1 , port: 57672
+[INFO] 05:35:56:528 Kernel/(11478:11484): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 05:35:57:822 Kernel/(11478:11486): Nueva Conexion de Programa , socket fd: 8
+[INFO] 05:35:57:822 Kernel/(11478:11486): Mensaje de bienvenida enviado correctamente al sd: 8
+[INFO] 05:35:57:863 Kernel/(11478:11486): Se recibio Literal proveniente del sd: 8
+[INFO] 05:35:57:902 Kernel/(11478:11486): Encolando Nuevo Programa en Cola de NEW,con Pid6596 y Peso 5
+[DEBUG] 05:35:57:903 Kernel/(11478:11486): Agregando pid en diccionario, con pid: 6596 y sd :8
+[INFO] 05:35:57:903 Kernel/(11478:11488): Encolando Programa en Cola Ready, pid: 6596
+[INFO] 05:35:57:903 Kernel/(11478:11485): Se saco programa de la cola Ready, con PID:6596
+[DEBUG] 05:35:57:903 Kernel/(11478:11485): Poniendo Programa en cola Intermedia, con PID:6596
+[DEBUG] 05:35:57:903 Kernel/(11478:11487): Se saco programa de cola intermedia, con PID:6596
+[INFO] 05:35:57:903 Kernel/(11478:11487): Agregando programa en cola de ejecucion,con PID:6596
+[INFO] 05:35:57:903 Kernel/(11478:11487): Enviando Programa a CPU disponible, con PID:6596 y CPU:7
+[INFO] 05:36:00:756 Kernel/(11478:11484): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57672 
+
+[INFO] 05:36:01:599 Kernel/(11478:11484): Nueva Conexion de CPU , socket fd: 7 , ip : 127.0.0.1 , port: 57675
+[INFO] 05:36:01:600 Kernel/(11478:11484): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 05:36:04:459 Kernel/(11478:11484): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57675 
+
+[INFO] 05:36:05:964 Kernel/(11478:11486): Un programa se cerro: socket fd: 8 , ip: 127.0.0.1 , puerto: 43854 
+
+[INFO] 05:36:06:503 Kernel/(11478:11486): Nueva Conexion de Programa , socket fd: 7 , ip : 127.0.0.1 , port: 43857
+[INFO] 05:36:06:503 Kernel/(11478:11486): Mensaje de bienvenida enviado correctamente al sd: 7
+[INFO] 05:36:06:543 Kernel/(11478:11486): Se recibio Literal proveniente del sd: 7
+[INFO] 05:36:06:583 Kernel/(11478:11486): Encolando Nuevo Programa en Cola de NEW,con Pid6761 y Peso 5
+[DEBUG] 05:36:06:583 Kernel/(11478:11486): Agregando pid en diccionario, con pid: 6761 y sd :7
+[INFO] 05:36:06:583 Kernel/(11478:11488): Encolando Programa en Cola Ready, pid: 6761
+[INFO] 05:36:06:583 Kernel/(11478:11485): Se saco programa de la cola Ready, con PID:6761
+[DEBUG] 05:36:06:583 Kernel/(11478:11485): Poniendo Programa en cola Intermedia, con PID:6761
+[INFO] 05:36:51:313 Kernel/(11507:11507): Comienza la ejecución del Kernel.
+[INFO] 05:36:51:314 Kernel/(11507:11507): Se creo Diccionario Variables Compartidas
+[INFO] 05:36:51:314 Kernel/(11507:11507): Se agrego variable: colas con valor:0 al diccionario de variables compartidas
+[INFO] 05:36:51:314 Kernel/(11507:11507): Se agrego variable: compartida con valor:0 al diccionario de variables compartidas
+[INFO] 05:36:51:314 Kernel/(11507:11507): Armando Diccionario de Semaforos
+[INFO] 05:36:51:314 Kernel/(11507:11507): Se agrego semaforo: b con valor: 1 al diccionario de semaforos
+[INFO] 05:36:51:314 Kernel/(11507:11507): Se agrego semaforo: c con valor: 0 al diccionario de semaforos
+[INFO] 05:36:51:314 Kernel/(11507:11507): Hilo PCP exitoso
+[INFO] 05:36:51:315 Kernel/(11507:11507): Hilo PLP exitoso
+[INFO] 05:36:51:315 Kernel/(11507:11510): Hilo Multiplexor Scripts lanzado exitosamente
+[INFO] 05:36:51:315 Kernel/(11507:11510): Hilo Cola New lanzado exitosamente
+[INFO] 05:36:51:315 Kernel/(11507:11510): Hilo Cola Exit lanzado exitosamente
+[INFO] 05:36:51:315 Kernel/(11507:11511): Esperando conexiones de programas en el puerto: 8005
+[INFO] 05:36:51:315 Kernel/(11507:11509): Hilo bloquear y devolver a Ready de dispositivo HDD1 exitoso
+[INFO] 05:36:51:315 Kernel/(11507:11509): Hilo bloquear y devolver a Ready de dispositivo LPT1 exitoso
+[INFO] 05:36:51:316 Kernel/(11507:11509): Exito al crear hilo atencionCPUs
+[INFO] 05:36:51:316 Kernel/(11507:11509): Exito al crear hilo mandar a Ejecutar
+[INFO] 05:36:51:316 Kernel/(11507:11509): Exito al crear hilo enviar CPU
+[INFO] 05:36:51:316 Kernel/(11507:11516): Esperando conexiones de CPUs en el puerto: 8015
+[INFO] 05:36:53:462 Kernel/(11507:11511): Nueva Conexion de Programa , socket fd: 7
+[INFO] 05:36:53:462 Kernel/(11507:11511): Mensaje de bienvenida enviado correctamente al sd: 7
+[INFO] 05:36:53:502 Kernel/(11507:11511): Se recibio Literal proveniente del sd: 7
+[INFO] 05:36:53:544 Kernel/(11507:11511): Encolando Nuevo Programa en Cola de NEW,con Pid7166 y Peso 5
+[DEBUG] 05:36:53:544 Kernel/(11507:11511): Agregando pid en diccionario, con pid: 7166 y sd :7
+[INFO] 05:36:53:544 Kernel/(11507:11512): Encolando Programa en Cola Ready, pid: 7166
+[INFO] 05:36:56:951 Kernel/(11507:11516): Nueva Conexion de CPU , socket fd: 8
+[INFO] 05:36:56:952 Kernel/(11507:11516): Paquete con retardo y quantum enviado correctamente al sd: 8
+[INFO] 05:36:56:952 Kernel/(11507:11517): Se saco programa de la cola Ready, con PID:7166
+[DEBUG] 05:36:56:952 Kernel/(11507:11517): Poniendo Programa en cola Intermedia, con PID:7166
+[DEBUG] 05:36:56:952 Kernel/(11507:11518): Se saco programa de cola intermedia, con PID:7166
+[INFO] 05:36:56:952 Kernel/(11507:11518): Agregando programa en cola de ejecucion,con PID:7166
+[INFO] 05:36:56:952 Kernel/(11507:11518): Enviando Programa a CPU disponible, con PID:7166 y CPU:8
+[INFO] 05:36:58:826 Kernel/(11507:11516): Una CPU se cerro abruptamente: socket fd: 8 , ip: 127.0.0.1 , puerto: 57680 
+
+[INFO] 05:37:01:610 Kernel/(11507:11511): Un programa se cerro: socket fd: 7 , ip: 127.0.0.1 , puerto: 43859 
+
+[INFO] 05:37:02:734 Kernel/(11507:11511): Nueva Conexion de Programa , socket fd: 7 , ip : 127.0.0.1 , port: 43862
+[INFO] 05:37:02:734 Kernel/(11507:11511): Mensaje de bienvenida enviado correctamente al sd: 7
+[INFO] 05:37:02:775 Kernel/(11507:11511): Se recibio Literal proveniente del sd: 7
+[INFO] 05:37:02:814 Kernel/(11507:11511): Encolando Nuevo Programa en Cola de NEW,con Pid9895 y Peso 5
+[DEBUG] 05:37:02:814 Kernel/(11507:11511): Agregando pid en diccionario, con pid: 9895 y sd :7
+[INFO] 05:37:02:814 Kernel/(11507:11512): Encolando Programa en Cola Ready, pid: 9895
+[INFO] 05:37:06:646 Kernel/(11507:11516): Nueva Conexion de CPU , socket fd: 8 , ip : 127.0.0.1 , port: 57683
+[INFO] 05:37:06:647 Kernel/(11507:11516): Paquete con retardo y quantum enviado correctamente al sd: 8
+[INFO] 05:37:06:647 Kernel/(11507:11517): Se saco programa de la cola Ready, con PID:9895
+[DEBUG] 05:37:06:647 Kernel/(11507:11517): Poniendo Programa en cola Intermedia, con PID:9895
+[DEBUG] 05:37:06:647 Kernel/(11507:11518): Se saco programa de cola intermedia, con PID:9895
+[INFO] 05:37:06:647 Kernel/(11507:11518): Agregando programa en cola de ejecucion,con PID:9895
+[INFO] 05:37:06:647 Kernel/(11507:11518): Enviando Programa a CPU disponible, con PID:9895 y CPU:8
+[INFO] 05:37:09:701 Kernel/(11507:11511): Un programa se cerro: socket fd: 7 , ip: 127.0.0.1 , puerto: 43862 
+
+[INFO] 05:37:10:533 Kernel/(11507:11511): Nueva Conexion de Programa , socket fd: 7 , ip : 127.0.0.1 , port: 43865
+[INFO] 05:37:10:533 Kernel/(11507:11511): Mensaje de bienvenida enviado correctamente al sd: 7
+[INFO] 05:37:10:570 Kernel/(11507:11511): Se recibio Literal proveniente del sd: 7
+[INFO] 05:37:10:611 Kernel/(11507:11511): Encolando Nuevo Programa en Cola de NEW,con Pid7314 y Peso 5
+[DEBUG] 05:37:10:611 Kernel/(11507:11511): Agregando pid en diccionario, con pid: 7314 y sd :7
+[INFO] 05:37:10:611 Kernel/(11507:11512): Encolando Programa en Cola Ready, pid: 7314
+[INFO] 05:37:11:559 Kernel/(11507:11511): Un programa se cerro: socket fd: 7 , ip: 127.0.0.1 , puerto: 43865 
+
+[INFO] 05:37:12:465 Kernel/(11507:11511): Nueva Conexion de Programa , socket fd: 7 , ip : 127.0.0.1 , port: 43866
+[INFO] 05:37:12:465 Kernel/(11507:11511): Mensaje de bienvenida enviado correctamente al sd: 7
+[INFO] 05:37:12:503 Kernel/(11507:11511): Se recibio Literal proveniente del sd: 7
+[INFO] 05:37:12:542 Kernel/(11507:11511): Encolando Nuevo Programa en Cola de NEW,con Pid4757 y Peso 5
+[DEBUG] 05:37:12:542 Kernel/(11507:11511): Agregando pid en diccionario, con pid: 4757 y sd :7
+[INFO] 05:37:12:542 Kernel/(11507:11512): Encolando Programa en Cola Ready, pid: 4757
+[INFO] 05:37:13:247 Kernel/(11507:11511): Un programa se cerro: socket fd: 7 , ip: 127.0.0.1 , puerto: 43866 
+
+[INFO] 05:37:14:237 Kernel/(11507:11511): Nueva Conexion de Programa , socket fd: 7 , ip : 127.0.0.1 , port: 43867
+[INFO] 05:37:14:237 Kernel/(11507:11511): Mensaje de bienvenida enviado correctamente al sd: 7
+[INFO] 05:37:14:274 Kernel/(11507:11511): Se recibio Literal proveniente del sd: 7
+[INFO] 05:37:14:317 Kernel/(11507:11511): Encolando Nuevo Programa en Cola de NEW,con Pid8648 y Peso 5
+[DEBUG] 05:37:14:318 Kernel/(11507:11511): Agregando pid en diccionario, con pid: 8648 y sd :7
+[INFO] 05:37:15:203 Kernel/(11507:11511): Un programa se cerro: socket fd: 7 , ip: 127.0.0.1 , puerto: 43867 
+
+[INFO] 05:37:16:213 Kernel/(11507:11511): Nueva Conexion de Programa , socket fd: 7 , ip : 127.0.0.1 , port: 43868
+[INFO] 05:37:16:213 Kernel/(11507:11511): Mensaje de bienvenida enviado correctamente al sd: 7
+[INFO] 05:37:16:250 Kernel/(11507:11511): Se recibio Literal proveniente del sd: 7
+[INFO] 05:37:16:291 Kernel/(11507:11511): Encolando Nuevo Programa en Cola de NEW,con Pid2359 y Peso 5
+[DEBUG] 05:37:16:291 Kernel/(11507:11511): Agregando pid en diccionario, con pid: 2359 y sd :7
+[INFO] 05:37:18:203 Kernel/(11507:11516): Una CPU se cerro abruptamente: socket fd: 8 , ip: 127.0.0.1 , puerto: 57683 
+
+[INFO] 05:37:19:839 Kernel/(11507:11516): Nueva Conexion de CPU , socket fd: 8 , ip : 127.0.0.1 , port: 57689
+[INFO] 05:37:19:840 Kernel/(11507:11516): Paquete con retardo y quantum enviado correctamente al sd: 8
+[INFO] 05:37:19:840 Kernel/(11507:11517): Se saco programa de la cola Ready, con PID:7314
+[DEBUG] 05:37:19:840 Kernel/(11507:11517): Poniendo Programa en cola Intermedia, con PID:7314
+[DEBUG] 05:37:19:840 Kernel/(11507:11518): Se saco programa de cola intermedia, con PID:7314
+[INFO] 05:37:19:840 Kernel/(11507:11518): Agregando programa en cola de ejecucion,con PID:7314
+[INFO] 05:37:19:840 Kernel/(11507:11518): Enviando Programa a CPU disponible, con PID:7314 y CPU:8
+[INFO] 05:37:21:881 Kernel/(11507:11516): Una CPU se cerro abruptamente: socket fd: 8 , ip: 127.0.0.1 , puerto: 57689 
+
+[INFO] 05:37:22:896 Kernel/(11507:11516): Nueva Conexion de CPU , socket fd: 8 , ip : 127.0.0.1 , port: 57691
+[INFO] 05:37:22:897 Kernel/(11507:11516): Paquete con retardo y quantum enviado correctamente al sd: 8
+[INFO] 05:37:22:897 Kernel/(11507:11517): Se saco programa de la cola Ready, con PID:4757
+[DEBUG] 05:37:22:897 Kernel/(11507:11517): Poniendo Programa en cola Intermedia, con PID:4757
+[DEBUG] 05:37:22:897 Kernel/(11507:11518): Se saco programa de cola intermedia, con PID:4757
+[INFO] 05:37:22:897 Kernel/(11507:11518): Agregando programa en cola de ejecucion,con PID:4757
+[INFO] 05:37:22:897 Kernel/(11507:11518): Enviando Programa a CPU disponible, con PID:4757 y CPU:8
+[INFO] 05:37:24:978 Kernel/(11507:11516): Una CPU se cerro abruptamente: socket fd: 8 , ip: 127.0.0.1 , puerto: 57691 
+
+[INFO] 05:37:47:108 Kernel/(11573:11573): Comienza la ejecución del Kernel.
+[INFO] 05:37:47:108 Kernel/(11573:11573): Se creo Diccionario Variables Compartidas
+[INFO] 05:37:47:108 Kernel/(11573:11573): Se agrego variable: colas con valor:0 al diccionario de variables compartidas
+[INFO] 05:37:47:108 Kernel/(11573:11573): Se agrego variable: compartida con valor:0 al diccionario de variables compartidas
+[INFO] 05:37:47:108 Kernel/(11573:11573): Armando Diccionario de Semaforos
+[INFO] 05:37:47:108 Kernel/(11573:11573): Se agrego semaforo: b con valor: 1 al diccionario de semaforos
+[INFO] 05:37:47:108 Kernel/(11573:11573): Se agrego semaforo: c con valor: 0 al diccionario de semaforos
+[INFO] 05:37:47:108 Kernel/(11573:11573): Hilo PCP exitoso
+[INFO] 05:37:47:109 Kernel/(11573:11573): Hilo PLP exitoso
+[INFO] 05:37:47:109 Kernel/(11573:11575): Hilo bloquear y devolver a Ready de dispositivo HDD1 exitoso
+[INFO] 05:37:47:109 Kernel/(11573:11575): Hilo bloquear y devolver a Ready de dispositivo LPT1 exitoso
+[INFO] 05:37:47:109 Kernel/(11573:11576): Hilo Multiplexor Scripts lanzado exitosamente
+[INFO] 05:37:47:109 Kernel/(11573:11575): Exito al crear hilo atencionCPUs
+[INFO] 05:37:47:109 Kernel/(11573:11576): Hilo Cola New lanzado exitosamente
+[INFO] 05:37:47:109 Kernel/(11573:11576): Hilo Cola Exit lanzado exitosamente
+[INFO] 05:37:47:109 Kernel/(11573:11575): Exito al crear hilo mandar a Ejecutar
+[INFO] 05:37:47:110 Kernel/(11573:11575): Exito al crear hilo enviar CPU
+[INFO] 05:37:47:110 Kernel/(11573:11579): Esperando conexiones de programas en el puerto: 8005
+[INFO] 05:37:47:110 Kernel/(11573:11580): Esperando conexiones de CPUs en el puerto: 8015
+[INFO] 05:37:48:665 Kernel/(11573:11580): Nueva Conexion de CPU , socket fd: 7
+[INFO] 05:37:48:666 Kernel/(11573:11580): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 05:37:50:81 Kernel/(11573:11579): Nueva Conexion de Programa , socket fd: 8
+[INFO] 05:37:50:82 Kernel/(11573:11579): Mensaje de bienvenida enviado correctamente al sd: 8
+[INFO] 05:37:50:122 Kernel/(11573:11579): Se recibio Literal proveniente del sd: 8
+[INFO] 05:37:50:163 Kernel/(11573:11579): Encolando Nuevo Programa en Cola de NEW,con Pid6050 y Peso 5
+[DEBUG] 05:37:50:163 Kernel/(11573:11579): Agregando pid en diccionario, con pid: 6050 y sd :8
+[INFO] 05:37:50:163 Kernel/(11573:11581): Encolando Programa en Cola Ready, pid: 6050
+[INFO] 05:37:50:163 Kernel/(11573:11583): Se saco programa de la cola Ready, con PID:6050
+[DEBUG] 05:37:50:163 Kernel/(11573:11583): Poniendo Programa en cola Intermedia, con PID:6050
+[DEBUG] 05:37:50:163 Kernel/(11573:11584): Se saco programa de cola intermedia, con PID:6050
+[INFO] 05:37:50:163 Kernel/(11573:11584): Agregando programa en cola de ejecucion,con PID:6050
+[INFO] 05:37:50:163 Kernel/(11573:11584): Enviando Programa a CPU disponible, con PID:6050 y CPU:7
+[INFO] 05:37:52:279 Kernel/(11573:11580): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57694 
+
+[INFO] 05:37:52:279 Kernel/(11573:11580): Se movio programa a cola exit, PID:6050
+[INFO] 05:37:52:279 Kernel/(11573:11582): Sacando programa de cola exit,con pid: 6050
+[DEBUG] 05:37:52:279 Kernel/(11573:11582): Borrando pid:6050 del diccionario
+[INFO] 05:38:23:205 Kernel/(11573:11579): Nueva Conexion de Programa , socket fd: 7 , ip : 127.0.0.1 , port: 43877
+[INFO] 05:38:23:205 Kernel/(11573:11579): Mensaje de bienvenida enviado correctamente al sd: 7
+[INFO] 05:38:23:242 Kernel/(11573:11579): Se recibio Literal proveniente del sd: 7
+[INFO] 05:38:23:283 Kernel/(11573:11579): Encolando Nuevo Programa en Cola de NEW,con Pid2960 y Peso 5
+[DEBUG] 05:38:23:283 Kernel/(11573:11579): Agregando pid en diccionario, con pid: 2960 y sd :7
+[ERROR] 05:38:23:283 Kernel/(11573:11579): Error en el select
+[INFO] 05:38:23:283 Kernel/(11573:11581): Encolando Programa en Cola Ready, pid: 2960
+[INFO] 05:38:26:612 Kernel/(11573:11580): Nueva Conexion de CPU , socket fd: 9 , ip : 127.0.0.1 , port: 57698
+[INFO] 05:38:26:613 Kernel/(11573:11580): Paquete con retardo y quantum enviado correctamente al sd: 9
+[INFO] 05:38:26:613 Kernel/(11573:11583): Se saco programa de la cola Ready, con PID:2960
+[DEBUG] 05:38:26:613 Kernel/(11573:11583): Poniendo Programa en cola Intermedia, con PID:2960
+[DEBUG] 05:38:26:613 Kernel/(11573:11584): Se saco programa de cola intermedia, con PID:2960
+[INFO] 05:38:26:613 Kernel/(11573:11584): Agregando programa en cola de ejecucion,con PID:2960
+[INFO] 05:38:26:613 Kernel/(11573:11584): Enviando Programa a CPU disponible, con PID:2960 y CPU:9
+[INFO] 05:38:33:299 Kernel/(11573:11580): Una CPU se cerro abruptamente: socket fd: 9 , ip: 127.0.0.1 , puerto: 57698 
+
+[INFO] 05:38:33:299 Kernel/(11573:11580): Se movio programa a cola exit, PID:2960
+[INFO] 05:38:33:299 Kernel/(11573:11582): Sacando programa de cola exit,con pid: 2960
+[DEBUG] 05:38:33:299 Kernel/(11573:11582): Borrando pid:2960 del diccionario
+[INFO] 05:38:53:993 Kernel/(11573:11579): Nueva Conexion de Programa , socket fd: 8 , ip : 127.0.0.1 , port: 43880
+[INFO] 05:38:53:993 Kernel/(11573:11579): Mensaje de bienvenida enviado correctamente al sd: 8
+[INFO] 05:38:54:30 Kernel/(11573:11579): Se recibio Literal proveniente del sd: 8
+[INFO] 05:38:54:71 Kernel/(11573:11579): Encolando Nuevo Programa en Cola de NEW,con Pid5682 y Peso 5
+[DEBUG] 05:38:54:71 Kernel/(11573:11579): Agregando pid en diccionario, con pid: 5682 y sd :8
+[INFO] 05:38:54:71 Kernel/(11573:11581): Encolando Programa en Cola Ready, pid: 5682
+[INFO] 05:38:56:503 Kernel/(11573:11580): Nueva Conexion de CPU , socket fd: 7 , ip : 127.0.0.1 , port: 57701
+[INFO] 05:38:56:503 Kernel/(11573:11580): Paquete con retardo y quantum enviado correctamente al sd: 7
+[INFO] 05:38:56:503 Kernel/(11573:11583): Se saco programa de la cola Ready, con PID:5682
+[DEBUG] 05:38:56:503 Kernel/(11573:11583): Poniendo Programa en cola Intermedia, con PID:5682
+[DEBUG] 05:38:56:503 Kernel/(11573:11584): Se saco programa de cola intermedia, con PID:5682
+[INFO] 05:38:56:503 Kernel/(11573:11584): Agregando programa en cola de ejecucion,con PID:5682
+[INFO] 05:38:56:503 Kernel/(11573:11584): Enviando Programa a CPU disponible, con PID:5682 y CPU:7
+[INFO] 05:38:56:976 Kernel/(11573:11580): Una CPU se cerro abruptamente: socket fd: 7 , ip: 127.0.0.1 , puerto: 57701 
+
+[INFO] 05:38:56:977 Kernel/(11573:11580): Se movio programa a cola exit, PID:5682
+[INFO] 05:38:56:977 Kernel/(11573:11582): Sacando programa de cola exit,con pid: 5682
+[DEBUG] 05:38:56:977 Kernel/(11573:11582): Borrando pid:5682 del diccionario
+[INFO] 05:39:01:608 Kernel/(11573:11579): Un programa se cerro: socket fd: 8 , ip: 127.0.0.1 , puerto: 43880 
+
+[ERROR] 05:39:01:608 Kernel/(11573:11579): Error en el select
+[INFO] 05:39:11:56 Kernel/(11573:11579): Nueva Conexion de Programa , socket fd: 7 , ip : 127.0.0.1 , port: 43883
+[INFO] 05:39:11:56 Kernel/(11573:11579): Mensaje de bienvenida enviado correctamente al sd: 7
+[INFO] 05:39:11:95 Kernel/(11573:11579): Se recibio Literal proveniente del sd: 7
+[INFO] 05:39:11:135 Kernel/(11573:11579): Encolando Nuevo Programa en Cola de NEW,con Pid8701 y Peso 5
+[DEBUG] 05:39:11:135 Kernel/(11573:11579): Agregando pid en diccionario, con pid: 8701 y sd :7
+[INFO] 05:39:11:136 Kernel/(11573:11581): Encolando Programa en Cola Ready, pid: 8701
+[INFO] 05:39:16:609 Kernel/(11573:11580): Nueva Conexion de CPU , socket fd: 8 , ip : 127.0.0.1 , port: 57704
+[INFO] 05:39:16:610 Kernel/(11573:11580): Paquete con retardo y quantum enviado correctamente al sd: 8
+[INFO] 05:39:16:610 Kernel/(11573:11583): Se saco programa de la cola Ready, con PID:8701
+[DEBUG] 05:39:16:610 Kernel/(11573:11583): Poniendo Programa en cola Intermedia, con PID:8701
+[DEBUG] 05:39:16:610 Kernel/(11573:11584): Se saco programa de cola intermedia, con PID:8701
+[INFO] 05:39:16:610 Kernel/(11573:11584): Agregando programa en cola de ejecucion,con PID:8701
+[INFO] 05:39:16:610 Kernel/(11573:11584): Enviando Programa a CPU disponible, con PID:8701 y CPU:8
+[INFO] 05:39:23:542 Kernel/(11573:11580): Una CPU se cerro abruptamente: socket fd: 8 , ip: 127.0.0.1 , puerto: 57704 
+
+[INFO] 05:39:23:542 Kernel/(11573:11580): Se movio programa a cola exit, PID:8701
+[INFO] 05:39:23:543 Kernel/(11573:11582): Sacando programa de cola exit,con pid: 8701
+[DEBUG] 05:39:23:543 Kernel/(11573:11582): Borrando pid:8701 del diccionario
+[INFO] 05:39:25:416 Kernel/(11573:11579): Un programa se cerro: socket fd: 7 , ip: 127.0.0.1 , puerto: 43883 
+
+[ERROR] 05:39:25:417 Kernel/(11573:11579): Error en el select
+[INFO] 05:39:30:176 Kernel/(11573:11579): Nueva Conexion de Programa , socket fd: 7 , ip : 127.0.0.1 , port: 43886
+[INFO] 05:39:30:176 Kernel/(11573:11579): Mensaje de bienvenida enviado correctamente al sd: 7
+[INFO] 05:39:30:215 Kernel/(11573:11579): Se recibio Literal proveniente del sd: 7
+[INFO] 05:39:30:254 Kernel/(11573:11579): Encolando Nuevo Programa en Cola de NEW,con Pid1657 y Peso 5
+[DEBUG] 05:39:30:254 Kernel/(11573:11579): Agregando pid en diccionario, con pid: 1657 y sd :7
+[INFO] 05:39:30:254 Kernel/(11573:11581): Encolando Programa en Cola Ready, pid: 1657
+[INFO] 05:39:37:975 Kernel/(11573:11580): Nueva Conexion de CPU , socket fd: 8 , ip : 127.0.0.1 , port: 57707
+[INFO] 05:39:37:976 Kernel/(11573:11580): Paquete con retardo y quantum enviado correctamente al sd: 8
+[INFO] 05:39:37:976 Kernel/(11573:11583): Se saco programa de la cola Ready, con PID:1657
+[DEBUG] 05:39:37:976 Kernel/(11573:11583): Poniendo Programa en cola Intermedia, con PID:1657
+[DEBUG] 05:39:37:976 Kernel/(11573:11584): Se saco programa de cola intermedia, con PID:1657
+[INFO] 05:39:37:976 Kernel/(11573:11584): Agregando programa en cola de ejecucion,con PID:1657
+[INFO] 05:39:37:976 Kernel/(11573:11584): Enviando Programa a CPU disponible, con PID:1657 y CPU:8
+[INFO] 05:39:40:317 Kernel/(11573:11580): Una CPU se cerro abruptamente: socket fd: 8 , ip: 127.0.0.1 , puerto: 57707 
+
+[INFO] 05:39:40:318 Kernel/(11573:11580): Se movio programa a cola exit, PID:1657
+[INFO] 05:39:40:318 Kernel/(11573:11582): Sacando programa de cola exit,con pid: 1657
+[DEBUG] 05:39:40:318 Kernel/(11573:11582): Borrando pid:1657 del diccionario
+[INFO] 05:39:44:986 Kernel/(11573:11579): Un programa se cerro: socket fd: 7 , ip: 127.0.0.1 , puerto: 43886 
+
+[ERROR] 05:39:44:986 Kernel/(11573:11579): Error en el select
+[INFO] 05:39:46:884 Kernel/(11573:11579): Nueva Conexion de Programa , socket fd: 7 , ip : 127.0.0.1 , port: 43889
+[INFO] 05:39:46:884 Kernel/(11573:11579): Mensaje de bienvenida enviado correctamente al sd: 7
+[INFO] 05:39:46:922 Kernel/(11573:11579): Se recibio Literal proveniente del sd: 7
+[INFO] 05:39:46:966 Kernel/(11573:11579): Encolando Nuevo Programa en Cola de NEW,con Pid1752 y Peso 5
+[INFO] 05:39:46:966 Kernel/(11573:11581): Encolando Programa en Cola Ready, pid: 1752
+[DEBUG] 05:39:46:966 Kernel/(11573:11579): Agregando pid en diccionario, con pid: 1752 y sd :7
+[INFO] 05:39:48:367 Kernel/(11573:11579): Un programa se cerro: socket fd: 7 , ip: 127.0.0.1 , puerto: 43889 
+
+[ERROR] 05:39:48:368 Kernel/(11573:11579): Error en el select
+[INFO] 05:39:49:142 Kernel/(11573:11579): Nueva Conexion de Programa , socket fd: 7 , ip : 127.0.0.1 , port: 43890
+[INFO] 05:39:49:142 Kernel/(11573:11579): Mensaje de bienvenida enviado correctamente al sd: 7
+[INFO] 05:39:49:182 Kernel/(11573:11579): Se recibio Literal proveniente del sd: 7
+[INFO] 05:39:49:222 Kernel/(11573:11579): Encolando Nuevo Programa en Cola de NEW,con Pid686 y Peso 5
+[DEBUG] 05:39:49:222 Kernel/(11573:11579): Agregando pid en diccionario, con pid: 686 y sd :7
+[INFO] 05:39:49:222 Kernel/(11573:11581): Encolando Programa en Cola Ready, pid: 686
+[INFO] 05:39:49:945 Kernel/(11573:11579): Un programa se cerro: socket fd: 7 , ip: 127.0.0.1 , puerto: 43890 
+
+[ERROR] 05:39:49:946 Kernel/(11573:11579): Error en el select
+[INFO] 05:39:50:711 Kernel/(11573:11579): Nueva Conexion de Programa , socket fd: 7 , ip : 127.0.0.1 , port: 43891
+[INFO] 05:39:50:711 Kernel/(11573:11579): Mensaje de bienvenida enviado correctamente al sd: 7
+[INFO] 05:39:50:750 Kernel/(11573:11579): Se recibio Literal proveniente del sd: 7
+[INFO] 05:39:50:790 Kernel/(11573:11579): Encolando Nuevo Programa en Cola de NEW,con Pid2104 y Peso 5
+[DEBUG] 05:39:50:790 Kernel/(11573:11579): Agregando pid en diccionario, con pid: 2104 y sd :7
+[INFO] 05:39:50:790 Kernel/(11573:11581): Encolando Programa en Cola Ready, pid: 2104
+[INFO] 05:39:52:64 Kernel/(11573:11579): Un programa se cerro: socket fd: 7 , ip: 127.0.0.1 , puerto: 43891 
+
+[ERROR] 05:39:52:64 Kernel/(11573:11579): Error en el select
+[INFO] 05:39:52:735 Kernel/(11573:11579): Nueva Conexion de Programa , socket fd: 7 , ip : 127.0.0.1 , port: 43892
+[INFO] 05:39:52:735 Kernel/(11573:11579): Mensaje de bienvenida enviado correctamente al sd: 7
+[INFO] 05:39:52:774 Kernel/(11573:11579): Se recibio Literal proveniente del sd: 7
+[INFO] 05:39:52:814 Kernel/(11573:11579): Encolando Nuevo Programa en Cola de NEW,con Pid7857 y Peso 5
+[DEBUG] 05:39:52:814 Kernel/(11573:11579): Agregando pid en diccionario, con pid: 7857 y sd :7
+[INFO] 05:39:52:814 Kernel/(11573:11581): Encolando Programa en Cola Ready, pid: 7857
+[INFO] 05:39:58:976 Kernel/(11573:11579): Un programa se cerro: socket fd: 7 , ip: 127.0.0.1 , puerto: 43892 
+
+[ERROR] 05:39:58:976 Kernel/(11573:11579): Error en el select
+[INFO] 05:40:04:99 Kernel/(11573:11579): Nueva Conexion de Programa , socket fd: 7 , ip : 127.0.0.1 , port: 43893
+[INFO] 05:40:04:99 Kernel/(11573:11579): Mensaje de bienvenida enviado correctamente al sd: 7
+[INFO] 05:40:04:138 Kernel/(11573:11579): Se recibio Literal proveniente del sd: 7
+[INFO] 05:40:04:178 Kernel/(11573:11579): Encolando Nuevo Programa en Cola de NEW,con Pid6744 y Peso 5
+[DEBUG] 05:40:04:178 Kernel/(11573:11579): Agregando pid en diccionario, con pid: 6744 y sd :7
+[INFO] 05:40:05:500 Kernel/(11573:11579): Un programa se cerro: socket fd: 7 , ip: 127.0.0.1 , puerto: 43893 
+
+[ERROR] 05:40:05:501 Kernel/(11573:11579): Error en el select
+[INFO] 05:40:09:177 Kernel/(11573:11579): Nueva Conexion de Programa , socket fd: 7 , ip : 127.0.0.1 , port: 43894
+[INFO] 05:40:09:177 Kernel/(11573:11579): Mensaje de bienvenida enviado correctamente al sd: 7
+[INFO] 05:40:09:214 Kernel/(11573:11579): Se recibio Literal proveniente del sd: 7
+[INFO] 05:40:09:254 Kernel/(11573:11579): Encolando Nuevo Programa en Cola de NEW,con Pid733 y Peso 27
+[DEBUG] 05:40:09:254 Kernel/(11573:11579): Agregando pid en diccionario, con pid: 733 y sd :7
+[INFO] 05:40:12:762 Kernel/(11573:11580): Nueva Conexion de CPU , socket fd: 8 , ip : 127.0.0.1 , port: 57715
+[INFO] 05:40:12:762 Kernel/(11573:11580): Paquete con retardo y quantum enviado correctamente al sd: 8
+[INFO] 05:40:12:762 Kernel/(11573:11583): Se saco programa de la cola Ready, con PID:1752
+[DEBUG] 05:40:12:762 Kernel/(11573:11583): Poniendo Programa en cola Intermedia, con PID:1752
+[DEBUG] 05:40:12:763 Kernel/(11573:11584): Se saco programa de cola intermedia, con PID:1752
+[INFO] 05:40:12:763 Kernel/(11573:11584): Agregando programa en cola de ejecucion,con PID:1752
+[INFO] 05:40:12:763 Kernel/(11573:11584): Enviando Programa a CPU disponible, con PID:1752 y CPU:8
+[INFO] 05:40:14:859 Kernel/(11573:11580): Una CPU se cerro abruptamente: socket fd: 8 , ip: 127.0.0.1 , puerto: 57715 
+
+[INFO] 05:40:14:859 Kernel/(11573:11580): Se movio programa a cola exit, PID:1752
+[INFO] 05:40:14:859 Kernel/(11573:11582): Sacando programa de cola exit,con pid: 1752
+[DEBUG] 05:40:14:859 Kernel/(11573:11582): Borrando pid:1752 del diccionario
+[INFO] 05:40:14:860 Kernel/(11573:11581): Encolando Programa en Cola Ready, pid: 6744

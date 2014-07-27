@@ -201,6 +201,10 @@ void moverAColaExit(t_PCB* pcb, int idCPU) {
 			pcb->program_id);
 	mostrar_todas_Las_Listas();
 	sem_post(&colaExitVacio);
+}
+
+void moverAColaExityLiberarCPU(t_PCB* pcb, int idCPU) {
+	moverAColaExit(pcb, idCPU);
 	seLiberoUnaCPU(idCPU);
 }
 
@@ -254,13 +258,11 @@ bool tieneID(t_estructuraCPU* estructura) {
 }
 
 void seDesconectoCPU(int idCPU) { //TODO
-	if (estaLibreID(idCPU)) {
-		sem_wait(&CPUsMutex);
-		list_remove_by_condition(CPUs, (void*) tieneID);
-		sem_post(&CPUsMutex);
-	} else {
+	if (!estaLibreID(idCPU)) {
 		int idPrograma = buscarIDPrograma(idCPU);
+		printf("idPrograma:%d \n", idPrograma);
 		int sd = obtener_sd_Programa(idPrograma);
+		printf("SD:%d\n", sd);
 		notificar_Programa(sd, "La CPU se desconectó, programa abortado");
 		bool esElpcb(t_PCB* pcbAcomparar) {
 			return pcbAcomparar->program_id == idPrograma;
@@ -269,10 +271,10 @@ void seDesconectoCPU(int idCPU) { //TODO
 		t_PCB* pcb = list_remove_by_condition(colaExec, (void*) esElpcb);
 		sem_post(&colaExecMutex);
 		moverAColaExit(pcb, idCPU);
-		sem_wait(&CPUsMutex);
-		list_remove_by_condition(CPUs, (void*) tieneID);
-		sem_post(&CPUsMutex);
-	}
+		}
+	sem_wait(&CPUsMutex);
+	list_remove_by_condition(CPUs, (void*) tieneID);
+	sem_post(&CPUsMutex);
 }
 
 void seDesconectoCPUSigusr(int idCPU, t_PCB* pcb) {

@@ -25,7 +25,7 @@ typedef struct {
  int idProceso;
  } t_estructuraCPU;
 
-
+void moverAColaExityLiberarCPU(t_PCB*,int);
 void* pcp_main(void*);
 void crearHilosPrincipales();
 void* mandarAEjecutar(void*);

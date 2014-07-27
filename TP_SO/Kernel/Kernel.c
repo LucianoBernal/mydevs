@@ -39,6 +39,7 @@ int main(int argc, char** argv) {
 	sem_init(&grado_Multiprogramacion, 0, multiprogramacion);
 	sem_init(&colaReadyMutex, 0, 1);
 	sem_init(&vacioReady, 0, 0);
+	idUltimaCPUDesconectada=-1;
 	socketUMV = conectarCliente(ip_UMV, puerto_UMV, logKernel);
 	if (send(socketUMV, "Kernel", 7, 0) == -1) {
 		log_error(logKernel, "Fallo el Send del handshake");

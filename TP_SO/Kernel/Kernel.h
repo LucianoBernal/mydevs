@@ -33,6 +33,8 @@
 #include <time.h>
 #include "PCP.h"
 
+
+int idUltimaCPUDesconectada;
 t_dictionary* diccionarioSemaforos;
 sem_t diccionarioSemaforosMutex;
 sem_t mostarColasMutex;

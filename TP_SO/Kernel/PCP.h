@@ -62,7 +62,7 @@ int retMandarAEjecutar, retEnviarCPU, retMultiplexorCPUs;
 int* sinParametros;
 t_dictionary* diccionarioDispositivos;
 t_list* CPUs;
-int idUltimaCPUDesconectada;
+extern int idUltimaCPUDesconectada;
 extern int quantum;
 extern int retardo;
 extern sem_t colaExitVacio;
@@ -75,6 +75,7 @@ extern t_list* semaforos;
 extern t_list* retardos;
 extern t_list* idDispositivos;
 extern t_log *logKernel;
+
 
 
 

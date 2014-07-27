@@ -196,10 +196,15 @@ void escribir_en_Memoria(t_metadata_program * metadata, t_PCB *pcb,
 }
 
 void agregar_En_Diccionario(int pid, int sd) {
+	char* pidC=malloc(5);
+	int* sdNodo=malloc(sizeof(int));
+	*sdNodo=sd;
+	snprintf(pidC, 5, "%d", pid);
 	sem_wait(&PidSD_Mutex);
 	log_debug(logKernel, "Agregando pid en diccionario, con pid: %d y sd :%d",
 			pid, sd);
-	dictionary_put(pidYSockets, (char*) &pid, &sd);
+
+	dictionary_put(pidYSockets, pidC, sdNodo);
 	sem_post(&PidSD_Mutex);
 
 }
@@ -316,16 +321,26 @@ void* manejoColaExit(void* sinParametros) {
 		log_info(logKernel, "Sacando programa de cola exit,con pid: %d",
 				pcb->program_id);
 		mostrar_todas_Las_Listas();
-		sem_wait(&mutexProcesoActivo);
-		cambiar_Proceso_Activo(pcb->program_id);
-		solicitar_Destruccion_Segmentos();
-		sem_post(&mutexProcesoActivo);
+//		sem_wait(&mutexProcesoActivo);                   FIXME
+//		cambiar_Proceso_Activo(pcb->program_id);    FIXME
+//		solicitar_Destruccion_Segmentos();	FIXME
+//		sem_post(&mutexProcesoActivo); FIXME
 		enviar_Mensaje_Final(pcb->program_id);
 		cerrar_conexion(pcb->program_id);
+		liberar_nodo_Diccionario_PIDySD(pcb->program_id);
 		liberar_numero(pcb->program_id);
 		free(pcb);
 	}
 	return NULL ;
+}
+
+void liberar_nodo_Diccionario_PIDySD(int pid){
+	char* pidC=malloc(5);
+	snprintf(pidC, 5, "%d", pid);
+	sem_wait(&PidSD_Mutex);
+	dictionary_remove_and_destroy(pidYSockets, pidC,(void*)free);
+	sem_post(&PidSD_Mutex);
+	log_debug(logKernel, "Borrando pid:%d del diccionario",	pid);
 }
 
 void solicitar_Destruccion_Segmentos() {
@@ -353,9 +368,12 @@ void enviar_Mensaje_Final(int pid) {
 }
 
 int obtener_sd_Programa(int pid) {
+	char* pidC=malloc(5);
+	snprintf(pidC, 5, "%d", pid);
 	sem_wait(&PidSD_Mutex);
-	int* sd = dictionary_get(pidYSockets, (char*) &pid);
+	int* sd = dictionary_get(pidYSockets,pidC);
 	sem_post(&PidSD_Mutex);
+	free (pidC);
 	return *sd;
 }
 
@@ -383,9 +401,9 @@ void mostrar_todas_Las_Listas() {
 	printf("El estado actual de todas las colas es el siguiente:\n");
 	mostrarListaNew();
 	mostrarColaDeProcesosListos();
-	mostrarColaDeProcesosFinalizados();
 	mostrarColaDeProcesosEnEjecucion();
 //mostrarColaDeProcesosBloqueados();
+	mostrarColaDeProcesosFinalizados();
 	sem_post(&mostarColasMutex);
 
 }

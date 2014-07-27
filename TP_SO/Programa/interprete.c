@@ -109,14 +109,14 @@ int programa(t_log* logger, FILE* archivo) {
 	free(literal);
 	int fin=0;
 	while (1) {
-		if ((valread = recv(sock, tamano, 4, MSG_WAITALL)) == 0) {
+		if ((valread = recv(sock, tamano, 4, 0)) <=0) {
 			log_error(logger, "Fallo Recive");
 			fin= 1;
 			break;
 
 		}
 		char* respuesta = malloc(*tamano);
-		if ((valread = recv(sock, respuesta, *tamano, MSG_WAITALL)) == 0) {
+		if ((valread = recv(sock, respuesta, *tamano, 0)) <= 0) {
 			log_error(logger, "Fallo Recive Handshake");
 			fin= 1;
 			break;

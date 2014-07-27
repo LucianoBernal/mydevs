@@ -26,6 +26,7 @@
 #include "multiplexorCPUs_interfaz.h"
 #include <biblioteca_comun/bibliotecaSockets.h>
 
+extern int idUltimaCPUDesconectada;
 extern char* puerto_CPU;
 extern t_log *logKernel;
 extern int quantum;
@@ -197,7 +198,7 @@ void* atencionCPUs(void* sinParametro) {
 						break;
 					case SALIDA_NORMAL: //El Programa termino normalmente
 						desempaquetar2(mensaje, &pcb, 0);
-						moverAColaExit(pcb, sd);
+						moverAColaExityLiberarCPU(pcb, sd);
 						break;
 					case SALIDA_POR_BLOQUEO: //El Programa salio por bloqueo
 						desempaquetar2(mensaje, &pcb, &tiempo, &dispositivoIO,
