@@ -140,8 +140,7 @@ void* enviarCPU(void* sinParametro) {
 				pcbAEjecutar->program_id, IDCpuLibre);
 		enviarConRazon(IDCpuLibre, logKernel, HANDSHAKE_CPU_KERNEL,
 				serializar2(crear_nodoVar(paquete->msj, paquete->tamano), 0));
-		//send(IDCpuLibre, &paquete, sizeof(paquete), 0);  //FIXME
-	}
+		}
 }
 
 void* bloquearYDevolverAReady(void * param) {
@@ -271,6 +270,8 @@ void seDesconectoCPU(int idCPU) { //TODO
 		t_PCB* pcb = list_remove_by_condition(colaExec, (void*) esElpcb);
 		sem_post(&colaExecMutex);
 		moverAColaExit(pcb, idCPU);
+		}else {
+			sem_wait(&CPUsLibres);
 		}
 	sem_wait(&CPUsMutex);
 	list_remove_by_condition(CPUs, (void*) tieneID);

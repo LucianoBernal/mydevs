@@ -21,7 +21,7 @@ t_PCB *pcbEnUso;
 t_dictionary *diccionarioDeVariables;
 t_log *logs;
 int programaFinalizo;
-int cpu_ocupada=0;
+int cpu_ocupada = 0;
 
 void obtenerDatosConfig(t_config *config) {
 	IP_UMV = config_get_string_value(config, "IP_UMV");
@@ -67,7 +67,7 @@ int main(int arc, char **argv) {
 	send(socketKernel, saludo, 4, 0); //TODO el saludo tiene tamaño 4?
 	char *respuestaKernel = malloc(7);
 	int *razon = malloc(sizeof(int));
-	char * paquete = recibirConRazon(socketKernel, razon,logs);
+	char * paquete = recibirConRazon(socketKernel, razon, logs);
 	desempaquetar2(paquete, respuestaKernel, &quantumDeKernel, &retardo, 0);
 	if (!strncmp(respuestaKernel, "Kernel", 6)) {
 		log_info(logs, "El handshake con el Kernel salió bien.");
@@ -109,19 +109,18 @@ int main(int arc, char **argv) {
 //	}
 //
 
-
-	sigusr1_activado=1;
-	 if (signal(SIGUSR1, sig_handler) == SIG_ERR)
-	        log_error(logs,"Error al atrapar señal SIGUSR1");
-	 if (signal(SIGINT, sig_handler) == SIG_ERR)
-		 log_error(logs,"Error al atrapar señal SIGINT");
+	sigusr1_activado = 1;
+	if (signal(SIGUSR1, sig_handler) == SIG_ERR )
+		log_error(logs, "Error al atrapar señal SIGUSR1");
+	if (signal(SIGINT, sig_handler) == SIG_ERR )
+		log_error(logs, "Error al atrapar señal SIGINT");
 
 	while (sigusr1_activado) {
 		//Recibo un PCB
 		int razon;
-		cpu_ocupada=0;
+		cpu_ocupada = 0;
 		char* mensaje = recibirConRazon(socketKernel, &razon, logs);
-		cpu_ocupada=1;
+		cpu_ocupada = 1;
 		char* pcbEmpaquetado = malloc(sizeof(t_PCB) + 4 * 9 + 32);
 //		t_PCB *pcb = malloc(sizeof(t_PCB));
 		desempaquetar2(mensaje, pcbEmpaquetado, 0);
@@ -129,24 +128,27 @@ int main(int arc, char **argv) {
 		free(mensaje);
 		free(pcbEmpaquetado);
 		int pid = pcbEnUso->program_id;
-		enviarConRazon(socketUMV, logs, CAMBIAR_PROCESO_ACTIVO,serializar2(crear_nodoVar(&pid, 4), 0));
+		enviarConRazon(socketUMV, logs, CAMBIAR_PROCESO_ACTIVO,
+				serializar2(crear_nodoVar(&pid, 4), 0));
 		etiquetas = solicitarBytesAUMV(pcbEnUso->indice_de_Etiquetas, 0,
 				pcbEnUso->tamanio_Indice_de_Etiquetas);
 //		actualizarDiccionarioDeVariables(pcb);
 		recuperarDiccionario();
 		int lineasAnalizadas = 0;
 		int programaBloqueado = 0;
-		programaFinalizo=0;
+		programaFinalizo = 0;
 		int ubInstruccion, largoInstruccion;
-		while (/*lineasAnalizadas < quantumDeKernel&& */ !programaBloqueado && !programaFinalizo) {
+		while (/*lineasAnalizadas < quantumDeKernel&& */!programaBloqueado
+				&& !programaFinalizo) {
 			//Si empieza en la instruccion 0 deberia ser progra_Counter-1 ???
-			char *msjInstruccion = solicitarBytesAUMV(pcbEnUso->indice_de_Codigo,
-					pcbEnUso->program_Counter * 8, 8);
+			char *msjInstruccion = solicitarBytesAUMV(
+					pcbEnUso->indice_de_Codigo, pcbEnUso->program_Counter * 8,
+					8);
 			memcpy(&ubInstruccion, msjInstruccion, 4);
-			memcpy(&largoInstruccion, msjInstruccion+4, 4);
-			char *literalInstruccion = solicitarBytesAUMV(pcbEnUso->segmento_Codigo,
-					ubInstruccion, largoInstruccion);
-			literalInstruccion[largoInstruccion]=0;
+			memcpy(&largoInstruccion, msjInstruccion + 4, 4);
+			char *literalInstruccion = solicitarBytesAUMV(
+					pcbEnUso->segmento_Codigo, ubInstruccion, largoInstruccion);
+			literalInstruccion[largoInstruccion] = 0;
 			log_info(logs, "El literal es juancito: %s", literalInstruccion);
 			analizadorLinea(strdup(literalInstruccion), &funciones_Ansisop,
 					&funciones_kernel);
@@ -175,17 +177,17 @@ int main(int arc, char **argv) {
 //}
 //Difiere en detalles con la de arriba...
 
-
-void sig_handler(int signo)
-{
-    if (signo == SIGUSR1){
-    	sigusr1_activado=0;
-    	log_info(logs, "Se recibió la señal SIGUSR_1, la CPU se cerrara al finalizar la ejecucion actual");}
-    	if(!cpu_ocupada){
-    		exit(EXIT_SUCCESS);
-    	}
-    else if (signo == SIGINT){
-    	log_info(logs, "Se recibió la señal SIGNIT, la CPU se cerrara abruptamente");
-    	exit(EXIT_FAILURE);
-  }
+void sig_handler(int signo) {
+	if (signo == SIGUSR1) {
+		sigusr1_activado = 0;
+		log_info(logs,
+				"Se recibió la señal SIGUSR_1, la CPU se cerrara al finalizar la ejecucion actual");
+		if (!cpu_ocupada) {
+			exit(EXIT_SUCCESS);
+		}
+	} else if (signo == SIGINT) {
+		log_info(logs,
+				"Se recibió la señal SIGNIT, la CPU se cerrara abruptamente");
+		exit(EXIT_FAILURE);
+	}
 }
