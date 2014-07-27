@@ -93,7 +93,7 @@ void agregarProceso(int pid, char tipo) {
 		cantProcesosActivos++;
 		pthread_mutex_unlock(&mutexCantProcActivos);
 	} else {
-		printf("El numero pid ya esta en uso (?");
+		//printf("El numero pid ya esta en uso (?");
 		log_error(logger,"El número pid ya está en uso.");//TODO fijarse.
 	}
 }
@@ -121,7 +121,7 @@ int crearSegmento(int tamano) {
 	if (proceso->tabla == NULL )
 		proceso->tabla = list_create();
 	list_add(proceso->tabla, nuevoSegmento);
-	log_info(logger,"Se creó un segmento de base %d y tamano %d\n",nuevoSegmento->inicioLogico, nuevoSegmento->tamano);
+	log_info(logger,"Se creó un segmento de base %d y tamano %d",nuevoSegmento->inicioLogico, nuevoSegmento->tamano);
 	return nuevoSegmento->inicioLogico;
 }
 

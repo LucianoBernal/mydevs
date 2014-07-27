@@ -117,7 +117,6 @@ void atencionKernel(int* socketKernel) {
 
 		case CREAR_SEGMENTOS_PROGRAMA:
 			log_debug(logger, "Recibí crear segmentos programa, de parte del Kernel.");
-			puts("recibi crear segmentos programa");
 			pthread_mutex_lock(&mutexOperacion);
 			int *tamano1 = malloc(sizeof(int)), *tamano2 = malloc(sizeof(int)),
 					*tamano3 = malloc(sizeof(int)), *tamano4 = malloc(
@@ -129,7 +128,9 @@ void atencionKernel(int* socketKernel) {
 			basesLogicas[2] = crearSegmento(*tamano3);
 			basesLogicas[3] = crearSegmento(*tamano4);
 			for (i = 0; i < 4; i++) {
-				printf("la base logica %d es %d\n", i, basesLogicas[i]);
+//				log_info(logger, "La base lógica %d es %d", i, basesLogicas[i]);
+//				//tendrían que volar el log y el printf, qué opinan?
+//				printf("la base logica %d es %d\n", i, basesLogicas[i]);
 				if (basesLogicas[i] == -1) {
 					destruirTodosLosSegmentos();
 					*razon = MEMORY_OVERLOAD;
@@ -159,7 +160,6 @@ void atencionKernel(int* socketKernel) {
 
 		case ESCRIBIR_EN_UMV:
 			log_debug(logger, "Recibí escribir en umv, de parte del Kernel.");
-			printf("recibi escribir en umv\n");
 			pthread_mutex_lock(&mutexOperacion);
 			cambiarProcesoActivo(procesoActivo);
 
@@ -167,7 +167,13 @@ void atencionKernel(int* socketKernel) {
 			desempaquetar2(mensaje, &parametro[0], &parametro[1], &parametro[2],
 					buffer, 0);
 			buffer=realloc(buffer, parametro[2]);
-			printf("Los parametros que envio fueron:\n base= %d\n offset=%d\n tamano= %d\n buffer= %s\n", parametro[0], parametro[1], parametro[2], buffer);
+			log_info(logger, "Los parámetros que envio fueron:\nbase= %d\noffset= %d\ntamano= %d\nbuffer= %s",parametro[0],parametro[1],parametro[2],buffer);
+//			log_info(logger, "los parámetros que envio fueron:");
+//			log_info(logger, "base= %d",parametro[0]);
+//			log_info(logger, "offset= %d",parametro[1]);
+//			log_info(logger, "tamano= %d",parametro[2]);
+//			log_info(logger, "buffer= %s", buffer);
+//			printf("Los parametros que envio fueron:\n base= %d\n offset=%d\n tamano= %d\n buffer= %s\n", parametro[0], parametro[1], parametro[2], buffer);
 			enviarUnosBytes(parametro[0], parametro[1], parametro[2], buffer);
 			pthread_mutex_unlock(&mutexOperacion);
 			free(buffer);
@@ -176,24 +182,25 @@ void atencionKernel(int* socketKernel) {
 
 		case CAMBIAR_PROCESO_ACTIVO:
 			log_debug(logger, "Recibí cambiar proceso activo, de parte del Kernel.");
-			printf("recibi cambiar proceso activo");
 			pthread_mutex_lock(&mutexOperacion);
 			desempaquetar2(mensaje, &procesoActivo, 0);
-			printf("\nel valor del pid es: %d\n", procesoActivo);
+			log_info(logger, "El valor del pid es: %d",procesoActivo);
+			//printf("\nel valor del pid es: %d\n", procesoActivo);
 			cambiarProcesoActivo(procesoActivo);
 			pthread_mutex_unlock(&mutexOperacion);
-			puts("termine de cambiar proceso activo");
 			log_debug(logger, "Terminé de cambiar proceso activo, de parte del Kernel.");
 			break;
 		case CREAR_PROCESO_NUEVO:
 			log_debug(logger, "Recibí crear proceso nuevo, de parte del Kernel.");
-			puts("recibi crear proceso nuevo");
 			pthread_mutex_lock(&mutexOperacion);
-			printf("el pid que recibi es:%d\n", *pid);
+			//log_debug(logger, "[antes de deserializar]El PID que recibí es: %d", *pid);
+			//printf("el pid que recibi es:%d\n", *pid);
 			desempaquetar2(mensaje, pid, 0);
-			printf("el pid que recibi es:%d\n", *pid);
+			log_debug(logger, "[después de deserializar]El PID que recibí es: %d", *pid);
+			//printf("el pid que recibi es:%d\n", *pid);
 			if (listaProcesos == NULL ) {
-				printf("lista procesos era null");
+				log_info(logger, "lista procesos era null");
+				//printf("lista procesos era null");
 				listaProcesos = list_create();
 			}
 			agregarProceso(*pid, 'c');
