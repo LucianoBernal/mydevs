@@ -54,6 +54,7 @@ int main(int argc, char **argv) {
 		fin = EXIT_SUCCESS;
 	}
 	log_destroy(logger);
+	fclose(archivo);
 	return fin;
 }
 
@@ -74,7 +75,6 @@ int programa(t_log* logger, FILE* archivo) {
 		fgets(lineaLiteral, PACKAGESIZE, archivo);
 		strcat(literal, lineaLiteral);
 	}
-	close((int)archivo);
 	literal[*tamano] = '\0';
 	log_info(logger,
 			"Se concateno Script en buffer interno y se cerro archivo");
