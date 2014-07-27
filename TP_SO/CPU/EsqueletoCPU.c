@@ -21,6 +21,7 @@ t_PCB *pcbEnUso;
 t_dictionary *diccionarioDeVariables;
 t_log *logs;
 int programaFinalizo;
+int cpu_ocupada=0;
 
 void obtenerDatosConfig(t_config *config) {
 	IP_UMV = config_get_string_value(config, "IP_UMV");
@@ -109,19 +110,18 @@ int main(int arc, char **argv) {
 //
 
 
-
-
-
-//	if(signal(SIGINT, (sighandler_t)manejar_seniales)==SIG_ERR){
-//		printf("mal\n");
-//	} else {printf("todo ok\n");}
-//	//signal(SIGUSR1, (sighandler_t) manejar_seniales);
-
 	sigusr1_activado=1;
+	 if (signal(SIGUSR1, sig_handler) == SIG_ERR)
+	        log_error(logs,"Error al atrapar señal SIGUSR1");
+	 if (signal(SIGINT, sig_handler) == SIG_ERR)
+		 log_error(logs,"Error al atrapar señal SIGINT");
+
 	while (sigusr1_activado) {
 		//Recibo un PCB
 		int razon;
+		cpu_ocupada=0;
 		char* mensaje = recibirConRazon(socketKernel, &razon, logs);
+		cpu_ocupada=1;
 		char* pcbEmpaquetado = malloc(sizeof(t_PCB) + 4 * 9 + 32);
 //		t_PCB *pcb = malloc(sizeof(t_PCB));
 		desempaquetar2(mensaje, pcbEmpaquetado, 0);
@@ -175,15 +175,17 @@ int main(int arc, char **argv) {
 //}
 //Difiere en detalles con la de arriba...
 
-void manejar_seniales(int senal) {
-	switch (senal) {
-	case SIGINT:
-		log_info(logs, "Se recibió la señal SIGNIT");
-		break;
-	case SIGUSR1:
-		sigusr1_activado=0;
-		log_info(logs, "Se recibió la señal SIGUSR_1");
 
-	}
+void sig_handler(int signo)
+{
+    if (signo == SIGUSR1){
+    	sigusr1_activado=0;
+    	log_info(logs, "Se recibió la señal SIGUSR_1, la CPU se cerrara al finalizar la ejecucion actual");}
+    	if(!cpu_ocupada){
+    		exit(EXIT_SUCCESS);
+    	}
+    else if (signo == SIGINT){
+    	log_info(logs, "Se recibió la señal SIGNIT, la CPU se cerrara abruptamente");
+    	exit(EXIT_FAILURE);
+  }
 }
-

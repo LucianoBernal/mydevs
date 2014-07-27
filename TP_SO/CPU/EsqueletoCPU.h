@@ -25,4 +25,6 @@ char * etiquetas;
 void manejar_seniales (int);
 void actualizarDiccionarioDeVariables (t_PCB*);
 void recuperarDiccionario();
+void sig_handler(int signo);
+
 #endif /* ESQUELETOCPU_H_ */
