@@ -37,7 +37,7 @@ int main(int argc, char **argv) {
 		}
 	t_log* logger;
 	int fin;
-	logger = log_create("logProcesoPrograma", "Programa", true, LOG_LEVEL_INFO);
+	logger = log_create("logProcesoPrograma", "Programa", true, LOG_LEVEL_DEBUG);
 	log_info(logger, "Comienza la ejecución del Programa.");
 	cargarConfig(config);
 	FILE *archivo;
@@ -53,8 +53,9 @@ int main(int argc, char **argv) {
 		log_info(logger, "Finalizo correctamente la ejecucion del Programa");
 		fin = EXIT_SUCCESS;
 	}
-	log_destroy(logger);
 	fclose(archivo);
+	log_debug(logger,"Se cerro el archivo Script");
+	log_destroy(logger);
 	return fin;
 }
 

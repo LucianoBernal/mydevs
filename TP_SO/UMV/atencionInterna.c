@@ -22,18 +22,18 @@ void* atencionInterna(void* sinParametro) {
 	log_debug(logger, "Se creó servidor para atención interna");
 
 	while (1) {
-
-		int socketKernel = aceptarConexion(socket, logger);
-		recv(socketKernel, (void*) saludoKernel, 30, 0);
+		int* socketKernel=malloc(sizeof(int));
+		*socketKernel = aceptarConexion(socket, logger);
+		recv(*socketKernel, (void*) saludoKernel, 30, 0);
 		log_info(logger, "Se intenta conectar un posible Kernel. Comprobando...");
 
 		if (!strncmp(saludoKernel, "Kernel", 6)) {
 			log_info(logger, "El handshake con el Kernel salió bien.");
-			send(socketKernel, "UMV", 4, 0);
+			send(*socketKernel, "UMV", 4, 0);
 			//free(saludoKernel);FIXME va acá?
 			//Creo hilo de atención al kernel.
 			if (pthread_create(&hiloKernel, NULL, (void *) atencionKernel,
-					(void*) &socketKernel)) {
+					(void*) socketKernel)) {
 				log_error(logger,
 						"El hilo del Kernel no se creó correctamente.");
 			} else {
@@ -41,24 +41,25 @@ void* atencionInterna(void* sinParametro) {
 			}
 			break;
 		} else {
-			close(socketKernel);
-			log_error(logger, "No es un Kernel válido o ya existe un Kernel activo.");
+			close(*socketKernel);
+			free(socketKernel);
+			log_error(logger, "No es un Kernel válido");
 		}
 
 	} //Cierra while de Kernel
 
 	while (1) {
-
-		int socketCPU = aceptarConexion(socket, logger);
-		recv(socketCPU, (void*) saludoCpu, 30, 0);
+		int *socketCPU=malloc(sizeof(int));
+		*socketCPU = aceptarConexion(socket, logger);
+		recv(*socketCPU, (void*) saludoCpu, 30, 0);
 		log_info(logger, "Se intenta conectar un posible CPU. Comprobando...");
 
 		if (!strncmp(saludoCpu, "CPU", 3)) {
 			log_info(logger, "El handshake con la CPU salió bien.");
-			send(socketCPU, "UMV", 4, 0);
+			send(*socketCPU, "UMV", 4, 0);
 			//Creo hilo de atención a CPU.
 			if (pthread_create(&hiloCpu, NULL, (void *) atencionCpu,
-					(void*) &socketCPU)) {
+					(void*) socketCPU)) {
 				log_error(logger, "El hilo de CPU no se creó correctamente.");
 			} else {
 				log_info(logger, "El hilo de CPU se creó correctamente.");
@@ -87,7 +88,8 @@ void* atencionInterna(void* sinParametro) {
 //			//CODIGO PELIGROSO T
 
 		} else {
-			close(socketCPU);
+			close(*socketCPU);
+			free(socketCPU);
 			log_error(logger, "No es una CPU válida.");
 		}
 	}			//Cierra while de CPU
@@ -106,6 +108,10 @@ void atencionKernel(int* socketKernel) {
 
 		j++;
 		char *mensaje = recibirConRazon(*socketKernel, razon, logger);
+		if(mensaje==NULL){
+			log_error(logger,"Se desconecto Abruptamente el Kernel, sd:%d",*socketKernel);
+			break;//el close lo hace recibirConRazon
+		}
 		//aplicarRetardo(retardo);
 		switch (*razon) {
 
@@ -200,6 +206,7 @@ void atencionKernel(int* socketKernel) {
 	}
 	free(header);
 	free(tamanoMensaje);
+	free(socketKernel);
 }
 void atencionCpu(int *socketCPU) {
 	log_info(logger, "Entró a atencionCpu");
@@ -212,6 +219,10 @@ void atencionCpu(int *socketCPU) {
 	while(1){
 //	aplicarRetardo(retardo);
 	char *mensaje=recibirConRazon(*socketCPU, razon, logger);
+	if(mensaje==NULL){
+			log_info(logger,"Se desconecto Abruptamente una CPU, sd%d",*socketCPU); //TODO hay que hacer algo??
+				break;//el close al socket lo hace recibirConRazon
+			}
 	switch (*razon) {
 
 	case SOLICITAR_A_UMV:
@@ -285,14 +296,12 @@ void atencionCpu(int *socketCPU) {
 //		free(pid2); //TODO lo puse arriba del mutex... no se en qué varía pero creo q es mas seguro asi.
 		log_debug(logger, "Terminé cambiar proceso activo, de la CPU: %d",*socketCPU);
 		break;
-//	default:
-//		close(*socketCPU);
-//		break;
 	}
 
 	free(mensaje);
 	}
 	free(tamanoMensaje);
 	free(razon);
+	free(socketCPU);
 }
 

@@ -43,7 +43,7 @@ int enviarConRazon(int socket, t_log* logs, int razon, t_paquete *pack){
 
 char *recibirConRazon(int socket, int *p_razon, t_log *logs){
 	char *header=malloc(16);
-	if (recv(socket, header, 16, MSG_WAITALL)==-1){
+	if (recv(socket, header, 16, MSG_WAITALL)<=0){
 		log_error(logs, "Hubo un error al recibir la cabecera");
 		close(socket);
 		return NULL;
@@ -53,7 +53,7 @@ char *recibirConRazon(int socket, int *p_razon, t_log *logs){
 	//free(header);
 	if (tamano!=4&&tamano!=0){
 		char *msj=malloc(tamano);
-		if(recv(socket, msj, tamano, MSG_WAITALL)==-1){
+		if(recv(socket, msj, tamano, MSG_WAITALL)<=0){
 			log_error(logs, "Hubo un error al recibir el mensaje");
 			close(socket);
 			return NULL;

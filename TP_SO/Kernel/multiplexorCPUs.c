@@ -33,11 +33,9 @@ extern int retardo;
 #define TRUE   1
 #define FALSE  0
 
-
-
 void* atencionCPUs(void* sinParametro) {
 	int master_socket, addrlen, new_socket, client_socket[30], max_clients = 30,
-			activity, i, valread, sd;
+			activity, i, valread, sd, primer_CPU = 1;
 	int max_sd;
 	struct sockaddr_in address;
 //	int* tamano = malloc(4);
@@ -47,19 +45,18 @@ void* atencionCPUs(void* sinParametro) {
 	//inicializo set
 	fd_set readfds;
 
-
 	char *message = "Kernel";
 	char handshake[4] = "CPU";
-
 
 	//inicializo todos los clientes en 0
 	for (i = 0; i < max_clients; i++) {
 		client_socket[i] = 0;
 	}
 
-	master_socket=crearServidor(puerto_CPU,logKernel);
+	master_socket = crearServidor(puerto_CPU, logKernel);
 
-	log_info(logKernel,"Esperando conexiones de CPUs en el puerto: %s",puerto_CPU);
+	log_info(logKernel, "Esperando conexiones de CPUs en el puerto: %s",
+			puerto_CPU);
 	while (TRUE) {
 		//limpio el Set
 		FD_ZERO(&readfds);
@@ -85,53 +82,62 @@ void* atencionCPUs(void* sinParametro) {
 		activity = select(max_sd + 1, &readfds, NULL, NULL, NULL );
 
 		if ((activity < 0) && (errno != EINTR)) {
-			log_error(logKernel,"Error en el select");
+			log_error(logKernel, "Error en el select");
 		}
 
 		//Si hubo actividad en el master socket, es una nueva conexion
 		if (FD_ISSET(master_socket, &readfds)) {
 			if ((new_socket = accept(master_socket,
 					(struct sockaddr *) &address, (socklen_t*) &addrlen)) < 0) {
-				log_error(logKernel,"Error al aceptar nueva conexion");
-								exit(EXIT_FAILURE);
+				log_error(logKernel, "Error al aceptar nueva conexion");
+				exit(EXIT_FAILURE);
 			}
 
 			//informo nueva conexion
-			log_info(logKernel,
-								"Nueva Conexion de CPU , socket fd: %d , ip : %s , port: %d",
-								new_socket, inet_ntoa(address.sin_addr),
-								ntohs(address.sin_port));
+			if (primer_CPU) {
+				primer_CPU=0;
+				log_info(logKernel, "Nueva Conexion de CPU , socket fd: %d",
+						new_socket);
+			} else {
+				log_info(logKernel,
+						"Nueva Conexion de CPU , socket fd: %d , ip : %s , port: %d",
+						new_socket, inet_ntoa(address.sin_addr),
+						ntohs(address.sin_port));
+			}
 			//handshake
-			char*cpu=malloc(4);
+			char*cpu = malloc(4);
 			if ((valread = recv(new_socket, cpu/*buffer*/, 4, 0)) < 0) {
-				log_error(logKernel,"Error en el recive del handshake");
+				log_error(logKernel, "Error en el recive del handshake");
 				close(new_socket);
 			}
 			if (strncmp(cpu/*buffer*/, handshake, 4) != 0) {
-				log_error(logKernel,"Handshake invalido");
-								log_info(logKernel,
-										"El Kernel desconecto a la CPU,no es una CPU Valida ,socket fd: %d , ip : %s , port: %d ",
-										new_socket, inet_ntoa(address.sin_addr),
-										ntohs(address.sin_port));
-										close(new_socket);
-										free(cpu);
-			}
-			else {
+				log_error(logKernel, "Handshake invalido");
+				log_info(logKernel,
+						"El Kernel desconecto a la CPU,no es una CPU Valida ,socket fd: %d , ip : %s , port: %d ",
+						new_socket, inet_ntoa(address.sin_addr),
+						ntohs(address.sin_port));
+				close(new_socket);
+				free(cpu);
+			} else {
 				free(cpu);
 				//envio retardo y quantum a la CPU
-				int* quantum2=malloc(4);
-				*quantum2=quantum;
-				int* retardo2=malloc(4);
-				*retardo2=retardo;
-				enviarConRazon(new_socket,logKernel,HANDSHAKE_CPU_KERNEL, serializar2(crear_nodoVar(message,7),crear_nodoVar(quantum2,4),crear_nodoVar(retardo2,4),0));
-				log_info(logKernel,"Paquete con retardo y quantum enviado correctamente al sd: %d",new_socket);
+				int* quantum2 = malloc(4);
+				*quantum2 = quantum;
+				int* retardo2 = malloc(4);
+				*retardo2 = retardo;
+				enviarConRazon(new_socket, logKernel, HANDSHAKE_CPU_KERNEL,
+						serializar2(crear_nodoVar(message, 7),
+								crear_nodoVar(quantum2, 4),
+								crear_nodoVar(retardo2, 4), 0));
+				log_info(logKernel,
+						"Paquete con retardo y quantum enviado correctamente al sd: %d",
+						new_socket);
 
 				//agrego nuevo socket al vector de sockets
 				for (i = 0; i < max_clients; i++) {
 
 					if (client_socket[i] == 0) {
 						client_socket[i] = new_socket;
-
 
 						break;
 					}
@@ -152,9 +158,10 @@ void* atencionCPUs(void* sinParametro) {
 					//Alguna CPU se desconecto, obtengo la informacion
 					getpeername(sd, (struct sockaddr*) &address,
 							(socklen_t*) &addrlen);
-					log_info(logKernel,"Una CPU se cerro abruptamente: socket fd: %d , ip: %s , puerto: %d \n",sd,
-												inet_ntoa(address.sin_addr),
-												ntohs(address.sin_port));
+					log_info(logKernel,
+							"Una CPU se cerro abruptamente: socket fd: %d , ip: %s , puerto: %d \n",
+							sd, inet_ntoa(address.sin_addr),
+							ntohs(address.sin_port));
 
 					//Cierra el socket y marca 0 el bit de ocupado
 					close(sd);
@@ -205,7 +212,7 @@ void* atencionCPUs(void* sinParametro) {
 						sem_post(&semCPUDesconectadaMutex);
 						break;
 					case WAIT:
-						desempaquetar2(mensaje, &tamano, &semaforo,&pcb, 0);
+						desempaquetar2(mensaje, &tamano, &semaforo, &pcb, 0);
 						sc_wait(semaforo, pcb, sd);
 						break;
 					case SIGNAL:
@@ -221,7 +228,7 @@ void* atencionCPUs(void* sinParametro) {
 						break;
 					case GRABAR_VALOR:
 						desempaquetar2(mensaje, &id, &valor, 0);
-						sc_grabar_valor(id, valor,sd);
+						sc_grabar_valor(id, valor, sd);
 						break;
 					case OBTENER_VALOR:
 						desempaquetar2(mensaje, &id, 0);
