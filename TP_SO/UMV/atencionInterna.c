@@ -109,7 +109,7 @@ void atencionKernel(int* socketKernel) {
 		j++;
 		char *mensaje = recibirConRazon(*socketKernel, razon, logger);
 		if(mensaje==NULL){
-			log_error(logger,"Se desconecto Abruptamente el Kernel, sd:%d",*socketKernel);
+			log_error(logger,"Se desconecto abruptamente el Kernel, sd: %d",*socketKernel);
 			break;//el close lo hace recibirConRazon
 		}
 		//aplicarRetardo(retardo);
@@ -196,7 +196,7 @@ void atencionKernel(int* socketKernel) {
 			//log_debug(logger, "[antes de deserializar]El PID que recibí es: %d", *pid);
 			//printf("el pid que recibi es:%d\n", *pid);
 			desempaquetar2(mensaje, pid, 0);
-			log_debug(logger, "[después de deserializar]El PID que recibí es: %d", *pid);
+			log_debug(logger, "El PID que recibí es: %d", *pid);
 			//printf("el pid que recibi es:%d\n", *pid);
 			if (listaProcesos == NULL ) {
 				log_info(logger, "lista procesos era null");
@@ -227,7 +227,7 @@ void atencionCpu(int *socketCPU) {
 //	aplicarRetardo(retardo);
 	char *mensaje=recibirConRazon(*socketCPU, razon, logger);
 	if(mensaje==NULL){
-			log_info(logger,"Se desconecto Abruptamente una CPU, sd%d",*socketCPU); //TODO hay que hacer algo??
+			log_info(logger,"Se desconecto abruptamente una CPU, sd %d",*socketCPU); //TODO hay que hacer algo??
 				break;//el close al socket lo hace recibirConRazon
 			}
 	switch (*razon) {
@@ -237,10 +237,15 @@ void atencionCpu(int *socketCPU) {
 		pthread_mutex_lock(&mutexOperacion);
 		cambiarProcesoActivo(procesoActivo);
 		desempaquetar2(mensaje, &parametro[0], &parametro[1], &parametro[2], 0);
-		printf("\nRecibi solicitar bytes, base: %d, offset: %d, y tamano: %d\n", parametro[0], parametro[1], parametro[2]);
+		log_debug(logger, "CPU %d solicitó base: %d, offset: %d, y tamano: %d.",*socketCPU, parametro[0], parametro[1], parametro[2]);
+		//printf("\nRecibi solicitar bytes, base: %d, offset: %d, y tamano: %d\n", parametro[0], parametro[1], parametro[2]);
 		char *respuesta = solicitarBytes(parametro[0], parametro[1],
 				parametro[2]);
-		printf("Y el resultado es buffer=%s", respuesta);
+
+		log_debug(logger, "Y el resultado es buffer=%s", respuesta);
+		//TODO la primera vez no tira lo mismo el log que el printf en solicitar.
+		//printf("Y el resultado es buffer=%s", respuesta);
+
 		pthread_mutex_unlock(&mutexOperacion);
 		if (!strcmp(respuesta, "error")) {
 //			*razon = SEGMENTATION_FAULT;
@@ -255,8 +260,13 @@ void atencionCpu(int *socketCPU) {
 		}
 		*razon = RESPUESTA_A_SOLICITAR_BUFFER;
 		*tamanoMensaje = parametro[2];
-		printf("Me solicitaron un buffer, base %d, offset %d, y tamano %d \n", parametro[0], parametro[1], parametro[2]);
-		printf("Y la respuesta es %s\n", respuesta);
+
+//		log_info(logger, "Me solicitaron un buffer, base: %d, offset: %d, y tamano: %d", parametro[0], parametro[1], parametro[2]);
+//		//printf("Me solicitaron un buffer, base %d, offset %d, y tamano %d \n", parametro[0], parametro[1], parametro[2]);
+//		log_info(logger, "Y la respuesta es: %s", respuesta);
+//		//Esto vuela todo no?
+//		//printf("Y la respuesta es %s\n", respuesta);
+
 //		t_paquete *paquete = (t_paquete *) serializar2(
 //				crear_nodoVar(respuesta, *tamanoMensaje), 0);
 //		t_paquete *header = (t_paquete *) serializar2(crear_nodoVar(razon, 4),
@@ -277,7 +287,8 @@ void atencionCpu(int *socketCPU) {
 		desempaquetar2(mensaje, &parametro[0], &parametro[1], &parametro[2],
 				buffer, 0);
 		buffer[parametro[2]]= 0;
-		printf("\nRecibi escribir bytes, base: %d, offset: %d, tamano: %d y buffer: %s\n", parametro[0], parametro[1], parametro[2], buffer);
+		log_debug(logger, "CPU %d escribió en, base: %d, offset: %d, tamano: %d, buffer: %s",*socketCPU, parametro[0], parametro[1], parametro[2], buffer);
+		//printf("\nRecibi escribir bytes, base: %d, offset: %d, tamano: %d y buffer: %s\n", parametro[0], parametro[1], parametro[2], buffer);
 		int resultado = enviarUnosBytes(parametro[0], parametro[1], parametro[2], buffer);
 		if (resultado){
 			enviarConRazon(*socketCPU, logger, CONFIRMACION, NULL);
@@ -290,16 +301,17 @@ void atencionCpu(int *socketCPU) {
 		break;
 	case CAMBIAR_PROCESO_ACTIVO:
 		log_debug(logger, "Recibí cambiar proceso activo, de la CPU: %d",*socketCPU);
-		printf("recibi cambiar proceso activo");
+		//printf("recibi cambiar proceso activo");
 		pthread_mutex_lock(&mutexOperacion);
 		int *pid2 = malloc(sizeof(int));
 		desempaquetar2(mensaje, pid2, 0);
 		procesoActivo = *pid2;
-		printf("\nel valor del pid es: %d\n", *pid2);
+		log_info(logger, "El valor del PID es: %d", *pid2);
+		//printf("\nel valor del pid es: %d\n", *pid2);
 		cambiarProcesoActivo(*pid2);
 		free(pid2);
 		pthread_mutex_unlock(&mutexOperacion);
-		puts("termine de cambiar proceso activo");
+		//puts("termine de cambiar proceso activo");
 //		free(pid2); //TODO lo puse arriba del mutex... no se en qué varía pero creo q es mas seguro asi.
 		log_debug(logger, "Terminé cambiar proceso activo, de la CPU: %d",*socketCPU);
 		break;
