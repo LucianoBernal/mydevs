@@ -172,6 +172,7 @@ void vincPrimitivas() {
 }
 
 static char* _depurar_sentencia(char* sentencia) {
+	log_debug(logs, "Depurando sentencia...");
 	int i = strlen(sentencia);
 	while (string_ends_with(sentencia, "\n")) {
 		i--;
@@ -182,6 +183,7 @@ static char* _depurar_sentencia(char* sentencia) {
 }
 
 void recuperarDiccionario() {
+	log_debug(logs, "Recuperando diccionario...");
 	int i = 0, *desplazamiento;
 	char *nombre, *stack = solicitarBytesAUMV(pcbEnUso->segmento_Stack,
 			pcbEnUso->cursor_Stack-pcbEnUso->segmento_Stack, pcbEnUso->tamanio_Contexto_Actual * 5);
@@ -247,6 +249,7 @@ char *solicitarBytesAUMV(t_puntero base, t_puntero desplazamiento, int tamano) {
 //} //UFF SOY TAN HOMBRE
 //
 t_puntero definirVariable(t_nombre_variable identificador_variable) { //Chequeada
+	log_debug(logs, "Definiendo variable...");
 	enviarBytesAUMV(pcbEnUso->segmento_Stack,
 			pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack
 					+ pcbEnUso->tamanio_Contexto_Actual * 5, 1,
@@ -257,8 +260,9 @@ t_puntero definirVariable(t_nombre_variable identificador_variable) { //Chequead
 	int *desplazamiento = malloc(4);
 	*desplazamiento = pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack
 			+ pcbEnUso->tamanio_Contexto_Actual * 5;
-	printf("Puse una variable de nombre = %c y de offset = %d\n",
-			identificador_variable, *desplazamiento);
+	log_debug(logs, "Puse una variable de nombre= %c y de offset= %d", identificador_variable, *desplazamiento);
+//	printf("Puse una variable de nombre = %c y de offset = %d\n",
+//			identificador_variable, *desplazamiento);
 	dictionary_put(diccionarioDeVariables, identificadorCopiado,
 			desplazamiento);
 	pcbEnUso->tamanio_Contexto_Actual++;
@@ -266,37 +270,43 @@ t_puntero definirVariable(t_nombre_variable identificador_variable) { //Chequead
 }
 
 t_puntero obtenerPosicionVariable(t_nombre_variable identificador_variable) { //Chequeada
-	printf("llame obtenerPosicion con identif = %c\n", identificador_variable);
+	log_debug(logs, "Obteniendo posición con identif= %c", identificador_variable);
+//	printf("llame obtenerPosicion con identif = %c\n", identificador_variable);
 	char *identificadorPosta = malloc(2);
 	identificadorPosta[0] = identificador_variable;
 	identificadorPosta[1] = 0;
 	int *aux = dictionary_get(diccionarioDeVariables, identificadorPosta);
-	printf("Y la direccion obtenida es %d\n", *aux);
+	log_debug(logs, "La dirección obtenida es %d", *aux);
+//	printf("Y la direccion obtenida es %d\n", *aux);
 	return (aux == NULL ) ? -1 : *aux;
 }
 //
 t_valor_variable dereferenciar(t_puntero direccion_variable) { //Chequeada
-	printf("llame dereferenciar con direccion = %d\n", direccion_variable);
+	log_debug(logs, "Dereferenciado con dirreción = %d", direccion_variable);
+	//printf("llame dereferenciar con direccion = %d\n", direccion_variable);
 
 	char *aux = solicitarBytesAUMV(pcbEnUso->segmento_Stack,
 			/*pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack +*/ direccion_variable + 1, 4);
 	t_valor_variable valor;
 	memcpy(&valor, aux, 4);
-	printf("y el valor obtenido es = %d\n", valor);
+	log_debug(logs, "El valor obtenido es= %d", valor);
+	//printf("y el valor obtenido es = %d\n", valor);
 	free(aux);
 	return valor;
 }
 ////
 void asignar(t_puntero direccion_variable, t_valor_variable valor) { //Chequeada
-	printf("llame asignar con direccion = %d y valor = %d\n",
-			direccion_variable, valor);
+	log_debug(logs, "Llamé asignar con dirección= %d y valor= %d", direccion_variable, valor);
+//	printf("llame asignar con direccion = %d y valor = %d\n",
+//			direccion_variable, valor);
 	if (direccion_variable<pcbEnUso->cursor_Stack-pcbEnUso->segmento_Stack){
 		direccion_variable+=pcbEnUso->cursor_Stack-pcbEnUso->segmento_Stack;
 	}
 	enviarBytesAUMV(pcbEnUso->segmento_Stack,
 			/*pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack
 					+*/ direccion_variable + 1, 4, &valor);
-	printf("el valor asignado es %d\n", valor);
+	log_debug(logs, "El valor asignado es %d", valor);
+//	printf("el valor asignado es %d\n", valor);
 }
 //
 t_valor_variable obtenerValorCompartida(t_nombre_compartida variable) {
@@ -406,7 +416,7 @@ void llamarConRetorno(t_nombre_etiqueta etiqueta, t_puntero donde_retornar) {
 	irAlLabel(etiqueta);
 }
 void finalizar(void) {
-	log_info(logs, "Ejecute finalizar");
+	log_info(logs, "Ejecuté finalizar");
 	if (pcbEnUso->cursor_Stack == pcbEnUso->segmento_Stack) {
 		printf("El programa deberia finalizar asi noma'\n"); //FIXME
 		programaFinalizo = 1;
@@ -463,7 +473,7 @@ void imprimir(t_valor_variable valor_mostrar) {
 	log_info(logs, "Ejecute imprimir con %d", valor_mostrar);
 	/*enviarConRazon(socketKernel, logs, IMPRIMIR,
 	 serializar2(crear_nodoVar(&valor_mostrar, sizeof(t_valor_variable)),
-	 0));*/
+	 0));*///TODO
 }
 void imprimirTexto(char* texto) {
 	log_info(logs, "Ejecute imprimirTexto con %s", texto);
@@ -477,7 +487,7 @@ void imprimirTexto(char* texto) {
 //	send(socketKernel, paquete->msj, paquete->tamano, 0);
 //	//Quizas deberiamos esperar la respuesta
 	/*	enviarConRazon(socketKernel, logs, IMPRIMIR_TEXTO,
-	 serializar2(crear_nodoVar(texto, strlen(texto) + 1), 0));*/
+	 serializar2(crear_nodoVar(texto, strlen(texto) + 1), 0));*///TODO
 }
 void entradaSalida(t_nombre_dispositivo dispositivo, int tiempo) {
 	log_info(logs, "Ejecute entradaSalida con %s", dispositivo);
@@ -496,7 +506,7 @@ void entradaSalida(t_nombre_dispositivo dispositivo, int tiempo) {
 	 enviarConRazon(socketKernel, logs, SALIO_POR_IO,
 	 serializar2(crear_nodoVar(paquetePCB->msj, tamano),
 	 crear_nodoVar(dispositivo, strlen(dispositivo) + 1),
-	 crear_nodoVar(&tiempo, 4), 0));*/
+	 crear_nodoVar(&tiempo, 4), 0));*///TODO
 }
 void wait(t_nombre_semaforo identificador_semaforo) {
 	log_info(logs, "Ejecute wait con %s", identificador_semaforo);
@@ -523,6 +533,7 @@ void wait(t_nombre_semaforo identificador_semaforo) {
 					crear_nodoVar(identificador_semaforo,
 							strlen(identificador_semaforo) + 1), 0));
 	char *respuesta = recibirConRazon(socketKernel, &razon, logs);
+	//TODO tiene razón el hijo de puta del warning.
 	if (razon == DESALOJAR_PROGRAMA) {
 		//DESALOJAR();
 	} else {
@@ -546,5 +557,5 @@ void signalPropia(t_nombre_semaforo identificador_semaforo) {
 	/*	enviarConRazon(socketKernel, logs, SIGNAL,
 	 serializar2(
 	 crear_nodoVar(identificador_semaforo,
-	 strlen(identificador_semaforo) + 1), 0));*/
+	 strlen(identificador_semaforo) + 1), 0));*///TODO
 }

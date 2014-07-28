@@ -41,7 +41,7 @@ int main(int arc, char **argv) {
 	pcbEnUso = malloc(sizeof(t_PCB));
 	proceso_terminado = 0;
 	proceso_bloqueado = 0;
-	logs = log_create("logCPU", "CPU", true, LOG_LEVEL_INFO);
+	logs = log_create("logCPU", "CPU", true, LOG_LEVEL_TRACE);
 	t_config *config = config_create(argv[1]);
 	obtenerDatosConfig(config);
 
@@ -149,12 +149,13 @@ int main(int arc, char **argv) {
 			char *literalInstruccion = solicitarBytesAUMV(
 					pcbEnUso->segmento_Codigo, ubInstruccion, largoInstruccion);
 			literalInstruccion[largoInstruccion] = 0;
-			log_info(logs, "El literal es juancito: %s", literalInstruccion);
+			log_debug(logs, "El literal es juancito: %s", literalInstruccion);
 			analizadorLinea(strdup(literalInstruccion), &funciones_Ansisop,
 					&funciones_kernel);
 			pcbEnUso->program_Counter++;
 			lineasAnalizadas++;
-			printf("ESTA ES LA INSTRUCCION %d\n", lineasAnalizadas);
+			log_info(logs, "ESTA ES LA INSTRUCCION %d", lineasAnalizadas);
+			//printf("ESTA ES LA INSTRUCCION %d\n", lineasAnalizadas);
 		}
 		enviarConRazon(socketKernel, logs, razon, serializarPCB(pcbEnUso));
 		free(pcbEnUso);
