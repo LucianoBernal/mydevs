@@ -39,6 +39,8 @@ int main(int argc, char** argv) {
 	sem_init(&grado_Multiprogramacion, 0, multiprogramacion);
 	sem_init(&colaReadyMutex, 0, 1);
 	sem_init(&vacioReady, 0, 0);
+	sem_init(&victimasMutex,0,1);
+	victimas=list_create();
 	idUltimaCPUDesconectada=-1;
 	socketUMV = conectarCliente(ip_UMV, puerto_UMV, logKernel);
 	if (send(socketUMV, "Kernel", 7, 0) == -1) {

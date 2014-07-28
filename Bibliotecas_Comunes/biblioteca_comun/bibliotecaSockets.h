@@ -11,6 +11,13 @@
 #include <commons/log.h>
 #include "Serializacion.h"
 
+typedef struct{
+	char *mensaje;
+	int size;
+} t_buffer;
+
+
+t_buffer *recibirConBuffer(int , int *, t_log *);
 int crearServidor(char* puerto, t_log* logs);
 int aceptarConexion(int socket, t_log* logs);
 int conectarCliente (char* ip, char* puerto, t_log* logs);

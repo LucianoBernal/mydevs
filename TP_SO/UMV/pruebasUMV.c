@@ -377,6 +377,13 @@ void destruirTodosLosSegmentos() {
 	list_destroy_and_destroy_elements(
 			((t_tablaProceso *) list_get(listaProcesos,
 					buscarPid(procesoActivo())))->tabla, (void*) tsegm_destroy);
+	free(((t_tablaProceso *) list_get(listaProcesos,
+			buscarPid(procesoActivo()))));
+	bool tienePidActivo(t_tablaProceso *self){
+		return self->pid==buscarPid(procesoActivo());
+	}
+	list_remove_and_destroy_by_condition(listaProcesos, (void*)tienePidActivo, (void*)free);
+	cantProcesosActivos--;
 }
 
 void conseguirDeArchivo(int *p_tamanoUMV) {

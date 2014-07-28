@@ -14,6 +14,7 @@
 
 #define BACKLOG 10
 
+
 int enviarConRazon(int socket, t_log* logs, int razon, t_paquete *pack){
 	if (pack==NULL){
 		pack=malloc(sizeof(t_paquete));
@@ -22,13 +23,13 @@ int enviarConRazon(int socket, t_log* logs, int razon, t_paquete *pack){
 	}
 	int tamano=pack->tamano; //Esta linea les puede sonar a boludo pero es super necesaria
 	t_paquete *header=serializar2(crear_nodoVar(&razon, 4), crear_nodoVar(&tamano, 4), 0);
-	if(send(socket, header->msj, header->tamano, 0)==-1){
+	if(send(socket, header->msj, header->tamano, 0)<=0){
 		log_error(logs, "La cabecera no se pudo enviar correctamente");
 		close(socket);
 		return 0;
 	}
 	if (pack->tamano!=4&&pack->tamano!=0){
-		if (send(socket, pack->msj, pack->tamano, 0)==-1){
+		if (send(socket, pack->msj, pack->tamano, 0)<=0){
 			log_error(logs, "El mensaje no se pudo enviar correctamente");
 			close(socket);
 			return 0;
@@ -40,28 +41,57 @@ int enviarConRazon(int socket, t_log* logs, int razon, t_paquete *pack){
 	free(pack);
 	return 1;
 }
-
-char *recibirConRazon(int socket, int *p_razon, t_log *logs){
+t_buffer *recibirConBuffer(int socket, int *p_razon, t_log *logs){
+	t_buffer *aux=malloc(sizeof(t_buffer));
+	int valread;
 	char *header=malloc(16);
-	if (recv(socket, header, 16, MSG_WAITALL)<=0){
-		log_error(logs, "Hubo un error al recibir la cabecera");
+	if ((valread=recv(socket, header, 16, MSG_WAITALL))<=0){
+		if(valread){log_error(logs, "Hubo un error al recibir la cabecera");
+		}
 		close(socket);
 		return NULL;
 	}
 	int tamano;
 	desempaquetar2(header, p_razon, &tamano, 0);
+	aux->size=tamano;
 	//free(header);
 	if (tamano!=4&&tamano!=0){
 		char *msj=malloc(tamano);
-		if(recv(socket, msj, tamano, MSG_WAITALL)<=0){
-			log_error(logs, "Hubo un error al recibir el mensaje");
+		aux->mensaje=msj;
+		if((valread=recv(socket, msj, tamano, MSG_WAITALL))<=0){
+			if(valread){log_error(logs, "Hubo un error al recibir la cabecera");
+					}
 			close(socket);
 			return NULL;
 		}
-		return msj;
+		return aux;
 	}else{
 		return NULL;
 	}
+}
+char *recibirConRazon(int socket, int *p_razon, t_log *logs){
+	t_buffer *aux=recibirConBuffer(socket, p_razon, logs);
+	return aux==NULL?NULL:aux->mensaje;
+//	char *header=malloc(16);
+//	if (recv(socket, header, 16, MSG_WAITALL)<=0){
+//		log_error(logs, "Hubo un error al recibir la cabecera");
+//		close(socket);
+//		return NULL;
+//	}
+//	int tamano;
+//	desempaquetar2(header, p_razon, &tamano, 0);
+//	//free(header);
+//	if (tamano!=4&&tamano!=0){
+//		char *msj=malloc(tamano);
+//		if(recv(socket, msj, tamano, MSG_WAITALL)<=0){
+//			log_error(logs, "Hubo un error al recibir el mensaje");
+//			close(socket);
+//			return NULL;
+//		}
+//		return msj;
+//	}else{
+//		return NULL;
+//	}
 }
 
 int crearServidor(char* puerto, t_log* logs){

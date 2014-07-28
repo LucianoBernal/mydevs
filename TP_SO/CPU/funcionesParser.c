@@ -420,6 +420,7 @@ void finalizar(void) {
 	if (pcbEnUso->cursor_Stack == pcbEnUso->segmento_Stack) {
 		printf("El programa deberia finalizar asi noma'\n"); //FIXME
 		programaFinalizo = 1;
+	//	enviarConRazon(socketKernel, logs, SALIDA_NORMAL, serializarPCB(pcbEnUso));
 	} else {
 		char *p_programCounter = solicitarBytesAUMV(pcbEnUso->segmento_Stack,
 				pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack - 4, 4);

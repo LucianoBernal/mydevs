@@ -204,7 +204,7 @@ void moverAColaExit(t_PCB* pcb, int idCPU) {
 
 void moverAColaExityLiberarCPU(t_PCB* pcb, int idCPU) {
 	moverAColaExit(pcb, idCPU);
-	seLiberoUnaCPU(idCPU);
+	//seLiberoUnaCPU(idCPU);
 }
 
 void programaSalioPorBloqueo(t_PCB* pcb, int tiempo, char* dispositivo,
@@ -259,10 +259,10 @@ bool tieneID(t_estructuraCPU* estructura) {
 void seDesconectoCPU(int idCPU) { //TODO
 	if (!estaLibreID(idCPU)) {
 		int idPrograma = buscarIDPrograma(idCPU);
-		printf("idPrograma:%d \n", idPrograma);
+	printf("idPrograma:%d \n", idPrograma);
 		int sd = obtener_sd_Programa(idPrograma);
 		printf("SD:%d\n", sd);
-		notificar_Programa(sd, "La CPU se desconectó, programa abortado");
+		//notificar_Programa(sd, "La CPU se desconectó, programa abortado");
 		bool esElpcb(t_PCB* pcbAcomparar) {
 			return pcbAcomparar->program_id == idPrograma;
 		}

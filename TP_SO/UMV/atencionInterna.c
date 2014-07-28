@@ -66,27 +66,6 @@ void* atencionInterna(void* sinParametro) {
 				cantCpu++;
 			}
 
-//			//CODIGO PELIGROSO E
-//			char buffer[1025];  //data buffer de 1K
-//			//inicializo set
-//			fd_set readfds;
-//			struct sockaddr_in address;
-//			int addrlen;
-//			if (FD_ISSET( socketCPU , &readfds)) {
-//				//Verifica si se cerro, y ademas lee el mensaje recibido
-//				if ((valread = read(socketCPU, buffer, 1024)) == 0) {
-//					//Algun programa se desconecto, obtengo la informacion
-//					getpeername(socketCPU, (struct sockaddr*) &address,
-//							(socklen_t*) &addrlen);
-//					log_info(logger,"Una cpu se cerro: socket fd: %d , ip: %s , puerto: %d \n",socketCPU,
-//							inet_ntoa(address.sin_addr),
-//							ntohs(address.sin_port));
-//					//Cierra el socket y marca 0 el bit de ocupado
-//					close(socketCPU);
-//				}
-//			}
-//			//CODIGO PELIGROSO T
-
 		} else {
 			close(*socketCPU);
 			free(socketCPU);
@@ -108,7 +87,7 @@ void atencionKernel(int* socketKernel) {
 
 		j++;
 		char *mensaje = recibirConRazon(*socketKernel, razon, logger);
-		if(mensaje==NULL){
+		if((mensaje==NULL) && (*razon!=DESTRUIR_SEGMENTOS)){
 			log_error(logger,"Se desconecto abruptamente el Kernel, sd: %d",*socketKernel);
 			break;//el close lo hace recibirConRazon
 		}
@@ -217,6 +196,7 @@ void atencionKernel(int* socketKernel) {
 }
 void atencionCpu(int *socketCPU) {
 	log_info(logger, "Entró a atencionCpu");
+	int fin=0;
 
 	int procesoActivo = 0, parametro[4];
 
@@ -273,8 +253,13 @@ void atencionCpu(int *socketCPU) {
 //				crear_nodoVar(&paquete->tamano, 4), 0);
 //		send(*socketCPU, header->msj, 16, 0);
 //		send(*socketCPU, paquete->msj, paquete->tamano, 0);
-		enviarConRazon(*socketCPU, logger, RESPUESTA_A_SOLICITAR_BUFFER, serializar2(
-				crear_nodoVar(respuesta, *tamanoMensaje), 0));
+//		log_debug(logger,"VOY A MORIRR");
+//		usleep(1000000);
+		if(!enviarConRazon(*socketCPU, logger, RESPUESTA_A_SOLICITAR_BUFFER, serializar2(
+				crear_nodoVar(respuesta, *tamanoMensaje), 0))){
+			fin=1;
+			break;
+		}
 		free(respuesta);
 		log_debug(logger, "Terminé solicitar a umv, de la CPU: %d",*socketCPU);
 		break;
@@ -316,8 +301,10 @@ void atencionCpu(int *socketCPU) {
 		log_debug(logger, "Terminé cambiar proceso activo, de la CPU: %d",*socketCPU);
 		break;
 	}
-
 	free(mensaje);
+	if(fin){
+		break;
+	}
 	}
 	free(tamanoMensaje);
 	free(razon);

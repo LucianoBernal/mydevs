@@ -31,17 +31,21 @@ extern char* puerto_CPU;
 extern t_log *logKernel;
 extern int quantum;
 extern int retardo;
+extern sem_t victimasMutex;
+extern t_list* victimas;
+
 #define TRUE   1
 #define FALSE  0
+
 
 void* atencionCPUs(void* sinParametro) {
 	int master_socket, addrlen, new_socket, client_socket[30], max_clients = 30,
 			activity, i, sd, primer_CPU = 1;
 	int max_sd;
 	struct sockaddr_in address;
-	char *header = malloc(16);
+	//char *header = malloc(16);
 	int *razon = malloc(sizeof(int));
-	int *tamanoMensaje = malloc(4);
+	//int *tamanoMensaje = malloc(4);
 
 	//inicializo set
 	fd_set readfds;
@@ -156,8 +160,10 @@ void* atencionCPUs(void* sinParametro) {
 			sd = client_socket[i];
 
 			if (FD_ISSET( sd , &readfds)) {
+				//t_buffer* mensaje;
+				char* mensaje;
 				//Verifica si se cerro, y ademas lee el mensaje recibido
-				if (recv(sd, (void*) header, 16, 0) <= 0) {
+				if ((mensaje=recibirConRazon(sd,razon,logKernel))==NULL/*recv(sd, (void*) header, 16, 0) <= 0*/) {
 					//Alguna CPU se desconecto, obtengo la informacion
 					getpeername(sd, (struct sockaddr*) &address,
 							(socklen_t*) &addrlen);
@@ -179,10 +185,10 @@ void* atencionCPUs(void* sinParametro) {
 				}
 				//Algun socket me envio algo, responder
 				else {
-					desempaquetar2(header, razon, tamanoMensaje, 0);
-					char *mensaje = malloc(*tamanoMensaje);
-					recv(sd, (void*) mensaje, *tamanoMensaje, MSG_WAITALL);
-					t_PCB* pcb;
+//					desempaquetar2(header, razon, tamanoMensaje, 0);
+//					char *mensaje = malloc(*tamanoMensaje);
+//					recv(sd, (void*) mensaje, *tamanoMensaje, MSG_WAITALL);
+					t_PCB* pcb=malloc(sizeof(t_PCB));
 					int tiempo, valor, tamano;
 					char* dispositivoIO;
 					char* texto;
@@ -194,7 +200,9 @@ void* atencionCPUs(void* sinParametro) {
 						programaSalioPorQuantum(pcb, sd);
 						break;
 					case SALIDA_NORMAL: //El Programa termino normalmente
-						desempaquetar2(mensaje, &pcb, 0);
+						log_info(logKernel,"Aca estoy");
+						desempaquetarPCB(pcb, mensaje);
+						log_info(logKernel,"Aca NO estoy");
 						moverAColaExityLiberarCPU(pcb, sd);
 						break;
 					case SALIDA_POR_BLOQUEO: //El Programa salio por bloqueo
@@ -237,11 +245,13 @@ void* atencionCPUs(void* sinParametro) {
 					free(texto);
 					free(semaforo);
 					free(id);
-					free(mensaje);
+					free(pcb);
+
 					// aca va el switch para saber porque volvio(pero no preguntas por
 					//desconexion, eso ya se sabe de antes. MMM igual ojo, quizas si
 					//porque quizas convenga que el que el que haga el close se el kernel
 				}
+				free(mensaje);
 			}
 		}
 	}
