@@ -31,17 +31,21 @@ extern char* puerto_CPU;
 extern t_log *logKernel;
 extern int quantum;
 extern int retardo;
+extern sem_t victimasMutex;
+extern t_list* victimas;
+
 #define TRUE   1
 #define FALSE  0
 
+
 void* atencionCPUs(void* sinParametro) {
 	int master_socket, addrlen, new_socket, client_socket[30], max_clients = 30,
-			activity, i, valread, sd, primer_CPU = 1;
+			activity, i, sd, primer_CPU = 1;
 	int max_sd;
 	struct sockaddr_in address;
-//	int* tamano = malloc(4);
-
-	char buffer[1025];  //data buffer of 1K
+	//char *header = malloc(16);
+	int *razon = malloc(sizeof(int));
+	//int *tamanoMensaje = malloc(4);
 
 	//inicializo set
 	fd_set readfds;
@@ -107,7 +111,7 @@ void* atencionCPUs(void* sinParametro) {
 			}
 			//handshake
 			char*cpu = malloc(4);
-			if ((valread = recv(new_socket, cpu/*buffer*/, 4, 0)) < 0) {
+			if ((recv(new_socket, cpu/*buffer*/, 4, 0)) <= 0) {
 				log_error(logKernel, "Error en el recive del handshake");
 				close(new_socket);
 			}
@@ -145,6 +149,8 @@ void* atencionCPUs(void* sinParametro) {
 				}
 
 				nuevaCPU(new_socket); //TODO es una nueva CPU
+				free(quantum2);
+				free(retardo2);
 
 			}
 		}
@@ -154,8 +160,12 @@ void* atencionCPUs(void* sinParametro) {
 			sd = client_socket[i];
 
 			if (FD_ISSET( sd , &readfds)) {
+				//t_buffer* mensaje;
+				char* mensaje;
+
+				puts("voy a recibir algo");
 				//Verifica si se cerro, y ademas lee el mensaje recibido
-				if ((valread = read(sd, buffer, 1024)) == 0) { //FIXME
+				if ((mensaje=recibirConRazon(sd,razon,logKernel))==NULL/*recv(sd, (void*) header, 16, 0) <= 0*/) {
 					//Alguna CPU se desconecto, obtengo la informacion
 					getpeername(sd, (struct sockaddr*) &address,
 							(socklen_t*) &addrlen);
@@ -177,33 +187,40 @@ void* atencionCPUs(void* sinParametro) {
 				}
 				//Algun socket me envio algo, responder
 				else {
-					char *header = malloc(16);
-//					int resultado;
-					int *razon = malloc(sizeof(int));
-					int *tamanoMensaje = malloc(4);
-					recv(sd, (void*) header, 16, 0);
-					desempaquetar2(header, razon, tamanoMensaje, 0);
-					char *mensaje = malloc(*tamanoMensaje);
-					recv(sd, (void*) mensaje, *tamanoMensaje, MSG_WAITALL);
-					t_PCB* pcb;
+//					desempaquetar2(header, razon, tamanoMensaje, 0);
+//					char *mensaje = malloc(*tamanoMensaje);
+//					recv(sd, (void*) mensaje, *tamanoMensaje, MSG_WAITALL);
+					t_PCB* pcb=malloc(sizeof(t_PCB));
+					char* pcbEmpaquetado=malloc(sizeof(t_PCB)+40);
 					int tiempo, valor, tamano;
 					char* dispositivoIO;
 					char* texto;
 					char* semaforo;
 					char* id;
+					puts("recibi algo");
 					switch (*razon) {
 					case SALIDA_POR_QUANTUM: //El Programa salio del CPU por quantum
-						desempaquetar2(mensaje, &pcb, 0);
+						puts("Salio por quantum");
+						desempaquetarPCB(pcb, mensaje);
 						programaSalioPorQuantum(pcb, sd);
 						break;
 					case SALIDA_NORMAL: //El Programa termino normalmente
-						desempaquetar2(mensaje, &pcb, 0);
+						log_info(logKernel,"Aca estoy");
+						desempaquetarPCB(pcb, mensaje);
+						log_info(logKernel,"Aca NO estoy");
 						moverAColaExityLiberarCPU(pcb, sd);
 						break;
 					case SALIDA_POR_BLOQUEO: //El Programa salio por bloqueo
-						desempaquetar2(mensaje, &pcb, &tiempo, &dispositivoIO,
-								0);
+//						desempaquetar2(mensaje, &pcb, &tiempo, &dispositivoIO,
+//								0);
+						desempaquetar2(mensaje, pcbEmpaquetado, &tiempo, dispositivoIO, 0);
+						desempaquetarPCB(pcb, pcbEmpaquetado);
 						programaSalioPorBloqueo(pcb, tiempo, dispositivoIO, sd);
+						break;
+					case SALIDA_POR_SEMAFORO:
+//						desempaquetar2(mensaje, pcbEmpaquetado, semaforo, 0);
+//						desempaquetarPCB(pcb, pcbEmpaquetado);
+//
 						break;
 					case SIGUSR_1: //la CPU se desconectó CON SIGUSR
 						desempaquetar2(mensaje, &pcb, 0);
@@ -236,14 +253,21 @@ void* atencionCPUs(void* sinParametro) {
 						sc_obtener_valor(id, sd);
 						break;
 					}
+					free( dispositivoIO);
+					free(texto);
+					free(semaforo);
+					free(id);
+					free(pcb);
 
 					// aca va el switch para saber porque volvio(pero no preguntas por
 					//desconexion, eso ya se sabe de antes. MMM igual ojo, quizas si
 					//porque quizas convenga que el que el que haga el close se el kernel
 				}
+				free(mensaje);
 			}
 		}
 	}
+	free(message);
 	return 0;
 }
 

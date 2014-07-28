@@ -20,7 +20,9 @@ char *etiquetas;
 t_PCB *pcbEnUso;
 t_dictionary *diccionarioDeVariables;
 t_log *logs;
-int programaFinalizo;
+int programaFinalizado;
+int programaBloqueado;
+int programaAbortado;
 int cpu_ocupada = 0;
 
 void obtenerDatosConfig(t_config *config) {
@@ -41,7 +43,7 @@ int main(int arc, char **argv) {
 	pcbEnUso = malloc(sizeof(t_PCB));
 	proceso_terminado = 0;
 	proceso_bloqueado = 0;
-	logs = log_create("logCPU", "CPU", true, LOG_LEVEL_INFO);
+	logs = log_create("logCPU", "CPU", true, LOG_LEVEL_TRACE);
 	t_config *config = config_create(argv[1]);
 	obtenerDatosConfig(config);
 
@@ -74,40 +76,6 @@ int main(int arc, char **argv) {
 	} else {
 		log_error(logs, "El handshake con el Kernel salió mal.");
 	}
-//	int pidMancodeado=8331;
-//	enviarConRazon(socketUMV, logs, CAMBIAR_PROCESO_ACTIVO, serializar2(crear_nodoVar(&pidMancodeado, 4), 0));
-//	int base, offset, tamano;
-//	char*mensaje=malloc(50);
-//	while (strncmp(mensaje, "exit", 4)){
-//		if (!strncmp(mensaje, "enviar", 6)){
-//			printf("Ingrese base:");
-//			scanf("%d", &base);
-//			printf("\nIngrese offset:");
-//			scanf("%d", &offset);
-//			printf("\nIngrese tamano:");
-//			scanf("%d", &tamano);
-//			scanf("%s", mensaje);
-//			enviarBytesAUMV(base, offset, tamano, mensaje);
-//			printf("\nlo enviado fue: %s\n", mensaje);
-//		}else if(!strncmp(mensaje, "solicitar", 9)){
-//			printf("Ingrese base:");
-//			scanf("%d", &base);
-//			printf("Ingrese offset:");
-//			scanf("%d", &offset);
-//			printf("Ingrese tamano:");
-//			scanf("%d", &tamano);
-//			mensaje=solicitarBytesAUMV(base, offset, tamano);
-//			printf("mensaje=%s\n", mensaje);
-//			if (mensaje==NULL){
-//				mensaje=malloc(40);
-//			}
-//		}else{
-//			printf("\nLo que ingresaste no coincide, si queres salir manda exit m3n\n");
-//		}
-//		fflush(stdin);
-//		gets(mensaje);
-//	}
-//
 
 	sigusr1_activado = 1;
 	if (signal(SIGUSR1, sig_handler) == SIG_ERR )
@@ -127,7 +95,6 @@ int main(int arc, char **argv) {
 		desempaquetarPCB(pcbEnUso, pcbEmpaquetado);
 		free(mensaje);
 		free(pcbEmpaquetado);
-
 		int pid = pcbEnUso->program_id;
 		enviarConRazon(socketUMV, logs, CAMBIAR_PROCESO_ACTIVO,
 				serializar2(crear_nodoVar(&pid, 4), 0));
@@ -136,12 +103,12 @@ int main(int arc, char **argv) {
 //		actualizarDiccionarioDeVariables(pcb);
 		recuperarDiccionario();
 		int lineasAnalizadas = 0;
-		int programaBloqueado = 0;
-		programaFinalizo = 0;
+		programaBloqueado = 0;
+		programaFinalizado = 0;
+		programaAbortado = 0;
 		int ubInstruccion, largoInstruccion;
-		while (/*lineasAnalizadas < quantumDeKernel&& */!programaBloqueado
-				&& !programaFinalizo) {
-			//Si empieza en la instruccion 0 deberia ser progra_Counter-1 ???
+		while (lineasAnalizadas < quantumDeKernel&& !programaBloqueado
+				&& !programaFinalizado && !programaAbortado) {
 			char *msjInstruccion = solicitarBytesAUMV(
 					pcbEnUso->indice_de_Codigo, pcbEnUso->program_Counter * 8,
 					8);
@@ -150,15 +117,31 @@ int main(int arc, char **argv) {
 			char *literalInstruccion = solicitarBytesAUMV(
 					pcbEnUso->segmento_Codigo, ubInstruccion, largoInstruccion);
 			literalInstruccion[largoInstruccion] = 0;
-			log_info(logs, "El literal es juancito: %s", literalInstruccion);
+			log_debug(logs, "El literal es juancito: %s", literalInstruccion);
 			analizadorLinea(strdup(literalInstruccion), &funciones_Ansisop,
 					&funciones_kernel);
 			pcbEnUso->program_Counter++;
 			lineasAnalizadas++;
-			printf("ESTA ES LA INSTRUCCION %d\n", lineasAnalizadas);
+			log_info(logs, "ESTA ES LA INSTRUCCION %d", lineasAnalizadas);
+			//printf("ESTA ES LA INSTRUCCION %d\n", lineasAnalizadas);
 		}
+		/*
 		enviarConRazon(socketKernel, logs, razon, serializarPCB(pcbEnUso));
 		free(pcbEnUso);
+		*/
+		if (programaBloqueado){
+			log_debug(logs, "El programa salió por bloqueo");
+		}
+		if (programaAbortado){
+			log_debug(logs, "El programa aborto");
+		}
+		if (programaFinalizado){
+			log_debug(logs, "El programa finalizo");
+		}
+		printf("Sali del while, lineasAnalizadas=%d y quantumDeKernel=%d\n", lineasAnalizadas, quantumDeKernel);
+		if (lineasAnalizadas==quantumDeKernel){
+			enviarConRazon(socketUMV, logs, SALIDA_POR_QUANTUM, serializarPCB(pcbEnUso));
+		}
 	}
 	return 0;
 }

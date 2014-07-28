@@ -33,7 +33,8 @@
 #include <time.h>
 #include "PCP.h"
 
-
+sem_t victimasMutex;
+t_list* victimas;
 int idUltimaCPUDesconectada;
 t_dictionary* diccionarioSemaforos;
 sem_t diccionarioSemaforosMutex;

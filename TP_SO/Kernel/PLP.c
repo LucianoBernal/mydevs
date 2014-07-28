@@ -172,7 +172,6 @@ int crearSegmentos_Memoria(t_metadata_program *metadata, t_PCB *pcb,
 void escribir_en_Memoria(t_metadata_program * metadata, t_PCB *pcb,
 		char *literal, int tamanoLiteral) {
 	int *offset = malloc(sizeof(int));
-	int razon;
 	*offset = 0;
 	printf("Estoy en escribir memoria\n");
 	int segmentoCodigo = pcb->segmento_Codigo;
@@ -194,9 +193,6 @@ void escribir_en_Memoria(t_metadata_program * metadata, t_PCB *pcb,
 			serializar2(crear_nodoVar(&indiceEtiquetas, 4),
 					crear_nodoVar(offset, 4), crear_nodoVar(&etiquetasSize, 4),
 					crear_nodoVar(metadata->etiquetas, etiquetasSize), 0));
-	enviarConRazon(socketUMV, logKernel, CONFIRMACION, NULL);
-	char *mensaje=recibirConRazon(socketUMV, &razon, logKernel);
-	if (razon==CONFIRMACION) printf("SALIO TODO OK\n");
 }
 
 void agregar_En_Diccionario(int pid, int sd) {
@@ -325,11 +321,11 @@ void* manejoColaExit(void* sinParametros) {
 		log_info(logKernel, "Sacando programa de cola exit,con pid: %d",
 				pcb->program_id);
 		mostrar_todas_Las_Listas();
-//		sem_wait(&mutexProcesoActivo);                   FIXME
-//		cambiar_Proceso_Activo(pcb->program_id);    FIXME
-//		solicitar_Destruccion_Segmentos();	FIXME
-//		sem_post(&mutexProcesoActivo); FIXME
-		enviar_Mensaje_Final(pcb->program_id);
+		sem_wait(&mutexProcesoActivo);                //   FIXME
+		cambiar_Proceso_Activo(pcb->program_id);   // FIXME
+	//	solicitar_Destruccion_Segmentos();	//FIXME
+		sem_post(&mutexProcesoActivo); //FIXME
+	//	enviar_Mensaje_Final(pcb->program_id);
 		cerrar_conexion(pcb->program_id);
 		liberar_nodo_Diccionario_PIDySD(pcb->program_id);
 		liberar_numero(pcb->program_id);
@@ -348,16 +344,20 @@ void liberar_nodo_Diccionario_PIDySD(int pid){
 }
 
 void solicitar_Destruccion_Segmentos() {
-	codigos_Mensajes razon;
-	razon = DESTRUIR_SEGMENTOS;
-	int *tamanoMensaje = malloc(sizeof(int));
-	*tamanoMensaje = 4;
-	t_paquete * aSerializarHeader = (t_paquete *) serializar2(
-			crear_nodoVar(&razon, 4), crear_nodoVar(tamanoMensaje, 4), 0);
-	send(socketUMV, aSerializarHeader->msj, 16, 0);
-	send(socketUMV, (void*) tamanoMensaje, *tamanoMensaje, 0); //ES BASURA ES PARA QUE ANDE NOMAS
-	free(tamanoMensaje);
-	free(aSerializarHeader);
+
+	printf("algo %d\n", enviarConRazon(socketUMV, logKernel, DESTRUIR_SEGMENTOS,
+				serializar2(crear_nodoVar(&socketUMV, 4), 0)));
+
+//	codigos_Mensajes razon;
+//	razon = DESTRUIR_SEGMENTOS;
+//	int *tamanoMensaje = malloc(sizeof(int));
+//	*tamanoMensaje = 4;
+//	t_paquete * aSerializarHeader = (t_paquete *) serializar2(
+//			crear_nodoVar(&razon, 4), crear_nodoVar(tamanoMensaje, 4), 0);
+//	send(socketUMV, aSerializarHeader->msj, 16, 0);
+//	send(socketUMV, (void*) tamanoMensaje, *tamanoMensaje, 0); //ES BASURA ES PARA QUE ANDE NOMAS
+//	free(tamanoMensaje);
+//	free(aSerializarHeader);
 }
 
 void cambiar_Proceso_Activo(int progid) {
@@ -382,7 +382,7 @@ int obtener_sd_Programa(int pid) {
 }
 
 void notificar_Programa(int sd, char* message) {
-	int* tamano = malloc(4);
+/*	int* tamano = malloc(4);
 	*tamano = strlen(message);
 	if (send(sd, tamano, 4, 0) == 0) {
 		perror("send");
@@ -391,11 +391,15 @@ void notificar_Programa(int sd, char* message) {
 			perror("send");
 		}
 	}
+
 	free(tamano);
+*/
+
 }
 
 void cerrar_conexion(int pid) {
 	int sd = obtener_sd_Programa(pid);
+	log_info(logKernel,"Cerrando Conexion con Programa, sd:%d",sd);
 	close(sd);
 
 }
@@ -410,4 +414,16 @@ void mostrar_todas_Las_Listas() {
 	mostrarColaDeProcesosFinalizados();
 	sem_post(&mostarColasMutex);
 
+}
+
+int obtener_pid_de_un_sd(int sd){
+	int tamanoDiccionario;
+	int i;
+	sem_wait(&PidSD_Mutex);
+	tamanoDiccionario=dictionary_size(pidYSockets);
+	for(i=0;i<tamanoDiccionario;i++){
+
+	}
+	sem_post(&PidSD_Mutex);
+	return 0;
 }

@@ -12,6 +12,8 @@
 #include "multiplexorScripts_interfaz.h"
 
 
+extern sem_t victimasMutex;
+extern t_list* victimas;
 extern sem_t mostarColasMutex;
 extern int socketUMV;
 extern t_log *logKernel;

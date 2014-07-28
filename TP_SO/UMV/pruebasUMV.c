@@ -93,7 +93,7 @@ void agregarProceso(int pid, char tipo) {
 		cantProcesosActivos++;
 		pthread_mutex_unlock(&mutexCantProcActivos);
 	} else {
-		printf("El numero pid ya esta en uso (?");
+		//printf("El numero pid ya esta en uso (?");
 		log_error(logger,"El número pid ya está en uso.");//TODO fijarse.
 	}
 }
@@ -121,7 +121,7 @@ int crearSegmento(int tamano) {
 	if (proceso->tabla == NULL )
 		proceso->tabla = list_create();
 	list_add(proceso->tabla, nuevoSegmento);
-	log_info(logger,"Se creó un segmento de base %d y tamano %d\n",nuevoSegmento->inicioLogico, nuevoSegmento->tamano);
+	log_info(logger,"Se creó un segmento de base %d y tamano %d",nuevoSegmento->inicioLogico, nuevoSegmento->tamano);
 	return nuevoSegmento->inicioLogico;
 }
 
@@ -206,12 +206,12 @@ void compactarMemoria() {
 	}
 	list_iterate(listaSegmentosOrdenada,
 			(void*) _cambiar_posiciones_chetamente);
-	printf("Compacte\n");
 	log_debug(logger,"Memoria compactada.");
 	//list_destroy_and_destroy_elements(listaSegmentosOrdenada, (void*)free);
 }
 
 void *obtenerInicioReal(int tamano) {
+	etiquetacompactar : ;
 	t_list *lista_mascapita2 = list_create();
 
 	t_list *lista_mascapita = obtenerEspaciosDisponibles();
@@ -221,19 +221,19 @@ void *obtenerInicioReal(int tamano) {
 	lista_mascapita2 = list_filter(lista_mascapita,
 			(void*) _tiene_tamano_suficiente);
 	if (list_is_empty(lista_mascapita2) && !list_is_empty(lista_mascapita)) {
-		pthread_mutex_lock(&mutexFlagCompactado);
+//		pthread_mutex_lock(&mutexFlagCompactado);
 		if (flag_compactado == 0) {
 			compactarMemoria();
 			flag_compactado = 1;
 			//list_destroy_and_destroy_elements(lista_mascapita, (void*)free);
-			return obtenerInicioReal(tamano);
+			goto etiquetacompactar ;
 		} else {
-			printf("Memory overload, u win \n");
+			//printf("Memory overload, u win \n");
 			log_error(logger,"Memory overload !!!");
 			//list_destroy_and_destroy_elements(lista_mascapita, (void*)free);
 			return (void *) 5; //Solo pongo esto para que me deje compilar, deberiamos crear un error.
 		}
-		pthread_mutex_unlock(&mutexFlagCompactado);
+//		pthread_mutex_unlock(&mutexFlagCompactado);
 	} else {
 		if (list_is_empty(lista_mascapita)) {
 			//list_destroy_and_destroy_elements(lista_mascapita, (void*)free);
@@ -377,6 +377,13 @@ void destruirTodosLosSegmentos() {
 	list_destroy_and_destroy_elements(
 			((t_tablaProceso *) list_get(listaProcesos,
 					buscarPid(procesoActivo())))->tabla, (void*) tsegm_destroy);
+	free(((t_tablaProceso *) list_get(listaProcesos,
+			buscarPid(procesoActivo()))));
+	bool tienePidActivo(t_tablaProceso *self){
+		return self->pid==buscarPid(procesoActivo());
+	}
+	list_remove_and_destroy_by_condition(listaProcesos, (void*)tienePidActivo, (void*)free);
+	cantProcesosActivos--;
 }
 
 void conseguirDeArchivo(int *p_tamanoUMV) {

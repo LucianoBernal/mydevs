@@ -37,7 +37,8 @@ typedef struct {
 // int idProceso;
 // } t_estructuraCPU;
 
-
+extern sem_t victimasMutex;
+extern t_list* victimas;
 extern t_queue* colaReady;
 extern sem_t  colaReadyMutex;
 extern sem_t  vacioReady;
