@@ -161,11 +161,11 @@ void* atencionCPUs(void* sinParametro) {
 
 			if (FD_ISSET( sd , &readfds)) {
 				//t_buffer* mensaje;
-				//char* mensaje;
+				char* mensaje;
 
 				puts("voy a recibir algo");
 				//Verifica si se cerro, y ademas lee el mensaje recibido
-				if (/*(mensaje=recibirConRazon(sd,razon,logKernel))==NULL*/recv(sd, (void*) header, 16, 0) <= 0) {
+				if ((mensaje=recibirConRazon(sd,razon,logKernel))==NULL/*recv(sd, (void*) header, 16, 0) <= 0*/) {
 					//Alguna CPU se desconecto, obtengo la informacion
 					getpeername(sd, (struct sockaddr*) &address,
 							(socklen_t*) &addrlen);
@@ -187,11 +187,11 @@ void* atencionCPUs(void* sinParametro) {
 				}
 				//Algun socket me envio algo, responder
 				else {
-					desempaquetar2(header, razon, tamanoMensaje, 0);
-					char *mensaje = malloc(*tamanoMensaje);
-					recv(sd, (void*) mensaje, *tamanoMensaje, MSG_WAITALL);
+//					desempaquetar2(header, razon, tamanoMensaje, 0);
+//					char *mensaje = malloc(*tamanoMensaje);
+//					recv(sd, (void*) mensaje, *tamanoMensaje, MSG_WAITALL);
 					t_PCB* pcb=malloc(sizeof(t_PCB));
-					char* pcbEmpaquetado=malloc(sizeof(t_PCB)+40);
+					char* pcbEmpaquetado=malloc(sizeof(t_PCB));
 					int tiempo, valor, tamano;
 					char* dispositivoIO;
 					char* texto;
@@ -202,7 +202,7 @@ void* atencionCPUs(void* sinParametro) {
 					case SALIDA_POR_QUANTUM: //El Programa salio del CPU por quantum
 						puts("Salio por quantum");
 						desempaquetarPCB(pcb, mensaje);
-						//programaSalioPorQuantum(pcb, sd);
+						programaSalioPorQuantum(pcb, sd);
 						break;
 					case SALIDA_NORMAL: //El Programa termino normalmente
 						log_info(logKernel,"Aca estoy");
@@ -257,13 +257,13 @@ void* atencionCPUs(void* sinParametro) {
 					free(texto);
 					free(semaforo);
 					free(id);
-					free(pcb);
-					free(mensaje);
+					free(pcbEmpaquetado);
+
 					// aca va el switch para saber porque volvio(pero no preguntas por
 					//desconexion, eso ya se sabe de antes. MMM igual ojo, quizas si
 					//porque quizas convenga que el que el que haga el close se el kernel
 				}
-
+				free(mensaje);
 			}
 		}
 	}
