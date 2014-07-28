@@ -139,9 +139,9 @@ int main(int arc, char **argv) {
 			log_debug(logs, "El programa finalizo");
 		}
 		printf("Sali del while, lineasAnalizadas=%d y quantumDeKernel=%d\n", lineasAnalizadas, quantumDeKernel);
-//		if (lineasAnalizadas==quantumDeKernel){
-//			enviarConRazon(socketUMV, logs, SALIDA_POR_QUANTUM, serializarPCB(pcbEnUso));
-//		}
+		if (lineasAnalizadas==quantumDeKernel){
+			enviarConRazon(socketKernel, logs, SALIDA_POR_QUANTUM, serializarPCB(pcbEnUso));
+		}
 	}
 	return 0;
 }
