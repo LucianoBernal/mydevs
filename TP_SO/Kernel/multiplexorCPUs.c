@@ -36,12 +36,12 @@ extern int retardo;
 
 void* atencionCPUs(void* sinParametro) {
 	int master_socket, addrlen, new_socket, client_socket[30], max_clients = 30,
-			activity, i, valread, sd, primer_CPU = 1;
+			activity, i, sd, primer_CPU = 1;
 	int max_sd;
 	struct sockaddr_in address;
-//	int* tamano = malloc(4);
-
-	char buffer[1025];  //data buffer of 1K
+	char *header = malloc(16);
+	int *razon = malloc(sizeof(int));
+	int *tamanoMensaje = malloc(4);
 
 	//inicializo set
 	fd_set readfds;
@@ -107,7 +107,7 @@ void* atencionCPUs(void* sinParametro) {
 			}
 			//handshake
 			char*cpu = malloc(4);
-			if ((valread = recv(new_socket, cpu/*buffer*/, 4, 0)) < 0) {
+			if ((recv(new_socket, cpu/*buffer*/, 4, 0)) <= 0) {
 				log_error(logKernel, "Error en el recive del handshake");
 				close(new_socket);
 			}
@@ -145,6 +145,8 @@ void* atencionCPUs(void* sinParametro) {
 				}
 
 				nuevaCPU(new_socket); //TODO es una nueva CPU
+				free(quantum2);
+				free(retardo2);
 
 			}
 		}
@@ -155,7 +157,7 @@ void* atencionCPUs(void* sinParametro) {
 
 			if (FD_ISSET( sd , &readfds)) {
 				//Verifica si se cerro, y ademas lee el mensaje recibido
-				if ((valread = read(sd, buffer, 1024)) == 0) { //FIXME
+				if (recv(sd, (void*) header, 16, 0) <= 0) {
 					//Alguna CPU se desconecto, obtengo la informacion
 					getpeername(sd, (struct sockaddr*) &address,
 							(socklen_t*) &addrlen);
@@ -177,11 +179,6 @@ void* atencionCPUs(void* sinParametro) {
 				}
 				//Algun socket me envio algo, responder
 				else {
-					char *header = malloc(16);
-//					int resultado;
-					int *razon = malloc(sizeof(int));
-					int *tamanoMensaje = malloc(4);
-					recv(sd, (void*) header, 16, 0);
 					desempaquetar2(header, razon, tamanoMensaje, 0);
 					char *mensaje = malloc(*tamanoMensaje);
 					recv(sd, (void*) mensaje, *tamanoMensaje, MSG_WAITALL);
@@ -236,7 +233,11 @@ void* atencionCPUs(void* sinParametro) {
 						sc_obtener_valor(id, sd);
 						break;
 					}
-
+					free( dispositivoIO);
+					free(texto);
+					free(semaforo);
+					free(id);
+					free(mensaje);
 					// aca va el switch para saber porque volvio(pero no preguntas por
 					//desconexion, eso ya se sabe de antes. MMM igual ojo, quizas si
 					//porque quizas convenga que el que el que haga el close se el kernel
@@ -244,6 +245,7 @@ void* atencionCPUs(void* sinParametro) {
 			}
 		}
 	}
+	free(message);
 	return 0;
 }
 
