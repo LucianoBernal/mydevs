@@ -14,7 +14,7 @@
 
 typedef void (*sighandler_t)(int);
 int socketUMV, socketKernel;
-int sigusr1_activado;
+int sigusr1_desactivado;
 t_log* logs;
 t_dictionary* diccionarioDeVariables;
 int proceso_terminado;

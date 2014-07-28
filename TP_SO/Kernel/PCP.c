@@ -286,16 +286,21 @@ void seDesconectoCPU(int idCPU) { //TODO
 
 void seDesconectoCPUSigusr(int idCPU, t_PCB* pcb) {
 	sem_wait(&CPUsMutex);
-	list_remove_by_condition(CPUs, (void*) tieneID);
+	t_estructuraCPU* CPU=list_remove_by_condition(CPUs, (void*) tieneID);
 	sem_post(&CPUsMutex);
+	int pidASacar=CPU->idProceso;
+	bool victimaPCB_exec(t_PCB* self){
+			return self->program_id==pidASacar;
+		}
 	sem_wait(&colaExecMutex);
-	int posicion = posicionEnLaListaExec(colaExec, pcb->program_id);
-	list_remove_and_destroy_element(colaExec, posicion, (void*) free);
+	list_remove_and_destroy_by_condition(colaExec, (void*)victimaPCB_exec,(void*)free);
 	sem_post(&colaExecMutex);
 	sem_wait(&colaReadyMutex);
 	queue_push(colaReady, pcb);
 	sem_post(&colaReadyMutex);
 	mostrar_todas_Las_Listas();
+	sem_post(&vacioReady);
+	free(CPU);
 
 }
 

@@ -325,10 +325,10 @@ void* manejoColaExit(void* sinParametros) {
 		log_info(logKernel, "Sacando programa de cola exit,con pid: %d",
 				pcb->program_id);
 		mostrar_todas_Las_Listas();
-		sem_wait(&mutexProcesoActivo);                //   FIXME
-		cambiar_Proceso_Activo(pcb->program_id);   // FIXME
-		solicitar_Destruccion_Segmentos();	//FIXME
-		sem_post(&mutexProcesoActivo); //FIXME
+		sem_wait(&mutexProcesoActivo);
+		cambiar_Proceso_Activo(pcb->program_id);
+		solicitar_Destruccion_Segmentos();
+		sem_post(&mutexProcesoActivo);
 	//	enviar_Mensaje_Final(pcb->program_id);
 		cerrar_conexion(pcb->program_id);
 		liberar_nodo_Diccionario_PIDySD(pcb->program_id);
@@ -349,7 +349,7 @@ void liberar_nodo_Diccionario_PIDySD(int pid){
 
 void solicitar_Destruccion_Segmentos() {
 
-	printf("algo %d\n", enviarConRazon(socketUMV, logKernel, DESTRUIR_SEGMENTOS, NULL));
+	enviarConRazon(socketUMV, logKernel, DESTRUIR_SEGMENTOS, NULL);
 
 //	codigos_Mensajes razon;
 //	razon = DESTRUIR_SEGMENTOS;

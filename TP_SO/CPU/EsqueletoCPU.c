@@ -77,13 +77,13 @@ int main(int arc, char **argv) {
 		log_error(logs, "El handshake con el Kernel salió mal.");
 	}
 
-	sigusr1_activado = 1;
+	sigusr1_desactivado = 1;
 	if (signal(SIGUSR1, sig_handler) == SIG_ERR )
 		log_error(logs, "Error al atrapar señal SIGUSR1");
 	if (signal(SIGINT, sig_handler) == SIG_ERR )
 		log_error(logs, "Error al atrapar señal SIGINT");
 
-	while (sigusr1_activado) {
+	while (sigusr1_desactivado) {
 		//Recibo un PCB
 		int razon;
 		cpu_ocupada = 0;
@@ -139,10 +139,13 @@ int main(int arc, char **argv) {
 			log_debug(logs, "El programa finalizo");
 		}
 		printf("Sali del while, lineasAnalizadas=%d y quantumDeKernel=%d\n", lineasAnalizadas, quantumDeKernel);
+		if(sigusr1_desactivado){
 		if (lineasAnalizadas==quantumDeKernel){
 			enviarConRazon(socketKernel, logs, SALIDA_POR_QUANTUM, serializarPCB(pcbEnUso));
 		}
+		}
 	}
+	enviarConRazon(socketKernel, logs, SIGUSR_1, serializarPCB(pcbEnUso));
 	return 0;
 }
 
@@ -163,7 +166,7 @@ int main(int arc, char **argv) {
 
 void sig_handler(int signo) {
 	if (signo == SIGUSR1) {
-		sigusr1_activado = 0;
+		sigusr1_desactivado = 0;
 		log_info(logs,
 				"Se recibió la señal SIGUSR_1, la CPU se cerrara al finalizar la ejecucion actual");
 		if (!cpu_ocupada) {

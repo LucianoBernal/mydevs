@@ -223,7 +223,10 @@ void* atencionCPUs(void* sinParametro) {
 //
 						break;
 					case SIGUSR_1: //la CPU se desconectó CON SIGUSR
-						desempaquetar2(mensaje, &pcb, 0);
+						desempaquetarPCB(pcb, mensaje);
+						log_info(logKernel,"Recibi señal SIGUSR1 para la CPU cuyo sd es:%d",sd);
+						close(sd);
+						client_socket[i] = 0;
 						sem_wait(&semCPUDesconectadaMutex);
 						idUltimaCPUDesconectada = sd;
 						seDesconectoCPUSigusr(sd, pcb);
