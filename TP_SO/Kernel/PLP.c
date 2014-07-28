@@ -172,6 +172,7 @@ int crearSegmentos_Memoria(t_metadata_program *metadata, t_PCB *pcb,
 void escribir_en_Memoria(t_metadata_program * metadata, t_PCB *pcb,
 		char *literal, int tamanoLiteral) {
 	int *offset = malloc(sizeof(int));
+	int razon;
 	*offset = 0;
 	printf("Estoy en escribir memoria\n");
 	int segmentoCodigo = pcb->segmento_Codigo;
@@ -193,6 +194,9 @@ void escribir_en_Memoria(t_metadata_program * metadata, t_PCB *pcb,
 			serializar2(crear_nodoVar(&indiceEtiquetas, 4),
 					crear_nodoVar(offset, 4), crear_nodoVar(&etiquetasSize, 4),
 					crear_nodoVar(metadata->etiquetas, etiquetasSize), 0));
+	enviarConRazon(socketUMV, logKernel, CONFIRMACION, NULL);
+	char *mensaje=recibirConRazon(socketUMV, &razon, logKernel);
+	if (razon==CONFIRMACION) printf("SALIO TODO OK\n");
 }
 
 void agregar_En_Diccionario(int pid, int sd) {
