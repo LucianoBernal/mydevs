@@ -87,12 +87,17 @@ void atencionKernel(int* socketKernel) {
 
 		j++;
 		char *mensaje = recibirConRazon(*socketKernel, razon, logger);
-		if((mensaje==NULL) && (*razon!=DESTRUIR_SEGMENTOS)){
+		if((mensaje==NULL) && (*razon!=DESTRUIR_SEGMENTOS) && (*razon!=CONFIRMACION)){
 			log_error(logger,"Se desconecto abruptamente el Kernel, sd: %d",*socketKernel);
 			break;//el close lo hace recibirConRazon
 		}
 		//aplicarRetardo(retardo);
 		switch (*razon) {
+		case CONFIRMACION:
+			pthread_mutex_lock(&mutexOperacion);
+			enviarConRazon(*socketKernel,logger,CONFIRMACION, NULL);
+			pthread_mutex_unlock(&mutexOperacion);
+			break;
 
 		case CREAR_SEGMENTOS_PROGRAMA:
 			log_debug(logger, "Recibí crear segmentos programa, de parte del Kernel.");
