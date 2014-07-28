@@ -195,8 +195,8 @@ void escribir_en_Memoria(t_metadata_program * metadata, t_PCB *pcb,
 					crear_nodoVar(offset, 4), crear_nodoVar(&etiquetasSize, 4),
 					crear_nodoVar(metadata->etiquetas, etiquetasSize), 0));
 	enviarConRazon(socketUMV, logKernel, CONFIRMACION, NULL);
-	char *mensaje=recibirConRazon(socketUMV, &razon, logKernel);
-	if (razon==CONFIRMACION) printf("SALIO TODO OK\n");
+	recibirConRazon(socketUMV, &razon, logKernel);
+//	if (razon==CONFIRMACION) printf("SALIO TODO OK\n");
 }
 
 void agregar_En_Diccionario(int pid, int sd) {
@@ -327,7 +327,7 @@ void* manejoColaExit(void* sinParametros) {
 		mostrar_todas_Las_Listas();
 		sem_wait(&mutexProcesoActivo);                //   FIXME
 		cambiar_Proceso_Activo(pcb->program_id);   // FIXME
-	//	solicitar_Destruccion_Segmentos();	//FIXME
+		solicitar_Destruccion_Segmentos();	//FIXME
 		sem_post(&mutexProcesoActivo); //FIXME
 	//	enviar_Mensaje_Final(pcb->program_id);
 		cerrar_conexion(pcb->program_id);
@@ -349,8 +349,7 @@ void liberar_nodo_Diccionario_PIDySD(int pid){
 
 void solicitar_Destruccion_Segmentos() {
 
-	printf("algo %d\n", enviarConRazon(socketUMV, logKernel, DESTRUIR_SEGMENTOS,
-				serializar2(crear_nodoVar(&socketUMV, 4), 0)));
+	printf("algo %d\n", enviarConRazon(socketUMV, logKernel, DESTRUIR_SEGMENTOS, NULL));
 
 //	codigos_Mensajes razon;
 //	razon = DESTRUIR_SEGMENTOS;

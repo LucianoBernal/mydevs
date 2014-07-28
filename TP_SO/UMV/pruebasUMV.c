@@ -374,15 +374,20 @@ void destruirSegmento(int base) {
 }
 
 void destruirTodosLosSegmentos() {
-	list_destroy_and_destroy_elements(
-			((t_tablaProceso *) list_get(listaProcesos,
-					buscarPid(procesoActivo())))->tabla, (void*) tsegm_destroy);
-	free(((t_tablaProceso *) list_get(listaProcesos,
-			buscarPid(procesoActivo()))));
 	bool tienePidActivo(t_tablaProceso *self){
-		return self->pid==buscarPid(procesoActivo());
+		return ((self->pid)==(procesoActivo()));
 	}
-	list_remove_and_destroy_by_condition(listaProcesos, (void*)tienePidActivo, (void*)free);
+	t_tablaProceso *aux1=list_remove_by_condition(listaProcesos, (void*)tienePidActivo);
+	list_destroy_and_destroy_elements(aux1->tabla, (void*)free);
+	printf("El pid forro es %d\n", aux1==NULL?10000:aux1->pid);
+	free(aux1);
+//	list_destroy_and_destroy_elements(
+//			((t_tablaProceso *) list_remove_by_condition(listaProcesos,
+//					buscarPid(procesoActivo())))->tabla, (void*) tsegm_destroy);
+//	free(((t_tablaProceso *) list_get(listaProcesos,
+//			buscarPid(procesoActivo()))));
+
+//	list_remove_and_destroy_by_condition(listaProcesos, (void*)tienePidActivo, (void*)free);
 	cantProcesosActivos--;
 }
 
@@ -488,7 +493,7 @@ void dumpMemoriaLibreYSegmentos(bool archivo) {
 void dumpTablaSegmentos(bool archivo, int pid) {
 	int i;
 	if (pid == -1) {
-		for (i = 0; i < cantProcesosActivos; i++) {
+		for (i = 0; i < list_size(listaProcesos); i++) {
 			printf("Se muestra la tabla de segmentos del proceso %d\n",
 					((t_tablaProceso *) list_get(listaProcesos, i))->pid);
 			fprintf(dumpFile,"Se muestra la tabla de segmentos del proceso %d\n",
