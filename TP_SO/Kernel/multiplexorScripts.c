@@ -22,14 +22,10 @@
 #include <biblioteca_comun/bibliotecaSockets.h>
 #include "multiplexorScripts_interfaz.h"
 #include <commons/log.h>
-#include <semaphore.h>
 
 
 extern char* puerto_programa;
 extern t_log *logKernel;
-extern sem_t victimasMutex;
-extern t_list* victimas;
-
 #define TRUE   1
 #define FALSE  0
 
@@ -87,7 +83,7 @@ void* atencionScripts(void* sinParametro) {
 		activity = select(max_sd + 1, &readfds, NULL, NULL, NULL );
 
 		if ((activity < 0) && (errno != EINTR)) {
-			log_error(logKernel,"Error en el select de scripts, %d", activity);
+			log_error(logKernel,"Error en el select");
 		}
 
 		//Si hubo actividad en el master socket, es una nueva conexion
@@ -161,7 +157,6 @@ void* atencionScripts(void* sinParametro) {
 					//Algun programa se desconecto, obtengo la informacion
 					getpeername(sd, (struct sockaddr*) &address,
 							(socklen_t*) &addrlen);
-				//	int pid=obtener_pid_de_un_sd(sd);
 					log_info(logKernel,"Un programa se cerro: socket fd: %d , ip: %s , puerto: %d \n",sd,
 							inet_ntoa(address.sin_addr),
 							ntohs(address.sin_port));

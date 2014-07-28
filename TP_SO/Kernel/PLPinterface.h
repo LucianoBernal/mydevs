@@ -17,7 +17,6 @@ typedef struct {
 	int peso;
 } t_new;
 
-int obtener_pid_de_un_sd(int);
 void liberar_nodo_Diccionario_PIDySD(int);
 void mostrar_todas_Las_Listas(void);
 void crear_Nuevo_Proceso( int );

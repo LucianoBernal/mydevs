@@ -109,7 +109,6 @@ int programa(t_log* logger, FILE* archivo) {
 	free(literal);
 	int fin=0;
 	while (1) {
-		/*
 		if ((valread = recv(sock, tamano, 4, 0)) <=0) {
 			log_error(logger, "Fallo Recive");
 			fin= 1;
@@ -125,20 +124,7 @@ int programa(t_log* logger, FILE* archivo) {
 		respuesta[*tamano]=0;
 		puts(respuesta);
 		free(respuesta);
-	*/
-		int razon;
-		t_buffer *buffer=recibirConBuffer(sock, &razon, logger);
-		if (buffer==NULL){
-			log_error(logger, "Lucho editame, algo malo paso");
-			fin=1;
-			break;
-		}
-		char *texto=malloc(buffer->size);
-		desempaquetar2(buffer->mensaje, texto, 0);
-		puts(texto);
-		free(texto);
-		free(buffer->mensaje);
-		free(buffer);
+
 	}
 
 	close(sock);
