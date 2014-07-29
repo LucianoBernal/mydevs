@@ -157,7 +157,7 @@ void* bloquearYDevolverAReady(void * param) {
 		sem_wait(&colaReadyMutex);
 		queue_push(colaReady, estructuraBloqueada->pcb);
 		sem_post(&colaReadyMutex);
-		mostrar_todas_Las_Listas();
+		//mostrar_todas_Las_Listas();
 	}
 	queue_destroy(estructura->procesosBloqueados);
 	free(estructura);
@@ -190,7 +190,7 @@ void programaSalioPorQuantum(t_PCB* pcb, int idCPU) {
 	log_debug(logKernel, "Estoy por encolar el pcb en ready");
 	queue_push(colaReady, pcb);
 	sem_post(&colaReadyMutex);
-	mostrar_todas_Las_Listas();
+	//mostrar_todas_Las_Listas();
 	sem_post(&vacioReady);
 
 
@@ -226,7 +226,7 @@ void programaSalioPorBloqueo(t_PCB* pcb, int tiempo, char* dispositivo,
 	sem_wait(&(estructura->mutexCola));
 	queue_push(estructura->procesosBloqueados, procesoBloqueado);
 	sem_post(&(estructura->mutexCola));
-	mostrar_todas_Las_Listas();
+	//mostrar_todas_Las_Listas();
 	sem_post(&(estructura->colaVacia));
 	seLiberoUnaCPU(idCPU);
 }
@@ -299,7 +299,7 @@ void seDesconectoCPUSigusr(int idCPU, t_PCB* pcb) {
 	sem_wait(&colaReadyMutex);
 	queue_push(colaReady, pcb);
 	sem_post(&colaReadyMutex);
-	mostrar_todas_Las_Listas();
+	//mostrar_todas_Las_Listas();
 	sem_post(&vacioReady);
 	free(CPU);
 
