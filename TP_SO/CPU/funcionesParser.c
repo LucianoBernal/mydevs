@@ -306,10 +306,12 @@ void asignar(t_puntero direccion_variable, t_valor_variable valor) { //Chequeada
 			direccion_variable, valor);
 //	printf("llame asignar con direccion = %d y valor = %d\n",
 //			direccion_variable, valor);
+	log_error(logs, "DIRECCION VARIABLE ES: %d, LA DIFERENCIA ES %d", direccion_variable, pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack);
 	if (direccion_variable
 			< pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack) {
 		direccion_variable += pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack;
 	}
+	log_error(logs, "LA NUEVA DIRECCION ES %d", direccion_variable);
 	enviarBytesAUMV(pcbEnUso->segmento_Stack,
 	/*pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack
 	 +*/direccion_variable + 1, 4, &valor);

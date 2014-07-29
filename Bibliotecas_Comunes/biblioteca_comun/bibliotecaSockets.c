@@ -72,26 +72,6 @@ t_buffer *recibirConBuffer(int socket, int *p_razon, t_log *logs){
 char *recibirConRazon(int socket, int *p_razon, t_log *logs){
 	t_buffer *aux=recibirConBuffer(socket, p_razon, logs);
 	return aux==NULL?NULL:aux->mensaje;
-//	char *header=malloc(16);
-//	if (recv(socket, header, 16, MSG_WAITALL)<=0){
-//		log_error(logs, "Hubo un error al recibir la cabecera");
-//		close(socket);
-//		return NULL;
-//	}
-//	int tamano;
-//	desempaquetar2(header, p_razon, &tamano, 0);
-//	//free(header);
-//	if (tamano!=4&&tamano!=0){
-//		char *msj=malloc(tamano);
-//		if(recv(socket, msj, tamano, MSG_WAITALL)<=0){
-//			log_error(logs, "Hubo un error al recibir el mensaje");
-//			close(socket);
-//			return NULL;
-//		}
-//		return msj;
-//	}else{
-//		return NULL;
-//	}
 }
 
 int crearServidor(char* puerto, t_log* logs){

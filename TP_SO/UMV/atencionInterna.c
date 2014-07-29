@@ -107,6 +107,7 @@ void atencionKernel(int* socketKernel) {
 							sizeof(int));
 			desempaquetar2(mensaje, tamano1, tamano2, tamano3, tamano4, 0);
 			int i;
+			cambiarProcesoActivo(procesoActivo);
 			basesLogicas[0] = crearSegmento(*tamano1);
 			basesLogicas[1] = crearSegmento(*tamano2);
 			basesLogicas[2] = crearSegmento(*tamano3);
@@ -170,7 +171,7 @@ void atencionKernel(int* socketKernel) {
 			desempaquetar2(mensaje, &procesoActivo, 0);
 			log_info(logger, "El valor del pid es: %d",procesoActivo);
 			//printf("\nel valor del pid es: %d\n", procesoActivo);
-			cambiarProcesoActivo(procesoActivo);
+//			cambiarProcesoActivo(procesoActivo);
 			pthread_mutex_unlock(&mutexOperacion);
 			log_debug(logger, "Terminé de cambiar proceso activo, de parte del Kernel.");
 			break;
@@ -298,7 +299,7 @@ void atencionCpu(int *socketCPU) {
 		procesoActivo = *pid2;
 		log_info(logger, "El valor del PID es: %d", *pid2);
 		//printf("\nel valor del pid es: %d\n", *pid2);
-		cambiarProcesoActivo(*pid2);
+//		cambiarProcesoActivo(*pid2);
 		free(pid2);
 		pthread_mutex_unlock(&mutexOperacion);
 		//puts("termine de cambiar proceso activo");

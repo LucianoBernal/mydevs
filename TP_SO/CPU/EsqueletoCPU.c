@@ -88,6 +88,10 @@ int main(int arc, char **argv) {
 		int razon;
 		cpu_ocupada = 0;
 		char* mensaje = recibirConRazon(socketKernel, &razon, logs);
+		if(mensaje==NULL){
+			log_error(logs, "Se recibió mal.");
+			exit(EXIT_FAILURE);
+		}
 		cpu_ocupada = 1;
 		char* pcbEmpaquetado = malloc(sizeof(t_PCB) + 4 * 9 + 32);
 //		t_PCB *pcb = malloc(sizeof(t_PCB));
@@ -123,8 +127,10 @@ int main(int arc, char **argv) {
 			pcbEnUso->program_Counter++;
 			lineasAnalizadas++;
 			log_info(logs, "ESTA ES LA INSTRUCCION %d", lineasAnalizadas);
+			log_info(logs, "EL PID DEL BASTARDO ES %d", pcbEnUso->program_id);
 			//printf("ESTA ES LA INSTRUCCION %d\n", lineasAnalizadas);
 		}
+		dictionary_clean_and_destroy_elements(diccionarioDeVariables, (void*)free);
 		/*
 		enviarConRazon(socketKernel, logs, razon, serializarPCB(pcbEnUso));
 		free(pcbEnUso);
