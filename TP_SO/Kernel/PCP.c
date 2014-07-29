@@ -185,11 +185,11 @@ void nuevaCPU(int idCPU) {
 }
 
 void programaSalioPorQuantum(t_PCB* pcb, int idCPU) {
+	seLiberoUnaCPU(idCPU);
 	sem_wait(&colaReadyMutex);
 	log_debug(logKernel, "Estoy por encolar el pcb en ready");
 	queue_push(colaReady, pcb);
 	sem_post(&colaReadyMutex);
-	seLiberoUnaCPU(idCPU);
 	mostrar_todas_Las_Listas();
 	sem_post(&vacioReady);
 
@@ -207,8 +207,9 @@ void moverAColaExit(t_PCB* pcb, int idCPU) {
 }
 
 void moverAColaExityLiberarCPU(t_PCB* pcb, int idCPU) {
-	moverAColaExit(pcb, idCPU);
 	seLiberoUnaCPU(idCPU);
+	moverAColaExit(pcb, idCPU);
+
 }
 
 void programaSalioPorBloqueo(t_PCB* pcb, int tiempo, char* dispositivo,
@@ -236,10 +237,10 @@ void seLiberoUnaCPU(int idCPU) {
 	t_estructuraCPU* CPU = list_get(CPUs, i);
 	sem_post(&CPUsMutex);
 	int pidASacar = CPU->idProceso;
-	sem_wait(&colaExecMutex);
 	bool victimaPCB_exec(t_PCB* self){
 		return self->program_id==pidASacar;
 	}
+	sem_wait(&colaExecMutex);
 	list_remove_and_destroy_by_condition(colaExec, (void*)victimaPCB_exec,(void*)free);
 	sem_post(&colaExecMutex);
 	t_estructuraCPU* estructura = malloc(sizeof(t_estructuraCPU));
