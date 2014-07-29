@@ -437,7 +437,7 @@ char *generarListadoVariables() {
 		free(cadena);
 		i++;
 	}
-	puts(aux); //Esto es para ver como esta de este lado
+//	puts(aux); //Esto es para ver como esta de este lado
 	return aux;
 }
 void finalizar(void) {
@@ -447,9 +447,11 @@ void finalizar(void) {
 //		char *tituloFinal2 =strdup(tituloFinal);
 //		enviarConRazon(socketKernel, logs, IMPRIMIR_TEXTO, serializar2(crear_nodoVar(tituloFinal2, strlen(tituloFinal2)), 0));
 		char *mensajeFinal = generarListadoVariables();
-		int razon;
-		enviarConRazon(socketKernel, logs, IMPRIMIR_TEXTO, serializar2(crear_nodoVar(mensajeFinal, strlen(mensajeFinal)), 0));
-		recibirConRazon(socketKernel, &razon, logs);//Deberia preguntar si es confirmacion pero bue
+		if (mensajeFinal!=NULL){
+			int razon;
+			enviarConRazon(socketKernel, logs, IMPRIMIR_TEXTO, serializar2(crear_nodoVar(mensajeFinal, strlen(mensajeFinal)), 0));
+			recibirConRazon(socketKernel, &razon, logs);//Deberia preguntar si es confirmacion pero bue
+		}
 		programaFinalizado = 1;
 		enviarConRazon(socketKernel, logs, SALIDA_NORMAL, serializarPCB(pcbEnUso));
 	} else {

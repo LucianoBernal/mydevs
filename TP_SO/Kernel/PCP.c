@@ -257,7 +257,7 @@ void seDesconectoCPU(int idCPU) { //TODO
 			sem_wait(&CPUsLibres);
 		}
 	sem_wait(&CPUsMutex);
-	list_remove_by_condition(CPUs, (void*) tieneID);
+	list_remove_and_destroy_by_condition(CPUs, (void*) tieneID,(void*)free);
 	sem_post(&CPUsMutex);
 }
 

@@ -145,13 +145,12 @@ int main(int arc, char **argv) {
 			log_debug(logs, "El programa finalizo");
 		}
 		printf("Sali del while, lineasAnalizadas=%d y quantumDeKernel=%d\n", lineasAnalizadas, quantumDeKernel);
-		if(sigusr1_desactivado){
 		if (lineasAnalizadas==quantumDeKernel){
 			enviarConRazon(socketKernel, logs, SALIDA_POR_QUANTUM, serializarPCB(pcbEnUso));
 		}
-		}
 	}
-	enviarConRazon(socketKernel, logs, SIGUSR_1, serializarPCB(pcbEnUso));
+	enviarConRazon(socketKernel, logs, SIGUSR_1, NULL);
+
 	return 0;
 }
 
