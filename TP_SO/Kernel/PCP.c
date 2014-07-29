@@ -208,7 +208,7 @@ void moverAColaExit(t_PCB* pcb, int idCPU) {
 
 void moverAColaExityLiberarCPU(t_PCB* pcb, int idCPU) {
 	moverAColaExit(pcb, idCPU);
-	//seLiberoUnaCPU(idCPU);
+	seLiberoUnaCPU(idCPU);
 }
 
 void programaSalioPorBloqueo(t_PCB* pcb, int tiempo, char* dispositivo,

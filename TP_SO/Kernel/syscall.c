@@ -75,8 +75,10 @@ void sc_imprimir(int valorAMostrar, int idCpu) {
 void sc_imprimirTexto(char* texto, int idCpu) {
 	int programID = programIdDeCpu(idCpu);
 	int sd = obtener_sd_Programa(programID);
-	notificar_Programa(sd, texto);
-	int cantDigitos = strlen(texto);
+//	notificar_Programa(sd, texto);
+//	int cantDigitos = strlen(texto);
+	enviarConRazon(sd, logKernel, IMPRIMIR_TEXTO, serializar2(crear_nodoVar(texto, strlen(texto)), 0));
+	enviarConRazon(idCpu, logKernel, CONFIRMACION, NULL);
 //	enviarConRazon(idCpu, logKernel, IMPRIMIR_TEXTO, serializar2(crear_nodoVar(&cantDigitos,4),0));
 } //VISTA
 

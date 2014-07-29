@@ -329,7 +329,7 @@ void* manejoColaExit(void* sinParametros) {
 		cambiar_Proceso_Activo(pcb->program_id);
 		solicitar_Destruccion_Segmentos();
 		sem_post(&mutexProcesoActivo);
-	//	enviar_Mensaje_Final(pcb->program_id);
+		enviar_Mensaje_Final(pcb->program_id);
 		cerrar_conexion(pcb->program_id);
 		liberar_nodo_Diccionario_PIDySD(pcb->program_id);
 		liberar_numero(pcb->program_id);
@@ -370,8 +370,9 @@ void cambiar_Proceso_Activo(int progid) {
 
 void enviar_Mensaje_Final(int pid) {
 	int sd = obtener_sd_Programa(pid);
-	notificar_Programa(sd,
-			"El kernel conluyo con la Ejecucion del Programa\r\n");
+	enviarConRazon(sd, logKernel, SALIDA_NORMAL, NULL);
+//	notificar_Programa(sd,
+//			"El kernel conluyo con la Ejecucion del Programa\r\n");
 }
 
 int obtener_sd_Programa(int pid) {

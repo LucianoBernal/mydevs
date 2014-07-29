@@ -128,13 +128,19 @@ int programa(t_log* logger, FILE* archivo) {
 	*/
 		int razon;
 		t_buffer *buffer=recibirConBuffer(sock, &razon, logger);
-		if (buffer==NULL){
+		if (razon==SALIDA_NORMAL){
+//			log_info(logger, "El programa finalizo normalmente");
+			fin=0;
+			break;
+		}
+		if (buffer==NULL/*&&razon!=SALIDA_NORMAL NO ESTARIA DE MAS, QUIZAS SI*/){
 			log_error(logger, "Lucho editame, algo malo paso");
 			fin=1;
 			break;
 		}
 		char *texto=malloc(buffer->size);
 		desempaquetar2(buffer->mensaje, texto, 0);
+		texto[buffer->size-4]=0;
 		puts(texto);
 		free(texto);
 		free(buffer->mensaje);

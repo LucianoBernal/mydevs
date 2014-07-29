@@ -37,7 +37,6 @@ extern t_list* victimas;
 #define TRUE   1
 #define FALSE  0
 
-
 void* atencionCPUs(void* sinParametro) {
 	int master_socket, addrlen, new_socket, client_socket[30], max_clients = 30,
 			activity, i, sd, primer_CPU = 1;
@@ -100,7 +99,7 @@ void* atencionCPUs(void* sinParametro) {
 
 			//informo nueva conexion
 			if (primer_CPU) {
-				primer_CPU=0;
+				primer_CPU = 0;
 				log_info(logKernel, "Nueva Conexion de CPU , socket fd: %d",
 						new_socket);
 			} else {
@@ -160,12 +159,13 @@ void* atencionCPUs(void* sinParametro) {
 			sd = client_socket[i];
 
 			if (FD_ISSET( sd , &readfds)) {
-				//t_buffer* mensaje;
-				char* mensaje;
+				t_buffer* mensaje;
+				//char* mensaje;
 
 				puts("voy a recibir algo");
 				//Verifica si se cerro, y ademas lee el mensaje recibido
-				if ((mensaje=recibirConRazon(sd,razon,logKernel))==NULL/*recv(sd, (void*) header, 16, 0) <= 0*/) {
+				if ((mensaje = recibirConBuffer(sd, razon, logKernel))
+						== NULL/*recv(sd, (void*) header, 16, 0) <= 0*/) {
 					//Alguna CPU se desconecto, obtengo la informacion
 					getpeername(sd, (struct sockaddr*) &address,
 							(socklen_t*) &addrlen);
@@ -190,30 +190,31 @@ void* atencionCPUs(void* sinParametro) {
 //					desempaquetar2(header, razon, tamanoMensaje, 0);
 //					char *mensaje = malloc(*tamanoMensaje);
 //					recv(sd, (void*) mensaje, *tamanoMensaje, MSG_WAITALL);
-					t_PCB* pcb=malloc(sizeof(t_PCB));
-					char* pcbEmpaquetado=malloc(sizeof(t_PCB));
+					t_PCB* pcb = malloc(sizeof(t_PCB));
+					char* pcbEmpaquetado = malloc(sizeof(t_PCB));
 					int tiempo, valor, tamano;
 					char* dispositivoIO;
-					char* texto;
+					char* texto = malloc(mensaje->size);
 					char* semaforo;
 					char* id;
 					puts("recibi algo");
 					switch (*razon) {
 					case SALIDA_POR_QUANTUM: //El Programa salio del CPU por quantum
 						puts("Salio por quantum");
-						desempaquetarPCB(pcb, mensaje);
+						desempaquetarPCB(pcb, mensaje->mensaje);
 						programaSalioPorQuantum(pcb, sd);
 						break;
 					case SALIDA_NORMAL: //El Programa termino normalmente
-						log_info(logKernel,"Aca estoy");
-						desempaquetarPCB(pcb, mensaje);
-						log_info(logKernel,"Aca NO estoy");
+//						log_info(logKernel,"Aca estoy");
+						desempaquetarPCB(pcb, mensaje->mensaje);
+//						log_info(logKernel,"Aca NO estoy");
 						moverAColaExityLiberarCPU(pcb, sd);
 						break;
 					case SALIDA_POR_BLOQUEO: //El Programa salio por bloqueo
 //						desempaquetar2(mensaje, &pcb, &tiempo, &dispositivoIO,
 //								0);
-						desempaquetar2(mensaje, pcbEmpaquetado, &tiempo, dispositivoIO, 0);
+						desempaquetar2(mensaje->mensaje, pcbEmpaquetado,
+								&tiempo, dispositivoIO, 0);
 						desempaquetarPCB(pcb, pcbEmpaquetado);
 						programaSalioPorBloqueo(pcb, tiempo, dispositivoIO, sd);
 						break;
@@ -223,8 +224,10 @@ void* atencionCPUs(void* sinParametro) {
 //
 						break;
 					case SIGUSR_1: //la CPU se desconectó CON SIGUSR
-						desempaquetarPCB(pcb, mensaje);
-						log_info(logKernel,"Recibi señal SIGUSR1 para la CPU cuyo sd es:%d",sd);
+						desempaquetarPCB(pcb, mensaje->mensaje);
+						log_info(logKernel,
+								"Recibi señal SIGUSR1 para la CPU cuyo sd es:%d",
+								sd);
 						close(sd);
 						client_socket[i] = 0;
 						sem_wait(&semCPUDesconectadaMutex);
@@ -233,40 +236,47 @@ void* atencionCPUs(void* sinParametro) {
 						sem_post(&semCPUDesconectadaMutex);
 						break;
 					case WAIT:
-						desempaquetar2(mensaje, &tamano, &semaforo, &pcb, 0);
+						desempaquetar2(mensaje->mensaje, &tamano, &semaforo,
+								&pcb, 0);
 						sc_wait(semaforo, pcb, sd);
 						break;
 					case SIGNAL:
-						desempaquetar2(mensaje, &semaforo, 0);
+						desempaquetar2(mensaje->mensaje, &semaforo, 0);
 						sc_signal(semaforo, sd);
 						break;
 					case IMPRIMIR:
 						//TODO
 						break;
 					case IMPRIMIR_TEXTO:
-						desempaquetar2(mensaje, &texto, 0);
+						printf("Ese algo era imprimir texto %d\n",
+								mensaje->size);
+
+						desempaquetar2(mensaje->mensaje, texto, 0);
+						texto[mensaje->size-4]=0;
+//						printf("No la cagaste desempaquetando %d\n", strlen(texto));
 						sc_imprimirTexto(texto, sd);
 						break;
 					case GRABAR_VALOR:
-						desempaquetar2(mensaje, &id, &valor, 0);
+						desempaquetar2(mensaje->mensaje, &id, &valor, 0);
 						sc_grabar_valor(id, valor, sd);
 						break;
 					case OBTENER_VALOR:
-						desempaquetar2(mensaje, &id, 0);
+						desempaquetar2(mensaje->mensaje, &id, 0);
 						sc_obtener_valor(id, sd);
 						break;
 					}
-					free( dispositivoIO);
+					//	free( dispositivoIO);
 					free(texto);
-					free(semaforo);
-					free(id);
-					free(pcbEmpaquetado);
+					//	free(semaforo);
+					//	free(id);
+					//	free(pcbEmpaquetado);
 
 					// aca va el switch para saber porque volvio(pero no preguntas por
 					//desconexion, eso ya se sabe de antes. MMM igual ojo, quizas si
 					//porque quizas convenga que el que el que haga el close se el kernel
 				}
-				free(mensaje);
+				//free(mensaje->mensaje);
+				//free(mensaje);
 			}
 		}
 	}
