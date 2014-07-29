@@ -20,6 +20,8 @@ void* consola(void* baseUMV) {
 	if (dumpFile==NULL) {
 		fputs ("File error",stderr);
 		exit (1);
+	} else {
+		log_info(logger, "Se creó el archivo de dump.");
 	}
 
 	do {
