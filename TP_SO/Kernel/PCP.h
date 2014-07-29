@@ -53,13 +53,9 @@ sem_t CPUsMutex;
 sem_t colaExecMutex;
 //sem_t semaforosMutex; //TODO
 t_list* colaExec;
-t_queue* colaIntermedia;
-sem_t colaIntermediaMutex;
-sem_t colaIntermediaVacia;
 pthread_t ejecutar;
 pthread_t multiplexorCPUs;
-pthread_t envCPU;
-int retMandarAEjecutar, retEnviarCPU, retMultiplexorCPUs;
+int retMandarAEjecutar, retMultiplexorCPUs;
 int* sinParametros;
 t_dictionary* diccionarioDispositivos;
 t_list* CPUs;
