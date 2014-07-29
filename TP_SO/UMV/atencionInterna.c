@@ -20,7 +20,6 @@ void* atencionInterna(void* sinParametro) {
 
 	int socket = crearServidor(puertoUMV, logger);
 	log_debug(logger, "Se creó servidor para atención interna");
-
 	while (1) {
 		int* socketKernel=malloc(sizeof(int));
 		*socketKernel = aceptarConexion(socket, logger);
@@ -91,7 +90,7 @@ void atencionKernel(int* socketKernel) {
 			log_error(logger,"Se desconecto abruptamente el Kernel, sd: %d",*socketKernel);
 			break;//el close lo hace recibirConRazon
 		}
-		//aplicarRetardo(retardo);
+		aplicarRetardo(retardo);
 		switch (*razon) {
 		case CONFIRMACION:
 			pthread_mutex_lock(&mutexOperacion);
@@ -210,7 +209,7 @@ void atencionCpu(int *socketCPU) {
 	int * razon = malloc(sizeof(int));
 
 	while(1){
-//	aplicarRetardo(retardo);
+	aplicarRetardo(retardo);
 	char *mensaje=recibirConRazon(*socketCPU, razon, logger);
 	if(mensaje==NULL){
 			log_info(logger,"Se desconecto abruptamente una CPU, sd %d",*socketCPU); //TODO hay que hacer algo??

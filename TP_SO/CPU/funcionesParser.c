@@ -363,7 +363,7 @@ t_valor_variable asignarValorCompartida(t_nombre_compartida variable,
 //	send(socketKernel, paquete->msj, paquete->tamano, 0);
 //	//Quizas deberias esperar a la confirmacion PROBABLEMENTE
 //	return valor;
-	enviarConRazon(socketKernel, logs, ASIGNAR_VALOR_COMPARTIDA,
+	enviarConRazon(socketKernel, logs, GRABAR_VALOR,
 			serializar2(crear_nodoVar(variable, strlen(variable) + 1),
 					crear_nodoVar(&valor, sizeof(t_valor_variable)), 0));
 	return valor;
@@ -594,8 +594,8 @@ void signalPropia(t_nombre_semaforo identificador_semaforo) {
 	/*Creo que no hace falta un recv, porque no le afecta directamente a el,
 	 * el PCP deberia sacar de la cola de bloqueados a quien corresponda y listo.
 	 */
-	/*	enviarConRazon(socketKernel, logs, SIGNAL,
+	enviarConRazon(socketKernel, logs, SIGNAL,
 	 serializar2(
 	 crear_nodoVar(identificador_semaforo,
-	 strlen(identificador_semaforo) + 1), 0));*/ //TODO
+	 strlen(identificador_semaforo) + 1), 0)); //TODO
 }

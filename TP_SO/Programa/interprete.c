@@ -65,10 +65,10 @@ int programa(t_log* logger, FILE* archivo) {
 	char lineaLiteral[PACKAGESIZE];
 	int valread;
 	char handshake[21] = "Soy un nuevo Programa";
-	int* tamano = malloc(4);
-	*tamano = obtenerTamanoArchivo(archivo);
-	log_info(logger,"Obtuve tamanio del archivo,%d",*tamano);
-	char* literal = malloc(*tamano);
+	int tamano;
+	tamano = obtenerTamanoArchivo(archivo);
+	log_info(logger,"Obtuve tamanio del archivo,%d",tamano);
+	char* literal = malloc(tamano);
 	char server_reply[1024];
 	fgets(lineaLiteral, PACKAGESIZE, archivo);
 	strcpy(literal, lineaLiteral);
@@ -76,7 +76,7 @@ int programa(t_log* logger, FILE* archivo) {
 		fgets(lineaLiteral, PACKAGESIZE, archivo);
 		strcat(literal, lineaLiteral);
 	}
-	literal[*tamano] = '\0';
+	literal[tamano-1] = 0;
 	log_info(logger,
 			"Se concateno Script en buffer interno y se cerro archivo");
 	//Create socket
@@ -96,18 +96,18 @@ int programa(t_log* logger, FILE* archivo) {
 	server_reply[valread] = '\0';
 	log_info(logger, server_reply);
 	//mandar literal
-	if (send(sock, tamano, 4, 0) == -1) {
+	if (send(sock, &tamano, 4, 0) == -1) {
 		log_error(logger, "Fallo Send Literal");
 		return 1;
 	}
 
-	if (send(sock, literal, *tamano, 0) == -1) {
+	if (send(sock, literal, tamano, 0) == -1) {
 		log_error(logger, "Fallo Send Literal");
 		return 1;
 	}
 	puts(literal);
 	free(literal);
-	int fin=0;
+	int fin=1;
 	while (1) {
 		/*
 		if ((valread = recv(sock, tamano, 4, 0)) <=0) {
@@ -148,7 +148,7 @@ int programa(t_log* logger, FILE* archivo) {
 	}
 
 	close(sock);
-	free(tamano);
+//	free(tamano);
 	return fin;
 }
 int obtenerTamanoArchivo(FILE* archivoAbierto) {

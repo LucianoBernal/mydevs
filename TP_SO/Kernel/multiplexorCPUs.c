@@ -236,13 +236,15 @@ void* atencionCPUs(void* sinParametro) {
 //						sem_post(&semCPUDesconectadaMutex);
 //						break;
 					case WAIT:
-						desempaquetar2(mensaje->mensaje, &tamano, &semaforo,
-								&pcb, 0);
-						sc_wait(semaforo, pcb, sd);
+						puts("Me llego wait lean careta");
+			//			desempaquetar2(mensaje->mensaje, &tamano, &semaforo,
+			//					&pcb, 0);
+			//			sc_wait(semaforo, pcb, sd);
 						break;
 					case SIGNAL:
-						desempaquetar2(mensaje->mensaje, &semaforo, 0);
-						sc_signal(semaforo, sd);
+						puts("Me llego signal");
+			//			desempaquetar2(mensaje->mensaje, &semaforo, 0);
+			//			sc_signal(semaforo, sd);
 						break;
 					case IMPRIMIR:
 						//TODO
@@ -257,12 +259,14 @@ void* atencionCPUs(void* sinParametro) {
 						sc_imprimirTexto(texto, sd);
 						break;
 					case GRABAR_VALOR:
-						desempaquetar2(mensaje->mensaje, &id, &valor, 0);
-						sc_grabar_valor(id, valor, sd);
+						puts("Me llego grabar valor");
+					//	desempaquetar2(mensaje->mensaje, &id, &valor, 0);
+					//	sc_grabar_valor(id, valor, sd);
 						break;
 					case OBTENER_VALOR:
-						desempaquetar2(mensaje->mensaje, &id, 0);
-						sc_obtener_valor(id, sd);
+						puts("me llego obtener valor");
+					//	desempaquetar2(mensaje->mensaje, &id, 0);
+				//		sc_obtener_valor(id, sd);
 						break;
 					}
 					//	free( dispositivoIO);

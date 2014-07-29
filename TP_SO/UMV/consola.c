@@ -132,6 +132,7 @@ void analizarYEjecutar(char *comando) {
 	else if (!strncmp("retardo", comando, 7)) {
 		int ret;
 		printf("\n ingrese el retardo: ");
+		fflush(stdin);
 		scanf("%d", &ret);
 		retardo = ret;
 
@@ -139,7 +140,7 @@ void analizarYEjecutar(char *comando) {
 
 	else if (!strncmp("algoritmo", comando, 9)) {
 		char alg;
-		printf("El algoritmo actual es %d.\n",algoritmo);
+		printf("El algoritmo actual es %s\n",!algoritmo?"First fit":"Worst fit");
 		printf(
 				"Si quiere cambiar a Worst-Fit, ingrese 'w'\nSi quiere cambiar a First-Fit, ingrese 'f':\n");
 		fflush(stdin);
@@ -180,7 +181,9 @@ void analizarYEjecutar(char *comando) {
 	}	//Termina if de algoritmo.
 
 	else if (!strncmp("compactacion", comando, 12)) {
+		pthread_mutex_lock(&mutexOperacion);
 		compactarMemoria();
+		pthread_mutex_unlock(&mutexOperacion);
 		printf("Compactación de memoria finalizada correctamente. \n");
 
 	}	//Termina if de compactación.
