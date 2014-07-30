@@ -44,15 +44,15 @@ int main33() {
 	cambiarProcesoActivo(1002);
 	crearSegmento(40);
 	crearSegmento(10);
-	dumpMemoriaLibreYSegmentos(0);
+	dumpMemoriaLibreYSegmentos();
 	cambiarProcesoActivo(1001);
 	crearSegmento(10);
 	crearSegmento(100);
 	cambiarProcesoActivo(1002);
 	destruirTodosLosSegmentos();
-	dumpMemoriaLibreYSegmentos(0);
+	dumpMemoriaLibreYSegmentos();
 	compactarMemoria();
-	dumpMemoriaLibreYSegmentos(0);
+	dumpMemoriaLibreYSegmentos();
 	free(baseUMV);
 	return 0;
 }
@@ -480,7 +480,7 @@ char *solicitarBytesPConsola(int base, int offset, int tamano) {
 	return solicitarBytes(base, offset, tamano);
 }
 
-void dumpMemoriaLibreYSegmentos(bool archivo) {
+void dumpMemoriaLibreYSegmentos() {
 	int i = 0;
 	mostrarListaSegmentos(obtenerListaSegmentosOrdenada());
 	void _acumularEspacio(t_limites *elemento) {
@@ -490,7 +490,7 @@ void dumpMemoriaLibreYSegmentos(bool archivo) {
 	printf("El espacio actual disponible en memoria es: %d b\n", i);
 	fprintf(dumpFile, "El espacio actual disponible en memoria es: %d b\n", i);
 }
-void dumpTablaSegmentos(bool archivo, int pid) {
+void dumpTablaSegmentos(int pid) {
 	int i;
 	if (pid == -1) {
 		for (i = 0; i < list_size(listaProcesos); i++) {
@@ -513,7 +513,7 @@ void dumpTablaSegmentos(bool archivo, int pid) {
 	}
 }
 
-void dumpMemoriaChata(int offset, int tamano, bool archivo) {
+void dumpMemoriaChata(int offset, int tamano) {
 	int i, *a = malloc(sizeof(int));
 	printf("Se muestra la memoria desde la posicion %x a la %x \n",
 			(unsigned int) baseUMV + offset,
