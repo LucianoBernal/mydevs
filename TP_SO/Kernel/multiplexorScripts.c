@@ -29,6 +29,9 @@ extern char* puerto_programa;
 extern t_log *logKernel;
 extern sem_t victimasMutex;
 extern t_list* victimas;
+extern int prog_client_socket[30];
+extern int max_programas;
+extern sem_t programasMutex;
 
 #define TRUE   1
 #define FALSE  0
@@ -36,7 +39,7 @@ extern t_list* victimas;
 
 void* atencionScripts(void* sinParametro) {
 //int main() {
-	int master_socket, addrlen, new_socket, client_socket[30], max_clients = 30,
+	int master_socket, addrlen, new_socket,
 			activity, i, valread, sd, primer_Prog=1;
 	int max_sd;
 	struct sockaddr_in address;
@@ -53,10 +56,11 @@ void* atencionScripts(void* sinParametro) {
 	char handshake[21] = "Soy un nuevo Programa";
 
 	//inicializo todos los clientes en 0
-	for (i = 0; i < max_clients; i++) {
-		client_socket[i] = 0;
+	sem_wait(&programasMutex);
+	for (i = 0; i < max_programas; i++) {
+		prog_client_socket[i] = 0;
 	}
-
+	sem_post(&programasMutex);
 	master_socket=crearServidor(puerto_programa,logKernel);
 
 	log_info(logKernel,"Esperando conexiones de programas en el puerto: %s",puerto_programa);
@@ -70,9 +74,10 @@ void* atencionScripts(void* sinParametro) {
 		max_sd = master_socket;
 
 		//agrego resto de sockets al set para que sean detectados por el select
-		for (i = 0; i < max_clients; i++) {
+		sem_wait(&programasMutex);
+		for (i = 0; i < max_programas; i++) {
 			//socket descriptor
-			sd = client_socket[i];
+			sd = prog_client_socket[i];
 
 			//si el sd es valido lo agrego al set
 			if (sd > 0)
@@ -82,6 +87,7 @@ void* atencionScripts(void* sinParametro) {
 			if (sd > max_sd)
 				max_sd = sd;
 		}
+		sem_post(&programasMutex);
 
 		//espero por actividad en alguno de los sockets, timeout es NULL , espera indefinidamente
 		activity = select(max_sd + 1, &readfds, NULL, NULL, NULL );
@@ -133,13 +139,15 @@ void* atencionScripts(void* sinParametro) {
 			log_info(logKernel,"Mensaje de bienvenida enviado correctamente al sd: %d",new_socket);
 
 			//agrego nuevo socket al vector de sockets
-			for (i = 0; i < max_clients; i++) {
+			sem_wait(&programasMutex);
+			for (i = 0; i < max_programas; i++) {
 
-				if (client_socket[i] == 0) {
-					client_socket[i] = new_socket;
+				if (prog_client_socket[i] == 0) {
+					prog_client_socket[i] = new_socket;
 					break;
 				}
 			}
+			sem_post(&programasMutex);
 			recv(new_socket, tamano, 4, MSG_WAITALL);
 			recv(new_socket, literal, *tamano, MSG_WAITALL);
 			literal[*tamano] =0;
@@ -152,8 +160,9 @@ void* atencionScripts(void* sinParametro) {
 }
 
 		//Hubo activdad en el resto de los sockets
-		for (i = 0; i < max_clients; i++) {
-			sd = client_socket[i];
+		sem_wait(&programasMutex);
+		for (i = 0; i < max_programas; i++) {
+			sd = prog_client_socket[i];
 
 			if (FD_ISSET( sd , &readfds)) {
 				//Verifica si se cerro, y ademas lee el mensaje recibido
@@ -161,23 +170,28 @@ void* atencionScripts(void* sinParametro) {
 					//Algun programa se desconecto, obtengo la informacion
 					getpeername(sd, (struct sockaddr*) &address,
 							(socklen_t*) &addrlen);
-				//	int pid=obtener_pid_de_un_sd(sd);
+					log_error(logKernel,"Antes de obtener PID");
+					int pid=obtener_pid_de_un_sd(sd);
+					log_error(logKernel,"Despues de obtener PID");
+					if(intentar_sacar_de_Programas_Finalizados(pid)==-1){
 					log_info(logKernel,"Un programa se cerro: socket fd: %d , ip: %s , puerto: %d \n",sd,
 							inet_ntoa(address.sin_addr),
 							ntohs(address.sin_port));
 					//Busco y borro PCB y Solicito destruccion de segmentos en la UMV
 					//TODO
-
+					}else{log_info(logKernel,"El programa que finalizo se cerro");}
 					//Cierra el socket y marca 0 el bit de ocupado
+					//liberar_nodo_Diccionario_PIDySD(pid);
 					close(sd);
-					client_socket[i] = 0;
-				}
+					prog_client_socket[i] = 0;
 
+				}
 				//Algun socket me envio algo, responder
 				/*else {
 				}*/
 			}
 		}
+		sem_post(&programasMutex);
 	}
 
 	return 0;
