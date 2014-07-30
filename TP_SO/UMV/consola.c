@@ -6,6 +6,20 @@
  */
 #include "consola.h"
 #include "consola_interfaz.h"
+
+bool validarPid(int pid) {
+	t_tablaProceso *pidFound = (list_get(listaProcesos, buscarPid(pid)));
+	if (pidFound == NULL ) {
+		printf("El pid no fue encontrado\n");
+		return 0;
+	}
+	if (pidFound->pid != pid) {/*Es muy raro que llegue a este error pero por las dudas lo valido.*/
+		printf("Error al encontrar el pid. Intente nuevamente.");
+		return 0;
+	}
+	return 1;
+}
+
 void crearProcesoArtificial() {
 	listaProcesos = list_create();
 	agregarProceso(10000, 'c');
@@ -16,10 +30,10 @@ void* consola(void* baseUMV) {
 	char* comando = malloc(COMANDO_SIZE);
 	crearProcesoArtificial();
 
-	dumpFile = fopen("archivoDeDump.txt","w+");
-	if (dumpFile==NULL) {
-		fputs ("File error",stderr);
-		exit (1);
+	dumpFile = fopen("archivoDeDump.txt", "w+");
+	if (dumpFile == NULL ) {
+		fputs("File error", stderr);
+		exit(1);
 	} else {
 		log_info(logger, "Se creó el archivo de dump.");
 	}
@@ -42,11 +56,14 @@ void analizarYEjecutar(char *comando) {
 	if (!strncmp("operacion", comando, 9)) {
 		t_operacion operacion;
 
-		printf(
-				"¿Qué operación desea ralizar?-para saber como usarlo enviar 'h'. \n");
+//		printf(
+//				"¿Qué operación desea ralizar?-para saber como usarlo enviar 'h'. \n");
 		int flag;
 		do {
+			printf(
+					"¿Qué operación desea ralizar?-para saber como usarlo enviar 'h'. \n");
 			flag = 0;
+			int processID;
 			fflush(stdin);
 			scanf("%s", &operacion.accion);
 
@@ -108,24 +125,45 @@ void analizarYEjecutar(char *comando) {
 				break;
 
 			case 'c':
+				printf("\ningrese pid: ");
+				fflush(stdin);
+				scanf("%d", &processID);
+				if (!validarPid(processID)) {
+					break;
+				}
+
 				printf("\ningrese tamaño: ");
+				fflush(stdin);
 				scanf("%d", &operacion.tamano);
 
+				pthread_mutex_lock(&mutexOperacion);
+				cambiarProcesoActivo(processID); //todo ojo fijarse!!
 				printf("La base logica del segmento creado es: %d\n",
 						crearSegmento(operacion.tamano));
+				pthread_mutex_unlock(&mutexOperacion);
 
 				break;
 
 			case 'd':
+				printf("\ningrese pid: ");
+				fflush(stdin);
+				scanf("%d", &processID);
+				if (!validarPid(processID)) {
+					break;
+				}
+
 				printf("\ningrese base: ");
+				fflush(stdin);
 				scanf("%d", &operacion.base);
 
+				pthread_mutex_lock(&mutexOperacion);
+				cambiarProcesoActivo(processID);
 				destruirSegmento(operacion.base);
-
+				pthread_mutex_unlock(&mutexOperacion);
 				break;
 
 			default:
-				printf("No ingresó ninguna opción válida.");
+				printf("No ingresó ninguna opción válida.\n");
 				flag = 1;
 			}		//Termina Switch para ingreso de parámetros de operacion.
 		} while (flag);
@@ -142,7 +180,8 @@ void analizarYEjecutar(char *comando) {
 
 	else if (!strncmp("algoritmo", comando, 9)) {
 		char alg;
-		printf("El algoritmo actual es %s\n",!algoritmo?"First fit":"Worst fit");
+		printf("El algoritmo actual es %s\n",
+				!algoritmo ? "First fit" : "Worst fit");
 		printf(
 				"Si quiere cambiar a Worst-Fit, ingrese 'w'\nSi quiere cambiar a First-Fit, ingrese 'f':\n");
 		fflush(stdin);
@@ -198,26 +237,27 @@ void analizarYEjecutar(char *comando) {
 		bool arch = 0;
 
 		printf("Estructuras de memoria.\n");
-		fprintf(dumpFile,"Estructuras de memoria.\n");
+		fprintf(dumpFile, "Estructuras de memoria.\n");
 		printf(
 				"Si quiere las tablas de segmentos de un proceso ingrese su pid, sino ingrese -1: \n");
 		scanf("%d", &pidPedido);
-		dumpTablaSegmentos(arch, pidPedido);//todo
+		dumpTablaSegmentos(arch, pidPedido);	//todo
 
 		printf("\nMemoria principal:\n");
 		fprintf(dumpFile, "\nMemoria principal:\n");
 		dumpMemoriaLibreYSegmentos(arch);
 
-		printf("\nSi desea saber el contenido de la memoria principal, ingrese '1', sino, '0'. \n");
+		printf(
+				"\nSi desea saber el contenido de la memoria principal, ingrese '1', sino, '0'. \n");
 		scanf("%d", &confirmaMemo);
-		if(confirmaMemo){
-		printf("\n Contenido de memoria principal.\n");
-		fprintf(dumpFile,"\n Contenido de memoria principal.\n");
-		printf("\nIngrese offset: ");
-		scanf("%d", &off);
-		printf("\nIngrese tamaño: ");
-		scanf("%d", &tam);
-		dumpMemoriaChata(off, tam, arch);
+		if (confirmaMemo) {
+			printf("\n Contenido de memoria principal.\n");
+			fprintf(dumpFile, "\n Contenido de memoria principal.\n");
+			printf("\nIngrese offset: ");
+			scanf("%d", &off);
+			printf("\nIngrese tamaño: ");
+			scanf("%d", &tam);
+			dumpMemoriaChata(off, tam, arch);
 		}
 
 	}	//Termina if de dump.
