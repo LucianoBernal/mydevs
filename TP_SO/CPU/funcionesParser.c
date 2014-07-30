@@ -425,7 +425,13 @@ void llamarConRetorno(t_nombre_etiqueta etiqueta, t_puntero donde_retornar) {
 }
 char *generarListadoVariables() {
 	int i=0, acum=0;
-	char *aux=NULL;
+	char *aux=NULL, *axu;
+//	if (pcbEnUso->tamanio_Contexto_Actual)
+//		chota="El estado final de las variables es: \n";
+//	 else
+//		chota="El programa no poseia variables";
+//	aux=strdup(chota);
+//	acum+=strlen(aux);
 	while (i<pcbEnUso->tamanio_Contexto_Actual){
 		char identif =*(solicitarBytesAUMV(pcbEnUso->segmento_Stack, i*5, 1));
 		int valor = dereferenciar(i*5);
@@ -437,8 +443,12 @@ char *generarListadoVariables() {
 		free(cadena);
 		i++;
 	}
+	if (aux!=NULL)
+		axu = string_from_format("El estado final de las variables es:\n%s", aux);
+	else
+		axu = string_from_format("El programa no tenia variables");
 //	puts(aux); //Esto es para ver como esta de este lado
-	return aux;
+	return axu;
 }
 void finalizar(void) {
 	log_info(logs, "Ejecuté finalizar");
