@@ -88,7 +88,7 @@ int main(int arc, char **argv) {
 		int razon;
 		cpu_ocupada = 0;
 		char* mensaje = recibirConRazon(socketKernel, &razon, logs);
-		if(mensaje==NULL){
+		if(mensaje==NULL&&razon!=CONFIRMACION/*&&razon!=SIGUSR_1*/){
 			log_error(logs, "Se recibió mal.");
 			exit(EXIT_FAILURE);
 		}
@@ -145,7 +145,7 @@ int main(int arc, char **argv) {
 			log_debug(logs, "El programa finalizo");
 		}
 		printf("Sali del while, lineasAnalizadas=%d y quantumDeKernel=%d\n", lineasAnalizadas, quantumDeKernel);
-		if (lineasAnalizadas==quantumDeKernel){
+		if (lineasAnalizadas==quantumDeKernel&&!programaFinalizado&&!programaBloqueado&&!programaAbortado){
 			enviarConRazon(socketKernel, logs, SALIDA_POR_QUANTUM, serializarPCB(pcbEnUso));
 		}
 	}

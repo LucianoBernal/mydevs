@@ -5,6 +5,7 @@ void* pcp_main(void* sinParametro) {
 	sinParametros = NULL;
 	colaExec = list_create();
 	diccionarioDispositivos = dictionary_create();
+	printf("diccionario de variables vale: %x\n", (u_int)variables_globales);
 	sem_init(&diccionarioDispositivosMutex, 0, 1);
 	CPUs = list_create();
 	sem_init(&CPUsLibres, 0, 0); //FIXME CPUS LIBRES VA 0, PUSE 3 PARA PROBAR

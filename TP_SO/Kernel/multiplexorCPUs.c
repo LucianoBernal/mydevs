@@ -20,7 +20,7 @@
 #include <sys/time.h> //FD_SET, FD_ISSET, FD_ZERO macros
 #include "PCPinterface.h"
 #include <biblioteca_comun/Serializacion.h>
-#include "syscall.h"
+#include "syscallskynet.h"
 #include "PCPinterface.h"
 #include "Kernel.h"
 #include "multiplexorCPUs_interfaz.h"
@@ -33,11 +33,13 @@ extern int quantum;
 extern int retardo;
 extern sem_t victimasMutex;
 extern t_list* victimas;
+extern t_dictionary *variables_globales;
 
 #define TRUE   1
 #define FALSE  0
 
 void* atencionCPUs(void* sinParametro) {
+	printf("multiplexor: diccionario de variables vale: %x\n", (u_int)variables_globales);
 	int master_socket, addrlen, new_socket, client_socket[30], max_clients = 30,
 			activity, i, sd, primer_CPU = 1;
 	int max_sd;
@@ -196,7 +198,7 @@ void* atencionCPUs(void* sinParametro) {
 					char* dispositivoIO;
 					char* texto = malloc(mensaje->size);
 					char* semaforo;
-					char* id;
+					char* id=malloc(mensaje->size);
 					puts("recibi algo");
 					switch (*razon) {
 					case SALIDA_POR_QUANTUM: //El Programa salio del CPU por quantum
@@ -237,8 +239,7 @@ void* atencionCPUs(void* sinParametro) {
 //						break;
 					case WAIT:
 						puts("Me llego wait lean careta");
-			//			desempaquetar2(mensaje->mensaje, &tamano, &semaforo,
-			//					&pcb, 0);
+			//			desempaquetar2(mensaje->mensaje, &tamano, &semaforo, &pcb, 0);
 			//			sc_wait(semaforo, pcb, sd);
 						break;
 					case SIGNAL:
@@ -260,13 +261,19 @@ void* atencionCPUs(void* sinParametro) {
 						break;
 					case GRABAR_VALOR:
 						puts("Me llego grabar valor");
-					//	desempaquetar2(mensaje->mensaje, &id, &valor, 0);
-					//	sc_grabar_valor(id, valor, sd);
+						desempaquetar2(mensaje->mensaje, id, &valor, 0);
+
+						id[mensaje->size-12]=0;
+						printf("El tamano de la cadena id es: %d\n", strlen(id));
+//						printf("El nombre del semaforo es %s y el valor a grabar es %d\n", id, valor);
+						sc_grabar_valor(id, valor, sd);
 						break;
 					case OBTENER_VALOR:
 						puts("me llego obtener valor");
-					//	desempaquetar2(mensaje->mensaje, &id, 0);
-				//		sc_obtener_valor(id, sd);
+						desempaquetar2(mensaje->mensaje, id, 0);
+						id[mensaje->size-5]=0;
+						printf("El tamano de la cadena id es: %d\n", strlen(id));
+						sc_obtener_valor(id, sd);
 						break;
 					}
 					//	free( dispositivoIO);

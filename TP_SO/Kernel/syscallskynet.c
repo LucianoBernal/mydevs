@@ -1,25 +1,29 @@
-#include "syscall.h"
+#include "syscallskynet.h"
 
 void sc_obtener_valor(char* id, int idCpu) {
 	sem_wait(&mutexVG);
-	int* a = dictionary_get(variables_globales, id);
-	int *aProp=malloc(sizeof(int));
-	*aProp= *a;
+	printf("Adentro del mutex\n");
+	int *a;
+	a = dictionary_get(variables_globales, id);
+	printf("hOlis\n");
+	printf("Ya grabe el valor: %d en la variable: %s \n", *a, id);
 	sem_post(&mutexVG);
-	enviarConRazon(idCpu, logKernel, OBTENER_VALOR, serializar2(crear_nodoVar(aProp,4),0));
-	free(aProp);
+	enviarConRazon(idCpu, logKernel, OBTENER_VALOR,
+			serializar2(crear_nodoVar(a, 4), 0));
+	printf("Y conteste!\n");
 } //VISTA
 
 void sc_grabar_valor(char* id, int valor, int idCpu) {
 	sem_wait(&mutexVG);
-	dictionary_remove_and_destroy(variables_globales, id, (void*) free);
-	int *valorProp=malloc(sizeof(int));
-	*valorProp=valor;
-	dictionary_put(variables_globales, id, &valorProp);
+	dictionary_has_key(variables_globales, id) ?
+			dictionary_remove(variables_globales, id) :
+			printf("No estaba la variable \n");
+	int *valorProp = malloc(sizeof(int));
+	*valorProp = valor;
+	dictionary_put(variables_globales, id, valorProp);
 	sem_post(&mutexVG);
-	enviarConRazon(idCpu, logKernel, GRABAR_VALOR, serializar2(crear_nodoVar(valorProp,4),0));
-	free(valorProp);
-}//VISTA
+	enviarConRazon(idCpu, logKernel, CONFIRMACION, NULL );
+} //VISTA
 
 void sc_signal(char* idSem, int idCPU) {
 	sem_wait(&diccionarioSemaforosMutex);
@@ -37,9 +41,8 @@ void sc_signal(char* idSem, int idCPU) {
 	}
 } //VISTA
 
-
 void sc_wait(char* idSem, t_PCB* pcb, int idCPU) {
-	int * estado_semaforo=malloc(sizeof(int));
+	int * estado_semaforo = malloc(sizeof(int));
 	sem_wait(&diccionarioSemaforosMutex);
 	t_estructuraSemaforo* semaforo = dictionary_get(diccionarioSemaforos,
 			idSem);
@@ -47,12 +50,14 @@ void sc_wait(char* idSem, t_PCB* pcb, int idCPU) {
 	semaforo->valor = (semaforo->valor) - 1;
 	sem_post(&diccionarioSemaforosMutex);
 	if (a > 0) {
-		*estado_semaforo=1;
-		enviarConRazon(idCPU, logKernel, WAIT, serializar2(crear_nodoVar(estado_semaforo,4),0));
+		*estado_semaforo = 1;
+		enviarConRazon(idCPU, logKernel, WAIT,
+				serializar2(crear_nodoVar(estado_semaforo, 4), 0));
 		//(puede seguir)
 	} else {
-		*estado_semaforo=0;
-		enviarConRazon(idCPU, logKernel, WAIT, serializar2(crear_nodoVar(estado_semaforo,4),0));
+		*estado_semaforo = 0;
+		enviarConRazon(idCPU, logKernel, WAIT,
+				serializar2(crear_nodoVar(estado_semaforo, 4), 0));
 		//(se libera)
 		seLiberoUnaCPU(idCPU);
 		sem_wait(&(semaforo->mutexCola));
@@ -64,12 +69,13 @@ void sc_wait(char* idSem, t_PCB* pcb, int idCPU) {
 
 void sc_imprimir(int valorAMostrar, int idCpu) {
 	int programID = programIdDeCpu(idCpu);
-		int sd = obtener_sd_Programa(programID);
-		int* valorAMostrarBuffer=malloc(sizeof(int));
-		*valorAMostrarBuffer=valorAMostrar;
-		send(sd, valorAMostrarBuffer, 4, 0);
-		int cantDigitos = strlen(string_from_format("%d",valorAMostrar));
-		enviarConRazon(idCpu, logKernel, IMPRIMIR_TEXTO, serializar2(crear_nodoVar(&cantDigitos,4),0));
+	int sd = obtener_sd_Programa(programID);
+	int* valorAMostrarBuffer = malloc(sizeof(int));
+	*valorAMostrarBuffer = valorAMostrar;
+	send(sd, valorAMostrarBuffer, 4, 0);
+	int cantDigitos = strlen(string_from_format("%d", valorAMostrar));
+	enviarConRazon(idCpu, logKernel, IMPRIMIR_TEXTO,
+			serializar2(crear_nodoVar(&cantDigitos, 4), 0));
 } //VISTA
 
 void sc_imprimirTexto(char* texto, int idCpu) {
@@ -77,11 +83,11 @@ void sc_imprimirTexto(char* texto, int idCpu) {
 	int sd = obtener_sd_Programa(programID);
 //	notificar_Programa(sd, texto);
 //	int cantDigitos = strlen(texto);
-	enviarConRazon(sd, logKernel, IMPRIMIR_TEXTO, serializar2(crear_nodoVar(texto, strlen(texto)), 0));
-	enviarConRazon(idCpu, logKernel, CONFIRMACION, NULL);
+	enviarConRazon(sd, logKernel, IMPRIMIR_TEXTO,
+			serializar2(crear_nodoVar(texto, strlen(texto)), 0));
+	enviarConRazon(idCpu, logKernel, CONFIRMACION, NULL );
 //	enviarConRazon(idCpu, logKernel, IMPRIMIR_TEXTO, serializar2(crear_nodoVar(&cantDigitos,4),0));
 } //VISTA
-
 
 int programIdDeCpu(int idCPU) {
 	sem_wait(&CPUsMutex);

@@ -1,5 +1,5 @@
-#ifndef SYSCALLS_H_
-#define SYSCALLS_H_
+#ifndef SYSCALLSKYNET_H_
+#define SYSCALLSKYNET_H_
 
 #include "Kernel.h"
 #include <string.h>

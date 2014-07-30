@@ -339,10 +339,10 @@ t_valor_variable obtenerValorCompartida(t_nombre_compartida variable) {
 //	t_valor_variable *aux = malloc(sizeof(t_valor_variable));
 //	desempaquetar2(mensaje, aux, 0);
 //	return *aux;
-	t_valor_variable aux;
+	int aux;
 	int razon;
 	enviarConRazon(socketKernel, logs, OBTENER_VALOR,
-			serializar2(crear_nodoVar(variable, strlen(variable) + 1), 0));
+			serializar2(crear_nodoVar(variable, strlen(variable)), 0));
 	char *respuesta = recibirConRazon(socketKernel, &razon, logs);
 	desempaquetar2(respuesta, &aux, 0);
 	free(respuesta);
@@ -352,20 +352,11 @@ t_valor_variable obtenerValorCompartida(t_nombre_compartida variable) {
 t_valor_variable asignarValorCompartida(t_nombre_compartida variable,
 		t_valor_variable valor) {
 	log_info(logs, "Ejecute asignarValorCompartida con %s", variable);
-//	int *razon = malloc(sizeof(int));
-//	*razon = GRABAR_VALOR;
-//	t_paquete *paquete = serializar2(
-//			crear_nodoVar(&variable, sizeof(t_nombre_compartida)),
-//			crear_nodoVar(&valor, sizeof(t_valor_variable)), 0);
-//	t_paquete *header = serializar2(crear_nodoVar(&(paquete->tamano), 4),
-//			crear_nodoVar(razon, 4), 0);
-//	send(socketKernel, header->msj, TAMANO_CABECERA, 0);
-//	send(socketKernel, paquete->msj, paquete->tamano, 0);
-//	//Quizas deberias esperar a la confirmacion PROBABLEMENTE
-//	return valor;
+	int razon;
 	enviarConRazon(socketKernel, logs, GRABAR_VALOR,
-			serializar2(crear_nodoVar(variable, strlen(variable) + 1),
+			serializar2(crear_nodoVar(variable, strlen(variable)),
 					crear_nodoVar(&valor, sizeof(t_valor_variable)), 0));
+	recibirConRazon(socketKernel, &razon, logs);
 	return valor;
 }
 //

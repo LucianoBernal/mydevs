@@ -28,7 +28,7 @@ int main(int argc, char** argv) {
 
 	//Cargo parámetros del config en variables de Kernel.
 	cargarConfig(config);
-	variables_globales = dictionary_create();
+//	variables_globales = dictionary_create();
 	colaReady = queue_create();
 	colaExit = queue_create();
 	programasFinalizados=list_create();
@@ -203,12 +203,18 @@ void cambiarTiposDeVariablesGlobales() {
 	variables_globales = dictionary_create();
 	log_info(logKernel,"Se creo Diccionario Variables Compartidas");
 	while (variables_globales_aux[i] != NULL ) {
+		variables_globales_aux[i]=realloc(variables_globales_aux[i], strlen(variables_globales_aux[i]));
 		int *a = malloc(sizeof(int));
 		*a = 0;
 		dictionary_put(variables_globales, variables_globales_aux[i], a);
 		(log_info(logKernel,"Se agrego variable: %s con valor:%d al diccionario de variables compartidas",variables_globales_aux[i],*a));
 		i++;
 	}
+	void mostrar_variables(char *key, int *valor){
+		printf("El nombre es %s y el valor es %d\n", key, *valor);
+	}
+	printf("diccionario de variables vale: %x\n", (u_int)variables_globales);
+	dictionary_iterator(variables_globales, (void*)mostrar_variables);
 }
 
 void armarDiccionarioDeSemaforos() {
