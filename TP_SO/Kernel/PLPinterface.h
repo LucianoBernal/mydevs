@@ -17,6 +17,10 @@ typedef struct {
 	int peso;
 } t_new;
 
+int intentar_sacar_de_Programas_Finalizados(int);
+void agregar_a_Programas_Finalizados(int);
+int buscarSocketenVector(int,int*);
+void cerrarSocketPrograma(int);
 int obtener_pid_de_un_sd(int);
 void liberar_nodo_Diccionario_PIDySD(int);
 void mostrar_todas_Las_Listas(void);

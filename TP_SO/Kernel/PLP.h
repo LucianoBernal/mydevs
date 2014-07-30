@@ -11,7 +11,10 @@
 #include "Kernel.h"
 #include "multiplexorScripts_interfaz.h"
 
-
+extern sem_t programasFinalizadosMutex;
+extern t_list *programasFinalizados;
+extern int max_programas;
+extern int prog_client_socket[30];
 extern sem_t victimasMutex;
 extern t_list* victimas;
 extern sem_t mostarColasMutex;

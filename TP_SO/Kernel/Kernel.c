@@ -31,7 +31,8 @@ int main(int argc, char** argv) {
 	variables_globales = dictionary_create();
 	colaReady = queue_create();
 	colaExit = queue_create();
-
+	programasFinalizados=list_create();
+	sem_init(&programasFinalizadosMutex, 0, 1);
 	sem_init(&mostarColasMutex, 0, 1);
 	sem_init(&colaExitMutex, 0, 1);
 	sem_init(&colaExitVacio, 0, 0);
@@ -40,6 +41,8 @@ int main(int argc, char** argv) {
 	sem_init(&colaReadyMutex, 0, 1);
 	sem_init(&vacioReady, 0, 0);
 	sem_init(&victimasMutex,0,1);
+	sem_init(&programasMutex,0,1);
+	max_programas= 30;
 	victimas=list_create();
 	idUltimaCPUDesconectada=-1;
 	socketUMV = conectarCliente(ip_UMV, puerto_UMV, logKernel);

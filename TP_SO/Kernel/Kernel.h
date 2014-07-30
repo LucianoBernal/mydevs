@@ -33,6 +33,12 @@
 #include <time.h>
 #include "PCP.h"
 
+
+sem_t programasFinalizadosMutex;
+t_list* programasFinalizados;
+sem_t programasMutex;
+int max_programas;
+int prog_client_socket[30];
 sem_t victimasMutex;
 t_list* victimas;
 int idUltimaCPUDesconectada;
