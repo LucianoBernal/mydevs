@@ -134,6 +134,7 @@ void* bloquearYDevolverAReady(void * param) {
 		sem_wait(&colaReadyMutex);
 		queue_push(colaReady, estructuraBloqueada->pcb);
 		sem_post(&colaReadyMutex);
+		sem_post(&vacioReady);
 		mostrar_todas_Las_Listas();
 	}
 	queue_destroy(estructura->procesosBloqueados);
@@ -339,7 +340,7 @@ void mostrarColaDeProcesosBloqueados() {
 		t_estructuraDispositivoIO* estructura = dictionary_get(
 				diccionarioDispositivos, id);
 		sem_wait(&(estructura->mutexCola));
-		mostrarColaDePCBs(estructura->procesosBloqueados);
+		mostrarColaDePCBsBloqueados(estructura->procesosBloqueados);
 		sem_post(&(estructura->mutexCola));
 		a++;
 	}
@@ -352,7 +353,7 @@ void mostrarColaDeProcesosBloqueados() {
 		t_estructuraSemaforo* semaforo = dictionary_get(diccionarioSemaforos,
 				sem);
 		sem_wait(&(semaforo->mutexCola));
-		mostrarColaDePCBsBloqueados(semaforo->procesosBloqueados);
+		mostrarColaDePCBs(semaforo->procesosBloqueados);
 		sem_post(&(semaforo->mutexCola));
 		b++;
 	}

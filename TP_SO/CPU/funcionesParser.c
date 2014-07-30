@@ -553,12 +553,15 @@ void entradaSalida(t_nombre_dispositivo dispositivo, int tiempo) {
 //	send(socketKernel, header->msj, TAMANO_CABECERA, 0);
 //	send(socketKernel, paquete->msj, paquete->tamano, 0);
 //	log_info(log, "Se desalojó un programa de esta CPU");
-	/*	t_paquete * paquetePCB = serializarPCB(pcbEnUso);
+	pcbEnUso->program_Counter++;
+	t_paquete * paquetePCB = serializarPCB(pcbEnUso);
 	 int tamano = paquetePCB->tamano;
+	 printf("El tamano del pcb empaquetado es %d", tamano);
 	 enviarConRazon(socketKernel, logs, SALIO_POR_IO,
 	 serializar2(crear_nodoVar(paquetePCB->msj, tamano),
-	 crear_nodoVar(dispositivo, strlen(dispositivo) + 1),
-	 crear_nodoVar(&tiempo, 4), 0));*///TODO
+	 crear_nodoVar(dispositivo, strlen(dispositivo)),
+	 crear_nodoVar(&tiempo, 4), 0));//TODO
+	 programaBloqueado=1;
 }
 void wait(t_nombre_semaforo identificador_semaforo) {
 	log_info(logs, "Ejecute wait con %s", identificador_semaforo);

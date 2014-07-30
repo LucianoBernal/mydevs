@@ -462,7 +462,7 @@ void mostrar_todas_Las_Listas() {
 	mostrarListaNew();
 	mostrarColaDeProcesosListos();
 	mostrarColaDeProcesosEnEjecucion();
-//mostrarColaDeProcesosBloqueados();
+    mostrarColaDeProcesosBloqueados();
 	mostrarColaDeProcesosFinalizados();
 	sem_post(&mostarColasMutex);
 

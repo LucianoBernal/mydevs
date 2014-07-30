@@ -39,7 +39,8 @@ extern t_dictionary *variables_globales;
 #define FALSE  0
 
 void* atencionCPUs(void* sinParametro) {
-	printf("multiplexor: diccionario de variables vale: %x\n", (u_int)variables_globales);
+	printf("multiplexor: diccionario de variables vale: %x\n",
+			(u_int) variables_globales);
 	int master_socket, addrlen, new_socket, client_socket[30], max_clients = 30,
 			activity, i, sd, primer_CPU = 1;
 	int max_sd;
@@ -195,10 +196,10 @@ void* atencionCPUs(void* sinParametro) {
 					t_PCB* pcb = malloc(sizeof(t_PCB));
 					char* pcbEmpaquetado = malloc(sizeof(t_PCB));
 					int tiempo, valor, tamano;
-					char* dispositivoIO;
+					char* dispositivoIO=malloc(mensaje->size);
 					char* texto = malloc(mensaje->size);
 					char* semaforo = malloc(mensaje->size);
-					char* id=malloc(mensaje->size);
+					char* id = malloc(mensaje->size);
 					puts("recibi algo");
 					switch (*razon) {
 					case SALIDA_POR_QUANTUM: //El Programa salio del CPU por quantum
@@ -212,12 +213,15 @@ void* atencionCPUs(void* sinParametro) {
 //						log_info(logKernel,"Aca NO estoy");
 						moverAColaExityLiberarCPU(pcb, sd);
 						break;
-					case SALIDA_POR_BLOQUEO: //El Programa salio por bloqueo
+					case SALIO_POR_IO: //El Programa salio por bloqueo
+						printf("Fuck yeah sali por IO\n");
 //						desempaquetar2(mensaje, &pcb, &tiempo, &dispositivoIO,
 //								0);
 						desempaquetar2(mensaje->mensaje, pcbEmpaquetado,
-								&tiempo, dispositivoIO, 0);
+								dispositivoIO, &tiempo, 0);
 						desempaquetarPCB(pcb, pcbEmpaquetado);
+						dispositivoIO[mensaje->size-88]=0;
+						printf("el dispositivo que recibi: %s y por un tiempo: %d\n",dispositivoIO,tiempo);
 						programaSalioPorBloqueo(pcb, tiempo, dispositivoIO, sd);
 						break;
 					case SALIDA_POR_SEMAFORO:
@@ -240,15 +244,15 @@ void* atencionCPUs(void* sinParametro) {
 					case WAIT:
 						puts("Me llego wait lean careta");
 						desempaquetar2(mensaje->mensaje, semaforo, 0);
-						semaforo[mensaje->size-5]=0;
+						semaforo[mensaje->size - 5] = 0;
 						puts(semaforo);
- 						sc_wait(semaforo, sd);
+						sc_wait(semaforo, sd);
 						break;
 					case SIGNAL:
 						puts("olvis que Me llego signal");
 						desempaquetar2(mensaje->mensaje, semaforo, 0);
 
-						semaforo[mensaje->size-5]=0;
+						semaforo[mensaje->size - 5] = 0;
 						puts(semaforo);
 						sc_signal(semaforo, sd);
 						break;
@@ -260,7 +264,7 @@ void* atencionCPUs(void* sinParametro) {
 								mensaje->size);
 
 						desempaquetar2(mensaje->mensaje, texto, 0);
-						texto[mensaje->size-5]=0;
+						texto[mensaje->size - 5] = 0;
 //						printf("No la cagaste desempaquetando %d\n", strlen(texto));
 						sc_imprimirTexto(texto, sd);
 						break;
@@ -268,16 +272,18 @@ void* atencionCPUs(void* sinParametro) {
 						puts("Me llego grabar valor");
 						desempaquetar2(mensaje->mensaje, id, &valor, 0);
 
-						id[mensaje->size-13]=0;
-						printf("El tamano de la cadena id es: %d\n", strlen(id));
+						id[mensaje->size - 13] = 0;
+						printf("El tamano de la cadena id es: %d\n",
+								strlen(id));
 //						printf("El nombre del semaforo es %s y el valor a grabar es %d\n", id, valor);
 						sc_grabar_valor(id, valor, sd);
 						break;
 					case OBTENER_VALOR:
 						puts("me llego obtener valor");
 						desempaquetar2(mensaje->mensaje, id, 0);
-						id[mensaje->size-5]=0;
-						printf("El tamano de la cadena id es: %d\n", strlen(id));
+						id[mensaje->size - 5] = 0;
+						printf("El tamano de la cadena id es: %d\n",
+								strlen(id));
 						sc_obtener_valor(id, sd);
 						break;
 					}
