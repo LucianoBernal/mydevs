@@ -122,7 +122,7 @@ int main(int arc, char **argv) {
 					pcbEnUso->segmento_Codigo, ubInstruccion, largoInstruccion);
 			literalInstruccion[largoInstruccion] = 0;
 			log_debug(logs, "El literal es juancito: %s", literalInstruccion);
-			analizadorLinea(strdup(literalInstruccion), &funciones_Ansisop,
+			analizadorLinea(_depurar_sentencia(strdup(literalInstruccion)), &funciones_Ansisop,
 					&funciones_kernel);
 			pcbEnUso->program_Counter++;
 			lineasAnalizadas++;
@@ -144,10 +144,10 @@ int main(int arc, char **argv) {
 		if (programaFinalizado){
 			log_debug(logs, "El programa finalizo");
 		}
-		printf("Sali del while, lineasAnalizadas=%d y quantumDeKernel=%d\n", lineasAnalizadas, quantumDeKernel);
 		if (lineasAnalizadas==quantumDeKernel&&!programaFinalizado&&!programaBloqueado&&!programaAbortado){
 			enviarConRazon(socketKernel, logs, SALIDA_POR_QUANTUM, serializarPCB(pcbEnUso));
 		}
+		printf("Sali del while, lineasAnalizadas=%d y quantumDeKernel=%d\n", lineasAnalizadas, quantumDeKernel);
 	}
 	enviarConRazon(socketKernel, logs, SIGUSR_1, NULL);
 

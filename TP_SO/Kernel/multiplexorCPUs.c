@@ -197,7 +197,7 @@ void* atencionCPUs(void* sinParametro) {
 					int tiempo, valor, tamano;
 					char* dispositivoIO;
 					char* texto = malloc(mensaje->size);
-					char* semaforo;
+					char* semaforo = malloc(mensaje->size);
 					char* id=malloc(mensaje->size);
 					puts("recibi algo");
 					switch (*razon) {
@@ -239,13 +239,18 @@ void* atencionCPUs(void* sinParametro) {
 //						break;
 					case WAIT:
 						puts("Me llego wait lean careta");
-			//			desempaquetar2(mensaje->mensaje, &tamano, &semaforo, &pcb, 0);
-			//			sc_wait(semaforo, pcb, sd);
+						desempaquetar2(mensaje->mensaje, semaforo, 0);
+						semaforo[mensaje->size-5]=0;
+						puts(semaforo);
+ 						sc_wait(semaforo, sd);
 						break;
 					case SIGNAL:
-						puts("Me llego signal");
-			//			desempaquetar2(mensaje->mensaje, &semaforo, 0);
-			//			sc_signal(semaforo, sd);
+						puts("olvis que Me llego signal");
+						desempaquetar2(mensaje->mensaje, semaforo, 0);
+
+						semaforo[mensaje->size-5]=0;
+						puts(semaforo);
+						sc_signal(semaforo, sd);
 						break;
 					case IMPRIMIR:
 						//TODO
@@ -255,7 +260,7 @@ void* atencionCPUs(void* sinParametro) {
 								mensaje->size);
 
 						desempaquetar2(mensaje->mensaje, texto, 0);
-						texto[mensaje->size-4]=0;
+						texto[mensaje->size-5]=0;
 //						printf("No la cagaste desempaquetando %d\n", strlen(texto));
 						sc_imprimirTexto(texto, sd);
 						break;
@@ -263,7 +268,7 @@ void* atencionCPUs(void* sinParametro) {
 						puts("Me llego grabar valor");
 						desempaquetar2(mensaje->mensaje, id, &valor, 0);
 
-						id[mensaje->size-12]=0;
+						id[mensaje->size-13]=0;
 						printf("El tamano de la cadena id es: %d\n", strlen(id));
 //						printf("El nombre del semaforo es %s y el valor a grabar es %d\n", id, valor);
 						sc_grabar_valor(id, valor, sd);

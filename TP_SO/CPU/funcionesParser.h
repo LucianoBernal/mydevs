@@ -33,7 +33,7 @@ void retornar(t_valor_variable retorno);
 void imprimir(t_valor_variable valor_mostrar);
 void imprimirTexto(char* texto);
 void entradaSalida(t_nombre_dispositivo dispositivo, int tiempo);
-
+char* _depurar_sentencia(char* sentencia);
 void wait(t_nombre_semaforo identificador_semaforo);
 void signalPropia(t_nombre_semaforo identificador_semaforo);
 

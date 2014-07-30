@@ -16,7 +16,7 @@ void sc_obtener_valor(char*, int);
 
 void sc_grabar_valor(char*, int, int);
 void sc_signal(char*, int);
-void sc_wait(char*, t_PCB* , int);
+void sc_wait(char*, int);
 
 void sc_imprimir();
 

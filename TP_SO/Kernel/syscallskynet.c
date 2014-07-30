@@ -38,11 +38,14 @@ void sc_signal(char* idSem, int idCPU) {
 		sem_wait(&colaReadyMutex);
 		queue_push(colaReady, pcbADesbloquear);
 		sem_post(&colaReadyMutex);
+		sem_post(&vacioReady);
 	}
+	printf("El semaforo: %s quedo con el valor: %d\n",idSem,semaforo->valor);
 } //VISTA
 
-void sc_wait(char* idSem, t_PCB* pcb, int idCPU) {
+void sc_wait(char* idSem, int idCPU) {
 	int * estado_semaforo = malloc(sizeof(int));
+	t_PCB *pcb=malloc(sizeof(t_PCB));
 	sem_wait(&diccionarioSemaforosMutex);
 	t_estructuraSemaforo* semaforo = dictionary_get(diccionarioSemaforos,
 			idSem);
@@ -50,15 +53,15 @@ void sc_wait(char* idSem, t_PCB* pcb, int idCPU) {
 	semaforo->valor = (semaforo->valor) - 1;
 	sem_post(&diccionarioSemaforosMutex);
 	if (a > 0) {
-		*estado_semaforo = 1;
-		enviarConRazon(idCPU, logKernel, WAIT,
-				serializar2(crear_nodoVar(estado_semaforo, 4), 0));
+		//*estado_semaforo = 1;
+		enviarConRazon(idCPU, logKernel, CONFIRMACION,NULL);
 		//(puede seguir)
 	} else {
-		*estado_semaforo = 0;
-		enviarConRazon(idCPU, logKernel, WAIT,
-				serializar2(crear_nodoVar(estado_semaforo, 4), 0));
+		//*estado_semaforo = 0;
+		enviarConRazon(idCPU, logKernel, DESALOJAR_PROGRAMA,NULL);
 		//(se libera)
+		char *respuesta = recibirConRazon(idCPU, estado_semaforo, logKernel);
+		desempaquetarPCB(pcb, respuesta);
 		seLiberoUnaCPU(idCPU);
 		sem_wait(&(semaforo->mutexCola));
 		queue_push(semaforo->procesosBloqueados, pcb);
@@ -85,7 +88,7 @@ void sc_imprimirTexto(char* texto, int idCpu) {
 //	int cantDigitos = strlen(texto);
 	enviarConRazon(sd, logKernel, IMPRIMIR_TEXTO,
 			serializar2(crear_nodoVar(texto, strlen(texto)), 0));
-	enviarConRazon(idCpu, logKernel, CONFIRMACION, NULL );
+	enviarConRazon(idCpu, logKernel, CONFIRMACION, serializar2(crear_nodoVar(texto, strlen(texto)), 0));
 //	enviarConRazon(idCpu, logKernel, IMPRIMIR_TEXTO, serializar2(crear_nodoVar(&cantDigitos,4),0));
 } //VISTA
 

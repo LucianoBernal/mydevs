@@ -26,7 +26,7 @@ extern t_log *logs;
 extern t_PCB *pcbEnUso;
 extern t_dictionary *diccionarioDeVariables;
 extern char *etiquetas;
-extern int programaFinalizado;
+extern int programaFinalizado, programaBloqueado;
 //static unsigned char nivelContexto;
 //int programCounter;
 //t_puntero stackBase;
@@ -171,7 +171,7 @@ void vincPrimitivas() {
 	funciones_kernel.AnSISOP_wait = wait;
 }
 
-static char* _depurar_sentencia(char* sentencia) {
+char* _depurar_sentencia(char* sentencia) {
 	log_debug(logs, "Depurando sentencia...");
 	int i = strlen(sentencia);
 	while (string_ends_with(sentencia, "\n")) {
@@ -306,7 +306,9 @@ void asignar(t_puntero direccion_variable, t_valor_variable valor) { //Chequeada
 			direccion_variable, valor);
 //	printf("llame asignar con direccion = %d y valor = %d\n",
 //			direccion_variable, valor);
-	log_error(logs, "DIRECCION VARIABLE ES: %d, LA DIFERENCIA ES %d", direccion_variable, pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack);
+	log_error(logs, "DIRECCION VARIABLE ES: %d, LA DIFERENCIA ES %d",
+			direccion_variable,
+			pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack);
 	if (direccion_variable
 			< pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack) {
 		direccion_variable += pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack;
@@ -376,7 +378,7 @@ void irAlLabel(t_nombre_etiqueta etiqueta) {
 void llamarSinRetorno(t_nombre_etiqueta etiqueta) {
 	//log_info(logs, "Ejecute llamarSinRetorno con %s", etiqueta);
 	//Yo crearia un nuevo diccionario, pero no se como es esta cosa.
-	dictionary_clean_and_destroy_elements(diccionarioDeVariables, (void*)free);
+	dictionary_clean_and_destroy_elements(diccionarioDeVariables, (void*) free);
 	enviarBytesAUMV(pcbEnUso->segmento_Stack,
 			pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack
 					+ pcbEnUso->tamanio_Contexto_Actual * 5, 4,
@@ -394,7 +396,7 @@ void llamarSinRetorno(t_nombre_etiqueta etiqueta) {
 }
 void llamarConRetorno(t_nombre_etiqueta etiqueta, t_puntero donde_retornar) {
 	//log_info(logs, "Ejecute llamarConRetorno con %s", etiqueta);
-	dictionary_clean_and_destroy_elements(diccionarioDeVariables, (void*)free);
+	dictionary_clean_and_destroy_elements(diccionarioDeVariables, (void*) free);
 	enviarBytesAUMV(pcbEnUso->segmento_Stack,
 			pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack
 					+ pcbEnUso->tamanio_Contexto_Actual * 5, 4,
@@ -415,27 +417,29 @@ void llamarConRetorno(t_nombre_etiqueta etiqueta, t_puntero donde_retornar) {
 	irAlLabel(etiqueta);
 }
 char *generarListadoVariables() {
-	int i=0, acum=0;
-	char *aux=NULL, *axu;
+	int i = 0, acum = 0;
+	char *aux = NULL, *axu;
 //	if (pcbEnUso->tamanio_Contexto_Actual)
 //		chota="El estado final de las variables es: \n";
 //	 else
 //		chota="El programa no poseia variables";
 //	aux=strdup(chota);
 //	acum+=strlen(aux);
-	while (i<pcbEnUso->tamanio_Contexto_Actual){
-		char identif =*(solicitarBytesAUMV(pcbEnUso->segmento_Stack, i*5, 1));
-		int valor = dereferenciar(i*5);
-		char *cadena=string_from_format("VARIABLE %c: %d\n", identif, valor);
-		acum+=strlen(cadena)+1;
-		aux=realloc(aux, acum);
-		if (!i) aux[0]=0;
+	while (i < pcbEnUso->tamanio_Contexto_Actual) {
+		char identif = *(solicitarBytesAUMV(pcbEnUso->segmento_Stack, i * 5, 1));
+		int valor = dereferenciar(i * 5);
+		char *cadena = string_from_format("VARIABLE %c: %d\n", identif, valor);
+		acum += strlen(cadena) + 1;
+		aux = realloc(aux, acum);
+		if (!i)
+			aux[0] = 0;
 		string_append(&aux, cadena);
 		free(cadena);
 		i++;
 	}
-	if (aux!=NULL)
-		axu = string_from_format("El estado final de las variables es:\n%s", aux);
+	if (aux != NULL )
+		axu = string_from_format("El estado final de las variables es:\n%s",
+				aux);
 	else
 		axu = string_from_format("El programa no tenia variables");
 //	puts(aux); //Esto es para ver como esta de este lado
@@ -448,13 +452,17 @@ void finalizar(void) {
 //		char *tituloFinal2 =strdup(tituloFinal);
 //		enviarConRazon(socketKernel, logs, IMPRIMIR_TEXTO, serializar2(crear_nodoVar(tituloFinal2, strlen(tituloFinal2)), 0));
 		char *mensajeFinal = generarListadoVariables();
-		if (mensajeFinal!=NULL){
+		if (mensajeFinal != NULL ) {
 			int razon;
-			enviarConRazon(socketKernel, logs, IMPRIMIR_TEXTO, serializar2(crear_nodoVar(mensajeFinal, strlen(mensajeFinal)), 0));
+			enviarConRazon(socketKernel, logs, IMPRIMIR_TEXTO,
+					serializar2(
+							crear_nodoVar(mensajeFinal, strlen(mensajeFinal)),
+							0));
 			recibirConRazon(socketKernel, &razon, logs);//Deberia preguntar si es confirmacion pero bue
 		}
 		programaFinalizado = 1;
-		enviarConRazon(socketKernel, logs, SALIDA_NORMAL, serializarPCB(pcbEnUso));
+		enviarConRazon(socketKernel, logs, SALIDA_NORMAL,
+				serializarPCB(pcbEnUso));
 	} else {
 		char *p_programCounter = solicitarBytesAUMV(pcbEnUso->segmento_Stack,
 				pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack - 4, 4);
@@ -514,8 +522,10 @@ void imprimir(t_valor_variable valor_mostrar) {
 //	enviarConRazon(socketKernel, logs, IMPRIMIR,
 //	 serializar2(crear_nodoVar(&valor_mostrar, sizeof(t_valor_variable)),
 //	 0)); //TODO
+	imprimirTexto(string_from_format("%d ", valor_mostrar));
 }
 void imprimirTexto(char* texto) {
+	int razon;
 	log_info(logs, "Ejecute imprimirTexto con %s", texto);
 //	enviarConRazon(socketKernel, logs, IMPRIMIR_TEXTO, serializar2(crear_nodoVar(texto, strlen(texto)), 0));
 //	int *razon = malloc(sizeof(int));
@@ -527,8 +537,9 @@ void imprimirTexto(char* texto) {
 //	send(socketKernel, header->msj, TAMANO_CABECERA, 0);
 //	send(socketKernel, paquete->msj, paquete->tamano, 0);
 //	//Quizas deberiamos esperar la respuesta
-	/*	enviarConRazon(socketKernel, logs, IMPRIMIR_TEXTO,
-	 serializar2(crear_nodoVar(texto, strlen(texto) + 1), 0));*///TODO
+	enviarConRazon(socketKernel, logs, IMPRIMIR_TEXTO,
+			serializar2(crear_nodoVar(texto, strlen(texto)), 0)); //TODO
+	recibirConRazon(socketKernel, &razon, logs);
 }
 void entradaSalida(t_nombre_dispositivo dispositivo, int tiempo) {
 	log_info(logs, "Ejecute entradaSalida con %s", dispositivo);
@@ -573,10 +584,12 @@ void wait(t_nombre_semaforo identificador_semaforo) {
 			serializar2(
 					crear_nodoVar(identificador_semaforo,
 							strlen(identificador_semaforo) + 1), 0));
-	char *respuesta = recibirConRazon(socketKernel, &razon, logs);
+	recibirConRazon(socketKernel, &razon, logs);
 	//TODO tiene razón el hijo de puta del warning.
 	if (razon == DESALOJAR_PROGRAMA) {
-		//DESALOJAR();
+		pcbEnUso->program_Counter++;
+		enviarConRazon(socketKernel, logs, 4, serializarPCB(pcbEnUso));
+		programaBloqueado = 1;
 	} else {
 		//NARANJA;
 	}
@@ -596,7 +609,7 @@ void signalPropia(t_nombre_semaforo identificador_semaforo) {
 	 * el PCP deberia sacar de la cola de bloqueados a quien corresponda y listo.
 	 */
 	enviarConRazon(socketKernel, logs, SIGNAL,
-	 serializar2(
-	 crear_nodoVar(identificador_semaforo,
-	 strlen(identificador_semaforo) + 1), 0)); //TODO
+			serializar2(
+					crear_nodoVar(identificador_semaforo,
+							strlen(identificador_semaforo) + 1), 0)); //TODO
 }

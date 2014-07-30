@@ -133,7 +133,7 @@ int programa(t_log* logger, FILE* archivo) {
 			fin=0;
 			break;
 		}
-		if (buffer==NULL/*&&razon!=SALIDA_NORMAL NO ESTARIA DE MAS, QUIZAS SI*/){
+		if (buffer==NULL&&razon!=IMPRIMIR_TEXTO/* NO ESTARIA DE MAS, QUIZAS SI*/){
 			log_error(logger, "Lucho editame, algo malo paso");
 			fin=1;
 			break;
