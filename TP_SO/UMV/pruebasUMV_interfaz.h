@@ -15,10 +15,10 @@ typedef struct {
 
 t_link_element *list_head(t_list *);
 t_tablaSegmento *obtenerPtrASegmento(int, int);
-void dumpMemoriaChata(int, int, bool);
-void dumpMemoriaLibreYSegmentos(bool);
+void dumpMemoriaChata(int, int);
+void dumpMemoriaLibreYSegmentos();
 void informarBaseUMV();
-void dumpTablaSegmentos(bool, int);
+void dumpTablaSegmentos(int);
 void crearEstructurasGlobales();
 void agregarProceso(int, char);
 int crearSegmento(int);
