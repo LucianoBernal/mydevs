@@ -259,7 +259,7 @@ void *seleccionarSegunAlgoritmo(t_list *lista) {
 //Habla bastante por si sola.
 void cambiarAlgoritmo() {
 	pthread_mutex_lock(&mutexAlgoritmo);
-	algoritmo ? //FIXME están al revés !!
+	algoritmo ?
 			printf("Ahora el algoritmo es First-Fit\n") :
 			printf("Ahora el algoritmo es Worst-Fit\n");
 	algoritmo = !algoritmo;
@@ -269,6 +269,7 @@ void cambiarAlgoritmo() {
 void mostrarListaSegmentos(t_list *listaSegmento) {
 	printf("			  Comienzo Final pidOwner BaseLogica Tamano\n");
 	fprintf(dumpFile, "			  Comienzo Final pidOwner BaseLogica Tamano\n");
+	fflush(dumpFile);
 	void _mostrar_posiciones_y_pid_owner(t_tablaSegmento* elemento) {
 		printf("Contenido lista Segmentos:%x %x %d       %d       %d\n",
 				(unsigned int) elemento->memPpal,
@@ -278,11 +279,12 @@ void mostrarListaSegmentos(t_list *listaSegmento) {
 				(unsigned int) elemento->memPpal,
 				(unsigned int) elemento->memPpal + elemento->tamano,
 				elemento->pidOwner, elemento->inicioLogico, elemento->tamano);
+		fflush(dumpFile);
 	}
 	list_iterate(listaSegmento, (void*) _mostrar_posiciones_y_pid_owner);
 }
 
-void mostrarListaEspacios(t_list *listaEspacios) {
+void mostrarListaEspacios(t_list *listaEspacios) {//TODO Esta va en el archivo dump??
 	void _mostrar_limites(t_limites *self) {
 		printf("Espacios libres: %x, %x\n", (unsigned int) self->comienzo,
 				(unsigned int) self->final);
@@ -489,6 +491,7 @@ void dumpMemoriaLibreYSegmentos() {
 	list_iterate(obtenerEspaciosDisponibles(), (void*) _acumularEspacio);
 	printf("El espacio actual disponible en memoria es: %d b\n", i);
 	fprintf(dumpFile, "El espacio actual disponible en memoria es: %d b\n", i);
+	fflush(dumpFile);
 }
 void dumpTablaSegmentos(int pid) {
 	int i;
@@ -498,6 +501,7 @@ void dumpTablaSegmentos(int pid) {
 					((t_tablaProceso *) list_get(listaProcesos, i))->pid);
 			fprintf(dumpFile,"Se muestra la tabla de segmentos del proceso %d\n",
 					((t_tablaProceso *) list_get(listaProcesos, i))->pid);
+			fflush(dumpFile);
 
 			mostrarListaSegmentos(
 					((t_tablaProceso *) list_get(listaProcesos, i))->tabla);
@@ -507,6 +511,7 @@ void dumpTablaSegmentos(int pid) {
 				((t_tablaProceso *) list_get(listaProcesos, buscarPid(pid)))->pid);
 		fprintf(dumpFile, "Se muestra la tabla de segmentos del proceso %d\n",
 				((t_tablaProceso *) list_get(listaProcesos, buscarPid(pid)))->pid);
+		fflush(dumpFile);
 
 		mostrarListaSegmentos(
 				((t_tablaProceso *) list_get(listaProcesos, buscarPid(pid)))->tabla);
@@ -521,15 +526,18 @@ void dumpMemoriaChata(int offset, int tamano) {
 	fprintf(dumpFile, "Se muestra la memoria desde la posicion %x a la %x \n",
 			(unsigned int) baseUMV + offset,
 			(unsigned int) baseUMV + offset + tamano);
+	fflush(dumpFile);
 
 	for (i = 0; i < tamano;) {
 		memcpy(a, baseUMV + offset + i, 4);
 		printf("%x ", (unsigned int) *a);
 		fprintf(dumpFile, "%x ", (unsigned int) *a);
+		fflush(dumpFile);
 		i += 4;
 		if (i % 96 == 0){
 			printf(" \n");
 			fprintf(dumpFile, " \n");
+			fflush(dumpFile);
 		}
 	}
 

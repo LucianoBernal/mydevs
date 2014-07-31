@@ -30,7 +30,7 @@ void* consola(void* baseUMV) {
 	char* comando = malloc(COMANDO_SIZE);
 	crearProcesoArtificial();
 
-	dumpFile = fopen("archivoDeDump.txt", /*"w+"*/"a");
+	dumpFile = fopen("archivoDeDump.txt", "a");
 	if (dumpFile == NULL ) {
 		fputs("File error", stderr);
 		exit(1);
@@ -237,6 +237,7 @@ void analizarYEjecutar(char *comando) {
 
 		printf("Estructuras de memoria.\n");
 		fprintf(dumpFile, "Estructuras de memoria.\n");
+		fflush(dumpFile);
 		printf(
 				"Si quiere las tablas de segmentos de un proceso ingrese su pid, sino ingrese -1: \n");
 		scanf("%d", &pidPedido);
@@ -250,6 +251,7 @@ void analizarYEjecutar(char *comando) {
 
 		printf("\nMemoria principal:\n");
 		fprintf(dumpFile, "\nMemoria principal:\n");
+		fflush(dumpFile);
 		dumpMemoriaLibreYSegmentos();
 
 		printf(
@@ -258,14 +260,15 @@ void analizarYEjecutar(char *comando) {
 		if (confirmaMemo==1) {
 			printf("\n Contenido de memoria principal.\n");
 			fprintf(dumpFile, "\n Contenido de memoria principal.\n");
+			fflush(dumpFile);
 			printf("\nIngrese offset: ");
 			scanf("%d", &off);
 			printf("\nIngrese tamaño: ");
 			scanf("%d", &tam);
-//			if(off+tam > tamanoUMV){
-//				printf("El offset y tamanio suman más que el tamaio de la memoria.\n");
-//				return;
-//			}
+			if(off+tam > tamanoUMV){
+				printf("El offset y tamanio suman más que el tamaio de la memoria.\n");
+				return;
+			}
 			dumpMemoriaChata(off, tam);
 		}
 
