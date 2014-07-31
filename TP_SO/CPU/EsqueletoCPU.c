@@ -160,11 +160,9 @@ int main(int arc, char **argv) {
 	}
 //	enviarConRazon(socketKernel, logs, SIGUSR_1, NULL);
 //	printf("Esto deberia ser null %s\n", recibirConRazon(socketKernel, razon, logs));
-//	close(socketKernel);
-//	close(socketUMV);
-	while (1){
-		usleep(1000);
-	}
+	close(socketKernel);
+	close(socketUMV);
+
 	return 0;
 }
 

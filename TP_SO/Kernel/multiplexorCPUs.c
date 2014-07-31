@@ -42,7 +42,7 @@ void* atencionCPUs(void* sinParametro) {
 	printf("multiplexor: diccionario de variables vale: %x\n",
 			(u_int) variables_globales);
 	int master_socket, addrlen, new_socket, client_socket[30], max_clients = 30,
-			activity, i, sd, primer_CPU = 1;
+			activity, i, sd, primer_CPU = 1, primer_desconexion = 1;
 	int max_sd;
 	struct sockaddr_in address;
 	char *header = malloc(16);
@@ -168,14 +168,24 @@ void* atencionCPUs(void* sinParametro) {
 				puts("voy a recibir algo");
 				mensaje = recibirConBuffer(sd, razon, logKernel);
 				//Verifica si se cerro, y ademas lee el mensaje recibido
-				if (mensaje== NULL && *razon!=SIGUSR_1/*recv(sd, (void*) header, 16, 0) <= 0*/) {
+				if (mensaje == NULL
+						&& *razon
+								!= SIGUSR_1/*recv(sd, (void*) header, 16, 0) <= 0*/) {
 					//Alguna CPU se desconecto, obtengo la informacion
 					getpeername(sd, (struct sockaddr*) &address,
 							(socklen_t*) &addrlen);
-					log_info(logKernel,
-							"Una CPU se cerro abruptamente: socket fd: %d , ip: %s , puerto: %d \n",
-							sd, inet_ntoa(address.sin_addr),
-							ntohs(address.sin_port));
+					if (primer_desconexion) {
+						primer_desconexion = 0;
+						log_info(logKernel,
+								"Una CPU se cerro: socket fd: %d \n", sd);
+
+					} else {
+
+						log_info(logKernel,
+								"Una CPU se cerro: socket fd: %d , ip: %s , puerto: %d \n",
+								sd, inet_ntoa(address.sin_addr),
+								ntohs(address.sin_port));
+					}
 
 					//Cierra el socket y marca 0 el bit de ocupado
 					close(sd);
@@ -199,7 +209,7 @@ void* atencionCPUs(void* sinParametro) {
 					t_PCB* pcb = malloc(sizeof(t_PCB));
 					char* pcbEmpaquetado = malloc(sizeof(t_PCB));
 					int tiempo, valor, tamano;
-					char* dispositivoIO=malloc(mensaje->size);
+					char* dispositivoIO = malloc(mensaje->size);
 					char* texto = malloc(mensaje->size);
 					char* semaforo = malloc(mensaje->size);
 					char* id = malloc(mensaje->size);
@@ -223,8 +233,10 @@ void* atencionCPUs(void* sinParametro) {
 						desempaquetar2(mensaje->mensaje, pcbEmpaquetado,
 								dispositivoIO, &tiempo, 0);
 						desempaquetarPCB(pcb, pcbEmpaquetado);
-						dispositivoIO[mensaje->size-88]=0;
-						printf("el dispositivo que recibi: %s y por un tiempo: %d\n",dispositivoIO,tiempo);
+						dispositivoIO[mensaje->size - 88] = 0;
+						printf(
+								"el dispositivo que recibi: %s y por un tiempo: %d\n",
+								dispositivoIO, tiempo);
 						programaSalioPorBloqueo(pcb, tiempo, dispositivoIO, sd);
 						break;
 					case SALIDA_POR_SEMAFORO:
@@ -241,7 +253,7 @@ void* atencionCPUs(void* sinParametro) {
 //						close(sd);
 //						client_socket[i] = 0;
 						sem_wait(&semCPUDesconectadaMutex);
-					    idUltimaCPUDesconectada = sd;
+						idUltimaCPUDesconectada = sd;
 						seDesconectoCPUSigusr(sd, pcb);
 						sem_post(&semCPUDesconectadaMutex);
 						break;
