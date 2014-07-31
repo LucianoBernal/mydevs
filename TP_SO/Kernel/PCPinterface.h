@@ -38,7 +38,7 @@ void nuevaCPU(int);
 void programaSalioPorQuantum(t_PCB*, int);
 void moverAColaExit(t_PCB*, int);
 void programaSalioPorBloqueo(t_PCB*, int, char*, int);
-void seLiberoUnaCPU(int);
+void seLiberoUnaCPU(int,t_PCB*);
 void cpu_destroy(t_estructuraCPU*);
 bool tieneID(t_estructuraCPU*);
 void seDesconectoCPU(int);

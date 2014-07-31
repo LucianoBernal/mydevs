@@ -11,6 +11,7 @@
 #include <commons/collections/dictionary.h>
 #include "funcionesParser.h"
 #include <commons/config.h>
+#include <semaphore.h>
 #include "EsqueletoCPU.h"
 
 #define HANDSHAKE_SIZE 16
@@ -24,6 +25,7 @@ int programaFinalizado;
 int programaBloqueado;
 int programaAbortado;
 int cpu_ocupada = 0;
+sem_t mutexSigu;
 
 void obtenerDatosConfig(t_config *config) {
 	IP_UMV = config_get_string_value(config, "IP_UMV");
@@ -38,6 +40,7 @@ void cerrarCPU(t_log *log) {
 	log_error(log, "Deberia estar cerrando el CPU");
 }
 int main(int arc, char **argv) {
+	sem_init(&mutexSigu,0,1);
 	vincPrimitivas();
 	diccionarioDeVariables = dictionary_create();
 	pcbEnUso = malloc(sizeof(t_PCB));
@@ -145,12 +148,23 @@ int main(int arc, char **argv) {
 			log_debug(logs, "El programa finalizo");
 		}
 		if (lineasAnalizadas==quantumDeKernel&&!programaFinalizado&&!programaBloqueado&&!programaAbortado){
+			sem_wait(&mutexSigu);
+			if (!sigusr1_desactivado){
+				log_info(logs,"MIRA MANDE SIGU");
+						enviarConRazon(socketKernel, logs, SIGUSR_1, serializar2(crear_nodoVar(&programaFinalizado,4),0));
+			}
+			sem_post(&mutexSigu);
 			enviarConRazon(socketKernel, logs, SALIDA_POR_QUANTUM, serializarPCB(pcbEnUso));
 		}
 		printf("Sali del while, lineasAnalizadas=%d y quantumDeKernel=%d\n", lineasAnalizadas, quantumDeKernel);
 	}
-	enviarConRazon(socketKernel, logs, SIGUSR_1, NULL);
-
+//	enviarConRazon(socketKernel, logs, SIGUSR_1, NULL);
+//	printf("Esto deberia ser null %s\n", recibirConRazon(socketKernel, razon, logs));
+//	close(socketKernel);
+//	close(socketUMV);
+	while (1){
+		usleep(1000);
+	}
 	return 0;
 }
 
@@ -171,7 +185,9 @@ int main(int arc, char **argv) {
 
 void sig_handler(int signo) {
 	if (signo == SIGUSR1) {
+		sem_wait(&mutexSigu);
 		sigusr1_desactivado = 0;
+		sem_post(&mutexSigu);
 		log_info(logs,
 				"Se recibió la señal SIGUSR_1, la CPU se cerrara al finalizar la ejecucion actual");
 		if (!cpu_ocupada) {

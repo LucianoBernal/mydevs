@@ -163,7 +163,7 @@ void nuevaCPU(int idCPU) {
 }
 
 void programaSalioPorQuantum(t_PCB* pcb, int idCPU) {
-	seLiberoUnaCPU(idCPU);
+	seLiberoUnaCPU(idCPU,pcb);
 	sem_wait(&colaReadyMutex);
 	log_debug(logKernel, "Estoy por encolar el pcb en ready");
 	queue_push(colaReady, pcb);
@@ -185,7 +185,7 @@ void moverAColaExit(t_PCB* pcb, int idCPU) {
 }
 
 void moverAColaExityLiberarCPU(t_PCB* pcb, int idCPU) {
-	seLiberoUnaCPU(idCPU);
+	seLiberoUnaCPU(idCPU,pcb);
 	moverAColaExit(pcb, idCPU);
 
 }
@@ -206,14 +206,19 @@ void programaSalioPorBloqueo(t_PCB* pcb, int tiempo, char* dispositivo,
 	sem_post(&(estructura->mutexCola));
 	mostrar_todas_Las_Listas();
 	sem_post(&(estructura->colaVacia));
-	seLiberoUnaCPU(idCPU);
+	seLiberoUnaCPU(idCPU,pcb);
 }
 
-void seLiberoUnaCPU(int idCPU) {
+void seLiberoUnaCPU(int idCPU,t_PCB* pcb) {
 	sem_wait(&CPUsMutex);
-	int i = posicionEnLaLista(CPUs, idCPU);
-	t_estructuraCPU* CPU = list_get(CPUs, i);
+	//int i = posicionEnLaLista(CPUs, idCPU);
+	//t_estructuraCPU* CPU = list_get(CPUs, i);
+	bool tieneIDlocal(t_estructuraCPU* self){
+		return self->idCPU==idCPU;
+	}
+	t_estructuraCPU* CPU=list_find(CPUs,(void*)tieneIDlocal);
 	sem_post(&CPUsMutex);
+	if(CPU!=NULL){
 	int pidASacar = CPU->idProceso;
 	bool victimaPCB_exec(t_PCB* self){
 		return self->program_id==pidASacar;
@@ -231,6 +236,14 @@ void seLiberoUnaCPU(int idCPU) {
 			(void*) cpu_destroy);
 	sem_post(&CPUsMutex);
 	sem_post(&CPUsLibres);
+	}else{
+		bool victimaPCB_exec2(t_PCB* self){
+			return self->program_id==pcb->program_id;
+		}
+		sem_wait(&colaExecMutex);
+		list_remove_and_destroy_by_condition(colaExec, (void*)victimaPCB_exec2,(void*)free);
+		sem_post(&colaExecMutex);
+	}
 
 }
 
@@ -242,9 +255,10 @@ bool tieneID(t_estructuraCPU* estructura) {
 }
 
 void seDesconectoCPU(int idCPU) { //TODO
-	if (!estaLibreID(idCPU)) {
-		int idPrograma = buscarIDPrograma(idCPU);
-	printf("idPrograma:%d \n", idPrograma);
+	if (estaLibreID(idCPU)!=-1) {
+		if(estaLibreID(idCPU)==0){
+			int idPrograma = buscarIDPrograma(idCPU);
+			printf("idPrograma:%d \n", idPrograma);
 		int sd = obtener_sd_Programa(idPrograma);
 		printf("SD:%d\n", sd);
 		//notificar_Programa(sd, "La CPU se desconectó, programa abortado");
@@ -255,30 +269,33 @@ void seDesconectoCPU(int idCPU) { //TODO
 		t_PCB* pcb = list_remove_by_condition(colaExec, (void*) esElpcb);
 		sem_post(&colaExecMutex);
 		moverAColaExit(pcb, idCPU);
-		}else {
+		}
+	else {
+			log_debug(logKernel,"ESTOY LIBRE MORITE");
 			sem_wait(&CPUsLibres);
 		}
 	sem_wait(&CPUsMutex);
 	list_remove_and_destroy_by_condition(CPUs, (void*) tieneID,(void*)free);
 	sem_post(&CPUsMutex);
 }
+}
 
 void seDesconectoCPUSigusr(int idCPU, t_PCB* pcb) {
 	sem_wait(&CPUsMutex);
 	t_estructuraCPU* CPU=list_remove_by_condition(CPUs, (void*) tieneID);
 	sem_post(&CPUsMutex);
-	int pidASacar=CPU->idProceso;
-	bool victimaPCB_exec(t_PCB* self){
-			return self->program_id==pidASacar;
-		}
-	sem_wait(&colaExecMutex);
-	list_remove_and_destroy_by_condition(colaExec, (void*)victimaPCB_exec,(void*)free);
-	sem_post(&colaExecMutex);
-	sem_wait(&colaReadyMutex);
+//	int pidASacar=CPU->idProceso;
+//	bool victimaPCB_exec(t_PCB* self){
+//			return self->program_id==pidASacar;
+//		}
+//	sem_wait(&colaExecMutex);
+//	list_remove_and_destroy_by_condition(colaExec, (void*)victimaPCB_exec,(void*)free);
+//	sem_post(&colaExecMutex);
+/*	sem_wait(&colaReadyMutex);
 	queue_push(colaReady, pcb);
-	sem_post(&colaReadyMutex);
-	mostrar_todas_Las_Listas();
-	sem_post(&vacioReady);
+	sem_post(&colaReadyMutex);*/
+//	mostrar_todas_Las_Listas();
+//	sem_post(&vacioReady);
 	free(CPU);
 
 }
@@ -300,10 +317,12 @@ int posicionEnLaListaExec(t_list* lista, int pid) {
 
 int estaLibreID(int idCPU) {
 	sem_wait(&CPUsMutex);
-	int i = posicionEnLaLista(CPUs, idCPU);
-	t_estructuraCPU* estructura = list_get(CPUs, i);
+	bool tieneIDlocal(t_estructuraCPU* self){
+		return self->idCPU==idCPU;
+	}
+	t_estructuraCPU* CPU=list_find(CPUs,(void*)tieneIDlocal);
 	sem_post(&CPUsMutex);
-	return (estructura->estado == 0);
+	return (CPU!=NULL?CPU->estado == 0:-1);
 
 }
 

@@ -15,9 +15,9 @@ void sc_obtener_valor(char* id, int idCpu) {
 
 void sc_grabar_valor(char* id, int valor, int idCpu) {
 	sem_wait(&mutexVG);
-	dictionary_has_key(variables_globales, id) ?
-			dictionary_remove(variables_globales, id) :
-			printf("No estaba la variable \n");
+//	dictionary_has_key(variables_globales, id) ?
+			dictionary_remove(variables_globales, id); //:
+//			printf("No estaba la variable \n");
 	int *valorProp = malloc(sizeof(int));
 	*valorProp = valor;
 	dictionary_put(variables_globales, id, valorProp);
@@ -62,7 +62,7 @@ void sc_wait(char* idSem, int idCPU) {
 		//(se libera)
 		char *respuesta = recibirConRazon(idCPU, estado_semaforo, logKernel);
 		desempaquetarPCB(pcb, respuesta);
-		seLiberoUnaCPU(idCPU);
+		seLiberoUnaCPU(idCPU,pcb);
 		sem_wait(&(semaforo->mutexCola));
 		queue_push(semaforo->procesosBloqueados, pcb);
 		sem_post(&(semaforo->mutexCola));

@@ -166,9 +166,9 @@ void* atencionCPUs(void* sinParametro) {
 				//char* mensaje;
 
 				puts("voy a recibir algo");
+				mensaje = recibirConBuffer(sd, razon, logKernel);
 				//Verifica si se cerro, y ademas lee el mensaje recibido
-				if ((mensaje = recibirConBuffer(sd, razon, logKernel))
-						== NULL/*recv(sd, (void*) header, 16, 0) <= 0*/) {
+				if (mensaje== NULL && *razon!=SIGUSR_1/*recv(sd, (void*) header, 16, 0) <= 0*/) {
 					//Alguna CPU se desconecto, obtengo la informacion
 					getpeername(sd, (struct sockaddr*) &address,
 							(socklen_t*) &addrlen);
@@ -184,6 +184,9 @@ void* atencionCPUs(void* sinParametro) {
 					idUltimaCPUDesconectada = sd;
 					seDesconectoCPU(sd);
 					sem_post(&semCPUDesconectadaMutex);
+//					if(*razon==SIGUSR_1){
+//						enviarConRazon(sd,logKernel,CONFIRMACION,NULL);
+//					}
 
 					//TODO Aca va lo que haces despues que una CPU se te desconecto,
 					//como ser sacarla de tu lista de CPUs
@@ -229,22 +232,23 @@ void* atencionCPUs(void* sinParametro) {
 //						desempaquetarPCB(pcb, pcbEmpaquetado);
 //
 						break;
-//					case SIGUSR_1: //la CPU se desconectó CON SIGUSR
+					case SIGUSR_1: //la CPU se desconectó CON SIGUSR
+
 //						desempaquetarPCB(pcb, mensaje->mensaje);
-//						log_info(logKernel,
-//								"Recibi señal SIGUSR1 para la CPU cuyo sd es:%d",
-//								sd);
+						log_info(logKernel,
+								"Recibi señal SIGUSR1 para la CPU cuyo sd es:%d",
+								sd);
 //						close(sd);
 //						client_socket[i] = 0;
-//						sem_wait(&semCPUDesconectadaMutex);
-//						idUltimaCPUDesconectada = sd;
-//						seDesconectoCPUSigusr(sd, pcb);
-//						sem_post(&semCPUDesconectadaMutex);
-//						break;
+						sem_wait(&semCPUDesconectadaMutex);
+					    idUltimaCPUDesconectada = sd;
+						seDesconectoCPUSigusr(sd, pcb);
+						sem_post(&semCPUDesconectadaMutex);
+						break;
 					case WAIT:
 						puts("Me llego wait lean careta");
 						desempaquetar2(mensaje->mensaje, semaforo, 0);
-						semaforo[mensaje->size - 5] = 0;
+						semaforo[mensaje->size - 4] = 0;
 						puts(semaforo);
 						sc_wait(semaforo, sd);
 						break;
@@ -252,7 +256,7 @@ void* atencionCPUs(void* sinParametro) {
 						puts("olvis que Me llego signal");
 						desempaquetar2(mensaje->mensaje, semaforo, 0);
 
-						semaforo[mensaje->size - 5] = 0;
+						semaforo[mensaje->size - 4] = 0;
 						puts(semaforo);
 						sc_signal(semaforo, sd);
 						break;
@@ -264,7 +268,7 @@ void* atencionCPUs(void* sinParametro) {
 								mensaje->size);
 
 						desempaquetar2(mensaje->mensaje, texto, 0);
-						texto[mensaje->size - 5] = 0;
+						texto[mensaje->size - 4] = 0;
 //						printf("No la cagaste desempaquetando %d\n", strlen(texto));
 						sc_imprimirTexto(texto, sd);
 						break;
@@ -272,7 +276,7 @@ void* atencionCPUs(void* sinParametro) {
 						puts("Me llego grabar valor");
 						desempaquetar2(mensaje->mensaje, id, &valor, 0);
 
-						id[mensaje->size - 13] = 0;
+						id[mensaje->size - 12] = 0;
 						printf("El tamano de la cadena id es: %d\n",
 								strlen(id));
 //						printf("El nombre del semaforo es %s y el valor a grabar es %d\n", id, valor);
@@ -281,7 +285,7 @@ void* atencionCPUs(void* sinParametro) {
 					case OBTENER_VALOR:
 						puts("me llego obtener valor");
 						desempaquetar2(mensaje->mensaje, id, 0);
-						id[mensaje->size - 5] = 0;
+						id[mensaje->size - 4] = 0;
 						printf("El tamano de la cadena id es: %d\n",
 								strlen(id));
 						sc_obtener_valor(id, sd);

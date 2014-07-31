@@ -10,6 +10,7 @@
 #include "funcionesParser.h"
 #include <biblioteca_comun/bibliotecaSockets.h>
 #include <biblioteca_comun/Serializacion.h>
+#include <semaphore.h>
 //#include <stdio.h>
 //#include <string.h>
 //#include <stdlib.h>
@@ -21,7 +22,8 @@
 //
 //#define TAMANO_CABECERA 16
 //
-extern int socketUMV, socketKernel;
+extern sem_t mutexSigu;
+extern int socketUMV, socketKernel, sigusr1_desactivado;
 extern t_log *logs;
 extern t_PCB *pcbEnUso;
 extern t_dictionary *diccionarioDeVariables;
@@ -461,6 +463,11 @@ void finalizar(void) {
 			recibirConRazon(socketKernel, &razon, logs);//Deberia preguntar si es confirmacion pero bue
 		}
 		programaFinalizado = 1;
+		sem_wait(&mutexSigu);
+		if (!sigusr1_desactivado) {
+			enviarConRazon(socketKernel, logs, SIGUSR_1, serializar2(crear_nodoVar(&programaBloqueado,4),0) );
+		}
+		sem_post(&mutexSigu);
 		enviarConRazon(socketKernel, logs, SALIDA_NORMAL,
 				serializarPCB(pcbEnUso));
 	} else {
@@ -555,13 +562,18 @@ void entradaSalida(t_nombre_dispositivo dispositivo, int tiempo) {
 //	log_info(log, "Se desalojó un programa de esta CPU");
 	pcbEnUso->program_Counter++;
 	t_paquete * paquetePCB = serializarPCB(pcbEnUso);
-	 int tamano = paquetePCB->tamano;
-	 printf("El tamano del pcb empaquetado es %d", tamano);
-	 enviarConRazon(socketKernel, logs, SALIO_POR_IO,
-	 serializar2(crear_nodoVar(paquetePCB->msj, tamano),
-	 crear_nodoVar(dispositivo, strlen(dispositivo)),
-	 crear_nodoVar(&tiempo, 4), 0));//TODO
-	 programaBloqueado=1;
+	int tamano = paquetePCB->tamano;
+	printf("El tamano del pcb empaquetado es %d", tamano);
+	sem_wait(&mutexSigu);
+	if (!sigusr1_desactivado) {
+		enviarConRazon(socketKernel, logs, SIGUSR_1, serializar2(crear_nodoVar(&programaBloqueado,4),0) );
+	}
+	sem_post(&mutexSigu);
+	enviarConRazon(socketKernel, logs, SALIO_POR_IO,
+			serializar2(crear_nodoVar(paquetePCB->msj, tamano),
+					crear_nodoVar(dispositivo, strlen(dispositivo)),
+					crear_nodoVar(&tiempo, 4), 0)); //TODO
+	programaBloqueado = 1;
 }
 void wait(t_nombre_semaforo identificador_semaforo) {
 	log_info(logs, "Ejecute wait con %s", identificador_semaforo);
@@ -591,6 +603,11 @@ void wait(t_nombre_semaforo identificador_semaforo) {
 	//TODO tiene razón el hijo de puta del warning.
 	if (razon == DESALOJAR_PROGRAMA) {
 		pcbEnUso->program_Counter++;
+		sem_wait(&mutexSigu);
+		if (!sigusr1_desactivado) {
+			enviarConRazon(socketKernel, logs,SIGUSR_1, serializar2(crear_nodoVar(&programaBloqueado,4),0) );
+		}
+		sem_post(&mutexSigu);
 		enviarConRazon(socketKernel, logs, 4, serializarPCB(pcbEnUso));
 		programaBloqueado = 1;
 	} else {
