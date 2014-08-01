@@ -74,6 +74,7 @@ int main(int arc, char **argv) {
 	int *razon = malloc(sizeof(int));
 	char * paquete = recibirConRazon(socketKernel, razon, logs);
 	desempaquetar2(paquete, respuestaKernel, &quantumDeKernel, &retardo, 0);
+	free(paquete);
 	if (!strncmp(respuestaKernel, "Kernel", 6)) {
 		log_info(logs, "El handshake con el Kernel salió bien.");
 	} else {

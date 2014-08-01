@@ -107,15 +107,16 @@ int buscarPid(int pid) {
 	t_tablaProceso *element = list_find(listaProcesos, (void*) tienePid);
 	return element == NULL ? -1 : i - 1;
 }
-
+bool estaActivo(t_tablaProceso *self){
+		return self->pid==procesoActivo();
+	}
 int crearSegmento(int tamano) {
 	t_tablaSegmento *nuevoSegmento = crear_nodoSegm(procesoActivo(),
 			obtenerInicioLogico(procesoActivo(), tamano), tamano,
 			obtenerInicioReal(tamano));
-	t_tablaProceso *proceso = list_get(listaProcesos,
-			buscarPid(procesoActivo()));
+	t_tablaProceso *proceso= list_find(listaProcesos, (void*)estaActivo);
 	if (nuevoSegmento->memPpal == (void*) 5) {
-		//free(nuevoSegmento);
+		free(nuevoSegmento);//TODO new free
 		return -1;
 	}
 	if (proceso->tabla == NULL )
@@ -126,17 +127,22 @@ int crearSegmento(int tamano) {
 }
 
 bool tieneProblemas(int inicio, int pid, int tamano) {
-	if ((((t_tablaProceso *) list_get(listaProcesos, buscarPid(pid)))->tabla)
-			== NULL )
-		return false;
-	t_list* tabla =
-			((t_tablaProceso *) list_get(listaProcesos, buscarPid(pid)))->tabla;
-	int i = 1;
-
+//	if ((((t_tablaProceso *) list_get(listaProcesos, buscarPid(pid)))->tabla)
+//			== NULL )
+//		return false;
+//	t_list* tabla =
+//			((t_tablaProceso *) list_get(listaProcesos, buscarPid(pid)))->tabla;
+//	int i = 1;
+	t_tablaProceso *proceso = list_find(listaProcesos, (void*)estaActivo);
 	bool ordenarPorInicioLogico(t_tablaSegmento *inicioMenor,
 			t_tablaSegmento *inicioMayor) {
 		return inicioMenor->inicioLogico < inicioMayor->inicioLogico;
 	}
+	if (proceso->tabla==NULL){
+		return false;
+	}
+	t_list *tabla=proceso->tabla;
+	int i=1;
 	list_sort(tabla, (void*) ordenarPorInicioLogico);
 	t_limites_logico *delimitar_espacios_libres(t_tablaSegmento *elemento) {
 		t_limites_logico *aux = malloc(sizeof(t_limites));
@@ -171,15 +177,15 @@ bool tieneProblemas(int inicio, int pid, int tamano) {
 		return ((inicio > espacio->comienzo)
 				&& ((inicio + tamano) < (espacio->final)));
 	}
-	//list_destroy_and_destroy_elements(tabla, (void*)tsegm_destroy);//con esta tira segmentation fault
 	//list_clean_and_destroy_elements(tabla, (void*)tsegm_destroy);//con esta tiene comportamiento raro (un memory overload nuestro)
-	return !list_any_satisfy(listaEspacios, (void*) estaDentroDeUnEspacio);
-	//list_destroy_and_destroy_elements(listaEspacios, (void*) free);//TODO guarda!!!
+	bool unBool = !list_any_satisfy(listaEspacios, (void*) estaDentroDeUnEspacio);
+	list_destroy_and_destroy_elements(listaEspacios, (void*)free);//TODO new free
+	return unBool;
 }
 
 int obtenerInicioLogico(int pid, int tamano) {
 	const int SIZE_SEGMENT = 10000;
-	int inicioLogico, error = 0;
+	int inicioLogico;
 	srand(time(NULL ));
 	inicioLogico = rand() % SIZE_SEGMENT;
 
@@ -207,7 +213,8 @@ void compactarMemoria() {
 	list_iterate(listaSegmentosOrdenada,
 			(void*) _cambiar_posiciones_chetamente);
 	log_debug(logger,"Memoria compactada.");
-	//list_destroy_and_destroy_elements(listaSegmentosOrdenada, (void*)free);
+	free(listaSegmentosOrdenada);
+//	list_destroy_and_destroy_elements(listaSegmentosOrdenada, (void*)free);
 }
 
 void *obtenerInicioReal(int tamano) {
@@ -358,6 +365,7 @@ t_list *obtenerListaSegmentosOrdenada() {
 	}
 	list_sort(listaSegmentos, (void*) _posicion_menor);
 	pthread_mutex_unlock(&mutexCantProcActivos);
+	free(listaAux);
 	return listaSegmentos;
 }
 //No me consta que sea necesaria esta funcion.
@@ -405,8 +413,7 @@ t_tablaSegmento *obtenerPtrASegmento(int base, int pid) {
 	bool _coincide_base_logica(t_tablaSegmento *self) {
 		return self->inicioLogico == base;
 	}
-	t_tablaSegmento *aux =
-			(t_tablaSegmento *) list_head(
+	t_tablaSegmento *aux =(t_tablaSegmento *)list_head(
 					list_filter(
 							((t_tablaProceso *) list_get(listaProcesos,
 									buscarPid(pid)))->tabla,
@@ -426,7 +433,7 @@ int verificarEspacio(int pid, int base, int offset, int tamano) {
 		if (tamano <= (int) (obtenerPtrASegmento(base, pid)->tamano) - offset) {
 			return 1;
 		} else {
-			printf("Segmentation fault\n coz %d > %d\n", (obtenerPtrASegmento(base, pid)->tamano) - offset, tamano);
+			printf("Segmentation fault\n");
 		}
 	}
 	return 0;
@@ -438,6 +445,7 @@ int enviarUnosBytes(int base, int offset, int tamano, void *mensaje) {
 		memcpy(obtenerDirFisica(base, offset, pid), mensaje, tamano);
 		return 1;
 	}
+	free(mensaje);
 	return 0;
 }
 
@@ -473,7 +481,6 @@ char *solicitarBytes(int base, int offset, int tamano) {
 	int pid = procesoActivo();
 	if (verificarEspacio(pid, base, offset, tamano)) {
 		memcpy(aux, obtenerDirFisica(base, offset, pid), tamano);
-		//*(aux + tamano) = 0;
 		return aux;
 	}
 	aux="error";
