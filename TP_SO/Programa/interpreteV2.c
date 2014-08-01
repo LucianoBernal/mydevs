@@ -22,7 +22,7 @@ char* obtener_programa(char* );
 int validar_Config(t_config*);
 void cargar_Config(t_config*);
 int programaPosta(t_log*,char*);
-int main2(int argc, char **argv) {
+int main(int argc, char **argv) {
 	if (argc <= 1) {
 			perror(
 					"Se debe ingresar la dirección de un script\n");
@@ -41,11 +41,11 @@ int main2(int argc, char **argv) {
 	logger = log_create("logProcesoPrograma", "Programa", true, LOG_LEVEL_DEBUG);
 	log_info(logger, "Comienza la ejecución del Programa.");
 	cargar_Config(config);
-	if (programaPosta(logger,argv[1]) == 0) {
-		log_error(logger, "Finalizo Erroneamente la ejecucion del Programa");
+	if (programaPosta(logger,argv[1]) == 1) {
+		log_error(logger, "Finalizo la ejecucion del Programa");
 		fin = EXIT_FAILURE;
 	} else {
-		log_info(logger, "Finalizo correctamente la ejecucion del Programa");
+		log_info(logger, "Finalizo la ejecucion del Programa");
 		fin = EXIT_SUCCESS;
 	}
 	log_debug(logger,"Se cerro el archivo Script");
