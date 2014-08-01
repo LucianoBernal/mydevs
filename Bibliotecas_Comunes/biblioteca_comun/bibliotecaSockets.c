@@ -26,20 +26,12 @@ int enviarConRazon(int socket, t_log* logs, int razon, t_paquete *pack){
 	if(send(socket, header->msj, header->tamano, 0)<=0){
 		log_error(logs, "La cabecera no se pudo enviar correctamente");
 		close(socket);
-		free(header->msj);
-		free(header);
-		free(pack->msj);
-		free(pack);
 		return 0;
 	}
 	if (pack->tamano!=4&&pack->tamano!=0){
 		if (send(socket, pack->msj, pack->tamano, 0)<=0){
 			log_error(logs, "El mensaje no se pudo enviar correctamente");
 			close(socket);
-			free(header->msj);
-			free(header);
-			free(pack->msj);
-			free(pack);
 			return 0;
 		}
 	}
@@ -57,7 +49,6 @@ t_buffer *recibirConBuffer(int socket, int *p_razon, t_log *logs){
 		if(valread){log_error(logs, "Hubo un error al recibir la cabecera");
 		}
 		close(socket);
-		free(header);
 		return NULL;
 	}
 	int tamano;
@@ -71,21 +62,16 @@ t_buffer *recibirConBuffer(int socket, int *p_razon, t_log *logs){
 			if(valread){log_error(logs, "Hubo un error al recibir la cabecera");
 					}
 			close(socket);
-			free(header);
 			return NULL;
 		}
-		free(header);
 		return aux;
 	}else{
-		free(header);
 		return NULL;
 	}
 }
 char *recibirConRazon(int socket, int *p_razon, t_log *logs){
 	t_buffer *aux=recibirConBuffer(socket, p_razon, logs);
-	char* auxChar = aux==NULL?NULL:aux->mensaje;
-	free(aux);
-	return auxChar;
+	return aux==NULL?NULL:aux->mensaje;
 }
 
 int crearServidor(char* puerto, t_log* logs){

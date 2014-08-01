@@ -60,24 +60,37 @@ t_paquete *serializar2(t_tamYDir *uno, ...){
 	va_start(p, uno);
 	int acum = 0;
 	t_tamYDir *arg=uno;
-	t_tamYDir *aux=NULL;
 	t_paquete *paquete=malloc(sizeof(t_paquete));
 	paquete->msj=malloc(2048);
 	do{
-//		free(aux->p_var);
-		free(aux);
 		memcpy(acum+(paquete->msj), &(arg->tamano), 4);
 		memcpy(acum+4+(paquete->msj), arg->p_var, arg->tamano);
 		acum+=((arg->tamano)+4);
-		aux=arg;
 	}while((arg = va_arg(p, t_tamYDir *)));
-	free(aux);
 	va_end(p);
 	paquete->tamano=acum;
 	paquete->msj=realloc(paquete->msj, paquete->tamano);
 	return paquete;
 }
-
+//Las dejo por si tienen algun problema las nuevas
+/*
+t_paquete *Serializar(t_queue *cola){
+	t_paquete *paquete=malloc(sizeof(t_paquete));
+	t_tamYDir *aux;
+	paquete->msj=malloc(50);
+	paquete->cantVar=0;
+	int acum=0;
+	while(!queue_is_empty(cola)){
+		aux=queue_pop(cola);
+		memcpy(acum+(paquete->msj), &(aux->tamano), 1);
+		memcpy(acum+1+(paquete->msj),aux->p_var, aux->tamano);
+		acum+=((aux->tamano)+1);
+		paquete->cantVar++;
+	}
+	paquete->tamano=acum;
+	return paquete;
+}
+*/
 void desempaquetar2(char *msjRecibido, void *uno, ...){
 	va_list(p);
 	va_start(p, uno);
@@ -91,7 +104,19 @@ void desempaquetar2(char *msjRecibido, void *uno, ...){
 	}while((arg = va_arg(p, void*)));
 	free(tamano);
 }
-
+/*
+void Desempaquetar(char *msjRecibido, t_queue *cola){
+	void *aux=malloc(50);
+	char tamano;
+	int acum=0;
+	while(!queue_is_empty(cola)){
+		memcpy(&tamano, msjRecibido+acum, 1);
+		aux=queue_pop(cola);
+		memcpy(aux, msjRecibido+acum+1, tamano);
+		acum+=(tamano+1);
+	}
+}
+*/
 t_tamYDir *crear_nodoVar(void *p_var, int tamano){
 	t_tamYDir *nuevo=malloc(sizeof(t_tamYDir));
 	nuevo->p_var=p_var;
