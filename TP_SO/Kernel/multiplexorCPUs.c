@@ -306,17 +306,7 @@ void* atencionCPUs(void* sinParametro) {
 						desempaquetar2(mensaje->mensaje, semaforo, 0);
 						semaforo[mensaje->size - 4] = 0;
 						puts(semaforo);
-
-						sem_wait(&victimasMutex);
-						if (!list_any_satisfy(victimas,
-								(void*) estaLaVictima)) {
-							sem_post(&victimasMutex);
-							sc_wait(semaforo, sd);
-						} else {
-							sem_post(&victimasMutex);
-							seLiberoUnaCPU(sd, pcb);
-							manejoVictimas(pcb->program_id);
-						}
+						sc_wait(semaforo, sd);
 
 						break;
 					case SIGNAL:
