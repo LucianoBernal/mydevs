@@ -17,7 +17,6 @@ typedef struct {
 	int peso;
 } t_new;
 
-void manejoVictimas(int);
 int intentar_sacar_de_Programas_Finalizados(int);
 void agregar_a_Programas_Finalizados(int);
 int buscarSocketenVector(int,int*);

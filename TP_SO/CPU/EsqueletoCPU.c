@@ -12,7 +12,6 @@
 #include "funcionesParser.h"
 #include <commons/config.h>
 #include <semaphore.h>
-#include <pthread.h>
 #include "EsqueletoCPU.h"
 
 #define HANDSHAKE_SIZE 16
@@ -26,9 +25,7 @@ int programaFinalizado;
 int programaBloqueado;
 int programaAbortado;
 int cpu_ocupada = 0;
-int flag_sigint=0;
 sem_t mutexSigu;
-pthread_mutex_t mutexCroto=PTHREAD_MUTEX_INITIALIZER;
 
 void obtenerDatosConfig(t_config *config) {
 	IP_UMV = config_get_string_value(config, "IP_UMV");
@@ -43,8 +40,7 @@ void cerrarCPU(t_log *log) {
 	log_error(log, "Deberia estar cerrando el CPU");
 }
 int main(int arc, char **argv) {
-	sem_init(&mutexSigu, 0, 1);
-//	sem_init(&mutexCroto, 0, 1);
+	sem_init(&mutexSigu,0,1);
 	vincPrimitivas();
 	diccionarioDeVariables = dictionary_create();
 	pcbEnUso = malloc(sizeof(t_PCB));
@@ -96,7 +92,7 @@ int main(int arc, char **argv) {
 		int razon;
 		cpu_ocupada = 0;
 		char* mensaje = recibirConRazon(socketKernel, &razon, logs);
-		if (mensaje == NULL && razon != CONFIRMACION/*&&razon!=SIGUSR_1*/) {
+		if(mensaje==NULL&&razon!=CONFIRMACION/*&&razon!=SIGUSR_1*/){
 			log_error(logs, "Se recibió mal.");
 			exit(EXIT_FAILURE);
 		}
@@ -108,22 +104,19 @@ int main(int arc, char **argv) {
 		free(mensaje);
 		free(pcbEmpaquetado);
 		int pid = pcbEnUso->program_id;
-//		pthread_mutex_lock(&mutexCroto);
 		enviarConRazon(socketUMV, logs, CAMBIAR_PROCESO_ACTIVO,
 				serializar2(crear_nodoVar(&pid, 4), 0));
 		etiquetas = solicitarBytesAUMV(pcbEnUso->indice_de_Etiquetas, 0,
 				pcbEnUso->tamanio_Indice_de_Etiquetas);
 //		actualizarDiccionarioDeVariables(pcb);
 		recuperarDiccionario();
-//		pthread_mutex_unlock(&mutexCroto);
 		int lineasAnalizadas = 0;
 		programaBloqueado = 0;
 		programaFinalizado = 0;
 		programaAbortado = 0;
 		int ubInstruccion, largoInstruccion;
-		while (lineasAnalizadas < quantumDeKernel && !programaBloqueado
+		while (lineasAnalizadas < quantumDeKernel&& !programaBloqueado
 				&& !programaFinalizado && !programaAbortado) {
-//			pthread_mutex_lock(&mutexCroto);
 			char *msjInstruccion = solicitarBytesAUMV(
 					pcbEnUso->indice_de_Codigo, pcbEnUso->program_Counter * 8,
 					8);
@@ -131,65 +124,50 @@ int main(int arc, char **argv) {
 			memcpy(&largoInstruccion, msjInstruccion + 4, 4);
 			char *literalInstruccion = solicitarBytesAUMV(
 					pcbEnUso->segmento_Codigo, ubInstruccion, largoInstruccion);
-//			pthread_mutex_unlock(&mutexCroto);
 			literalInstruccion[largoInstruccion] = 0;
 			log_debug(logs, "El literal es juancito: %s", literalInstruccion);
-//			pthread_mutex_lock(&mutexCroto);
-			analizadorLinea(_depurar_sentencia(strdup(literalInstruccion)),
-					&funciones_Ansisop, &funciones_kernel);
-			if (flag_sigint){
-				close(socketKernel);
-				close(socketUMV);
-				exit(EXIT_FAILURE);
-			}
-//			pthread_mutex_unlock(&mutexCroto);
+			analizadorLinea(_depurar_sentencia(strdup(literalInstruccion)), &funciones_Ansisop,
+					&funciones_kernel);
 			pcbEnUso->program_Counter++;
 			lineasAnalizadas++;
 			log_info(logs, "ESTA ES LA INSTRUCCION %d", lineasAnalizadas);
 			log_info(logs, "EL PID DEL BASTARDO ES %d", pcbEnUso->program_id);
 			//printf("ESTA ES LA INSTRUCCION %d\n", lineasAnalizadas);
 		}
-		dictionary_clean_and_destroy_elements(diccionarioDeVariables,
-				(void*) free);
+		dictionary_clean_and_destroy_elements(diccionarioDeVariables, (void*)free);
 		/*
-		 enviarConRazon(socketKernel, logs, razon, serializarPCB(pcbEnUso));
-		 free(pcbEnUso);
-		 */
-		if (programaBloqueado) {
+		enviarConRazon(socketKernel, logs, razon, serializarPCB(pcbEnUso));
+		free(pcbEnUso);
+		*/
+		if (programaBloqueado){
 			log_debug(logs, "El programa salió por bloqueo");
 		}
-		if (programaAbortado) {
+		if (programaAbortado){
 			char *aviso;
-			if (programaAbortado == 2) {
-				aviso = string_from_format("EstaCoverFlow");
-			} else {
-				aviso = string_from_format("Segmentation fault");
+			if (programaAbortado==2){
+				aviso=string_from_format("EstaCoverFlow");
+			}else{
+				aviso=string_from_format("Segmentation fault");
 			}
-			enviarConRazon(socketKernel, logs, IMPRIMIR_TEXTO,
-					serializar2(crear_nodoVar(aviso, strlen(aviso)), 0));
+			enviarConRazon(socketKernel, logs, IMPRIMIR_TEXTO, serializar2(crear_nodoVar(aviso, strlen(aviso)), 0));
 			log_debug(logs, "El programa aborto");
 			free(aviso);
-			enviarConRazon(socketKernel, logs, SALIDA_NORMAL,
-					serializarPCB(pcbEnUso));
+			enviarConRazon(socketKernel, logs, SALIDA_NORMAL, serializarPCB(pcbEnUso));
 			recibirConRazon(socketKernel, &programaAbortado, logs);
 		}
-		if (programaFinalizado) {
+		if (programaFinalizado){
 			log_debug(logs, "El programa finalizo");
 		}
-		if (lineasAnalizadas == quantumDeKernel && !programaFinalizado
-				&& !programaBloqueado && !programaAbortado) {
+		if (lineasAnalizadas==quantumDeKernel&&!programaFinalizado&&!programaBloqueado&&!programaAbortado){
 			sem_wait(&mutexSigu);
-			if (!sigusr1_desactivado) {
-				log_info(logs, "MIRA MANDE SIGU");
-				enviarConRazon(socketKernel, logs, SIGUSR_1,
-						serializar2(crear_nodoVar(&programaFinalizado, 4), 0));
+			if (!sigusr1_desactivado){
+				log_info(logs,"MIRA MANDE SIGU");
+						enviarConRazon(socketKernel, logs, SIGUSR_1, serializar2(crear_nodoVar(&programaFinalizado,4),0));
 			}
 			sem_post(&mutexSigu);
-			enviarConRazon(socketKernel, logs, SALIDA_POR_QUANTUM,
-					serializarPCB(pcbEnUso));
+			enviarConRazon(socketKernel, logs, SALIDA_POR_QUANTUM, serializarPCB(pcbEnUso));
 		}
-		printf("Sali del while, lineasAnalizadas=%d y quantumDeKernel=%d\n",
-				lineasAnalizadas, quantumDeKernel);
+		printf("Sali del while, lineasAnalizadas=%d y quantumDeKernel=%d\n", lineasAnalizadas, quantumDeKernel);
 	}
 //	enviarConRazon(socketKernel, logs, SIGUSR_1, NULL);
 //	printf("Esto deberia ser null %s\n", recibirConRazon(socketKernel, razon, logs));
@@ -225,19 +203,8 @@ void sig_handler(int signo) {
 			exit(EXIT_SUCCESS);
 		}
 	} else if (signo == SIGINT) {
-//		pthread_mutex_lock(&mutexCroto);
 		log_info(logs,
 				"Se recibió la señal SIGNIT, la CPU se cerrara abruptamente");
-//		pthread_mutex_unlock(&mutexCroto);
-		flag_sigint=1;
-		if (!cpu_ocupada){
-			close(socketKernel);
-			close(socketUMV);
-			exit(EXIT_FAILURE);
-		}
-//		close(socketUMV);
-//		close(socketKernel);
-
-//		exit(EXIT_FAILURE);
+		exit(EXIT_FAILURE);
 	}
 }

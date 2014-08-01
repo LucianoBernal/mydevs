@@ -83,7 +83,7 @@ t_buffer *recibirConBuffer(int socket, int *p_razon, t_log *logs){
 }
 char *recibirConRazon(int socket, int *p_razon, t_log *logs){
 	t_buffer *aux=recibirConBuffer(socket, p_razon, logs);
-	char* auxChar = (aux==NULL?NULL:aux->mensaje);
+	char* auxChar = aux==NULL?NULL:aux->mensaje;
 	free(aux);
 	return auxChar;
 }
