@@ -234,8 +234,8 @@ void gestionarProgramaNuevo(char* literal, int sd, int tamanioLiteral) {
 		escribir_en_Memoria(metadata, pcb, literal, tamanioLiteral);
 		asignaciones_desde_metada(metadata, pcb);
 		sem_post(&mutexProcesoActivo);
-		encolar_New(pcb, peso);
 		agregar_En_Diccionario(pcb->program_id, sd);
+		encolar_New(pcb, peso);
 	} else {
 		sem_post(&mutexProcesoActivo);
 		notificar_Memoria_Llena(sd);
@@ -257,9 +257,30 @@ void* deNewAReady(void* sinParametro) { // OTRO HILO
 		sem_wait(&colaNuevosMutex);
 		elementoSacado = list_remove(colaNew, 0);
 		sem_post(&colaNuevosMutex);
+		bool estaLaVictima(int* self){
+			return *self==elementoSacado->pcb->program_id;
+		}
+		sem_wait(&victimasMutex);
+		if(!list_any_satisfy(victimas,(void*)estaLaVictima)){
+		sem_post(&victimasMutex);
 		t_PCB* pcb_Ready = malloc(sizeof(t_PCB));
 		memcpy(pcb_Ready, elementoSacado->pcb, sizeof(t_PCB));
 		encolar_en_Ready(pcb_Ready);
+
+	}else{
+		//BORRO
+//		sem_post(&victimasMutex);
+//		sem_post(&grado_Multiprogramacion);
+//		sem_wait(&victimasMutex);
+//		list_remove_and_destroy_by_condition(victimas,(void*)estaLaVictima,(void*)free);
+//		sem_post(&victimasMutex);
+//		sem_wait(&mutexProcesoActivo);
+//		cambiar_Proceso_Activo(elementoSacado->pcb->program_id);
+//		solicitar_Destruccion_Segmentos();
+//		sem_post(&mutexProcesoActivo);
+		manejoVictimas(elementoSacado->pcb->program_id);
+		log_error(logKernel,"NO TE ENCOLO NADA");
+	}
 		free(elementoSacado);
 	}
 	return NULL ;
@@ -487,3 +508,26 @@ int obtener_pid_de_un_sd(int sd) {
 	free(pid);
 	return pidI;
 }
+
+
+
+void manejoVictimas(int pid){
+	bool estaLaVictima(int* self) {
+			return *self == pid;
+		}
+	sem_post(&victimasMutex);
+				sem_post(&grado_Multiprogramacion);
+				sem_wait(&victimasMutex);
+				list_remove_and_destroy_by_condition(victimas,
+						(void*) estaLaVictima, (void*) free);
+				sem_post(&victimasMutex);
+				sem_wait(&mutexProcesoActivo);
+				cambiar_Proceso_Activo(pid);
+				solicitar_Destruccion_Segmentos();
+				sem_post(&mutexProcesoActivo);
+	cerrar_conexion(pid);
+	liberar_nodo_Diccionario_PIDySD(pid);
+	liberar_numero(pid);
+
+}
+
