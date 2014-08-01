@@ -441,12 +441,13 @@ int enviarUnosBytes(int base, int offset, int tamano, void *mensaje) {
 	return 0;
 }
 
-int enviarUnosBytesPConsola(int base, int offset, int tamano, void *mensaje) {
-	agregarProceso(1000, 'c');
-	cambiarProcesoActivo(1000);
-	int basePosta = crearSegmento(100);
-	enviarUnosBytes(basePosta, offset, tamano, mensaje);
-	return basePosta;
+int enviarUnosBytesPCPU(int base, int offset, int tamano, void *mensaje) {
+	int pid = procesoActivo();
+	if (verificarEspacio(pid, base, offset, tamano+4)){
+		memcpy(obtenerDirFisica(base, offset, pid), mensaje, tamano);
+		return 1;
+	}
+	return 0;
 }
 
 int procesoActivo() {

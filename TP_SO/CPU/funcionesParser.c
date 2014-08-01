@@ -28,7 +28,7 @@ extern t_log *logs;
 extern t_PCB *pcbEnUso;
 extern t_dictionary *diccionarioDeVariables;
 extern char *etiquetas;
-extern int programaFinalizado, programaBloqueado;
+extern int programaFinalizado, programaBloqueado, programaAbortado;
 //static unsigned char nivelContexto;
 //int programCounter;
 //t_puntero stackBase;
@@ -174,13 +174,13 @@ void vincPrimitivas() {
 }
 
 char* _depurar_sentencia(char* sentencia) {
-	log_debug(logs, "Depurando sentencia...");
+//	log_debug(logs, "Depurando sentencia...");
 	int i = strlen(sentencia);
 	while (string_ends_with(sentencia, "\n")) {
 		i--;
 		sentencia = string_substring_until(sentencia, i);
 	}
-	log_info(logs, "Sentencia depurada: %s", sentencia);
+//	log_info(logs, "Sentencia depurada: %s", sentencia);
 	return sentencia;
 }
 
@@ -213,8 +213,21 @@ void enviarBytesAUMV(t_puntero base, t_puntero desplazamiento, int tamano,
 	recibirConRazon(socketUMV, &razon, logs);
 	if (razon == SEGMENTATION_FAULT) {
 		log_error(logs, "Hubo segmentation fault");
-		programaFinalizado = 1;
-		//SACARPROCESODECPUPORABORTO();
+		if (!programaAbortado) programaAbortado = 1;
+	}
+}
+void enviarVariableAUMV(t_puntero base, t_puntero desplazamiento, int tamano,
+		void *datos) {
+	int razon;
+	enviarConRazon(socketUMV, logs, AGREGAR_VARIABLE,
+			serializar2(crear_nodoVar(&base, sizeof(t_puntero)),
+					crear_nodoVar(&desplazamiento, sizeof(t_puntero)),
+					crear_nodoVar(&tamano, 4), crear_nodoVar(datos, tamano),
+					0));
+	recibirConRazon(socketUMV, &razon, logs);
+	if (razon == SEGMENTATION_FAULT) {
+		log_error(logs, "Hubo stack overflow");
+		if (!programaAbortado) programaAbortado = 2;
 	}
 }
 char *solicitarBytesAUMV(t_puntero base, t_puntero desplazamiento, int tamano) {
@@ -226,35 +239,18 @@ char *solicitarBytesAUMV(t_puntero base, t_puntero desplazamiento, int tamano) {
 	char *mensaje = recibirConRazon(socketUMV, &razon, logs);
 	if (razon == SEGMENTATION_FAULT) {
 		log_error(logs, "Hubo segmentation fault");
-		//SACARPROCESODECPUPORABORTO(); Declaratividad op
+		programaAbortado = 1;
 		return NULL ;
 	}
 	char *aux = malloc(tamano + 1);
-	mensaje != NULL ?
-			desempaquetar2(mensaje, aux, 0) : printf("Esta estaba vacia\n");
+	if (mensaje != NULL)
+			desempaquetar2(mensaje, aux, 0);
 	free(mensaje);
 	return aux;
 }
-//	return mensaje;
-////	char *msjCabecera = malloc(TAMANO_CABECERA);
-////	recv(socketUMV, msjCabecera, TAMANO_CABECERA, MSG_WAITALL);
-////	int tamanoMensaje;
-////	desempaquetar2(msjCabecera, &tamanoMensaje, razon, 0);
-////	if (razon == CONFIRMACION) {
-////		char *mensaje = malloc(tamanoMensaje);
-////		recv(socketUMV, mensaje, tamanoMensaje, MSG_WAITALL);
-////		char *aux = malloc(tamano);
-////		desempaquetar2(mensaje, aux, 0);
-////		return aux;
-////	} else {
-////		//notificar error
-////		return "";
-////	}
-//} //UFF SOY TAN HOMBRE
-//
 t_puntero definirVariable(t_nombre_variable identificador_variable) { //Chequeada
 	log_debug(logs, "Definiendo variable...");
-	enviarBytesAUMV(pcbEnUso->segmento_Stack,
+	enviarVariableAUMV(pcbEnUso->segmento_Stack,
 			pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack
 					+ pcbEnUso->tamanio_Contexto_Actual * 5, 1,
 			&identificador_variable);
@@ -266,8 +262,6 @@ t_puntero definirVariable(t_nombre_variable identificador_variable) { //Chequead
 			+ pcbEnUso->tamanio_Contexto_Actual * 5;
 	log_debug(logs, "Puse una variable de nombre= %c y de offset= %d",
 			identificador_variable, *desplazamiento);
-//	printf("Puse una variable de nombre = %c y de offset = %d\n",
-//			identificador_variable, *desplazamiento);
 	dictionary_put(diccionarioDeVariables, identificadorCopiado,
 			desplazamiento);
 	pcbEnUso->tamanio_Contexto_Actual++;
@@ -277,37 +271,31 @@ t_puntero definirVariable(t_nombre_variable identificador_variable) { //Chequead
 t_puntero obtenerPosicionVariable(t_nombre_variable identificador_variable) { //Chequeada
 	log_debug(logs, "Obteniendo posición con identif= %c",
 			identificador_variable);
-//	printf("llame obtenerPosicion con identif = %c\n", identificador_variable);
 	char *identificadorPosta = malloc(2);
 	identificadorPosta[0] = identificador_variable;
 	identificadorPosta[1] = 0;
 	int *aux = dictionary_get(diccionarioDeVariables, identificadorPosta);
 	log_debug(logs, "La dirección obtenida es %d", *aux);
-//	printf("Y la direccion obtenida es %d\n", *aux);
 	return (aux == NULL ) ? -1 : *aux;
 }
 //
 t_valor_variable dereferenciar(t_puntero direccion_variable) { //Chequeada
 	log_debug(logs, "Dereferenciado con dirreción = %d", direccion_variable);
-	//printf("llame dereferenciar con direccion = %d\n", direccion_variable);
-
 	char *aux =
 			solicitarBytesAUMV(pcbEnUso->segmento_Stack,
-					/*pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack +*/direccion_variable
+					direccion_variable
 							+ 1, 4);
 	t_valor_variable valor;
+	if (aux==NULL)
+		return -736;
 	memcpy(&valor, aux, 4);
 	log_debug(logs, "El valor obtenido es= %d", valor);
-	//printf("y el valor obtenido es = %d\n", valor);
 	free(aux);
 	return valor;
 }
-////
 void asignar(t_puntero direccion_variable, t_valor_variable valor) { //Chequeada
 	log_debug(logs, "Llamé asignar con dirección= %d y valor= %d",
 			direccion_variable, valor);
-//	printf("llame asignar con direccion = %d y valor = %d\n",
-//			direccion_variable, valor);
 	log_error(logs, "DIRECCION VARIABLE ES: %d, LA DIFERENCIA ES %d",
 			direccion_variable,
 			pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack);
@@ -316,33 +304,12 @@ void asignar(t_puntero direccion_variable, t_valor_variable valor) { //Chequeada
 		direccion_variable += pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack;
 	}
 	log_error(logs, "LA NUEVA DIRECCION ES %d", direccion_variable);
-	enviarBytesAUMV(pcbEnUso->segmento_Stack,
-	/*pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack
-	 +*/direccion_variable + 1, 4, &valor);
+	enviarBytesAUMV(pcbEnUso->segmento_Stack,direccion_variable + 1, 4, &valor);
 	log_debug(logs, "El valor asignado es %d", valor);
-//	printf("el valor asignado es %d\n", valor);
 }
-//
+
 t_valor_variable obtenerValorCompartida(t_nombre_compartida variable) {
 	log_info(logs, "Ejecute obtenerValorCompartida con %s", variable);
-//	int razon = OBTENER_VALOR;
-//	t_paquete *paquete = serializar2(crear_nodoVar(variable, strlen(variable)),
-//			0);
-//	t_paquete *header = serializar2(crear_nodoVar(&(paquete->tamano), 4),
-//			crear_nodoVar(&razon, 4), 0);
-//	send(socketKernel, header->msj, TAMANO_CABECERA, 0);
-//	send(socketKernel, paquete->msj, paquete->tamano, 0);
-//	char *msjCabecera = malloc(TAMANO_CABECERA);
-//	//bind y listen mediante
-//	recv(socketKernel, msjCabecera, TAMANO_CABECERA, MSG_WAITALL);
-//	int tamanoMensaje;
-//	desempaquetar2(msjCabecera, &tamanoMensaje, &razon, 0);
-//	//quizas deberia preguntar por la razon, pero ni da la verdad.
-//	char *mensaje = malloc(tamanoMensaje);
-//	recv(socketKernel, mensaje, tamanoMensaje, MSG_WAITALL);
-//	t_valor_variable *aux = malloc(sizeof(t_valor_variable));
-//	desempaquetar2(mensaje, aux, 0);
-//	return *aux;
 	int aux;
 	int razon;
 	enviarConRazon(socketKernel, logs, OBTENER_VALOR,
@@ -352,7 +319,7 @@ t_valor_variable obtenerValorCompartida(t_nombre_compartida variable) {
 	free(respuesta);
 	return aux;
 }
-//
+
 t_valor_variable asignarValorCompartida(t_nombre_compartida variable,
 		t_valor_variable valor) {
 	log_info(logs, "Ejecute asignarValorCompartida con %s", variable);
@@ -365,9 +332,6 @@ t_valor_variable asignarValorCompartida(t_nombre_compartida variable,
 }
 //
 void irAlLabel(t_nombre_etiqueta etiqueta) {
-//	log_info(logs, "Ejecute irAlLabel con %s", etiqueta);
-//	Segun yo a las 12, al comienzo del programa en el cpu, debemos traer el segmento de etiquetas hacia el.
-//	etiquetas es una global en la que copiamos enterito el indice de etiquetas
 	printf("el valor del program counter viejo es %d\n",
 			pcbEnUso->program_Counter);
 	pcbEnUso->program_Counter = metadata_buscar_etiqueta(
@@ -378,8 +342,6 @@ void irAlLabel(t_nombre_etiqueta etiqueta) {
 }
 //
 void llamarSinRetorno(t_nombre_etiqueta etiqueta) {
-	//log_info(logs, "Ejecute llamarSinRetorno con %s", etiqueta);
-	//Yo crearia un nuevo diccionario, pero no se como es esta cosa.
 	dictionary_clean_and_destroy_elements(diccionarioDeVariables, (void*) free);
 	enviarBytesAUMV(pcbEnUso->segmento_Stack,
 			pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack
@@ -397,7 +359,6 @@ void llamarSinRetorno(t_nombre_etiqueta etiqueta) {
 	irAlLabel(etiqueta);
 }
 void llamarConRetorno(t_nombre_etiqueta etiqueta, t_puntero donde_retornar) {
-	//log_info(logs, "Ejecute llamarConRetorno con %s", etiqueta);
 	dictionary_clean_and_destroy_elements(diccionarioDeVariables, (void*) free);
 	enviarBytesAUMV(pcbEnUso->segmento_Stack,
 			pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack
@@ -421,12 +382,6 @@ void llamarConRetorno(t_nombre_etiqueta etiqueta, t_puntero donde_retornar) {
 char *generarListadoVariables() {
 	int i = 0, acum = 0;
 	char *aux = NULL, *axu;
-//	if (pcbEnUso->tamanio_Contexto_Actual)
-//		chota="El estado final de las variables es: \n";
-//	 else
-//		chota="El programa no poseia variables";
-//	aux=strdup(chota);
-//	acum+=strlen(aux);
 	while (i < pcbEnUso->tamanio_Contexto_Actual) {
 		char identif = *(solicitarBytesAUMV(pcbEnUso->segmento_Stack, i * 5, 1));
 		int valor = dereferenciar(i * 5);
@@ -443,16 +398,12 @@ char *generarListadoVariables() {
 		axu = string_from_format("El estado final de las variables es:\n%s",
 				aux);
 	else
-		axu = string_from_format("El programa no tenia variables");
-//	puts(aux); //Esto es para ver como esta de este lado
+		axu = string_from_format("El programa no tenia variables ");
 	return axu;
 }
 void finalizar(void) {
 	log_info(logs, "Ejecuté finalizar");
 	if (pcbEnUso->cursor_Stack == pcbEnUso->segmento_Stack) {
-//		char *tituloFinal = "El estado final de las variables es:\n";
-//		char *tituloFinal2 =strdup(tituloFinal);
-//		enviarConRazon(socketKernel, logs, IMPRIMIR_TEXTO, serializar2(crear_nodoVar(tituloFinal2, strlen(tituloFinal2)), 0));
 		char *mensajeFinal = generarListadoVariables();
 		if (mensajeFinal != NULL ) {
 			int razon;
@@ -460,7 +411,7 @@ void finalizar(void) {
 					serializar2(
 							crear_nodoVar(mensajeFinal, strlen(mensajeFinal)),
 							0));
-			recibirConRazon(socketKernel, &razon, logs);//Deberia preguntar si es confirmacion pero bue
+			recibirConRazon(socketKernel, &razon, logs);//FIXME confirmacion
 		}
 		programaFinalizado = 1;
 		sem_wait(&mutexSigu);
@@ -475,6 +426,8 @@ void finalizar(void) {
 				pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack - 4, 4);
 		char *p_cursorCtxto = solicitarBytesAUMV(pcbEnUso->segmento_Stack,
 				pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack - 8, 4);
+		if (programaAbortado)
+			goto falloSolicitar;
 		int proximo_cursor_stack;
 		printf("el viejo program counter es %d\n", pcbEnUso->program_Counter);
 		memcpy(&(pcbEnUso->program_Counter), p_programCounter, 4);
@@ -483,30 +436,30 @@ void finalizar(void) {
 		pcbEnUso->tamanio_Contexto_Actual = (pcbEnUso->cursor_Stack - 8
 				- proximo_cursor_stack) / 5;
 		pcbEnUso->cursor_Stack = proximo_cursor_stack;
-//		free(diccionarioDeVariables);
-//		diccionarioDeVariables=dictionary_create();
 		dictionary_clean_and_destroy_elements(diccionarioDeVariables,
 				(void*) free);
 		recuperarDiccionario();
-//		memcpy(&(pcbEnUso->program_Counter), p_programCounter, 4);
-//		memcpy(&(pcbEnUso->cursor_Stack), p_cursorCtxto, 4);
+		falloSolicitar: ;
 		free(p_programCounter);
 		free(p_cursorCtxto);
 	}
-} //Esa division es bastante discutible
+}
 void retornar(t_valor_variable retorno) {
 	log_info(logs, "Ejecute retornar con %d", retorno);
 	char *p_retorno = solicitarBytesAUMV(pcbEnUso->segmento_Stack,
 			pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack - 4, 4);
+	if (programaAbortado)
+		goto falloSolicitar;
 	int dirRetorno;
 	memcpy(&dirRetorno, p_retorno, 4);
-	free(p_retorno);
 	enviarBytesAUMV(pcbEnUso->segmento_Stack, dirRetorno + 1, 4, &retorno);
 	char *p_programCounter = solicitarBytesAUMV(pcbEnUso->segmento_Stack,
 			pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack - 8, 4);
 	char *p_cursorCtxto = solicitarBytesAUMV(pcbEnUso->segmento_Stack,
 			pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack - 12, 4);
 	int proximo_cursor_stack;
+	if (programaAbortado)
+		goto falloSolicitar;
 	printf("el viejo program counter es %d\n", pcbEnUso->program_Counter);
 	memcpy(&pcbEnUso->program_Counter, p_programCounter, 4);
 	printf("el nuevo program counter es %d\n", pcbEnUso->program_Counter);
@@ -519,47 +472,25 @@ void retornar(t_valor_variable retorno) {
 
 	dictionary_clean_and_destroy_elements(diccionarioDeVariables, (void*) free);
 	recuperarDiccionario();
+	falloSolicitar:;
+	free(p_retorno);
 	free(p_programCounter);
 	free(p_cursorCtxto);
 }
 void imprimir(t_valor_variable valor_mostrar) {
 	log_info(logs, "Ejecute imprimir con %d", valor_mostrar);
-//	char *cadena=string_from_format("%d\n", valor_mostrar);
-//	enviarConRazon(socketKernel, logs, IMPRIMIR_TEXTO, serializar2(crear_nodoVar(cadena, strlen(cadena)), 0));
-//	enviarConRazon(socketKernel, logs, IMPRIMIR,
-//	 serializar2(crear_nodoVar(&valor_mostrar, sizeof(t_valor_variable)),
-//	 0)); //TODO
+	if (valor_mostrar!=-736)
 	imprimirTexto(string_from_format("%d ", valor_mostrar));
 }
 void imprimirTexto(char* texto) {
 	int razon;
 	log_info(logs, "Ejecute imprimirTexto con %s", texto);
-//	enviarConRazon(socketKernel, logs, IMPRIMIR_TEXTO, serializar2(crear_nodoVar(texto, strlen(texto)), 0));
-//	int *razon = malloc(sizeof(int));
-//	*razon = MOSTRAR_TEXTO;
-//	t_paquete *paquete = serializar2(crear_nodoVar(texto, strlen(texto) + 1),
-//			0);
-//	t_paquete *header = serializar2(crear_nodoVar(&(paquete->tamano), 4),
-//			crear_nodoVar(razon, 4), 0);
-//	send(socketKernel, header->msj, TAMANO_CABECERA, 0);
-//	send(socketKernel, paquete->msj, paquete->tamano, 0);
-//	//Quizas deberiamos esperar la respuesta
 	enviarConRazon(socketKernel, logs, IMPRIMIR_TEXTO,
 			serializar2(crear_nodoVar(texto, strlen(texto)), 0)); //TODO
 	recibirConRazon(socketKernel, &razon, logs);
 }
 void entradaSalida(t_nombre_dispositivo dispositivo, int tiempo) {
 	log_info(logs, "Ejecute entradaSalida con %s", dispositivo);
-//	int *razon = malloc(sizeof(int));
-//	*razon = SALIDA_POR_BLOQUEO;
-//	t_paquete *paquete = serializar2(crear_nodoVar(&pcb, sizeof(pcb)),
-//			crear_nodoVar(&tiempo, 4),
-//			crear_nodoVar(dispositivo, strlen(dispositivo)), 0);
-//	t_paquete *header = serializar2(crear_nodoVar(&(paquete->tamano), 4),
-//			crear_nodoVar(razon, 4), 0);
-//	send(socketKernel, header->msj, TAMANO_CABECERA, 0);
-//	send(socketKernel, paquete->msj, paquete->tamano, 0);
-//	log_info(log, "Se desalojó un programa de esta CPU");
 	pcbEnUso->program_Counter++;
 	t_paquete * paquetePCB = serializarPCB(pcbEnUso);
 	int tamano = paquetePCB->tamano;
@@ -578,30 +509,12 @@ void entradaSalida(t_nombre_dispositivo dispositivo, int tiempo) {
 }
 void wait(t_nombre_semaforo identificador_semaforo) {
 	log_info(logs, "Ejecute wait con %s", identificador_semaforo);
-//	//PASO
-//	int razon = WAIT, tamano;
-//	t_paquete *paquete = serializar2(
-//			crear_nodoVar(identificador_semaforo,
-//					strlen(identificador_semaforo)),
-//			crear_nodoVar(&pcb, sizeof(pcb)), 0);
-//	t_paquete *header = serializar2(crear_nodoVar(&(paquete->tamano), 4),
-//			crear_nodoVar(&razon, 4), 0);
-//	send(socketKernel, (void*) header->msj, TAMANO_CABECERA, 0);
-//	send(socketKernel, (void*) paquete->msj, paquete->tamano, 0);
-//	char *cabecera = malloc(TAMANO_CABECERA);
-//	//lo que haga falta
-//	recv(socketKernel, (void*) cabecera, TAMANO_CABECERA, MSG_WAITALL);
-//	desempaquetar2(cabecera, &tamano, &razon, 0);
-//	if (!razon) {
-//		log_info(log, "Se desalojó un programa de esta CPU");
-//	}
 	int razon;
 	enviarConRazon(socketKernel, logs, WAIT,
 			serializar2(
 					crear_nodoVar(identificador_semaforo,
-							strlen(identificador_semaforo) + 1), 0));
+							strlen(identificador_semaforo)), 0));
 	recibirConRazon(socketKernel, &razon, logs);
-	//TODO tiene razón el hijo de puta del warning.
 	if (razon == DESALOJAR_PROGRAMA) {
 		pcbEnUso->program_Counter++;
 		sem_wait(&mutexSigu);
@@ -618,19 +531,8 @@ void wait(t_nombre_semaforo identificador_semaforo) {
 
 void signalPropia(t_nombre_semaforo identificador_semaforo) {
 	log_info(logs, "Ejecute signalPropia %s", identificador_semaforo);
-//	int razon = SIGNAL;
-//	t_paquete *paquete = serializrar2(
-//			crear_nodoVar(identificador_semaforo,
-//					strlen(identificador_semaforo)), 0);
-//	t_paquete *header = serializar2(crear_nodoVar(&(paquete->tamano), 4),
-//			crear_nodoVar(&razon, 4), 0);
-//	send(socketKernel, (void*) header->msj, TAMANO_CABECERA, 0);
-//	send(socketKernel, (void*) paquete->msj, paquete->tamano, 0);
-	/*Creo que no hace falta un recv, porque no le afecta directamente a el,
-	 * el PCP deberia sacar de la cola de bloqueados a quien corresponda y listo.
-	 */
 	enviarConRazon(socketKernel, logs, SIGNAL,
 			serializar2(
 					crear_nodoVar(identificador_semaforo,
-							strlen(identificador_semaforo) + 1), 0)); //TODO
+							strlen(identificador_semaforo)), 0)); //TODO
 }

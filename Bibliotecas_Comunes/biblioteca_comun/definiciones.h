@@ -22,6 +22,7 @@ typedef struct {
 } t_PCB;
 
 typedef enum {
+	AGREGAR_VARIABLE,
 	BASES_LOGICAS,
 	CONFIRMACION,
 	SEGMENTATION_FAULT,

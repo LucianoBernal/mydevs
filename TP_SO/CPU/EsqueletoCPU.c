@@ -142,7 +142,17 @@ int main(int arc, char **argv) {
 			log_debug(logs, "El programa salió por bloqueo");
 		}
 		if (programaAbortado){
+			char *aviso;
+			if (programaAbortado==2){
+				aviso=string_from_format("EstaCoverFlow");
+			}else{
+				aviso=string_from_format("Segmentation fault");
+			}
+			enviarConRazon(socketKernel, logs, IMPRIMIR_TEXTO, serializar2(crear_nodoVar(aviso, strlen(aviso)), 0));
 			log_debug(logs, "El programa aborto");
+			free(aviso);
+			enviarConRazon(socketKernel, logs, SALIDA_NORMAL, serializarPCB(pcbEnUso));
+			recibirConRazon(socketKernel, &programaAbortado, logs);
 		}
 		if (programaFinalizado){
 			log_debug(logs, "El programa finalizo");

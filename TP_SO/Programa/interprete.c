@@ -46,7 +46,7 @@ int main(int argc, char **argv) {
 		log_error(logger, "Hubo un error al abrir el Script");
 		return EXIT_FAILURE;
 	}
-	if (programa(logger, archivo) == 1) {
+	if (programa(logger, archivo) == 0) {
 		log_error(logger, "Finalizo Erroneamente la ejecucion del Programa");
 		fin = EXIT_FAILURE;
 	} else {

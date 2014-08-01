@@ -223,43 +223,17 @@ void atencionCpu(int *socketCPU) {
 		cambiarProcesoActivo(procesoActivo);
 		desempaquetar2(mensaje, &parametro[0], &parametro[1], &parametro[2], 0);
 		log_debug(logger, "CPU %d solicitó base: %d, offset: %d, y tamano: %d.",*socketCPU, parametro[0], parametro[1], parametro[2]);
-		//printf("\nRecibi solicitar bytes, base: %d, offset: %d, y tamano: %d\n", parametro[0], parametro[1], parametro[2]);
 		char *respuesta = solicitarBytes(parametro[0], parametro[1],
 				parametro[2]);
 
 		log_debug(logger, "Y el resultado es buffer=%s", respuesta);
-		//TODO la primera vez no tira lo mismo el log que el printf en solicitar.
-		//printf("Y el resultado es buffer=%s", respuesta);
-
 		pthread_mutex_unlock(&mutexOperacion);
 		if (!strcmp(respuesta, "error")) {
-//			*razon = SEGMENTATION_FAULT;
-//			*tamanoMensaje = 0;
-//			t_paquete *varALiberar = (t_paquete *) serializar2(
-//					crear_nodoVar(razon, 4), crear_nodoVar(tamanoMensaje, 4),
-//					0);
-//			send(*socketCPU, varALiberar->msj, 16, 0);
-//			free(varALiberar);
 			enviarConRazon(*socketCPU, logger, SEGMENTATION_FAULT, NULL);
 			break;
 		}
 		*razon = RESPUESTA_A_SOLICITAR_BUFFER;
 		*tamanoMensaje = parametro[2];
-
-//		log_info(logger, "Me solicitaron un buffer, base: %d, offset: %d, y tamano: %d", parametro[0], parametro[1], parametro[2]);
-//		//printf("Me solicitaron un buffer, base %d, offset %d, y tamano %d \n", parametro[0], parametro[1], parametro[2]);
-//		log_info(logger, "Y la respuesta es: %s", respuesta);
-//		//Esto vuela todo no?
-//		//printf("Y la respuesta es %s\n", respuesta);
-
-//		t_paquete *paquete = (t_paquete *) serializar2(
-//				crear_nodoVar(respuesta, *tamanoMensaje), 0);
-//		t_paquete *header = (t_paquete *) serializar2(crear_nodoVar(razon, 4),
-//				crear_nodoVar(&paquete->tamano, 4), 0);
-//		send(*socketCPU, header->msj, 16, 0);
-//		send(*socketCPU, paquete->msj, paquete->tamano, 0);
-//		log_debug(logger,"VOY A MORIRR");
-//		usleep(1000000);
 		if(!enviarConRazon(*socketCPU, logger, RESPUESTA_A_SOLICITAR_BUFFER, serializar2(
 				crear_nodoVar(respuesta, *tamanoMensaje), 0))){
 			fin=1;
@@ -278,7 +252,6 @@ void atencionCpu(int *socketCPU) {
 				buffer, 0);
 		buffer[parametro[2]]= 0;
 		log_debug(logger, "CPU %d escribió en, base: %d, offset: %d, tamano: %d, buffer: %s",*socketCPU, parametro[0], parametro[1], parametro[2], buffer);
-		//printf("\nRecibi escribir bytes, base: %d, offset: %d, tamano: %d y buffer: %s\n", parametro[0], parametro[1], parametro[2], buffer);
 		int resultado = enviarUnosBytes(parametro[0], parametro[1], parametro[2], buffer);
 		if (resultado){
 			enviarConRazon(*socketCPU, logger, CONFIRMACION, NULL);
@@ -289,6 +262,25 @@ void atencionCpu(int *socketCPU) {
 		free(buffer);
 		log_debug(logger, "Terminé escribir en umv, de la CPU: %d",*socketCPU);
 		break;
+		case AGREGAR_VARIABLE:
+			log_debug(logger, "Recibí escribir en umv, de la CPU: %d",*socketCPU);
+			pthread_mutex_lock(&mutexOperacion);
+			cambiarProcesoActivo(procesoActivo);
+			char *buffer2 = malloc(*tamanoMensaje+1);
+			desempaquetar2(mensaje, &parametro[0], &parametro[1], &parametro[2],
+					buffer2, 0);
+			buffer2[parametro[2]]= 0;
+			log_debug(logger, "CPU %d escribió en, base: %d, offset: %d, tamano: %d, buffer: %s",*socketCPU, parametro[0], parametro[1], parametro[2], buffer2);
+			int resultado2 = enviarUnosBytesPCPU(parametro[0], parametro[1], parametro[2], buffer2);
+			if (resultado2){
+				enviarConRazon(*socketCPU, logger, CONFIRMACION, NULL);
+			}else{
+				enviarConRazon(*socketCPU, logger, SEGMENTATION_FAULT, NULL);
+			}
+			pthread_mutex_unlock(&mutexOperacion);
+			free(buffer2);
+			log_debug(logger, "Terminé escribir en umv, de la CPU: %d",*socketCPU);
+			break;
 	case CAMBIAR_PROCESO_ACTIVO:
 		log_debug(logger, "Recibí cambiar proceso activo, de la CPU: %d",*socketCPU);
 		//printf("recibi cambiar proceso activo");
