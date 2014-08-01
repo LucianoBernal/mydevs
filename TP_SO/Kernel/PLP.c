@@ -518,6 +518,7 @@ void manejoVictimas(int pid) {
 	cerrar_conexion(pid);
 	liberar_nodo_Diccionario_PIDySD(pid);
 	liberar_numero(pid);
+	mostrar_todas_Las_Listas();
 
 }
 

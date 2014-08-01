@@ -214,23 +214,44 @@ void* atencionCPUs(void* sinParametro) {
 					char* semaforo = malloc(mensaje->size);
 					char* id = malloc(mensaje->size);
 					puts("recibi algo");
+					bool estaLaVictima(int* self) {
+												return *self == pcb->program_id;
+											}
 					switch (*razon) {
 					case SALIDA_POR_QUANTUM: //El Programa salio del CPU por quantum
 						puts("Salio por quantum");
 						desempaquetarPCB(pcb, mensaje->mensaje);
-						programaSalioPorQuantum(pcb, sd);
+						sem_wait(&victimasMutex);
+						if (!list_any_satisfy(victimas,
+								(void*) estaLaVictima)) {
+							sem_post(&victimasMutex);
+							programaSalioPorQuantum(pcb, sd);
+						} else {
+							sem_post(&victimasMutex);
+							seLiberoUnaCPU(sd, pcb);
+							manejoVictimas(pcb->program_id);
+						}
 						break;
 					case SALIDA_NORMAL: //El Programa termino normalmente
 //						log_info(logKernel,"Aca estoy");
 						desempaquetarPCB(pcb, mensaje->mensaje);
 //						log_info(logKernel,"Aca NO estoy");
-						moverAColaExityLiberarCPU(pcb, sd);
+						sem_wait(&victimasMutex);
+						if (!list_any_satisfy(victimas,
+								(void*) estaLaVictima)) {
+							sem_post(&victimasMutex);
+							moverAColaExityLiberarCPU(pcb, sd);
+						} else {
+							sem_post(&victimasMutex);
+							seLiberoUnaCPU(sd, pcb);
+							manejoVictimas(pcb->program_id);
+						}
 						break;
 					case SALIO_POR_IO: //El Programa salio por bloqueo
 						desempaquetarPCB(pcb, mensaje->mensaje);
 						t_buffer* rta;
-						rta= recibirConBuffer(sd,razon,logKernel);
-						desempaquetar2(rta->mensaje,dispositivoIO,&tiempo,0);
+						rta = recibirConBuffer(sd, razon, logKernel);
+						desempaquetar2(rta->mensaje, dispositivoIO, &tiempo, 0);
 						//programaSalioPorQuantum(pcb, sd);
 //					printf("Fuck yeah sali por IO\n");
 //						desempaquetar2(mensaje, &pcb, &tiempo, &dispositivoIO,
@@ -238,18 +259,29 @@ void* atencionCPUs(void* sinParametro) {
 //						desempaquetar2(mensaje->mensaje, pcbEmpaquetado,
 //								dispositivoIO, &tiempo, 0);
 //						desempaquetarPCB(pcb, pcbEmpaquetado);
-						printf("el tamnio del mensaje es: %d\n",mensaje->size);
-						dispositivoIO[rta->size-12] = 0;
+						printf("el tamnio del mensaje es: %d\n", mensaje->size);
+						dispositivoIO[rta->size - 12] = 0;
 //						printf(
 //								"el dispositivo que recibi: %s y por un tiempo: %d\n",
 //								dispositivoIO, tiempo);
-					//	printf("Holis\n");
-						printf("el dispositivo es: %s",dispositivoIO);
+						//	printf("Holis\n");
+						printf("el dispositivo es: %s", dispositivoIO);
 						mostrarPCB(pcb);
 //						tiempo=3;
 //						dispositivoIO=string_from_format("HDD1");
-				//		programaSalioPorQuantum(pcb,sd);
-					    programaSalioPorBloqueo(pcb, tiempo, dispositivoIO, sd);
+						//		programaSalioPorQuantum(pcb,sd);
+						sem_wait(&victimasMutex);
+						if (!list_any_satisfy(victimas,
+								(void*) estaLaVictima)) {
+							sem_post(&victimasMutex);
+							programaSalioPorBloqueo(pcb, tiempo, dispositivoIO,
+									sd);
+						} else {
+							sem_post(&victimasMutex);
+							seLiberoUnaCPU(sd, pcb);
+							manejoVictimas(pcb->program_id);
+						}
+
 						break;
 					case SALIDA_POR_SEMAFORO:
 //						desempaquetar2(mensaje, pcbEmpaquetado, semaforo, 0);
@@ -274,7 +306,18 @@ void* atencionCPUs(void* sinParametro) {
 						desempaquetar2(mensaje->mensaje, semaforo, 0);
 						semaforo[mensaje->size - 4] = 0;
 						puts(semaforo);
-						sc_wait(semaforo, sd);
+
+						sem_wait(&victimasMutex);
+						if (!list_any_satisfy(victimas,
+								(void*) estaLaVictima)) {
+							sem_post(&victimasMutex);
+							sc_wait(semaforo, sd);
+						} else {
+							sem_post(&victimasMutex);
+							seLiberoUnaCPU(sd, pcb);
+							manejoVictimas(pcb->program_id);
+						}
+
 						break;
 					case SIGNAL:
 						puts("olvis que Me llego signal");
@@ -295,6 +338,8 @@ void* atencionCPUs(void* sinParametro) {
 						texto[mensaje->size - 4] = 0;
 //						printf("No la cagaste desempaquetando %d\n", strlen(texto));
 						sc_imprimirTexto(texto, sd);
+
+
 						break;
 					case GRABAR_VALOR:
 						puts("Me llego grabar valor");
