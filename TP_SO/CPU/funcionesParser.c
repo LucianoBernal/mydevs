@@ -11,6 +11,7 @@
 #include <biblioteca_comun/bibliotecaSockets.h>
 #include <biblioteca_comun/Serializacion.h>
 #include <semaphore.h>
+#include <pthread.h>
 //#include <stdio.h>
 //#include <string.h>
 //#include <stdlib.h>
@@ -27,6 +28,7 @@ extern int socketUMV, socketKernel, sigusr1_desactivado;
 extern t_log *logs;
 extern t_PCB *pcbEnUso;
 extern t_dictionary *diccionarioDeVariables;
+extern pthread_mutex_t mutexCroto;
 extern char *etiquetas;
 extern int programaFinalizado, programaBloqueado, programaAbortado;
 //static unsigned char nivelContexto;
@@ -187,9 +189,12 @@ char* _depurar_sentencia(char* sentencia) {
 void recuperarDiccionario() {
 	log_debug(logs, "Recuperando diccionario...");
 	int i = 0, *desplazamiento;
+
+//	pthread_mutex_lock(&mutexCroto);
 	char *nombre, *stack = solicitarBytesAUMV(pcbEnUso->segmento_Stack,
 			pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack,
 			pcbEnUso->tamanio_Contexto_Actual * 5);
+//	pthread_mutex_unlock(&mutexCroto);
 	while (i < pcbEnUso->tamanio_Contexto_Actual) {
 		nombre = malloc(2);
 		desplazamiento = malloc(4);
@@ -231,12 +236,16 @@ void enviarVariableAUMV(t_puntero base, t_puntero desplazamiento, int tamano,
 	}
 }
 char *solicitarBytesAUMV(t_puntero base, t_puntero desplazamiento, int tamano) {
+//	pthread_mutex_lock(&mutexCroto);
 	int razon;
 	enviarConRazon(socketUMV, logs, SOLICITAR_A_UMV,
 			serializar2(crear_nodoVar(&base, sizeof(t_puntero)),
 					crear_nodoVar(&desplazamiento, sizeof(t_puntero)),
 					crear_nodoVar(&tamano, 4), 0));
+
+
 	char *mensaje = recibirConRazon(socketUMV, &razon, logs);
+//	pthread_mutex_unlock(&mutexCroto);
 	if (razon == SEGMENTATION_FAULT) {
 		log_error(logs, "Hubo segmentation fault");
 		programaAbortado = 1;
@@ -250,10 +259,12 @@ char *solicitarBytesAUMV(t_puntero base, t_puntero desplazamiento, int tamano) {
 }
 t_puntero definirVariable(t_nombre_variable identificador_variable) { //Chequeada
 	log_debug(logs, "Definiendo variable...");
+//	pthread_mutex_lock(&mutexCroto);
 	enviarVariableAUMV(pcbEnUso->segmento_Stack,
 			pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack
 					+ pcbEnUso->tamanio_Contexto_Actual * 5, 1,
 			&identificador_variable);
+//	pthread_mutex_unlock(&mutexCroto);
 	char *identificadorCopiado = malloc(2);
 	identificadorCopiado[0] = identificador_variable;
 	identificadorCopiado[1] = 0;
@@ -281,10 +292,12 @@ t_puntero obtenerPosicionVariable(t_nombre_variable identificador_variable) { //
 //
 t_valor_variable dereferenciar(t_puntero direccion_variable) { //Chequeada
 	log_debug(logs, "Dereferenciado con dirreción = %d", direccion_variable);
+//	pthread_mutex_lock(&mutexCroto);
 	char *aux =
 			solicitarBytesAUMV(pcbEnUso->segmento_Stack,
 					direccion_variable
 							+ 1, 4);
+//	pthread_mutex_unlock(&mutexCroto);
 	t_valor_variable valor;
 	if (aux==NULL)
 		return -736;
@@ -304,7 +317,9 @@ void asignar(t_puntero direccion_variable, t_valor_variable valor) { //Chequeada
 		direccion_variable += pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack;
 	}
 	log_error(logs, "LA NUEVA DIRECCION ES %d", direccion_variable);
+//	pthread_mutex_lock(&mutexCroto);
 	enviarBytesAUMV(pcbEnUso->segmento_Stack,direccion_variable + 1, 4, &valor);
+//	pthread_mutex_unlock(&mutexCroto);
 	log_debug(logs, "El valor asignado es %d", valor);
 }
 
@@ -343,6 +358,7 @@ void irAlLabel(t_nombre_etiqueta etiqueta) {
 //
 void llamarSinRetorno(t_nombre_etiqueta etiqueta) {
 	dictionary_clean_and_destroy_elements(diccionarioDeVariables, (void*) free);
+//	pthread_mutex_lock(&mutexCroto);
 	enviarBytesAUMV(pcbEnUso->segmento_Stack,
 			pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack
 					+ pcbEnUso->tamanio_Contexto_Actual * 5, 4,
@@ -351,6 +367,7 @@ void llamarSinRetorno(t_nombre_etiqueta etiqueta) {
 			pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack
 					+ pcbEnUso->tamanio_Contexto_Actual * 5 + 4, 4,
 			&(pcbEnUso->program_Counter));
+//	pthread_mutex_unlock(&mutexCroto);
 	printf("El viejo cursor stack es: %d\n", pcbEnUso->cursor_Stack);
 	pcbEnUso->cursor_Stack = pcbEnUso->cursor_Stack
 			+ pcbEnUso->tamanio_Contexto_Actual * 5 + 8;
@@ -360,6 +377,7 @@ void llamarSinRetorno(t_nombre_etiqueta etiqueta) {
 }
 void llamarConRetorno(t_nombre_etiqueta etiqueta, t_puntero donde_retornar) {
 	dictionary_clean_and_destroy_elements(diccionarioDeVariables, (void*) free);
+//	pthread_mutex_lock(&mutexCroto);
 	enviarBytesAUMV(pcbEnUso->segmento_Stack,
 			pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack
 					+ pcbEnUso->tamanio_Contexto_Actual * 5, 4,
@@ -372,6 +390,7 @@ void llamarConRetorno(t_nombre_etiqueta etiqueta, t_puntero donde_retornar) {
 			pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack
 					+ pcbEnUso->tamanio_Contexto_Actual * 5 + 8, 4,
 			&(donde_retornar));
+//	pthread_mutex_unlock(&mutexCroto);
 	printf("El viejo cursor stack es: %d\n", pcbEnUso->cursor_Stack);
 	pcbEnUso->cursor_Stack = pcbEnUso->cursor_Stack
 			+ pcbEnUso->tamanio_Contexto_Actual * 5 + 12;
@@ -383,7 +402,9 @@ char *generarListadoVariables() {
 	int i = 0, acum = 0;
 	char *aux = NULL, *axu;
 	while (i < pcbEnUso->tamanio_Contexto_Actual) {
+	//	pthread_mutex_lock(&mutexCroto);
 		char identif = *(solicitarBytesAUMV(pcbEnUso->segmento_Stack, i * 5, 1));
+	//	pthread_mutex_unlock(&mutexCroto);
 		int valor = dereferenciar(i * 5);
 		char *cadena = string_from_format("VARIABLE %c: %d\n", identif, valor);
 		acum += strlen(cadena) + 1;
@@ -422,10 +443,12 @@ void finalizar(void) {
 		enviarConRazon(socketKernel, logs, SALIDA_NORMAL,
 				serializarPCB(pcbEnUso));
 	} else {
+//		pthread_mutex_lock(&mutexCroto);
 		char *p_programCounter = solicitarBytesAUMV(pcbEnUso->segmento_Stack,
 				pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack - 4, 4);
 		char *p_cursorCtxto = solicitarBytesAUMV(pcbEnUso->segmento_Stack,
 				pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack - 8, 4);
+//		pthread_mutex_unlock(&mutexCroto);
 		if (programaAbortado)
 			goto falloSolicitar;
 		int proximo_cursor_stack;
@@ -446,17 +469,21 @@ void finalizar(void) {
 }
 void retornar(t_valor_variable retorno) {
 	log_info(logs, "Ejecute retornar con %d", retorno);
+//	pthread_mutex_lock(&mutexCroto);
 	char *p_retorno = solicitarBytesAUMV(pcbEnUso->segmento_Stack,
 			pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack - 4, 4);
+//	pthread_mutex_unlock(&mutexCroto);
 	if (programaAbortado)
 		goto falloSolicitar;
 	int dirRetorno;
 	memcpy(&dirRetorno, p_retorno, 4);
+//	pthread_mutex_lock(&mutexCroto);
 	enviarBytesAUMV(pcbEnUso->segmento_Stack, dirRetorno + 1, 4, &retorno);
 	char *p_programCounter = solicitarBytesAUMV(pcbEnUso->segmento_Stack,
 			pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack - 8, 4);
 	char *p_cursorCtxto = solicitarBytesAUMV(pcbEnUso->segmento_Stack,
 			pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack - 12, 4);
+//	pthread_mutex_unlock(&mutexCroto);
 	int proximo_cursor_stack;
 	if (programaAbortado)
 		goto falloSolicitar;

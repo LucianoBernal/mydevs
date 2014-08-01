@@ -236,22 +236,25 @@ void atencionCpu(int *socketCPU) {
 					parametro[2]);
 
 			log_debug(logger, "Y el resultado es buffer=%s", respuesta);
-			pthread_mutex_unlock(&mutexOperacion);
 			if (!strcmp(respuesta, "error")) {
-				enviarConRazon(*socketCPU, logger, SEGMENTATION_FAULT, NULL );
+				if (!enviarConRazon(*socketCPU, logger, SEGMENTATION_FAULT,
+						NULL ))
+					fin = 1;
+
 			} else {
 				*razon = RESPUESTA_A_SOLICITAR_BUFFER;
 				*tamanoMensaje = parametro[2];
 				if (!enviarConRazon(*socketCPU, logger,
 						RESPUESTA_A_SOLICITAR_BUFFER,
 						serializar2(crear_nodoVar(respuesta, *tamanoMensaje),
-								0))) {
+								0)))
 					fin = 1;
-				}
+
 			}
 			free(respuesta);
 			log_debug(logger, "Terminé solicitar a umv, de la CPU: %d",
 					*socketCPU);
+			pthread_mutex_unlock(&mutexOperacion);
 			break;
 
 		case ESCRIBIR_EN_UMV:
@@ -271,9 +274,14 @@ void atencionCpu(int *socketCPU) {
 			int resultado = enviarUnosBytes(parametro[0], parametro[1],
 					parametro[2], buffer);
 			if (resultado) {
-				enviarConRazon(*socketCPU, logger, CONFIRMACION, NULL );
+				if (!enviarConRazon(*socketCPU, logger, CONFIRMACION, NULL )) {
+					fin = 1;
+				}
 			} else {
-				enviarConRazon(*socketCPU, logger, SEGMENTATION_FAULT, NULL );
+				if (!enviarConRazon(*socketCPU, logger, SEGMENTATION_FAULT,
+						NULL )) {
+					fin = 1;
+				}
 			}
 			pthread_mutex_unlock(&mutexOperacion);
 			free(buffer);
@@ -297,9 +305,14 @@ void atencionCpu(int *socketCPU) {
 			int resultado2 = enviarUnosBytesPCPU(parametro[0], parametro[1],
 					parametro[2], buffer2);
 			if (resultado2) {
-				enviarConRazon(*socketCPU, logger, CONFIRMACION, NULL );
+				if (!enviarConRazon(*socketCPU, logger, CONFIRMACION, NULL )) {
+					fin = 1;
+				}
 			} else {
-				enviarConRazon(*socketCPU, logger, SEGMENTATION_FAULT, NULL );
+				if (!enviarConRazon(*socketCPU, logger, SEGMENTATION_FAULT,
+						NULL )) {
+					fin = 1;
+				}
 			}
 			pthread_mutex_unlock(&mutexOperacion);
 			free(buffer2);
