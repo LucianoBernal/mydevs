@@ -70,10 +70,10 @@ int main(int arc, char **argv) {
 		log_error(logs, "El handshake con la UMV salió mal.");
 	}
 	free(respuestaUMV);
-	send(socketKernel, saludo, 4, 0); //TODO el saludo tiene tamaño 4?
+	send(socketKernel, saludo, 4, 0);
 	char *respuestaKernel = malloc(7);
 	int *razon = malloc(sizeof(int));
-	char * paquete = recibirConRazon(socketKernel, razon, logs);
+	char *paquete = recibirConRazon(socketKernel, razon, logs);
 	desempaquetar2(paquete, respuestaKernel, &quantumDeKernel, &retardo, 0);
 	if (!strncmp(respuestaKernel, "Kernel", 6)) {
 		log_info(logs, "El handshake con el Kernel salió bien.");
@@ -88,17 +88,15 @@ int main(int arc, char **argv) {
 		log_error(logs, "Error al atrapar señal SIGINT");
 
 	while (sigusr1_desactivado) {
-		//Recibo un PCB
 		int razon;
 		cpu_ocupada = 0;
 		char* mensaje = recibirConRazon(socketKernel, &razon, logs);
-		if(mensaje==NULL&&razon!=CONFIRMACION/*&&razon!=SIGUSR_1*/){
+		if(mensaje==NULL&&razon!=CONFIRMACION){
 			log_error(logs, "Se recibió mal.");
 			exit(EXIT_FAILURE);
 		}
 		cpu_ocupada = 1;
 		char* pcbEmpaquetado = malloc(sizeof(t_PCB) + 4 * 9 + 32);
-//		t_PCB *pcb = malloc(sizeof(t_PCB));
 		desempaquetar2(mensaje, pcbEmpaquetado, 0);
 		desempaquetarPCB(pcbEnUso, pcbEmpaquetado);
 		free(mensaje);
@@ -108,7 +106,6 @@ int main(int arc, char **argv) {
 				serializar2(crear_nodoVar(&pid, 4), 0));
 		etiquetas = solicitarBytesAUMV(pcbEnUso->indice_de_Etiquetas, 0,
 				pcbEnUso->tamanio_Indice_de_Etiquetas);
-//		actualizarDiccionarioDeVariables(pcb);
 		recuperarDiccionario();
 		int lineasAnalizadas = 0;
 		programaBloqueado = 0;
@@ -125,7 +122,7 @@ int main(int arc, char **argv) {
 			char *literalInstruccion = solicitarBytesAUMV(
 					pcbEnUso->segmento_Codigo, ubInstruccion, largoInstruccion);
 			literalInstruccion[largoInstruccion] = 0;
-			log_debug(logs, "El literal es juancito: %s", literalInstruccion);
+			log_debug(logs, "El literal obtenido es: %s", literalInstruccion);
 			analizadorLinea(_depurar_sentencia(strdup(literalInstruccion)), &funciones_Ansisop,
 					&funciones_kernel);
 			if (flag_sigint){
@@ -135,9 +132,7 @@ int main(int arc, char **argv) {
 			}
 			pcbEnUso->program_Counter++;
 			lineasAnalizadas++;
-			log_info(logs, "ESTA ES LA INSTRUCCION %d", lineasAnalizadas);
-			log_info(logs, "EL PID DEL BASTARDO ES %d", pcbEnUso->program_id);
-			//printf("ESTA ES LA INSTRUCCION %d\n", lineasAnalizadas);
+			usleep(retardo*1000);
 		}
 		dictionary_clean_and_destroy_elements(diccionarioDeVariables, (void*)free);
 		if (programaBloqueado){
@@ -162,34 +157,17 @@ int main(int arc, char **argv) {
 		if (lineasAnalizadas==quantumDeKernel&&!programaFinalizado&&!programaBloqueado&&!programaAbortado){
 			sem_wait(&mutexSigu);
 			if (!sigusr1_desactivado){
-				log_info(logs,"MIRA MANDE SIGU");
 						enviarConRazon(socketKernel, logs, SIGUSR_1, serializar2(crear_nodoVar(&programaFinalizado,4),0));
 			}
 			sem_post(&mutexSigu);
 			enviarConRazon(socketKernel, logs, SALIDA_POR_QUANTUM, serializarPCB(pcbEnUso));
 		}
-		printf("Sali del while, lineasAnalizadas=%d y quantumDeKernel=%d\n", lineasAnalizadas, quantumDeKernel);
 	}
 	close(socketKernel);
 	close(socketUMV);
 
 	return 0;
 }
-
-//void actualizarDiccionarioDeVariables (t_PCB* pcb){
-//	if (pcb->tamanio_Contexto_Actual){
-//		char *datosContexto =solicitarBytesAUMV(pcb->cursor_Stack, 0, pcb->tamanio_Contexto_Actual);
-//		int cantVariables=0;
-//		while (cantVariables*5 < pcb->tamanio_Contexto_Actual){
-//			char *nombreTemporal=malloc(1);
-//			int *valorTemporal=malloc(sizeof(int));
-//			memcpy(nombreTemporal, datosContexto+cantVariables*5, 1);
-//			memcpy(valorTemporal, datosContexto+cantVariables*5+1, 4);
-//			dictionary_put(diccionarioDeVariables, nombreTemporal, valorTemporal);
-//		}
-//	}
-//}
-//Difiere en detalles con la de arriba...
 
 void sig_handler(int signo) {
 	if (signo == SIGUSR1) {
@@ -203,7 +181,7 @@ void sig_handler(int signo) {
 		}
 	} else if (signo == SIGINT) {
 		log_info(logs,
-				"Se recibió la señal SIGNIT, la CPU se cerrara abruptamente");
+				"Se recibió la señal SIGINT, la CPU se cerrara abruptamente");
 		flag_sigint=1;
 		if (!cpu_ocupada){
 			close(socketKernel);

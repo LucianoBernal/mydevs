@@ -1,27 +1,11 @@
-///*
-// * funcionesParser.c
-// *
-// *  Created on: 09/06/2014
-// *      Author: utnso
-// */
-////#include <biblioteca_comun/definiciones.h>
+
 #include <parser/parser/parser.h>
 #include <parser/parser/metadata_program.h>
 #include "funcionesParser.h"
 #include <biblioteca_comun/bibliotecaSockets.h>
 #include <biblioteca_comun/Serializacion.h>
 #include <semaphore.h>
-//#include <stdio.h>
-//#include <string.h>
-//#include <stdlib.h>
-//#include <sys/types.h>
-//#include <sys/socket.h>
-//#include <netdb.h>
-//#include <unistd.h>
-//#include "EsqueletoCPU.h"
-//
-//#define TAMANO_CABECERA 16
-//
+
 extern sem_t mutexSigu;
 extern int socketUMV, socketKernel, sigusr1_desactivado;
 extern t_log *logs;
@@ -29,130 +13,6 @@ extern t_PCB *pcbEnUso;
 extern t_dictionary *diccionarioDeVariables;
 extern char *etiquetas;
 extern int programaFinalizado, programaBloqueado, programaAbortado;
-//static unsigned char nivelContexto;
-//int programCounter;
-//t_puntero stackBase;
-//t_puntero desplazamiento;
-//t_dictionary *diccionario;
-//t_puntero cursorCtxto;
-//extern char *etiquetas;
-////
-//typedef enum {
-//	CONFIRMACION,
-//	SEGMENTATION_FAULT,
-//	MEMORY_OVERLOAD,
-//	MOSTRAR_VALOR,
-//	MOSTRAR_TEXTO,
-//	SALIDA_POR_BLOQUEO,
-//	OBTENER_VALOR,
-//	GRABAR_VALOR,
-//	CREAR_SEGMENTO,
-//	CREAR_SEGMENTOS_PROGRAMA,
-//	DESTRUIR_SEGMENTOS,
-//	ESCRIBIR_EN_UMV,
-//	ESCRIBIR_EN_UMV_OFFSET_CERO,
-//	ENVIAR_PCB,
-//	SOLICITAR_A_UMV,
-//	WAIT,
-//	SIGNAL,
-//	BLOQUEATE,
-//	PEDIR_ETIQUETAS,
-//	PEDIR_INSTRUCCION
-//} codigos_mensajes;
-//
-//typedef struct {
-//	t_nombre_variable identificador_variable;
-//	t_valor_variable valor_variable;
-//} t_variable;
-//
-//typedef struct {
-//	int program_id;	//Identificador único del Programa en el sistema
-//	int* segmento_Codigo;// Dirección del primer byte en la UMV del segmento de código
-//	int* segmento_Stack;// Dirección del primer byte en la UMV del segmento de stack
-//
-//	int* cursor_Stack;// Dirección del primer byte en la UMV del Contexto de Ejecución Actual
-//	int* indice_de_Codigo;// Dirección del primer byte en la UMV del Índice de Código
-//	int* indice_de_Etiquetas;//Dirección del primer byte en la UMV del Índice de Etiquetas
-//	int program_Counter;	//Número de la próxima instrucción a ejecutar
-//	int tamanio_Contexto_Actual;//Cantidad de variables (locales y parámetros) del Contexto de Ejecución Actual
-//	int tamanio_Indice_de_Etiquetas;//Cantidad de bytes que ocupa el Índice de etiquetas
-//} t_PCB;
-//
-//typedef struct {
-//	char *msj;
-//	int tamano; //un tamano de 255 PUEDE ser poco
-//	char cantVar; //pero es mejor que nada
-//} t_paquete;
-//
-//typedef struct {
-//	t_nombre_variable identificador_variable;
-//	t_puntero desplazamiento;
-//} t_variable_diccionario;
-//typedef struct {
-//	int tamano;
-//	char *p_var;
-//} t_tamYDir;
-//
-//t_tamYDir *crear_nodoVar(void *, int);
-//t_paquete *serializar2(t_tamYDir *uno, ...);
-//void desempaquetar2(char *, void *, ...);
-//t_PCB *pcb;
-//t_paquete *serializar2(t_tamYDir *uno, ...) {
-//	va_list (p);
-//	va_start(p, uno);
-//	int acum = 0;
-//	t_tamYDir *arg = uno;
-//	t_paquete *paquete = malloc(sizeof(t_paquete));
-//	paquete->msj = malloc(50);
-//	do {
-//		memcpy(acum + (paquete->msj), &(arg->tamano), 4);
-//		memcpy(acum + 4 + (paquete->msj), arg->p_var, arg->tamano);
-//		acum += ((arg->tamano) + 4);
-//	} while ((arg = va_arg(p, t_tamYDir *) ));
-//	va_end(p);
-//	paquete->tamano = acum;
-//	return paquete;
-//}
-//void desempaquetar2(char *msjRecibido, void *uno, ...) {
-//	va_list (p);
-//	va_start(p, uno);
-//	void * arg = uno;
-//	int tamano;
-//	int acum = 0;
-//	do {
-//		memcpy(&tamano, msjRecibido + acum, 4);
-//		memcpy(arg, msjRecibido + acum + 4, tamano);
-//		acum += (tamano + 4);
-//	} while ((arg = va_arg(p, void*) ));
-//
-//}
-//t_tamYDir *crear_nodoVar(void *p_var, int tamano) {
-//	t_tamYDir *nuevo = malloc(sizeof(t_tamYDir));
-//	nuevo->p_var = p_var;
-//	nuevo->tamano = tamano;
-//	return nuevo;
-//}
-//
-
-typedef struct {
-	char identificador_variable;
-	int desplazamiento;
-} t_variable_diccionario;
-
-t_variable_diccionario *crear_nodoDiccionario(t_nombre_variable identificador,
-		int desplazamiento) {
-	t_variable_diccionario *nuevo = malloc(sizeof(t_variable_diccionario));
-	nuevo->identificador_variable = identificador;
-	nuevo->desplazamiento = desplazamiento;
-	return nuevo;
-}
-
-///*
-// static void destruir_variable(t_variable *self) {
-// free(self);
-// }
-// */
-////claramente a este socket hace falta crearlo (y incluir las librerias)
 
 void vincPrimitivas() {
 	funciones_Ansisop.AnSISOP_asignar = asignar;
@@ -174,13 +34,11 @@ void vincPrimitivas() {
 }
 
 char* _depurar_sentencia(char* sentencia) {
-//	log_debug(logs, "Depurando sentencia...");
 	int i = strlen(sentencia);
 	while (string_ends_with(sentencia, "\n")) {
 		i--;
 		sentencia = string_substring_until(sentencia, i);
 	}
-//	log_info(logs, "Sentencia depurada: %s", sentencia);
 	return sentencia;
 }
 
@@ -200,7 +58,6 @@ void recuperarDiccionario() {
 		dictionary_put(diccionarioDeVariables, nombre, desplazamiento);
 		i++;
 	}
-	i == 0 ? printf("jamas entre al loop\n") : printf("regenere algo\n");
 }
 void enviarBytesAUMV(t_puntero base, t_puntero desplazamiento, int tamano,
 		void *datos) {
@@ -248,7 +105,7 @@ char *solicitarBytesAUMV(t_puntero base, t_puntero desplazamiento, int tamano) {
 	free(mensaje);
 	return aux;
 }
-t_puntero definirVariable(t_nombre_variable identificador_variable) { //Chequeada
+t_puntero definirVariable(t_nombre_variable identificador_variable) {
 	log_debug(logs, "Definiendo variable...");
 	enviarVariableAUMV(pcbEnUso->segmento_Stack,
 			pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack
@@ -268,7 +125,7 @@ t_puntero definirVariable(t_nombre_variable identificador_variable) { //Chequead
 	return (pcbEnUso->tamanio_Contexto_Actual - 1) * 5;
 }
 
-t_puntero obtenerPosicionVariable(t_nombre_variable identificador_variable) { //Chequeada
+t_puntero obtenerPosicionVariable(t_nombre_variable identificador_variable) {
 	log_debug(logs, "Obteniendo posición con identif= %c",
 			identificador_variable);
 	char *identificadorPosta = malloc(2);
@@ -278,8 +135,8 @@ t_puntero obtenerPosicionVariable(t_nombre_variable identificador_variable) { //
 	log_debug(logs, "La dirección obtenida es %d", *aux);
 	return (aux == NULL ) ? -1 : *aux;
 }
-//
-t_valor_variable dereferenciar(t_puntero direccion_variable) { //Chequeada
+
+t_valor_variable dereferenciar(t_puntero direccion_variable) {
 	log_debug(logs, "Dereferenciado con dirreción = %d", direccion_variable);
 	char *aux =
 			solicitarBytesAUMV(pcbEnUso->segmento_Stack,
@@ -293,19 +150,14 @@ t_valor_variable dereferenciar(t_puntero direccion_variable) { //Chequeada
 	free(aux);
 	return valor;
 }
-void asignar(t_puntero direccion_variable, t_valor_variable valor) { //Chequeada
-	log_debug(logs, "Llamé asignar con dirección= %d y valor= %d",
-			direccion_variable, valor);
-	log_error(logs, "DIRECCION VARIABLE ES: %d, LA DIFERENCIA ES %d",
-			direccion_variable,
-			pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack);
+void asignar(t_puntero direccion_variable, t_valor_variable valor) {
 	if (direccion_variable
 			< pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack) {
 		direccion_variable += pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack;
 	}
-	log_error(logs, "LA NUEVA DIRECCION ES %d", direccion_variable);
+	log_debug(logs, "Llamé asignar con dirección= %d y valor= %d",
+			direccion_variable, valor);
 	enviarBytesAUMV(pcbEnUso->segmento_Stack,direccion_variable + 1, 4, &valor);
-	log_debug(logs, "El valor asignado es %d", valor);
 }
 
 t_valor_variable obtenerValorCompartida(t_nombre_compartida variable) {
@@ -332,13 +184,9 @@ t_valor_variable asignarValorCompartida(t_nombre_compartida variable,
 }
 //
 void irAlLabel(t_nombre_etiqueta etiqueta) {
-	printf("el valor del program counter viejo es %d\n",
-			pcbEnUso->program_Counter);
 	pcbEnUso->program_Counter = metadata_buscar_etiqueta(
 			_depurar_sentencia(etiqueta), etiquetas,
 			pcbEnUso->tamanio_Indice_de_Etiquetas) - 1;
-	printf("el valor del program counter nuevo es %d\n",
-			pcbEnUso->program_Counter);
 }
 //
 void llamarSinRetorno(t_nombre_etiqueta etiqueta) {
@@ -351,10 +199,8 @@ void llamarSinRetorno(t_nombre_etiqueta etiqueta) {
 			pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack
 					+ pcbEnUso->tamanio_Contexto_Actual * 5 + 4, 4,
 			&(pcbEnUso->program_Counter));
-	printf("El viejo cursor stack es: %d\n", pcbEnUso->cursor_Stack);
 	pcbEnUso->cursor_Stack = pcbEnUso->cursor_Stack
 			+ pcbEnUso->tamanio_Contexto_Actual * 5 + 8;
-	printf("El nuevo cursor stack es: %d\n", pcbEnUso->cursor_Stack);
 	pcbEnUso->tamanio_Contexto_Actual = 0;
 	irAlLabel(etiqueta);
 }
@@ -372,10 +218,8 @@ void llamarConRetorno(t_nombre_etiqueta etiqueta, t_puntero donde_retornar) {
 			pcbEnUso->cursor_Stack - pcbEnUso->segmento_Stack
 					+ pcbEnUso->tamanio_Contexto_Actual * 5 + 8, 4,
 			&(donde_retornar));
-	printf("El viejo cursor stack es: %d\n", pcbEnUso->cursor_Stack);
 	pcbEnUso->cursor_Stack = pcbEnUso->cursor_Stack
 			+ pcbEnUso->tamanio_Contexto_Actual * 5 + 12;
-	printf("El nuevo cursor stack es: %d\n", pcbEnUso->cursor_Stack);
 	pcbEnUso->tamanio_Contexto_Actual = 0;
 	irAlLabel(etiqueta);
 }
@@ -429,9 +273,7 @@ void finalizar(void) {
 		if (programaAbortado)
 			goto falloSolicitar;
 		int proximo_cursor_stack;
-		printf("el viejo program counter es %d\n", pcbEnUso->program_Counter);
 		memcpy(&(pcbEnUso->program_Counter), p_programCounter, 4);
-		printf("el nuevo program counter es %d\n", pcbEnUso->program_Counter);
 		memcpy(&proximo_cursor_stack, p_cursorCtxto, 4);
 		pcbEnUso->tamanio_Contexto_Actual = (pcbEnUso->cursor_Stack - 8
 				- proximo_cursor_stack) / 5;
@@ -460,16 +302,11 @@ void retornar(t_valor_variable retorno) {
 	int proximo_cursor_stack;
 	if (programaAbortado)
 		goto falloSolicitar;
-	printf("el viejo program counter es %d\n", pcbEnUso->program_Counter);
 	memcpy(&pcbEnUso->program_Counter, p_programCounter, 4);
-	printf("el nuevo program counter es %d\n", pcbEnUso->program_Counter);
 	memcpy(&proximo_cursor_stack, p_cursorCtxto, 4);
 	pcbEnUso->tamanio_Contexto_Actual = (pcbEnUso->cursor_Stack - 12
 			- proximo_cursor_stack) / 5;
 	pcbEnUso->cursor_Stack = proximo_cursor_stack;
-	printf("el nuevo contexto actual es %d\n",
-			pcbEnUso->tamanio_Contexto_Actual);
-
 	dictionary_clean_and_destroy_elements(diccionarioDeVariables, (void*) free);
 	recuperarDiccionario();
 	falloSolicitar:;
@@ -478,13 +315,12 @@ void retornar(t_valor_variable retorno) {
 	free(p_cursorCtxto);
 }
 void imprimir(t_valor_variable valor_mostrar) {
-	log_info(logs, "Ejecute imprimir con %d", valor_mostrar);
 	if (valor_mostrar!=-736)
 	imprimirTexto(string_from_format("%d ", valor_mostrar));
 }
 void imprimirTexto(char* texto) {
 	int razon;
-	log_info(logs, "Ejecute imprimirTexto con %s", texto);
+	log_info(logs, "Ejecute imprimir con %s", texto);
 	enviarConRazon(socketKernel, logs, IMPRIMIR_TEXTO,
 			serializar2(crear_nodoVar(texto, strlen(texto)), 0)); //TODO
 	recibirConRazon(socketKernel, &razon, logs);
@@ -492,16 +328,11 @@ void imprimirTexto(char* texto) {
 void entradaSalida(t_nombre_dispositivo dispositivo, int tiempo) {
 	log_info(logs, "Ejecute entradaSalida con %s", dispositivo);
 	pcbEnUso->program_Counter++;
-	t_paquete * paquetePCB = serializarPCB(pcbEnUso);
-	int tamano = paquetePCB->tamano;
-	printf("El tamano del pcb empaquetado es %d", tamano);
-	mostrarPCB(pcbEnUso);
 	sem_wait(&mutexSigu);
 	if (!sigusr1_desactivado) {
 		enviarConRazon(socketKernel, logs, SIGUSR_1, serializar2(crear_nodoVar(&programaBloqueado,4),0) );
 	}
 	sem_post(&mutexSigu);
-	printf("El dispositvo es: %s\n",dispositivo);
 	enviarConRazon(socketKernel, logs, SALIO_POR_IO, serializarPCB(pcbEnUso));
 	enviarConRazon(socketKernel, logs, SALIO_POR_IO,serializar2(crear_nodoVar(dispositivo, strlen(dispositivo)),
 					crear_nodoVar(&tiempo, 4), 0)); //TODO
@@ -524,8 +355,6 @@ void wait(t_nombre_semaforo identificador_semaforo) {
 		sem_post(&mutexSigu);
 		enviarConRazon(socketKernel, logs, 4, serializarPCB(pcbEnUso));
 		programaBloqueado = 1;
-	} else {
-		//NARANJA;
 	}
 }
 

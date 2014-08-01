@@ -21,7 +21,7 @@ char* ip_Kernel;
 int validarConfig(t_config*);
 void cargarConfig(t_config*);
 int programa(t_log*, FILE*);
-int main(int argc, char **argv) {
+int main2(int argc, char **argv) {
 	if (argc <= 1) {
 			perror(
 					"Se debe ingresar la dirección de un script\n");
