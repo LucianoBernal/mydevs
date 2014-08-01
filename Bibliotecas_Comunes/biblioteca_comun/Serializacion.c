@@ -8,6 +8,19 @@
 t_tamYDir *crear_nodoVar(void *, int);
 t_paquete *serializar2(t_tamYDir *uno, ...);
 void desempaquetar2(char *, void *, ...);
+void mostrarPCB(t_PCB *);
+
+void mostrarPCB(t_PCB *pcb){
+	printf("El program id es %d\n", pcb->program_id);
+	printf("El cursor stack es %d\n", pcb->cursor_Stack);
+	printf("El indice de codigo es %d\n", pcb->indice_de_Codigo);
+	printf("El indice de etiquetas es %d\n", pcb->indice_de_Etiquetas);
+	printf("El program counter es %d\n", pcb->program_Counter);
+	printf("El segmento de codigo es %d\n", pcb->segmento_Codigo);
+	printf("El segmento de stack es %d\n", pcb->segmento_Stack);
+	printf("El tamanio del contexto actual es %d\n", pcb->tamanio_Contexto_Actual);
+	printf("El tamanio indice de etiquetas es %d\n", pcb->tamanio_Indice_de_Etiquetas);
+}
 
 int mainNO(){
 	int g=333, h=0;
@@ -35,6 +48,7 @@ t_paquete *serializarPCB(t_PCB *pcb) {
 }
 
 void desempaquetarPCB(t_PCB* pcb, char* pcbserializado) {
+//	pcb=malloc(sizeof(t_PCB));
 	desempaquetar2(pcbserializado, &pcb->cursor_Stack, &pcb->indice_de_Codigo,
 			&pcb->indice_de_Etiquetas, &pcb->program_Counter, &pcb->program_id,
 			&pcb->segmento_Codigo, &pcb->segmento_Stack,

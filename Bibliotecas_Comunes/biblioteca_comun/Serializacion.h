@@ -31,5 +31,6 @@ t_paquete *serializar2(t_tamYDir *uno, ...);
 void desempaquetar2(char *, void *, ...);
 t_paquete *serializarPCB(t_PCB*);
 void desempaquetarPCB(t_PCB*, char*);
+void mostrarPCB(t_PCB*);
 
 #endif /* SERIALIZACION_H_ */

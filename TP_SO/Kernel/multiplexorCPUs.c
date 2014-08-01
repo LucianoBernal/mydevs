@@ -207,7 +207,7 @@ void* atencionCPUs(void* sinParametro) {
 //					char *mensaje = malloc(*tamanoMensaje);
 //					recv(sd, (void*) mensaje, *tamanoMensaje, MSG_WAITALL);
 					t_PCB* pcb = malloc(sizeof(t_PCB));
-					char* pcbEmpaquetado = malloc(sizeof(t_PCB));
+					char* pcbEmpaquetado = malloc(160);
 					int tiempo, valor, tamano;
 					char* dispositivoIO = malloc(mensaje->size);
 					char* texto = malloc(mensaje->size);
@@ -227,17 +227,29 @@ void* atencionCPUs(void* sinParametro) {
 						moverAColaExityLiberarCPU(pcb, sd);
 						break;
 					case SALIO_POR_IO: //El Programa salio por bloqueo
-						printf("Fuck yeah sali por IO\n");
+						desempaquetarPCB(pcb, mensaje->mensaje);
+						t_buffer* rta;
+						rta= recibirConBuffer(sd,razon,logKernel);
+						desempaquetar2(rta->mensaje,dispositivoIO,&tiempo,0);
+						//programaSalioPorQuantum(pcb, sd);
+//					printf("Fuck yeah sali por IO\n");
 //						desempaquetar2(mensaje, &pcb, &tiempo, &dispositivoIO,
-//								0);
-						desempaquetar2(mensaje->mensaje, pcbEmpaquetado,
-								dispositivoIO, &tiempo, 0);
-						desempaquetarPCB(pcb, pcbEmpaquetado);
-						dispositivoIO[mensaje->size - 88] = 0;
-						printf(
-								"el dispositivo que recibi: %s y por un tiempo: %d\n",
-								dispositivoIO, tiempo);
-						programaSalioPorBloqueo(pcb, tiempo, dispositivoIO, sd);
+////								0);
+//						desempaquetar2(mensaje->mensaje, pcbEmpaquetado,
+//								dispositivoIO, &tiempo, 0);
+//						desempaquetarPCB(pcb, pcbEmpaquetado);
+						printf("el tamnio del mensaje es: %d\n",mensaje->size);
+						dispositivoIO[rta->size-12] = 0;
+//						printf(
+//								"el dispositivo que recibi: %s y por un tiempo: %d\n",
+//								dispositivoIO, tiempo);
+					//	printf("Holis\n");
+						printf("el dispositivo es: %s",dispositivoIO);
+						mostrarPCB(pcb);
+//						tiempo=3;
+//						dispositivoIO=string_from_format("HDD1");
+				//		programaSalioPorQuantum(pcb,sd);
+					    programaSalioPorBloqueo(pcb, tiempo, dispositivoIO, sd);
 						break;
 					case SALIDA_POR_SEMAFORO:
 //						desempaquetar2(mensaje, pcbEmpaquetado, semaforo, 0);

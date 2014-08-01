@@ -21,10 +21,11 @@ void* pcp_main(void* sinParametro) {
 		int *a = list_get(retardos, i);
 		int retardo = *a;
 		t_queue* colaDispositivo = queue_create();
-		sem_t semaforo;
-		sem_t mutex;
-		sem_init(&semaforo, 0, 0);
-		sem_init(&mutex, 0, 1);
+		sem_t *semaforo=malloc(sizeof(sem_t));
+		sem_t *mutex=malloc(sizeof(sem_t));
+//		sem_t semaforo = sem_create()
+		sem_init(semaforo, 0, 0);
+		sem_init(mutex, 0, 1);
 		t_estructuraDispositivoIO* estructuraDispositivo = malloc(
 				sizeof(t_estructuraDispositivoIO));
 		estructuraDispositivo->retardo = retardo;
@@ -36,8 +37,8 @@ void* pcp_main(void* sinParametro) {
 		dictionary_put(diccionarioDispositivos, idDispositivo,
 				estructuraDispositivo);
 		sem_post(&diccionarioDispositivosMutex);
-		pthread_t dispositivo;
-		int retIO = pthread_create(&dispositivo, NULL, bloquearYDevolverAReady,
+		pthread_t *dispositivo=malloc(sizeof(pthread_t));
+		int retIO = pthread_create(dispositivo, NULL, bloquearYDevolverAReady,
 				(void*) estructuraDispositivo);
 		if (retIO) {
 			log_error(logKernel,
@@ -125,17 +126,22 @@ void* bloquearYDevolverAReady(void * param) {
 	 sizeof(t_estructuraDispositivoIO))*/;
 	estructura = (t_estructuraDispositivoIO *) param;
 	while (1) {
-		sem_wait(&(estructura->colaVacia));
-		sem_wait(&(estructura->mutexCola));
+		sem_wait(estructura->colaVacia);
+		sem_wait(estructura->mutexCola);
 		t_estructuraProcesoBloqueado* estructuraBloqueada = queue_pop(
 				estructura->procesosBloqueados);
-		sem_post(&(estructura->mutexCola));
-		usleep((estructura->retardo) * (estructuraBloqueada->tiempo) * 1000);
+		sem_post(estructura->mutexCola);
+		int retard = (estructura->retardo) * (estructuraBloqueada->tiempo)*1000;
+////		printf("EL FORRO ES:%d",retard);
+		usleep(retard);
 		sem_wait(&colaReadyMutex);
+		printf("El programa que estoy poniendo en ready es %d\n", estructuraBloqueada->pcb->program_id);
 		queue_push(colaReady, estructuraBloqueada->pcb);
 		sem_post(&colaReadyMutex);
 		sem_post(&vacioReady);
-		mostrar_todas_Las_Listas();
+//		log_info(logKernel, "Soy el hilo del dispositivo %x y que tiene retardo %d", (u_int)estructura, estructura->retardo);
+//		log_info(logKernel, "Teoricamente lo bloquee");
+//		mostrar_todas_Las_Listas();
 	}
 	queue_destroy(estructura->procesosBloqueados);
 	free(estructura);
@@ -192,7 +198,7 @@ void moverAColaExityLiberarCPU(t_PCB* pcb, int idCPU) {
 
 void programaSalioPorBloqueo(t_PCB* pcb, int tiempo, char* dispositivo,
 		int idCPU) {
-
+	seLiberoUnaCPU(idCPU,pcb);
 	sem_wait(&diccionarioDispositivosMutex);
 	t_estructuraDispositivoIO* estructura = dictionary_get(
 			diccionarioDispositivos, dispositivo);
@@ -201,12 +207,12 @@ void programaSalioPorBloqueo(t_PCB* pcb, int tiempo, char* dispositivo,
 			sizeof(t_estructuraProcesoBloqueado));
 	procesoBloqueado->pcb = pcb;
 	procesoBloqueado->tiempo = tiempo;
-	sem_wait(&(estructura->mutexCola));
+	sem_wait(estructura->mutexCola);
 	queue_push(estructura->procesosBloqueados, procesoBloqueado);
-	sem_post(&(estructura->mutexCola));
+	sem_post(estructura->mutexCola);
 	mostrar_todas_Las_Listas();
-	sem_post(&(estructura->colaVacia));
-	seLiberoUnaCPU(idCPU,pcb);
+	sem_post(estructura->colaVacia);
+
 }
 
 void seLiberoUnaCPU(int idCPU,t_PCB* pcb) {
@@ -358,9 +364,9 @@ void mostrarColaDeProcesosBloqueados() {
 
 		t_estructuraDispositivoIO* estructura = dictionary_get(
 				diccionarioDispositivos, id);
-		sem_wait(&(estructura->mutexCola));
+		sem_wait(estructura->mutexCola);
 		mostrarColaDePCBsBloqueados(estructura->procesosBloqueados);
-		sem_post(&(estructura->mutexCola));
+		sem_post(estructura->mutexCola);
 		a++;
 	}
 	sem_post(&diccionarioDispositivosMutex);

@@ -14,9 +14,9 @@ typedef struct {
 
 typedef struct {
 	int retardo;
-	sem_t colaVacia;
+	sem_t *colaVacia;
 	t_queue* procesosBloqueados;
-	sem_t mutexCola;
+	sem_t *mutexCola;
 } t_estructuraDispositivoIO;
 
 typedef struct {

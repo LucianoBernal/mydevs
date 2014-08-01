@@ -564,14 +564,15 @@ void entradaSalida(t_nombre_dispositivo dispositivo, int tiempo) {
 	t_paquete * paquetePCB = serializarPCB(pcbEnUso);
 	int tamano = paquetePCB->tamano;
 	printf("El tamano del pcb empaquetado es %d", tamano);
+	mostrarPCB(pcbEnUso);
 	sem_wait(&mutexSigu);
 	if (!sigusr1_desactivado) {
 		enviarConRazon(socketKernel, logs, SIGUSR_1, serializar2(crear_nodoVar(&programaBloqueado,4),0) );
 	}
 	sem_post(&mutexSigu);
-	enviarConRazon(socketKernel, logs, SALIO_POR_IO,
-			serializar2(crear_nodoVar(paquetePCB->msj, tamano),
-					crear_nodoVar(dispositivo, strlen(dispositivo)),
+	printf("El dispositvo es: %s\n",dispositivo);
+	enviarConRazon(socketKernel, logs, SALIO_POR_IO, serializarPCB(pcbEnUso));
+	enviarConRazon(socketKernel, logs, SALIO_POR_IO,serializar2(crear_nodoVar(dispositivo, strlen(dispositivo)),
 					crear_nodoVar(&tiempo, 4), 0)); //TODO
 	programaBloqueado = 1;
 }
