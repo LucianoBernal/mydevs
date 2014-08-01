@@ -5,7 +5,7 @@ void* pcp_main(void* sinParametro) {
 	sinParametros = NULL;
 	colaExec = list_create();
 	diccionarioDispositivos = dictionary_create();
-	printf("diccionario de variables vale: %x\n", (u_int)variables_globales);
+	printf("diccionario de variables vale: %x\n", (u_int) variables_globales);
 	sem_init(&diccionarioDispositivosMutex, 0, 1);
 	CPUs = list_create();
 	sem_init(&CPUsLibres, 0, 0); //FIXME CPUS LIBRES VA 0, PUSE 3 PARA PROBAR
@@ -21,8 +21,8 @@ void* pcp_main(void* sinParametro) {
 		int *a = list_get(retardos, i);
 		int retardo = *a;
 		t_queue* colaDispositivo = queue_create();
-		sem_t *semaforo=malloc(sizeof(sem_t));
-		sem_t *mutex=malloc(sizeof(sem_t));
+		sem_t *semaforo = malloc(sizeof(sem_t));
+		sem_t *mutex = malloc(sizeof(sem_t));
 //		sem_t semaforo = sem_create()
 		sem_init(semaforo, 0, 0);
 		sem_init(mutex, 0, 1);
@@ -37,7 +37,7 @@ void* pcp_main(void* sinParametro) {
 		dictionary_put(diccionarioDispositivos, idDispositivo,
 				estructuraDispositivo);
 		sem_post(&diccionarioDispositivosMutex);
-		pthread_t *dispositivo=malloc(sizeof(pthread_t));
+		pthread_t *dispositivo = malloc(sizeof(pthread_t));
 		int retIO = pthread_create(dispositivo, NULL, bloquearYDevolverAReady,
 				(void*) estructuraDispositivo);
 		if (retIO) {
@@ -87,11 +87,22 @@ void* mandarAEjecutar(void* j) {
 		log_info(logKernel, "Se saco programa de la cola Ready, con PID:%d",
 				procesoAEjecutar->program_id);
 		sem_post(&colaReadyMutex);
-		enviarCPU(procesoAEjecutar);
+		bool estaLaVictima(int* self) {
+			return *self == procesoAEjecutar->program_id;
+		}
+		sem_wait(&victimasMutex);
+		if (!list_any_satisfy(victimas, (void*) estaLaVictima)) {
+			sem_post(&victimasMutex);
+			enviarCPU(procesoAEjecutar);
+		} else {
+			sem_post(&victimasMutex);
+			sem_post(&CPUsLibres);
+			manejoVictimas(procesoAEjecutar->program_id);
+
+		}
 	}
 }
-
-void enviarCPU(t_PCB* pcbAEjecutar) {
+	void enviarCPU(t_PCB* pcbAEjecutar) {
 		sem_wait(&CPUsMutex);
 		int IDCpuLibre = encontrarPrimeraCpuLibre(CPUs); //FIXME PARA PRUEBA
 		//int IDCpuLibre =1;
@@ -118,178 +129,181 @@ void enviarCPU(t_PCB* pcbAEjecutar) {
 				pcbAEjecutar->program_id, IDCpuLibre);
 		enviarConRazon(IDCpuLibre, logKernel, HANDSHAKE_CPU_KERNEL,
 				serializar2(crear_nodoVar(paquete->msj, paquete->tamano), 0));
-		}
+	}
 
-
-void* bloquearYDevolverAReady(void * param) {
-	t_estructuraDispositivoIO* estructura /*= malloc(
-	 sizeof(t_estructuraDispositivoIO))*/;
-	estructura = (t_estructuraDispositivoIO *) param;
-	while (1) {
-		sem_wait(estructura->colaVacia);
-		sem_wait(estructura->mutexCola);
-		t_estructuraProcesoBloqueado* estructuraBloqueada = queue_pop(
-				estructura->procesosBloqueados);
-		sem_post(estructura->mutexCola);
-		int retard = (estructura->retardo) * (estructuraBloqueada->tiempo)*1000;
+	void* bloquearYDevolverAReady(void * param) {
+		t_estructuraDispositivoIO* estructura /*= malloc(
+		 sizeof(t_estructuraDispositivoIO))*/;
+		estructura = (t_estructuraDispositivoIO *) param;
+		while (1) {
+			sem_wait(estructura->colaVacia);
+			sem_wait(estructura->mutexCola);
+			t_estructuraProcesoBloqueado* estructuraBloqueada = queue_pop(
+					estructura->procesosBloqueados);
+			sem_post(estructura->mutexCola);
+			int retard = (estructura->retardo) * (estructuraBloqueada->tiempo)
+					* 1000;
 ////		printf("EL FORRO ES:%d",retard);
-		usleep(retard);
-		sem_wait(&colaReadyMutex);
-		printf("El programa que estoy poniendo en ready es %d\n", estructuraBloqueada->pcb->program_id);
-		queue_push(colaReady, estructuraBloqueada->pcb);
-		sem_post(&colaReadyMutex);
-		sem_post(&vacioReady);
+			usleep(retard);
+			sem_wait(&colaReadyMutex);
+			printf("El programa que estoy poniendo en ready es %d\n",
+					estructuraBloqueada->pcb->program_id);
+			queue_push(colaReady, estructuraBloqueada->pcb);
+			sem_post(&colaReadyMutex);
+			sem_post(&vacioReady);
 //		log_info(logKernel, "Soy el hilo del dispositivo %x y que tiene retardo %d", (u_int)estructura, estructura->retardo);
 //		log_info(logKernel, "Teoricamente lo bloquee");
 //		mostrar_todas_Las_Listas();
-	}
-	queue_destroy(estructura->procesosBloqueados);
-	free(estructura);
-	return NULL ;
-}
-
-int encontrarPrimeraCpuLibre(t_list* lista) {
-	t_estructuraCPU* estructura = list_find(lista, (void*) estaLibre);
-	return (estructura->idCPU);
-}
-
-bool estaLibre(t_estructuraCPU* estructura) {
-	return (estructura->estado == 0);
-}
-
-void nuevaCPU(int idCPU) {
-	t_estructuraCPU* estructura = malloc(sizeof(t_estructuraCPU));
-	estructura->idCPU = idCPU;
-	estructura->estado = 0;
-	estructura->idProceso = -1;
-	sem_wait(&CPUsMutex);
-	list_add(CPUs, estructura);
-	sem_post(&CPUsMutex);
-	sem_post(&CPUsLibres);
-}
-
-void programaSalioPorQuantum(t_PCB* pcb, int idCPU) {
-	seLiberoUnaCPU(idCPU,pcb);
-	sem_wait(&colaReadyMutex);
-	log_debug(logKernel, "Estoy por encolar el pcb en ready");
-	queue_push(colaReady, pcb);
-	sem_post(&colaReadyMutex);
-	mostrar_todas_Las_Listas();
-	sem_post(&vacioReady);
-
-
-}
-
-void moverAColaExit(t_PCB* pcb, int idCPU) {
-	sem_wait(&colaExitMutex);
-	queue_push(colaExit, pcb);
-	sem_post(&colaExitMutex);
-	log_info(logKernel, "Se movio programa a cola exit, PID:%d",
-			pcb->program_id);
-	mostrar_todas_Las_Listas();
-	sem_post(&colaExitVacio);
-}
-
-void moverAColaExityLiberarCPU(t_PCB* pcb, int idCPU) {
-	seLiberoUnaCPU(idCPU,pcb);
-	moverAColaExit(pcb, idCPU);
-
-}
-
-void programaSalioPorBloqueo(t_PCB* pcb, int tiempo, char* dispositivo,
-		int idCPU) {
-	seLiberoUnaCPU(idCPU,pcb);
-	sem_wait(&diccionarioDispositivosMutex);
-	t_estructuraDispositivoIO* estructura = dictionary_get(
-			diccionarioDispositivos, dispositivo);
-	sem_post(&diccionarioDispositivosMutex);
-	t_estructuraProcesoBloqueado* procesoBloqueado = malloc(
-			sizeof(t_estructuraProcesoBloqueado));
-	procesoBloqueado->pcb = pcb;
-	procesoBloqueado->tiempo = tiempo;
-	sem_wait(estructura->mutexCola);
-	queue_push(estructura->procesosBloqueados, procesoBloqueado);
-	sem_post(estructura->mutexCola);
-	mostrar_todas_Las_Listas();
-	sem_post(estructura->colaVacia);
-
-}
-
-void seLiberoUnaCPU(int idCPU,t_PCB* pcb) {
-	sem_wait(&CPUsMutex);
-	//int i = posicionEnLaLista(CPUs, idCPU);
-	//t_estructuraCPU* CPU = list_get(CPUs, i);
-	bool tieneIDlocal(t_estructuraCPU* self){
-		return self->idCPU==idCPU;
-	}
-	t_estructuraCPU* CPU=list_find(CPUs,(void*)tieneIDlocal);
-	sem_post(&CPUsMutex);
-	if(CPU!=NULL){
-	int pidASacar = CPU->idProceso;
-	bool victimaPCB_exec(t_PCB* self){
-		return self->program_id==pidASacar;
-	}
-	sem_wait(&colaExecMutex);
-	list_remove_and_destroy_by_condition(colaExec, (void*)victimaPCB_exec,(void*)free);
-	sem_post(&colaExecMutex);
-	t_estructuraCPU* estructura = malloc(sizeof(t_estructuraCPU));
-	estructura->idCPU = idCPU;
-	estructura->estado = 0;
-	estructura->idProceso = -1;
-	sem_wait(&CPUsMutex);
-	int pos = posicionEnLaLista(CPUs, idCPU);
-	list_replace_and_destroy_element(CPUs, pos, estructura,
-			(void*) cpu_destroy);
-	sem_post(&CPUsMutex);
-	sem_post(&CPUsLibres);
-	}else{
-		bool victimaPCB_exec2(t_PCB* self){
-			return self->program_id==pcb->program_id;
 		}
-		sem_wait(&colaExecMutex);
-		list_remove_and_destroy_by_condition(colaExec, (void*)victimaPCB_exec2,(void*)free);
-		sem_post(&colaExecMutex);
+		queue_destroy(estructura->procesosBloqueados);
+		free(estructura);
+		return NULL ;
 	}
 
-}
+	int encontrarPrimeraCpuLibre(t_list* lista) {
+		t_estructuraCPU* estructura = list_find(lista, (void*) estaLibre);
+		return (estructura->idCPU);
+	}
 
-void cpu_destroy(t_estructuraCPU* estructura) {
-	free(estructura);
-}
-bool tieneID(t_estructuraCPU* estructura) {
-	return (estructura->idCPU == idUltimaCPUDesconectada);
-}
+	bool estaLibre(t_estructuraCPU* estructura) {
+		return (estructura->estado == 0);
+	}
 
-void seDesconectoCPU(int idCPU) { //TODO
-	if (estaLibreID(idCPU)!=-1) {
-		if(estaLibreID(idCPU)==0){
-			int idPrograma = buscarIDPrograma(idCPU);
-			printf("idPrograma:%d \n", idPrograma);
-		int sd = obtener_sd_Programa(idPrograma);
-		printf("SD:%d\n", sd);
-		//notificar_Programa(sd, "La CPU se desconectó, programa abortado");
-		bool esElpcb(t_PCB* pcbAcomparar) {
-			return pcbAcomparar->program_id == idPrograma;
-		}
-		sem_wait(&colaExecMutex);
-		t_PCB* pcb = list_remove_by_condition(colaExec, (void*) esElpcb);
-		sem_post(&colaExecMutex);
+	void nuevaCPU(int idCPU) {
+		t_estructuraCPU* estructura = malloc(sizeof(t_estructuraCPU));
+		estructura->idCPU = idCPU;
+		estructura->estado = 0;
+		estructura->idProceso = -1;
+		sem_wait(&CPUsMutex);
+		list_add(CPUs, estructura);
+		sem_post(&CPUsMutex);
+		sem_post(&CPUsLibres);
+	}
+
+	void programaSalioPorQuantum(t_PCB* pcb, int idCPU) {
+		seLiberoUnaCPU(idCPU, pcb);
+		sem_wait(&colaReadyMutex);
+		log_debug(logKernel, "Estoy por encolar el pcb en ready");
+		queue_push(colaReady, pcb);
+		sem_post(&colaReadyMutex);
+		mostrar_todas_Las_Listas();
+		sem_post(&vacioReady);
+
+	}
+
+	void moverAColaExit(t_PCB* pcb, int idCPU) {
+		sem_wait(&colaExitMutex);
+		queue_push(colaExit, pcb);
+		sem_post(&colaExitMutex);
+		log_info(logKernel, "Se movio programa a cola exit, PID:%d",
+				pcb->program_id);
+		mostrar_todas_Las_Listas();
+		sem_post(&colaExitVacio);
+	}
+
+	void moverAColaExityLiberarCPU(t_PCB* pcb, int idCPU) {
+		seLiberoUnaCPU(idCPU, pcb);
 		moverAColaExit(pcb, idCPU);
-		}
-	else {
-			log_debug(logKernel,"ESTOY LIBRE MORITE");
-			sem_wait(&CPUsLibres);
-		}
-	sem_wait(&CPUsMutex);
-	list_remove_and_destroy_by_condition(CPUs, (void*) tieneID,(void*)free);
-	sem_post(&CPUsMutex);
-}
-}
 
-void seDesconectoCPUSigusr(int idCPU, t_PCB* pcb) {
-	sem_wait(&CPUsMutex);
-	t_estructuraCPU* CPU=list_remove_by_condition(CPUs, (void*) tieneID);
-	sem_post(&CPUsMutex);
+	}
+
+	void programaSalioPorBloqueo(t_PCB* pcb, int tiempo, char* dispositivo,
+			int idCPU) {
+		seLiberoUnaCPU(idCPU, pcb);
+		sem_wait(&diccionarioDispositivosMutex);
+		t_estructuraDispositivoIO* estructura = dictionary_get(
+				diccionarioDispositivos, dispositivo);
+		sem_post(&diccionarioDispositivosMutex);
+		t_estructuraProcesoBloqueado* procesoBloqueado = malloc(
+				sizeof(t_estructuraProcesoBloqueado));
+		procesoBloqueado->pcb = pcb;
+		procesoBloqueado->tiempo = tiempo;
+		sem_wait(estructura->mutexCola);
+		queue_push(estructura->procesosBloqueados, procesoBloqueado);
+		sem_post(estructura->mutexCola);
+		mostrar_todas_Las_Listas();
+		sem_post(estructura->colaVacia);
+
+	}
+
+	void seLiberoUnaCPU(int idCPU, t_PCB* pcb) {
+		sem_wait(&CPUsMutex);
+		//int i = posicionEnLaLista(CPUs, idCPU);
+		//t_estructuraCPU* CPU = list_get(CPUs, i);
+		bool tieneIDlocal(t_estructuraCPU* self) {
+			return self->idCPU == idCPU;
+		}
+		t_estructuraCPU* CPU = list_find(CPUs, (void*) tieneIDlocal);
+		sem_post(&CPUsMutex);
+		if (CPU != NULL ) {
+			int pidASacar = CPU->idProceso;
+			bool victimaPCB_exec(t_PCB* self) {
+				return self->program_id == pidASacar;
+			}
+			sem_wait(&colaExecMutex);
+			list_remove_and_destroy_by_condition(colaExec,
+					(void*) victimaPCB_exec, (void*) free);
+			sem_post(&colaExecMutex);
+			t_estructuraCPU* estructura = malloc(sizeof(t_estructuraCPU));
+			estructura->idCPU = idCPU;
+			estructura->estado = 0;
+			estructura->idProceso = -1;
+			sem_wait(&CPUsMutex);
+			int pos = posicionEnLaLista(CPUs, idCPU);
+			list_replace_and_destroy_element(CPUs, pos, estructura,
+					(void*) cpu_destroy);
+			sem_post(&CPUsMutex);
+			sem_post(&CPUsLibres);
+		} else {
+			bool victimaPCB_exec2(t_PCB* self) {
+				return self->program_id == pcb->program_id;
+			}
+			sem_wait(&colaExecMutex);
+			list_remove_and_destroy_by_condition(colaExec,
+					(void*) victimaPCB_exec2, (void*) free);
+			sem_post(&colaExecMutex);
+		}
+
+	}
+
+	void cpu_destroy(t_estructuraCPU* estructura) {
+		free(estructura);
+	}
+	bool tieneID(t_estructuraCPU* estructura) {
+		return (estructura->idCPU == idUltimaCPUDesconectada);
+	}
+
+	void seDesconectoCPU(int idCPU) { //TODO
+		if (estaLibreID(idCPU) != -1) {
+			if (estaLibreID(idCPU) == 0) {
+				int idPrograma = buscarIDPrograma(idCPU);
+				printf("idPrograma:%d \n", idPrograma);
+				int sd = obtener_sd_Programa(idPrograma);
+				printf("SD:%d\n", sd);
+				//notificar_Programa(sd, "La CPU se desconectó, programa abortado");
+				bool esElpcb(t_PCB* pcbAcomparar) {
+					return pcbAcomparar->program_id == idPrograma;
+				}
+				sem_wait(&colaExecMutex);
+				t_PCB* pcb = list_remove_by_condition(colaExec,
+						(void*) esElpcb);
+				sem_post(&colaExecMutex);
+				moverAColaExit(pcb, idCPU);
+			} else {
+				log_debug(logKernel, "ESTOY LIBRE MORITE");
+				sem_wait(&CPUsLibres);
+			}
+			sem_wait(&CPUsMutex);
+			list_remove_and_destroy_by_condition(CPUs, (void*) tieneID,
+					(void*) free);
+			sem_post(&CPUsMutex);
+		}
+	}
+
+	void seDesconectoCPUSigusr(int idCPU, t_PCB* pcb) {
+		sem_wait(&CPUsMutex);
+		t_estructuraCPU* CPU = list_remove_by_condition(CPUs, (void*) tieneID);
+		sem_post(&CPUsMutex);
 //	int pidASacar=CPU->idProceso;
 //	bool victimaPCB_exec(t_PCB* self){
 //			return self->program_id==pidASacar;
@@ -297,107 +311,110 @@ void seDesconectoCPUSigusr(int idCPU, t_PCB* pcb) {
 //	sem_wait(&colaExecMutex);
 //	list_remove_and_destroy_by_condition(colaExec, (void*)victimaPCB_exec,(void*)free);
 //	sem_post(&colaExecMutex);
-/*	sem_wait(&colaReadyMutex);
-	queue_push(colaReady, pcb);
-	sem_post(&colaReadyMutex);*/
+		/*	sem_wait(&colaReadyMutex);
+		 queue_push(colaReady, pcb);
+		 sem_post(&colaReadyMutex);*/
 //	mostrar_todas_Las_Listas();
 //	sem_post(&vacioReady);
-	free(CPU);
+		free(CPU);
 
-}
-
-int posicionEnLaLista(t_list* lista, int idCpu) {
-	int i = 0;
-	while ((*(t_estructuraCPU*) list_get(lista, i)).idCPU != idCpu) {
-		i++;
 	}
-	return i;
-}
-int posicionEnLaListaExec(t_list* lista, int pid) {
-	int i = 0;
-	while ((*(t_PCB*) list_get(lista, i)).program_id != pid) {
-		i++;
+
+	int posicionEnLaLista(t_list* lista, int idCpu) {
+		int i = 0;
+		while ((*(t_estructuraCPU*) list_get(lista, i)).idCPU != idCpu) {
+			i++;
+		}
+		return i;
 	}
-	return i;
-}
-
-int estaLibreID(int idCPU) {
-	sem_wait(&CPUsMutex);
-	bool tieneIDlocal(t_estructuraCPU* self){
-		return self->idCPU==idCPU;
+	int posicionEnLaListaExec(t_list* lista, int pid) {
+		int i = 0;
+		while ((*(t_PCB*) list_get(lista, i)).program_id != pid) {
+			i++;
+		}
+		return i;
 	}
-	t_estructuraCPU* CPU=list_find(CPUs,(void*)tieneIDlocal);
-	sem_post(&CPUsMutex);
-	return (CPU!=NULL?CPU->estado == 0:-1);
 
-}
+	int estaLibreID(int idCPU) {
+		sem_wait(&CPUsMutex);
+		bool tieneIDlocal(t_estructuraCPU* self) {
+			return self->idCPU == idCPU;
+		}
+		t_estructuraCPU* CPU = list_find(CPUs, (void*) tieneIDlocal);
+		sem_post(&CPUsMutex);
+		return (CPU != NULL ? CPU->estado == 0 : -1);
 
-void mostrarColaDeProcesosListos() {
-	printf("El estado de la Cola Ready es el siguiente:\n");
-	sem_wait(&colaReadyMutex);
-	mostrarColaDePCBs(colaReady);
-	sem_post(&colaReadyMutex);
-}
-void mostrarColaDeProcesosFinalizados() {
-	printf("El estado de la Cola Exit es el siguiente:\n");
-	sem_wait(&colaExitMutex);
-	mostrarColaDePCBs(colaExit);
-	sem_post(&colaExitMutex);
-}
-
-void mostrarColaDeProcesosEnEjecucion() {
-	printf("El estado de la Cola Exec es el siguiente:\n");
-	sem_wait(&colaExecMutex);
-	list_iterate(colaExec, (void*) (void*) imprimirNodosPCBs);
-	sem_post(&colaExecMutex);
-}
-
-void mostrarColaDeProcesosBloqueados() {
-	printf("El estado de la Cola de Bloqueados es el siguiente:\n");
-	int a = 0;
-	int b = 0;
-	sem_wait(&diccionarioDispositivosMutex);
-	while (a < cantidadDeDispositivos) {
-		char* id = list_get(idDispositivos, a);
-		printf("Procesos bloqueados para el dispositivo %s es el siguiente: \n",
-				id);
-
-		t_estructuraDispositivoIO* estructura = dictionary_get(
-				diccionarioDispositivos, id);
-		sem_wait(estructura->mutexCola);
-		mostrarColaDePCBsBloqueados(estructura->procesosBloqueados);
-		sem_post(estructura->mutexCola);
-		a++;
 	}
-	sem_post(&diccionarioDispositivosMutex);
-	sem_wait(&diccionarioSemaforosMutex);
-	while (b < cantidadDeSemaforos) {
-		char* sem = list_get(semaforos, b);
-		printf("Procesos bloqueados para el semaforo %s es el siguiente: \n",
-				sem);
-		t_estructuraSemaforo* semaforo = dictionary_get(diccionarioSemaforos,
-				sem);
-		sem_wait(&(semaforo->mutexCola));
-		mostrarColaDePCBs(semaforo->procesosBloqueados);
-		sem_post(&(semaforo->mutexCola));
-		b++;
+
+	void mostrarColaDeProcesosListos() {
+		printf("El estado de la Cola Ready es el siguiente:\n");
+		sem_wait(&colaReadyMutex);
+		mostrarColaDePCBs(colaReady);
+		sem_post(&colaReadyMutex);
 	}
-	sem_post(&diccionarioSemaforosMutex);
-}
+	void mostrarColaDeProcesosFinalizados() {
+		printf("El estado de la Cola Exit es el siguiente:\n");
+		sem_wait(&colaExitMutex);
+		mostrarColaDePCBs(colaExit);
+		sem_post(&colaExitMutex);
+	}
 
-void mostrarColaDePCBsBloqueados(t_queue* procesosBloqueados) {
-	list_iterate(procesosBloqueados->elements,
-			(void*) (void*) imprimirNodosPCBsBloqueados);
-}
+	void mostrarColaDeProcesosEnEjecucion() {
+		printf("El estado de la Cola Exec es el siguiente:\n");
+		sem_wait(&colaExecMutex);
+		list_iterate(colaExec, (void*) (void*) imprimirNodosPCBs);
+		sem_post(&colaExecMutex);
+	}
 
-void imprimirNodosPCBsBloqueados(t_estructuraProcesoBloqueado* procesoBloqueado) {
-	printf("Program id:%i \n", procesoBloqueado->pcb->program_id);
-}
+	void mostrarColaDeProcesosBloqueados() {
+		printf("El estado de la Cola de Bloqueados es el siguiente:\n");
+		int a = 0;
+		int b = 0;
+		sem_wait(&diccionarioDispositivosMutex);
+		while (a < cantidadDeDispositivos) {
+			char* id = list_get(idDispositivos, a);
+			printf(
+					"Procesos bloqueados para el dispositivo %s es el siguiente: \n",
+					id);
 
-int buscarIDPrograma(int idCPU) {
-	sem_wait(&CPUsMutex);
-	int posicion = posicionEnLaLista(CPUs, idCPU);
-	t_estructuraCPU* CPU = list_get(CPUs, posicion);
-	sem_post(&CPUsMutex);
-	return CPU->idProceso;
-}
+			t_estructuraDispositivoIO* estructura = dictionary_get(
+					diccionarioDispositivos, id);
+			sem_wait(estructura->mutexCola);
+			mostrarColaDePCBsBloqueados(estructura->procesosBloqueados);
+			sem_post(estructura->mutexCola);
+			a++;
+		}
+		sem_post(&diccionarioDispositivosMutex);
+		sem_wait(&diccionarioSemaforosMutex);
+		while (b < cantidadDeSemaforos) {
+			char* sem = list_get(semaforos, b);
+			printf(
+					"Procesos bloqueados para el semaforo %s es el siguiente: \n",
+					sem);
+			t_estructuraSemaforo* semaforo = dictionary_get(
+					diccionarioSemaforos, sem);
+			sem_wait(&(semaforo->mutexCola));
+			mostrarColaDePCBs(semaforo->procesosBloqueados);
+			sem_post(&(semaforo->mutexCola));
+			b++;
+		}
+		sem_post(&diccionarioSemaforosMutex);
+	}
+
+	void mostrarColaDePCBsBloqueados(t_queue* procesosBloqueados) {
+		list_iterate(procesosBloqueados->elements,
+				(void*) (void*) imprimirNodosPCBsBloqueados);
+	}
+
+	void imprimirNodosPCBsBloqueados(
+			t_estructuraProcesoBloqueado* procesoBloqueado) {
+		printf("Program id:%i \n", procesoBloqueado->pcb->program_id);
+	}
+
+	int buscarIDPrograma(int idCPU) {
+		sem_wait(&CPUsMutex);
+		int posicion = posicionEnLaLista(CPUs, idCPU);
+		t_estructuraCPU* CPU = list_get(CPUs, posicion);
+		sem_post(&CPUsMutex);
+		return CPU->idProceso;
+	}

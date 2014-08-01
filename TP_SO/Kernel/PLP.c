@@ -138,7 +138,7 @@ void liberar_numero(int pid) {
 	numABorrar = pid;
 	list_remove_by_condition(randoms, (void*) esIgualANumABorrar);
 	sem_post(&numABorrarMutex);
-	log_debug(logKernel,"Se libero pid: %d",pid);
+	log_debug(logKernel, "Se libero pid: %d", pid);
 
 }
 
@@ -239,7 +239,8 @@ void gestionarProgramaNuevo(char* literal, int sd, int tamanioLiteral) {
 	} else {
 		sem_post(&mutexProcesoActivo);
 		notificar_Memoria_Llena(sd);
-		log_info(logKernel, "Cerrando Conexion con Programa, pid:%d y sd:%d",pcb->program_id, sd);
+		log_info(logKernel, "Cerrando Conexion con Programa, pid:%d y sd:%d",
+				pcb->program_id, sd);
 		cerrarSocketPrograma(sd);
 		liberar_numero(pcb->program_id);
 		free(pcb);
@@ -257,9 +258,21 @@ void* deNewAReady(void* sinParametro) { // OTRO HILO
 		sem_wait(&colaNuevosMutex);
 		elementoSacado = list_remove(colaNew, 0);
 		sem_post(&colaNuevosMutex);
-		t_PCB* pcb_Ready = malloc(sizeof(t_PCB));
-		memcpy(pcb_Ready, elementoSacado->pcb, sizeof(t_PCB));
-		encolar_en_Ready(pcb_Ready);
+		bool estaLaVictima(int* self) {
+			return *self == elementoSacado->pcb->program_id;
+		}
+		sem_wait(&victimasMutex);
+		if (!list_any_satisfy(victimas, (void*) estaLaVictima)) {
+			sem_post(&victimasMutex);
+			t_PCB* pcb_Ready = malloc(sizeof(t_PCB));
+			memcpy(pcb_Ready, elementoSacado->pcb, sizeof(t_PCB));
+			encolar_en_Ready(pcb_Ready);
+		} else {
+			sem_post(&victimasMutex);
+			sem_post(&grado_Multiprogramacion);
+			manejoVictimas(elementoSacado->pcb->program_id);
+
+		}
 		free(elementoSacado);
 	}
 	return NULL ;
@@ -333,38 +346,37 @@ void* manejoColaExit(void* sinParametros) {
 		solicitar_Destruccion_Segmentos();
 		sem_post(&mutexProcesoActivo);
 		enviar_Mensaje_Final(pcb->program_id);
-	//	liberar_nodo_Diccionario_PIDySD(pcb->program_id);
-	//	cerrar_conexion(pcb->program_id); NO IRIA LO CIERRA EL PROGRAMA. Cierra multiplexor
+		//	liberar_nodo_Diccionario_PIDySD(pcb->program_id);
+		//	cerrar_conexion(pcb->program_id); NO IRIA LO CIERRA EL PROGRAMA. Cierra multiplexor
 		free(pcb);
 	}
 	return NULL ;
 }
 
-void agregar_a_Programas_Finalizados(int pid){
-	int* pidLista=malloc(sizeof(int));
-	*pidLista=pid;
+void agregar_a_Programas_Finalizados(int pid) {
+	int* pidLista = malloc(sizeof(int));
+	*pidLista = pid;
 	sem_wait(&programasFinalizadosMutex);
-	list_add(programasFinalizados,pidLista);
+	list_add(programasFinalizados, pidLista);
 	sem_post(&programasFinalizadosMutex);
 }
 
-int intentar_sacar_de_Programas_Finalizados(int pid){
-	bool esElPid(int* self){
-			return *self == pid;
-		}
-	sem_wait(&programasFinalizadosMutex);
-	if(list_any_satisfy(programasFinalizados,(void*)esElPid)){
-		list_remove_and_destroy_by_condition(programasFinalizados,(void*)esElPid,(void*)free);
-			sem_post(&programasFinalizadosMutex);
-			liberar_numero(pid);
-			return 1;
+int intentar_sacar_de_Programas_Finalizados(int pid) {
+	bool esElPid(int* self) {
+		return *self == pid;
 	}
-	else{
+	sem_wait(&programasFinalizadosMutex);
+	if (list_any_satisfy(programasFinalizados, (void*) esElPid)) {
+		list_remove_and_destroy_by_condition(programasFinalizados,
+				(void*) esElPid, (void*) free);
 		sem_post(&programasFinalizadosMutex);
-			return -1;
-		}
+		liberar_numero(pid);
+		return 1;
+	} else {
+		sem_post(&programasFinalizadosMutex);
+		return -1;
+	}
 }
-
 
 void liberar_nodo_Diccionario_PIDySD(int pid) {
 	char* pidC = malloc(5);
@@ -431,17 +443,18 @@ void notificar_Programa(int sd, char* message) {
 
 void cerrar_conexion(int pid) {
 	int sd = obtener_sd_Programa(pid);
-	log_info(logKernel, "Cerrando Conexion con Programa, pid:%d y sd:%d",pid, sd);
+	log_info(logKernel, "Cerrando Conexion con Programa, pid:%d y sd:%d", pid,
+			sd);
 	cerrarSocketPrograma(sd);
 }
 
 void cerrarSocketPrograma(int sd) {
 	sem_wait(&programasMutex);
 	int pos = buscarSocketenVector(sd, prog_client_socket);
-	printf("El socket que agarre fue %d y la posicion%d\n",sd,pos);
-	if(pos!= -1){
-	prog_client_socket[pos] = 0;
-	close(sd);
+	printf("El socket que agarre fue %d y la posicion%d\n", sd, pos);
+	if (pos != -1) {
+		prog_client_socket[pos] = 0;
+		close(sd);
 	}
 	sem_post(&programasMutex);
 }
@@ -462,7 +475,7 @@ void mostrar_todas_Las_Listas() {
 	mostrarListaNew();
 	mostrarColaDeProcesosListos();
 	mostrarColaDeProcesosEnEjecucion();
-    mostrarColaDeProcesosBloqueados();
+	mostrarColaDeProcesosBloqueados();
 	mostrarColaDeProcesosFinalizados();
 	sem_post(&mostarColasMutex);
 
@@ -471,19 +484,40 @@ void mostrar_todas_Las_Listas() {
 int obtener_pid_de_un_sd(int sd) {
 	int tamanoLista;
 	int i;
-	char* pid=malloc(6);
+	char* pid = malloc(6);
 	sem_wait(&PidSD_Mutex);
 	tamanoLista = list_size(randoms);
 	for (i = 0; i < tamanoLista; i++) {
 		sem_wait(&randomMutex);
-		snprintf(pid, 5, "%d",(*(int*) list_get(randoms,i)));
+		snprintf(pid, 5, "%d", (*(int*) list_get(randoms, i)));
 		sem_post(&randomMutex);
-		if(sd==(*(int*)dictionary_get(pidYSockets,pid))){
+		if (sd == (*(int*) dictionary_get(pidYSockets, pid))) {
 			break;
 		}
 	}
 	sem_post(&PidSD_Mutex);
-	int pidI=atoi(pid);
+	int pidI = atoi(pid);
 	free(pid);
 	return pidI;
 }
+
+void manejoVictimas(int pid) {
+	bool estaLaVictima(int* self) {
+		return *self == pid;
+	}
+	sem_post(&victimasMutex);
+	sem_post(&grado_Multiprogramacion);
+	sem_wait(&victimasMutex);
+	list_remove_and_destroy_by_condition(victimas, (void*) estaLaVictima,
+			(void*) free);
+	sem_post(&victimasMutex);
+	sem_wait(&mutexProcesoActivo);
+	cambiar_Proceso_Activo(pid);
+	solicitar_Destruccion_Segmentos();
+	sem_post(&mutexProcesoActivo);
+	cerrar_conexion(pid);
+	liberar_nodo_Diccionario_PIDySD(pid);
+	liberar_numero(pid);
+
+}
+
