@@ -60,13 +60,17 @@ t_paquete *serializar2(t_tamYDir *uno, ...){
 	va_start(p, uno);
 	int acum = 0;
 	t_tamYDir *arg=uno;
+	t_tamYDir *aux=NULL;
 	t_paquete *paquete=malloc(sizeof(t_paquete));
 	paquete->msj=malloc(2048);
 	do{
+		free(aux);
 		memcpy(acum+(paquete->msj), &(arg->tamano), 4);
 		memcpy(acum+4+(paquete->msj), arg->p_var, arg->tamano);
 		acum+=((arg->tamano)+4);
+		aux=arg;
 	}while((arg = va_arg(p, t_tamYDir *)));
+	free(aux);
 	va_end(p);
 	paquete->tamano=acum;
 	paquete->msj=realloc(paquete->msj, paquete->tamano);

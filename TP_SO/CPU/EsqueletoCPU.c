@@ -25,6 +25,7 @@ int programaFinalizado;
 int programaBloqueado;
 int programaAbortado;
 int cpu_ocupada = 0;
+int flag_sigint = 0;
 sem_t mutexSigu;
 
 void obtenerDatosConfig(t_config *config) {
@@ -127,6 +128,11 @@ int main(int arc, char **argv) {
 			log_debug(logs, "El literal es juancito: %s", literalInstruccion);
 			analizadorLinea(_depurar_sentencia(strdup(literalInstruccion)), &funciones_Ansisop,
 					&funciones_kernel);
+			if (flag_sigint){
+				close(socketKernel);
+				close(socketUMV);
+				exit(EXIT_FAILURE);
+			}
 			pcbEnUso->program_Counter++;
 			lineasAnalizadas++;
 			log_info(logs, "ESTA ES LA INSTRUCCION %d", lineasAnalizadas);
@@ -134,10 +140,6 @@ int main(int arc, char **argv) {
 			//printf("ESTA ES LA INSTRUCCION %d\n", lineasAnalizadas);
 		}
 		dictionary_clean_and_destroy_elements(diccionarioDeVariables, (void*)free);
-		/*
-		enviarConRazon(socketKernel, logs, razon, serializarPCB(pcbEnUso));
-		free(pcbEnUso);
-		*/
 		if (programaBloqueado){
 			log_debug(logs, "El programa salió por bloqueo");
 		}
@@ -168,8 +170,6 @@ int main(int arc, char **argv) {
 		}
 		printf("Sali del while, lineasAnalizadas=%d y quantumDeKernel=%d\n", lineasAnalizadas, quantumDeKernel);
 	}
-//	enviarConRazon(socketKernel, logs, SIGUSR_1, NULL);
-//	printf("Esto deberia ser null %s\n", recibirConRazon(socketKernel, razon, logs));
 	close(socketKernel);
 	close(socketUMV);
 
@@ -204,6 +204,11 @@ void sig_handler(int signo) {
 	} else if (signo == SIGINT) {
 		log_info(logs,
 				"Se recibió la señal SIGNIT, la CPU se cerrara abruptamente");
-		exit(EXIT_FAILURE);
+		flag_sigint=1;
+		if (!cpu_ocupada){
+			close(socketKernel);
+			close(socketUMV);
+			exit(EXIT_FAILURE);
+		}
 	}
 }
