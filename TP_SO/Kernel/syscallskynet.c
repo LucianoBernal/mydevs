@@ -26,18 +26,19 @@ void sc_grabar_valor(char* id, int valor, int idCpu) {
 } //VISTA
 
 void sc_signal(char* idSem, int idCPU) {
+	int victimario=1;
 	sem_wait(&diccionarioSemaforosMutex);
 	t_estructuraSemaforo* semaforo = dictionary_get(diccionarioSemaforos,
 			idSem);
-	semaforo->valor = (semaforo->valor) + 1;
 	sem_post(&diccionarioSemaforosMutex);
+	sem_wait(&(semaforo->mutexCola));
 	while (!queue_is_empty(semaforo->procesosBloqueados)) {
-		sem_wait(&(semaforo->mutexCola));
 		t_PCB* pcbADesbloquear = queue_pop(semaforo->procesosBloqueados);
 
 		bool estaLaVictima(int* self) {
 			return *self == pcbADesbloquear->program_id;
 		}
+
 		sem_wait(&victimasMutex);
 		if (!list_any_satisfy(victimas, (void*) estaLaVictima)) {
 			sem_post(&victimasMutex);
@@ -46,13 +47,21 @@ void sc_signal(char* idSem, int idCPU) {
 			sem_post(&colaReadyMutex);
 			sem_post(&vacioReady);
 
+
 			break;
 		} else {
 			sem_post(&victimasMutex);
+			sem_post(&(semaforo->mutexCola));
 			manejoVictimas(pcbADesbloquear->program_id);
+			sem_wait(&(semaforo->mutexCola));
+			victimario=0;
 		}
-		sem_post(&(semaforo->mutexCola));
+
 	}
+	if(victimario){
+	semaforo->valor = (semaforo->valor) + 1;}
+	sem_post(&(semaforo->mutexCola));
+
 	printf("El semaforo: %s quedo con el valor: %d\n", idSem, semaforo->valor);
 } //VISTA
 
@@ -63,9 +72,10 @@ void sc_wait(char* idSem, int idCPU) {
 	t_estructuraSemaforo* semaforo = dictionary_get(diccionarioSemaforos,
 			idSem);
 	int a = semaforo->valor;
-	semaforo->valor = (semaforo->valor) - 1;
 	sem_post(&diccionarioSemaforosMutex);
 	if (a > 0) {
+
+		semaforo->valor = (semaforo->valor) - 1;
 		//*estado_semaforo = 1;
 		enviarConRazon(idCPU, logKernel, CONFIRMACION, NULL );
 		//(puede seguir)
@@ -80,6 +90,7 @@ void sc_wait(char* idSem, int idCPU) {
 		}
 		sem_wait(&victimasMutex);
 		if (!list_any_satisfy(victimas, (void*) estaLaVictima)) {
+			semaforo->valor = (semaforo->valor) - 1;
 			sem_post(&victimasMutex);
 			seLiberoUnaCPU(idCPU, pcb);
 			sem_wait(&(semaforo->mutexCola));
