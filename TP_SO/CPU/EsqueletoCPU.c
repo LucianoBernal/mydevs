@@ -132,7 +132,7 @@ int main(int arc, char **argv) {
 			}
 			pcbEnUso->program_Counter++;
 			lineasAnalizadas++;
-//			usleep(retardo*1000);
+			usleep(retardo*1000);
 		}
 		dictionary_clean_and_destroy_elements(diccionarioDeVariables, (void*)free);
 		if (programaBloqueado){

@@ -38,7 +38,7 @@ int main(int argc, char **argv) {
 		}
 	t_log* logger;
 	int fin;
-	logger = log_create("logProcesoPrograma", "Programa", true, LOG_LEVEL_DEBUG);
+	logger = log_create("logProcesoPrograma", "Programa", true, LOG_LEVEL_TRACE);
 	log_info(logger, "Comienza la ejecución del Programa.");
 	cargar_Config(config);
 	if (programaPosta(logger,argv[1]) == 1) {
@@ -120,7 +120,7 @@ int programaPosta(t_log* logger,char* ruta) {
 			break;
 		}
 		if (buffer==NULL&&razon!=IMPRIMIR_TEXTO/* NO ESTARIA DE MAS, QUIZAS SI*/){
-			log_error(logger, "Lucho editame, algo malo paso");
+			log_error(logger, "Error #404");
 			fin=1;
 			break;
 		}

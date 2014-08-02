@@ -154,7 +154,7 @@ void* atencionScripts(void* sinParametro) {
 				literal[*tamano] = 0;
 				log_info(logKernel, "Se recibio Literal proveniente del sd: %d",
 						new_socket);
-				puts(literal);
+//				puts(literal);
 				gestionarProgramaNuevo(literal, new_socket, *tamano);
 				fflush(stdin);
 

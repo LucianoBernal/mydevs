@@ -145,9 +145,9 @@ void liberar_numero(int pid) {
 int crearSegmentos_Memoria(t_metadata_program *metadata, t_PCB *pcb,
 		char* literal, int tamanioScript) {
 	int razon;
-	printf("razon de CREAR SEGMENTOS es%d\n", CREAR_SEGMENTOS_PROGRAMA);
-	printf("%d %d %d %d", tamanioScript, metadata->instrucciones_size,
-			metadata->etiquetas_size, tamanio_stack);
+//	printf("razon de CREAR SEGMENTOS es%d\n", CREAR_SEGMENTOS_PROGRAMA);
+//	printf("%d %d %d %d", tamanioScript, metadata->instrucciones_size,
+//			metadata->etiquetas_size, tamanio_stack);
 	int tamanoInstrucciones = metadata->instrucciones_size * 8;
 	enviarConRazon(socketUMV, logKernel, CREAR_SEGMENTOS_PROGRAMA,
 			serializar2(crear_nodoVar(&tamanioScript, 4),
@@ -158,14 +158,14 @@ int crearSegmentos_Memoria(t_metadata_program *metadata, t_PCB *pcb,
 	if (razon == BASES_LOGICAS) {
 		desempaquetar2(mensaje, &pcb->segmento_Codigo, &pcb->indice_de_Codigo,
 				&pcb->indice_de_Etiquetas, &pcb->segmento_Stack, 0);
-		printf(
-				"\nsegmento de codigo %d\n indice de codigo %d \n indice etiquetas %d \n segmento stack %d \n",
-				pcb->segmento_Codigo, pcb->indice_de_Codigo,
-				pcb->indice_de_Etiquetas, pcb->segmento_Stack);
+//		printf(
+//				"\nsegmento de codigo %d\n indice de codigo %d \n indice etiquetas %d \n segmento stack %d \n",
+//				pcb->segmento_Codigo, pcb->indice_de_Codigo,
+//				pcb->indice_de_Etiquetas, pcb->segmento_Stack);
 		free(mensaje);
 		return 1;
 	} else {
-		printf("memory_Overload\n");
+	//	printf("memory_Overload\n");
 		return 0;
 	}
 }
@@ -175,7 +175,7 @@ void escribir_en_Memoria(t_metadata_program * metadata, t_PCB *pcb,
 	int *offset = malloc(sizeof(int));
 	int razon;
 	*offset = 0;
-	printf("Estoy en escribir memoria\n");
+	//printf("Estoy en escribir memoria\n");
 	int segmentoCodigo = pcb->segmento_Codigo;
 	int indiceCodigo = pcb->indice_de_Codigo;
 	int instruccionesSize = metadata->instrucciones_size * 8;
@@ -215,10 +215,10 @@ void agregar_En_Diccionario(int pid, int sd) {
 }
 
 void crear_Nuevo_Proceso(int progid) {
-	printf("estoy en crear proceso nuevo\n");
+//	printf("estoy en crear proceso nuevo\n");
 	enviarConRazon(socketUMV, logKernel, CREAR_PROCESO_NUEVO,
 			serializar2(crear_nodoVar(&progid, 4), 0));
-	printf("pid:%d \n", progid);	//Prendanme una vela pls
+//	printf("pid:%d \n", progid);	//Prendanme una vela pls
 }
 
 void gestionarProgramaNuevo(char* literal, int sd, int tamanioLiteral) {
@@ -227,6 +227,7 @@ void gestionarProgramaNuevo(char* literal, int sd, int tamanioLiteral) {
 	metadata = metadata_desde_literal(literal);
 	pcb->program_id = generarProgramID();
 	int peso = calcularPeso(metadata);
+	agregar_En_Diccionario(pcb->program_id, sd);
 	sem_wait(&mutexProcesoActivo);
 	crear_Nuevo_Proceso(pcb->program_id);
 	cambiar_Proceso_Activo(pcb->program_id);
@@ -235,18 +236,22 @@ void gestionarProgramaNuevo(char* literal, int sd, int tamanioLiteral) {
 		asignaciones_desde_metada(metadata, pcb);
 		sem_post(&mutexProcesoActivo);
 		encolar_New(pcb, peso);
-		agregar_En_Diccionario(pcb->program_id, sd);
+
 	} else {
 		sem_post(&mutexProcesoActivo);
-		notificar_Memoria_Llena(sd);
-		log_info(logKernel, "Cerrando Conexion con Programa, pid:%d y sd:%d",
-				pcb->program_id, sd);
-		cerrarSocketPrograma(sd);
-		liberar_numero(pcb->program_id);
+//		notificar_Memoria_Llena(sd);
+//		log_info(logKernel, "Cerrando Conexion con Programa, pid:%d y sd:%d",
+//				pcb->program_id, sd);
+//		cerrarSocketPrograma(sd);
+//		liberar_numero(pcb->program_id);
+		char *cadena=string_from_format("Se rechazo el acceso al sistema por falta de memoria\n");
+		enviarConRazon(sd, logKernel, IMPRIMIR_TEXTO, serializar2(crear_nodoVar(cadena, strlen(cadena)), 0));
+		agregar_a_Programas_Finalizados(pcb->program_id);
+		enviarConRazon(sd, logKernel, SALIDA_NORMAL, NULL);
 		free(pcb);
 	}
 	metadata_destruir(metadata); //OJO QUIZAS SOLO SEA EN EL ELSE REVISAR!
-	printf("PESO:%d\n", peso);
+//	printf("PESO:%d\n", peso);
 	fflush(stdin);
 }
 
@@ -451,7 +456,7 @@ void cerrar_conexion(int pid) {
 void cerrarSocketPrograma(int sd) {
 	sem_wait(&programasMutex);
 	int pos = buscarSocketenVector(sd, prog_client_socket);
-	printf("El socket que agarre fue %d y la posicion%d\n", sd, pos);
+//	printf("El socket que agarre fue %d y la posicion%d\n", sd, pos);
 	if (pos != -1) {
 		prog_client_socket[pos] = 0;
 		close(sd);

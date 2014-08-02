@@ -213,7 +213,6 @@ void cambiarTiposDeVariablesGlobales() {
 	void mostrar_variables(char *key, int *valor){
 		printf("El nombre es %s y el valor es %d\n", key, *valor);
 	}
-	printf("diccionario de variables vale: %x\n", (u_int)variables_globales);
 	dictionary_iterator(variables_globales, (void*)mostrar_variables);
 }
 

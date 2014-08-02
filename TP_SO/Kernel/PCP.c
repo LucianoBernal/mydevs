@@ -5,7 +5,7 @@ void* pcp_main(void* sinParametro) {
 	sinParametros = NULL;
 	colaExec = list_create();
 	diccionarioDispositivos = dictionary_create();
-	printf("diccionario de variables vale: %x\n", (u_int) variables_globales);
+	//printf("diccionario de variables vale: %x\n", (u_int) variables_globales);
 	sem_init(&diccionarioDispositivosMutex, 0, 1);
 	CPUs = list_create();
 	sem_init(&CPUsLibres, 0, 0); //FIXME CPUS LIBRES VA 0, PUSE 3 PARA PROBAR
@@ -288,9 +288,9 @@ void seDesconectoCPU(int idCPU) { //TODO
 	if (estaLibreID(idCPU) != -1) {
 		if (estaLibreID(idCPU) == 0) {
 			int idPrograma = buscarIDPrograma(idCPU);
-			printf("idPrograma:%d \n", idPrograma);
-			int sd = obtener_sd_Programa(idPrograma);
-			printf("SD:%d\n", sd);
+	//		printf("idPrograma:%d \n", idPrograma);
+	//		int sd = obtener_sd_Programa(idPrograma);
+	//		printf("SD:%d\n", sd);
 			//notificar_Programa(sd, "La CPU se desconectó, programa abortado");
 			bool esElpcb(t_PCB* pcbAcomparar) {
 				return pcbAcomparar->program_id == idPrograma;
@@ -300,7 +300,7 @@ void seDesconectoCPU(int idCPU) { //TODO
 			sem_post(&colaExecMutex);
 			moverAColaExit(pcb, idCPU);
 		} else {
-			log_debug(logKernel, "ESTOY LIBRE MORITE");
+		//	log_debug(logKernel, "ESTOY LIBRE MORITE");
 			sem_wait(&CPUsLibres);
 		}
 		sem_wait(&CPUsMutex);

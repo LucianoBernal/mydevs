@@ -2,15 +2,15 @@
 
 void sc_obtener_valor(char* id, int idCpu) {
 	sem_wait(&mutexVG);
-	printf("Adentro del mutex\n");
+//	printf("Adentro del mutex\n");
 	int *a;
 	a = dictionary_get(variables_globales, id);
-	printf("hOlis\n");
-	printf("Ya grabe el valor: %d en la variable: %s \n", *a, id);
+//	printf("hOlis\n");
+//	printf("Ya grabe el valor: %d en la variable: %s \n", *a, id);
 	sem_post(&mutexVG);
 	enviarConRazon(idCpu, logKernel, OBTENER_VALOR,
 			serializar2(crear_nodoVar(a, 4), 0));
-	printf("Y conteste!\n");
+//	printf("Y conteste!\n");
 } //VISTA
 
 void sc_grabar_valor(char* id, int valor, int idCpu) {
@@ -62,7 +62,7 @@ void sc_signal(char* idSem, int idCPU) {
 	semaforo->valor = (semaforo->valor) + 1;}
 	sem_post(&(semaforo->mutexCola));
 
-	printf("El semaforo: %s quedo con el valor: %d\n", idSem, semaforo->valor);
+//	printf("El semaforo: %s quedo con el valor: %d\n", idSem, semaforo->valor);
 } //VISTA
 
 void sc_wait(char* idSem, int idCPU) {

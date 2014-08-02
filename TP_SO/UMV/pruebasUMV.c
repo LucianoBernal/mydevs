@@ -17,7 +17,6 @@ int flag = 1; //Esta ni se para que esta.
 int k = 0; //Esta esta solo para mostrar unos mensajes.
 //bool algoritmo = 0; //0 significa FF, lo ponemos por defecto porque es el mas lindo*
 static t_tablaSegmento *crear_nodoSegm(int, int, int, void *);
-static void tsegm_destroy(t_tablaSegmento *);
 pthread_mutex_t mutexCantProcActivos, mutexFlagCompactado, mutexAlgoritmo =
 		PTHREAD_MUTEX_INITIALIZER;
 
@@ -74,10 +73,6 @@ static t_tablaSegmento *crear_nodoSegm(int pidOwner, int inicioLogico,
 	nuevo->tamano = tamano;
 	nuevo->memPpal = memPpal;
 	return nuevo;
-}
-
-static void tsegm_destroy(t_tablaSegmento *self) {
-	free(self);
 }
 
 void crearEstructurasGlobales() {
@@ -179,7 +174,7 @@ bool tieneProblemas(int inicio, int pid, int tamano) {
 
 int obtenerInicioLogico(int pid, int tamano) {
 	const int SIZE_SEGMENT = 10000;
-	int inicioLogico, error = 0;
+	int inicioLogico;
 	srand(time(NULL ));
 	inicioLogico = rand() % SIZE_SEGMENT;
 
@@ -267,14 +262,14 @@ void cambiarAlgoritmo() {
 }
 
 void mostrarListaSegmentos(t_list *listaSegmento) {
-	printf("			  Comienzo Final pidOwner BaseLogica Tamano\n");
+	//printf("			  Comienzo Final pidOwner BaseLogica Tamano\n");
 	fprintf(dumpFile, "			  Comienzo Final pidOwner BaseLogica Tamano\n");
 	fflush(dumpFile);
 	void _mostrar_posiciones_y_pid_owner(t_tablaSegmento* elemento) {
-		printf("Contenido lista Segmentos:%x %x %d       %d       %d\n",
-				(unsigned int) elemento->memPpal,
-				(unsigned int) elemento->memPpal + elemento->tamano,
-				elemento->pidOwner, elemento->inicioLogico, elemento->tamano);
+//		printf("Contenido lista Segmentos:%x %x %d       %d       %d\n",
+//				(unsigned int) elemento->memPpal,
+//				(unsigned int) elemento->memPpal + elemento->tamano,
+//				elemento->pidOwner, elemento->inicioLogico, elemento->tamano);
 		fprintf(dumpFile, "Contenido lista Segmentos:%x %x %d       %d       %d\n",
 				(unsigned int) elemento->memPpal,
 				(unsigned int) elemento->memPpal + elemento->tamano,
@@ -381,7 +376,7 @@ void destruirTodosLosSegmentos() {
 	}
 	t_tablaProceso *aux1=list_remove_by_condition(listaProcesos, (void*)tienePidActivo);
 	list_destroy_and_destroy_elements(aux1->tabla, (void*)free);
-	printf("El pid forro es %d\n", aux1==NULL?10000:aux1->pid);
+//	printf("El pid forro es %d\n", aux1==NULL?10000:aux1->pid);
 	free(aux1);
 //	list_destroy_and_destroy_elements(
 //			((t_tablaProceso *) list_remove_by_condition(listaProcesos,
@@ -426,7 +421,7 @@ int verificarEspacio(int pid, int base, int offset, int tamano) {
 		if (tamano <= (int) (obtenerPtrASegmento(base, pid)->tamano) - offset) {
 			return 1;
 		} else {
-			printf("Segmentation fault\n coz %d > %d\n", (obtenerPtrASegmento(base, pid)->tamano) - offset, tamano);
+			printf("Segmentation fault\n");
 		}
 	}
 	return 0;
@@ -490,7 +485,7 @@ void dumpMemoriaLibreYSegmentos() {
 		i += elemento->final - elemento->comienzo;
 	}
 	list_iterate(obtenerEspaciosDisponibles(), (void*) _acumularEspacio);
-	printf("El espacio actual disponible en memoria es: %d b\n", i);
+	//printf("El espacio actual disponible en memoria es: %d b\n", i);
 	fprintf(dumpFile, "El espacio actual disponible en memoria es: %d b\n", i);
 	fflush(dumpFile);
 }
@@ -498,8 +493,8 @@ void dumpTablaSegmentos(int pid) {
 	int i;
 	if (pid == -1) {
 		for (i = 0; i < list_size(listaProcesos); i++) {
-			printf("Se muestra la tabla de segmentos del proceso %d\n",
-					((t_tablaProceso *) list_get(listaProcesos, i))->pid);
+//			printf("Se muestra la tabla de segmentos del proceso %d\n",
+//					((t_tablaProceso *) list_get(listaProcesos, i))->pid);
 			fprintf(dumpFile,"Se muestra la tabla de segmentos del proceso %d\n",
 					((t_tablaProceso *) list_get(listaProcesos, i))->pid);
 			fflush(dumpFile);
@@ -508,8 +503,8 @@ void dumpTablaSegmentos(int pid) {
 					((t_tablaProceso *) list_get(listaProcesos, i))->tabla);
 		}
 	} else {
-		printf("Se muestra la tabla de segmentos del proceso %d\n",
-				((t_tablaProceso *) list_get(listaProcesos, buscarPid(pid)))->pid);
+//		printf("Se muestra la tabla de segmentos del proceso %d\n",
+//				((t_tablaProceso *) list_get(listaProcesos, buscarPid(pid)))->pid);
 		fprintf(dumpFile, "Se muestra la tabla de segmentos del proceso %d\n",
 				((t_tablaProceso *) list_get(listaProcesos, buscarPid(pid)))->pid);
 		fflush(dumpFile);
@@ -521,9 +516,9 @@ void dumpTablaSegmentos(int pid) {
 
 void dumpMemoriaChata(int offset, int tamano) {
 	int i, *a = malloc(sizeof(int));
-	printf("Se muestra la memoria desde la posicion %x a la %x \n",
-			(unsigned int) baseUMV + offset,
-			(unsigned int) baseUMV + offset + tamano);
+//	printf("Se muestra la memoria desde la posicion %x a la %x \n",
+//			(unsigned int) baseUMV + offset,
+//			(unsigned int) baseUMV + offset + tamano);
 	fprintf(dumpFile, "Se muestra la memoria desde la posicion %x a la %x \n",
 			(unsigned int) baseUMV + offset,
 			(unsigned int) baseUMV + offset + tamano);
@@ -531,12 +526,12 @@ void dumpMemoriaChata(int offset, int tamano) {
 
 	for (i = 0; i < tamano;) {
 		memcpy(a, baseUMV + offset + i, 4);
-		printf("%x ", (unsigned int) *a);
+		//printf("%x ", (unsigned int) *a);
 		fprintf(dumpFile, "%x ", (unsigned int) *a);
 		fflush(dumpFile);
 		i += 4;
 		if (i % 96 == 0){
-			printf(" \n");
+			//printf(" \n");
 			fprintf(dumpFile, " \n");
 			fflush(dumpFile);
 		}

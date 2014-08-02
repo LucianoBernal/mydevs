@@ -7,6 +7,7 @@
 #include "consola.h"
 #include "consola_interfaz.h"
 
+	int procesoConsola=-3;
 bool validarPid(int pid) {
 	t_tablaProceso *pidFound = (list_get(listaProcesos, buscarPid(pid)));
 	if (pidFound == NULL ) {
@@ -28,7 +29,7 @@ void crearProcesoArtificial() {
 void* consola(void* baseUMV) {
 	const int COMANDO_SIZE = 30;
 	char* comando = malloc(COMANDO_SIZE);
-	crearProcesoArtificial();
+//	crearProcesoArtificial();
 
 	dumpFile = fopen("archivoDeDump.txt", "a");
 	if (dumpFile == NULL ) {
@@ -37,6 +38,12 @@ void* consola(void* baseUMV) {
 	} else {
 		log_info(logger, "Se creó el archivo de dump.");
 	}
+
+	opFile = fopen("archivoDeOperacion.txt", "a");
+		if (opFile == NULL ) {
+			fputs("File error", stderr);
+			exit(1);
+		}
 
 	do {
 		printf("\nIngrese comando: \n");
@@ -52,7 +59,6 @@ void* consola(void* baseUMV) {
 }
 
 void analizarYEjecutar(char *comando) {
-
 	if (!strncmp("operacion", comando, 9)) {
 		t_operacion operacion;
 
@@ -63,7 +69,7 @@ void analizarYEjecutar(char *comando) {
 			printf(
 					"¿Qué operación desea ralizar?-para saber como usarlo enviar 'h'. \n");
 			flag = 0;
-			int processID;
+			char *respuesta;
 			fflush(stdin);
 			scanf("%s", &operacion.accion);
 
@@ -84,21 +90,24 @@ void analizarYEjecutar(char *comando) {
 
 				printf("\ningrese tamaño: ");
 				scanf("%d", &operacion.tamano);
-
 				char* msj = malloc(operacion.tamano);
 				printf("\n Ingrese bloque de mensaje: \n");
 				fflush(stdin);
 				scanf("%s", msj);
 				pthread_mutex_lock(&mutexOperacion);
-				//cambiarProcesoActivo(10000);
+				if (procesoConsola==-3){
+									printf("Actualmente no hay proceso activo\n");
+								} else{
+				cambiarProcesoActivo(procesoConsola);
 				enviarUnosBytes(operacion.base, operacion.offset,
 						operacion.tamano, msj);
+								}
 				pthread_mutex_unlock(&mutexOperacion);
 				free(msj);
 				break;
 
 			case 's':
-
+				respuesta = NULL;
 				printf("\ningrese base: ");
 				scanf("%d", &operacion.base);
 
@@ -109,15 +118,21 @@ void analizarYEjecutar(char *comando) {
 				scanf("%d", &operacion.tamano);
 				int i;
 				pthread_mutex_lock(&mutexOperacion);
-				//cambiarProcesoActivo(10000); //TODO me parece que va eh...
-				char *respuesta = solicitarBytes(operacion.base,
+				if (procesoConsola==-3){
+					printf("Actualmente no hay proceso activo\n");
+				} else{
+				cambiarProcesoActivo(procesoConsola); //TODO me parece que va eh...
+				respuesta = solicitarBytes(operacion.base,
 						operacion.offset, operacion.tamano);
+				}
 				pthread_mutex_unlock(&mutexOperacion);
 				//printf("\n%d\n", strlen(respuesta));
 				if (strcmp(respuesta, "")) {
+					fprintf(opFile, "\nRespuesta a solicitar bytes \n");
 					for (i = 0; i < operacion.tamano; i++) {
 						//para darme cuenta si no imprime o imprime un /0 TODO borrar!!
 						printf("%c", respuesta[i] == 0 ? '0' : respuesta[i]);
+						fprintf(opFile, "%c", respuesta[i] == 0 ? '0' : respuesta[i]);
 					}
 					free(respuesta);
 				}
@@ -125,40 +140,48 @@ void analizarYEjecutar(char *comando) {
 				break;
 
 			case 'c':
-				printf("\ningrese pid: ");
-				fflush(stdin);
-				scanf("%d", &processID);
-				if (!validarPid(processID)) {
-					break;
-				}
+//				printf("\ningrese pid: ");
+//				fflush(stdin);
+//				scanf("%d", &processID);
+//				if (!validarPid(processID)) {
+//					break;
+//				}
 
 				printf("\ningrese tamaño: ");
 				fflush(stdin);
 				scanf("%d", &operacion.tamano);
 
 				pthread_mutex_lock(&mutexOperacion);
-				cambiarProcesoActivo(processID); //todo ojo fijarse!!
-				printf("La base logica del segmento creado es: %d\n",
-						crearSegmento(operacion.tamano));
+				if (procesoConsola==-3){
+					printf("Actualmente no hay proceso activo \n");
+				} else{
+					cambiarProcesoActivo(procesoConsola); //todo ojo fijarse!!
+					printf("La base logica del segmento creado es: %d\n",
+							crearSegmento(operacion.tamano));
+				}
 				pthread_mutex_unlock(&mutexOperacion);
 
 				break;
 
 			case 'd':
-				printf("\ningrese pid: ");
-				fflush(stdin);
-				scanf("%d", &processID);
-				if (!validarPid(processID)) {
-					break;
-				}
+//				printf("\ningrese pid: ");
+//				fflush(stdin);
+//				scanf("%d", &processID);
+//				if (!validarPid(processID)) {
+//					break;
+//				}
 
 				printf("\ningrese base: ");
 				fflush(stdin);
 				scanf("%d", &operacion.base);
 
 				pthread_mutex_lock(&mutexOperacion);
-				cambiarProcesoActivo(processID);
-				destruirSegmento(operacion.base);
+				if (procesoConsola==-3){
+					printf("Actualmente no hay proceso activo \n");
+				}else{
+					cambiarProcesoActivo(procesoConsola);
+					destruirSegmento(operacion.base);
+				}
 				pthread_mutex_unlock(&mutexOperacion);
 				break;
 
@@ -235,8 +258,8 @@ void analizarYEjecutar(char *comando) {
 		int tam;
 		int confirmaMemo;
 
-		printf("Estructuras de memoria.\n");
-		fprintf(dumpFile, "Estructuras de memoria.\n");
+		//printf("Estructuras de memoria.\n");
+		fprintf(dumpFile, "\nEstructuras de memoria.\n");
 		fflush(dumpFile);
 		printf(
 				"Si quiere las tablas de segmentos de un proceso ingrese su pid, sino ingrese -1: \n");
@@ -249,7 +272,7 @@ void analizarYEjecutar(char *comando) {
 		}
 		dumpTablaSegmentos(pidPedido);
 
-		printf("\nMemoria principal:\n");
+		//printf("\nMemoria principal:\n");
 		fprintf(dumpFile, "\nMemoria principal:\n");
 		fflush(dumpFile);
 		dumpMemoriaLibreYSegmentos();
@@ -258,7 +281,7 @@ void analizarYEjecutar(char *comando) {
 				"\nSi desea saber el contenido de la memoria principal, ingrese '1', sino, '0'. \n");
 		scanf("%d", &confirmaMemo);
 		if (confirmaMemo==1) {
-			printf("\n Contenido de memoria principal.\n");
+			//printf("\n Contenido de memoria principal.\n");
 			fprintf(dumpFile, "\n Contenido de memoria principal.\n");
 			fflush(dumpFile);
 			printf("\nIngrese offset: ");
@@ -273,7 +296,17 @@ void analizarYEjecutar(char *comando) {
 		}
 
 	}	//Termina if de dump.
-
+	else if (!strncmp("cambiarpid", comando, 10)){
+		printf("\nIngrese pid\n");
+		int pid;
+		scanf("%d", &pid);
+		if (!validarPid(pid)){
+			agregarProceso(pid, 'c');
+			printf("El pid ingresado no existia, fue creado\n");
+		}
+		procesoConsola=pid;
+		printf("El proceso activo fue cambiado, ahora es %d\n", procesoConsola);
+	}
 	else if (!strncmp("exit", comando, 4)) {
 		return;
 	} else {
